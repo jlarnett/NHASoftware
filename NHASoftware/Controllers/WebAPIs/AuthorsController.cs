@@ -1,6 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using NHASoftware.Data;
+using NHASoftware.Models;
 
 namespace NHASoftware.Controllers.WebAPIs
 {
@@ -8,36 +14,95 @@ namespace NHASoftware.Controllers.WebAPIs
     [ApiController]
     public class AuthorsController : ControllerBase
     {
-        // GET: api/<AuthorsController>
+        private readonly ApplicationDbContext _context;
+
+        public AuthorsController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/Authors
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
         {
-            return new string[] { "value1", "value2" };
+            return await _context.Authors.ToListAsync();
         }
 
-        // GET api/<AuthorsController>/5
+        // GET: api/Authors/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<Author>> GetAuthor(int id)
         {
-            return "value";
+            var author = await _context.Authors.FindAsync(id);
+
+            if (author == null)
+            {
+                return NotFound();
+            }
+
+            return author;
         }
 
-        // POST api/<AuthorsController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<AuthorsController>/5
+        // PUT: api/Authors/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> PutAuthor(int id, Author author)
         {
+            if (id != author.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(author).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AuthorExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // DELETE api/<AuthorsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // POST: api/Authors
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Author>> PostAuthor(Author author)
         {
+            _context.Authors.Add(author);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetAuthor", new { id = author.Id }, author);
+        }
+
+        // DELETE: api/Authors/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAuthor(int id)
+        {
+            var author = await _context.Authors.FindAsync(id);
+            if (author == null)
+            {
+                return NotFound();
+            }
+
+            _context.Authors.Remove(author);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool AuthorExists(int id)
+        {
+            return _context.Authors.Any(e => e.Id == id);
         }
     }
 }
