@@ -40,20 +40,19 @@
                     {
                         data: "name" , 
                         render: function(data, type, author) {
-                            return "<a href='/author/edit/" + author.id + "'>" + author.name + "</a>";
+                            return "<a href='/authors/edit/" + author.id + "'>" + author.name + "</a>";
                         }
                     },
                     {
                         data: "id",
                         render: function (data) {
-                            return "<button class='btn-link js-delete' data-author-id=" + data + ">Delete</button>";
+                            return "<button class='btn-primary js-delete' data-author-id=" + data + ">Delete</button>";
                         }
                     }
                 ]
             });
 
-            $("#authors").on("click", ".js-delete", function () 
-            {
+            $("#authors").on("click", ".js-delete", function () {
                 var button = $(this);
 
                     $.ajax ({ 
@@ -65,6 +64,7 @@
                         }
                     });
             });
+
         });
 
     </script>
