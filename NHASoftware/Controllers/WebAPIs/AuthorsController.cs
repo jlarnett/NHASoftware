@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
+using NHASoftware.DTOs;
 using NHASoftware.Models;
 
 namespace NHASoftware.Controllers.WebAPIs
@@ -15,17 +17,22 @@ namespace NHASoftware.Controllers.WebAPIs
     public class AuthorsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public AuthorsController(ApplicationDbContext context)
+        public AuthorsController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Authors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
-        {
-            return await _context.Authors.ToListAsync();
+        public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAuthors()
+        { 
+
+            var authors = await _context.Authors.ToListAsync();
+            var authorDto = authors.ToList().Select(_mapper.Map<Author, AuthorDTO>);
+            return Ok(authorDto);
         }
 
         // GET: api/Authors/5

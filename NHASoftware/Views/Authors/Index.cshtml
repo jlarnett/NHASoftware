@@ -9,33 +9,63 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+
+<table id="authors" class="table table-bordered table-hover">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Address)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>Author Id</th>
+        <th>Author Name</th>
+        <th>Author Address</th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
     </tbody>
 </table>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function ()
+        {
+            var table = $("#authors").DataTable({
+                ajax: {
+                    url: "/api/authors",
+                    dataSrc: ""
+                },
+                columns: 
+                [
+                    {
+                        data: "id"
+                    },
+                    {
+                        data: "name" , 
+                        render: function(data, type, author) {
+                            return "<a href='/author/edit/" + author.id + "'>" + author.name + "</a>";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return "<button class='btn-link js-delete' data-author-id=" + data + ">Delete</button>";
+                        }
+                    }
+                ]
+            });
+
+            $("#authors").on("click", ".js-delete", function () 
+            {
+                var button = $(this);
+
+                    $.ajax ({ 
+                        url: "/api/authors/" + button.attr("data-author-id"),
+                        method: "DELETE",
+                        success: function () 
+                        {
+                            table.row(button.parents("tr")).remove().draw();
+                        }
+                    });
+            });
+        });
+
+    </script>
+}
