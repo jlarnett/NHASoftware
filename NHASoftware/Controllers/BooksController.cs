@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
 using NHASoftware.Models;
+using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
 {
@@ -149,5 +150,6 @@ namespace NHASoftware.Controllers
         {
             return _context.Books.Any(e => e.Id == id);
         }
+
     }
 }

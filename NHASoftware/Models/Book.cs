@@ -5,11 +5,13 @@
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public virtual ICollection<Author> Authors { get; set; }
+
+        //Nav Property
+        public virtual IList<AuthorBook> AuthorBooks { get; set; }
 
         public Book()
         {
-            Authors = new List<Author>();
+            AuthorBooks = new List<AuthorBook>();
         }
     }
 }

@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewData["Title"] = "View";
+}
+
+<h1>View</h1>
+
+<table id="covids" class="table table-bordered table-hover">
+    <thead>
+    <tr>
+        <th>Confirmed New Cases</th>
+        <th>New Deaths</th>
+        <th>Total Deaths</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section scripts
+{
+    @*
+        Jquery datatables scripts to render table columns, by fetching API.
+    *@
+    <script>
+        $(document).ready(function () {
+
+            var table = $("#covids").DataTable({
+
+                ajax: {
+                    url: "https://api.covid19api.com/summary",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "Global.NewConfirmed.",
+                    },
+                    {
+                        data: "Global.TotalDeaths"
+                    },
+                    {
+                        data: "Global.NewDeaths",
+                    }
+                ]
+            });
+        });
+    </script>
+}
+

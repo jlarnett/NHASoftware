@@ -4,14 +4,14 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
-
         public string Address { get; set; }
+
+        //Nav Property
+        public virtual IList<AuthorBook> AuthorBooks { get; set; }
 
         public Author()
         {
-            this.Books = new List<Book>();
+            this.AuthorBooks = new List<AuthorBook>();
         }
-
-        public virtual ICollection<Book> Books { get; set; }
     }
 }
