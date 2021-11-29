@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NHASoftware.Data;
+using NHASoftware.Models;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
@@ -20,15 +21,14 @@ namespace NHASoftware.Controllers
         [HttpGet]
         public IActionResult AddAuthors(int id)
         {
-            var AssignVM = new AssignAuthorViewModel(id, _context.Authors.ToList());
-            return View(AssignVM);
+            var assignVM = new AssignAuthorViewModel(id, _context.Authors.ToList());
+            return View(assignVM);
         }
 
         [HttpPost]
         public IActionResult AddAuthors()
         {
-            return Ok();
+            return Json(new { success = true });
         }
-
     }
 }

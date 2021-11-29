@@ -4,13 +4,29 @@
 <hr />
 
 <body>
-    @using (Html.BeginForm())
-    {
-        for (int i = 0; i < Model.Authors.Count; i++)
+<div>
+    
+    <!--For loop that loops through all possible Authors-->
+    
+    <table id="AuthorSelectionTable" class="table table-bordered table-hover">
+
+        @foreach (var author in @Model.Authors)
         {
-            
+            var checkBoxId = "chk" + author.Name;
+            var tdId = "td" + author.Id;
+
+            <tr>
+                <td width="20%"><input type="checkbox" id="@checkBoxId" class="form-check" value="@author.Id"/></td>
+                <td id="@tdId" width="20%">@author.Name</td>
+                <td id="@tdId" width="60%">@author.Address</td>
+            </tr>
         }
-    }
+    </table>
+    
+    <div>
+        <input type="button" id="Submit" value="Upate Authors."/>
+    </div>
+</div>
 </body>
 
 
@@ -19,5 +35,34 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            $('#Submit').click(function() {
+                var selectedAuthorList = null;
+                selectedAuthorList = [];
+
+                $("input:checkbox:checked").each(function() {
+                    selectedAuthorList.push($(this).attr('value'));
+                });
+
+                console.log(selectedAuthorList);
+
+                $.ajax({
+                    url: '/AuthorBook/addAuthors',
+                    type: 'POST',
+                    data: JSON.stringify(selectedAuthorList),
+                    datatype: 'json',
+                    contentType: 'application/json',
+                    crossDomain: true,
+                    cache: false,
+                    success: function(data) { console.log(data); }
+                });
+            });
+        });
+    </script>
 }
+
+
+
+
+
