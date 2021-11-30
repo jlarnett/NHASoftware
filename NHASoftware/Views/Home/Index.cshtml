@@ -1,8 +1,27 @@
-﻿@{
+﻿@model NHASoftware.ViewModels.IndexPageViewModel;
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welcome To NHA Industries!</h1>
+
 </div>
+
+<div class="font-monospace">
+    <p>The purpose of this website to to correlate Various EF functions. Currently the site</p>
+    <p>Here is a the count of books and Authors in Database.</p>
+    
+    <br/>
+
+    <p id="author">Authors: </p> 
+    <p id="book">Books </p> 
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $("#author").text("Author Count: " + @Model.AuthorCount);
+        $("#book").text("Book Count: " + @Model.BookCount);
+    </script>
+}
