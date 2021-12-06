@@ -1,5 +1,7 @@
-html {
+html 
+{
   font-size: 14px;
+    
 }
 
 @media (min-width: 768px) {
@@ -15,4 +17,16 @@ html {
 
 body {
   margin-bottom: 60px;
+}
+
+.container {
+    margin-left: 20px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    margin-right: 40px;
+    max-width: 98%;
+}
+
+.display-4 {
+    margin-bottom: 50px;
 }
