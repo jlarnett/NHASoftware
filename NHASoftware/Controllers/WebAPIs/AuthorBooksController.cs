@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NHASoftware.Data;
@@ -82,12 +83,14 @@ namespace NHASoftware.Controllers.WebAPIs
         // POST: api/AuthorBooks
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public IActionResult PostAuthorBook(BookAuthorsDTO bookAuthorDTO)
+        public JsonResult PostAuthorBook(BookAuthorsDTO bookAuthorDTO)
         {
+            //Receives DTO with bookID and array of assigned authorIds
+            //Checks if whether record exist between authors. If it doesn't it is added to database.
 
             foreach (var authorid in bookAuthorDTO.Authors)
             {
-                AuthorBook authorBook = _context.AuthorBooks.Find(bookAuthorDTO.bookId, int.Parse(authorid));
+                AuthorBook authorBook = _context.AuthorBooks.Find(int.Parse(authorid), bookAuthorDTO.bookId);
 
                 if (authorBook == null)
                 {
@@ -100,11 +103,11 @@ namespace NHASoftware.Controllers.WebAPIs
                 }
                 else
                 {
-                    return StatusCode(409);
+                    return new JsonResult(new { success = false});
                 }
             }
 
-            return RedirectToAction("Index", "Books");
+            return new JsonResult(new { success = true});
         }
 
         // DELETE: api/AuthorBooks/5
