@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NHASoftware.Data;
+using NHASoftware.DTOs;
 using NHASoftware.Models;
+using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers.WebAPIs
 {
@@ -15,10 +19,12 @@ namespace NHASoftware.Controllers.WebAPIs
     public class AuthorBooksController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public AuthorBooksController(ApplicationDbContext context)
+        public AuthorBooksController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/AuthorBooks
@@ -76,26 +82,29 @@ namespace NHASoftware.Controllers.WebAPIs
         // POST: api/AuthorBooks
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<AuthorBook>> PostAuthorBook(AuthorBook authorBook)
+        public IActionResult PostAuthorBook(BookAuthorsDTO bookAuthorDTO)
         {
-            _context.AuthorBooks.Add(authorBook);
-            try
+
+            foreach (var authorid in bookAuthorDTO.Authors)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (AuthorBookExists(authorBook.AuthorId))
+                AuthorBook authorBook = _context.AuthorBooks.Find(bookAuthorDTO.bookId, int.Parse(authorid));
+
+                if (authorBook == null)
                 {
-                    return Conflict();
+                    AuthorBook book = new AuthorBook();
+                    book.BookId=bookAuthorDTO.bookId;
+                    book.AuthorId=int.Parse(authorid);
+
+                    _context.AuthorBooks.Add(book);
+                    _context.SaveChanges();
                 }
                 else
                 {
-                    throw;
+                    return StatusCode(409);
                 }
             }
 
-            return CreatedAtAction("GetAuthorBook", new { id = authorBook.AuthorId }, authorBook);
+            return RedirectToAction("Index", "Books");
         }
 
         // DELETE: api/AuthorBooks/5

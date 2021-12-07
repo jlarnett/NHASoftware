@@ -8,6 +8,8 @@
     
     <!--For loop that loops through all possible Authors-->
     
+    <div id="book" value="@Model.BookId"></div>
+    
     <table id="AuthorSelectionTable" class="table table-bordered table-hover">
 
         @foreach (var author in @Model.Authors)
@@ -38,24 +40,30 @@
     <script>
         $(document).ready(function() {
             $('#Submit').click(function() {
+
                 var selectedAuthorList = null;
+
                 selectedAuthorList = [];
+                var bookAuthor = {};
 
                 $("input:checkbox:checked").each(function() {
                     selectedAuthorList.push($(this).attr('value'));
                 });
 
-                console.log(selectedAuthorList);
+                bookAuthor.bookId = $('#book').attr('value');
+                bookAuthor.authors = selectedAuthorList;
+
+                console.log(bookAuthor);
 
                 $.ajax({
-                    url: '/AuthorBook/addAuthors',
-                    type: 'POST',
-                    data: JSON.stringify(selectedAuthorList),
+                    url: '/api/AuthorBooks',
+                    method: 'POST',
+                    contentType: "application/json; charset=utf-8",
                     datatype: 'json',
-                    contentType: 'application/json',
-                    crossDomain: true,
-                    cache: false,
-                    success: function(data) { console.log(data); }
+                    data: JSON.stringify(bookAuthor),
+                    success: function(data) {
+                         alert(data);
+                    }
                 });
             });
         });

@@ -12,6 +12,8 @@ namespace NHASoftware.Profiles
             //Example CreateMap<Message, MessageDto>();
             CreateMap<Author, AuthorDTO>();
             CreateMap<AuthorDTO, Author>().ForMember(a => a.Id, opt => opt.Ignore());
+            CreateMap<BookAuthorsDTO, AuthorBook>();
+            CreateMap<AuthorBook, BookAuthorsDTO>();
         }
     }
 }
