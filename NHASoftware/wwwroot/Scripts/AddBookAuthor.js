@@ -16,7 +16,7 @@
             console.log(bookAuthor);
 
             $.ajax({
-                url: '/api/AuthorBooks',
+                url: '/api/BookAuthors',
                 method: 'POST',
                 contentType: "application/json; charset=utf-8",
                 datatype: 'json',

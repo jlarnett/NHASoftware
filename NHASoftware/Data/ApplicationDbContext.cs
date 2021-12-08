@@ -15,18 +15,19 @@ namespace NHASoftware.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<AuthorBook>().HasKey(sc => new { sc.AuthorId, sc.BookId });
+            builder.Entity<BookAuthor>().HasKey(sc => new { sc.AuthorId, sc.BookId });
 
-            builder.Entity<AuthorBook>().HasOne<Author>(ab => ab.Author).WithMany(a => a.AuthorBooks)
+            builder.Entity<BookAuthor>().HasOne<Author>(ab => ab.Author).WithMany(a => a.BookAuthors)
                 .HasForeignKey(ab => ab.AuthorId);
 
-            builder.Entity<AuthorBook>().HasOne<Book>(ab => ab.Book).WithMany(b => b.AuthorBooks)
-                .HasForeignKey(ab => ab.BookId);
+            builder.Entity<BookAuthor>().HasOne<Book>(ab => ab.Book).WithMany(b => b.BookAuthors).HasForeignKey(ab => ab.BookId);
+
+            
         }
 
         public DbSet<Book> Books { get; set; }
         public DbSet<Author> Authors { get; set; }
-        public DbSet<AuthorBook> AuthorBooks { get; set; }
-        
+        public DbSet<BookAuthor> BookAuthors { get; set; }
+
     }
 }

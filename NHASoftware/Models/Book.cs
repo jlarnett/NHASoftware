@@ -7,11 +7,11 @@
         public string Description { get; set; }
 
         //Nav Property
-        public virtual IList<AuthorBook> AuthorBooks { get; set; }
+        public virtual IList<BookAuthor> BookAuthors { get; set; }
 
         public Book()
         {
-            AuthorBooks = new List<AuthorBook>();
+            BookAuthors = new List<BookAuthor>();
         }
     }
 }

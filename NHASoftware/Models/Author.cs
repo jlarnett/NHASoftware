@@ -7,11 +7,11 @@
         public string Address { get; set; }
 
         //Nav Property
-        public virtual IList<AuthorBook> AuthorBooks { get; set; }
+        public virtual IList<BookAuthor> BookAuthors { get; set; }
 
         public Author()
         {
-            this.AuthorBooks = new List<AuthorBook>();
+            this.BookAuthors = new List<BookAuthor>();
         }
     }
 }
