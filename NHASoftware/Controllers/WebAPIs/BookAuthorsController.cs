@@ -96,7 +96,6 @@ namespace NHASoftware.Controllers.WebAPIs
                     }
                     else
                     {
-                        return new JsonResult(new { success = false});
                     }
                 }
 

@@ -23,7 +23,18 @@ namespace NHASoftware.Controllers
         [HttpGet]
         public IActionResult AddBookAuthors(int id)
         {
-            var assignVM = new AssignAuthorViewModel(id, _context.Authors.ToList());
+            List<BookAuthor> bookAuthors = _context.BookAuthors.ToList();
+            List<Author> Authors = new List<Author>();
+
+            foreach (var ba in bookAuthors)
+            {
+                if (ba.BookId == id)
+                {
+                    Authors.Add(_context.Authors.Find(ba.AuthorId));
+                }
+            }
+
+            var assignVM = new AddBookAuthorViewModel(id, _context.Authors.ToList(), Authors);
             return View(assignVM);
         }
 
