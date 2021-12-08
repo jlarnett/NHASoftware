@@ -26,6 +26,9 @@ namespace NHASoftware.Controllers.WebAPIs
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookAuthor>>> GetBookAuthors()
         {
+            //NOT IMPLEMENTED YET
+            //NOT IMPLEMENTED YET
+
             return await _context.BookAuthors.ToListAsync();
         }
 
@@ -33,6 +36,9 @@ namespace NHASoftware.Controllers.WebAPIs
         [HttpGet("{id}")]
         public async Task<ActionResult<BookAuthor>> GetBookAuthor(int id)
         {
+            //NOT IMPLEMENTED YET
+            //NOT IMPLEMENTED YET
+
             var bookAuthor = await _context.BookAuthors.FindAsync(id);
 
             if (bookAuthor == null)
@@ -48,6 +54,9 @@ namespace NHASoftware.Controllers.WebAPIs
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBookAuthor(int id, BookAuthor bookAuthor)
         {
+            //NOT IMPLEMENTED YET
+            //NOT IMPLEMENTED YET
+
             if (id != bookAuthor.AuthorId)
             {
                 return BadRequest();
@@ -99,13 +108,19 @@ namespace NHASoftware.Controllers.WebAPIs
                     }
                 }
 
+                //Returns json bool results
                 return new JsonResult(new { success = true});
             }
+
+
 
         // DELETE: api/BookAuthors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBookAuthor(int id)
         {
+            //NOT IMPLEMENTED YET
+            //NOT IMPLEMENTED YET
+
             var bookAuthor = await _context.BookAuthors.FindAsync(id);
             if (bookAuthor == null)
             {
@@ -120,6 +135,10 @@ namespace NHASoftware.Controllers.WebAPIs
 
         private bool BookAuthorExists(int id)
         {
+            //NOT IMPLEMENTED YET
+            //NOT IMPLEMENTED YET
+
+
             return _context.BookAuthors.Any(e => e.AuthorId == id);
         }
     }

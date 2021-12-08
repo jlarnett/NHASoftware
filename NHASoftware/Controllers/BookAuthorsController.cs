@@ -23,6 +23,9 @@ namespace NHASoftware.Controllers
         [HttpGet]
         public IActionResult AddBookAuthors(int id)
         {
+            //Redirects the user to the AddBookAuthors View.
+            //Creates a AddBookAuthorViewModel and sends author list + selected author list.
+
             List<BookAuthor> bookAuthors = _context.BookAuthors.ToList();
             List<Author> Authors = new List<Author>();
 
