@@ -17,14 +17,22 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
-//This configures CORS. Allows external API Calls
-builder.Services.AddCors(options => 
+
+//CORS policy setup. Allows calls to binace api. 
+var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); 
-    });
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        builder =>
+        {
+            builder.WithOrigins("https://api.binance.com/");
+            builder.WithHeaders("Access-Control-Allow-Headers");
+        });
 });
+
+//CORS policy setup End. 
+
 
 //Automapper configuration.
 var mapperConfig = new MapperConfiguration(mc =>
@@ -34,9 +42,6 @@ var mapperConfig = new MapperConfiguration(mc =>
 
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
-
-
-
 
 var app = builder.Build();
 
@@ -57,8 +62,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-//Enables cors property.
-app.UseCors();
+//Enables cors property with the binance api policy..
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();
