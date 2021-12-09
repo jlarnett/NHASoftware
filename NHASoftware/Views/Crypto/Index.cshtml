@@ -3,14 +3,22 @@
     ViewData["title"] = "Crypto Index";
 }
 
+
 <h1>Crypto Index!</h1>
-<div>
-    <div id="CryptoLabel">Symbol: </div>
-    <div id="CryptoPrice">Symbol Price: </div>
-    
-    <input type="button" class="btn btn-dark" id="Submit" value="Get Crypto"/>
+
+ <div class="container">
+    <img id="BitcoinPicture" src="Images/BitcoinPhoto.jpg" height="400px" width="40%" class="rounded float-left"/>
+    <img id="EthereumPicture" src="Images/EthereumPhoto.jpeg" height="400px" width="40%" class="rounded float-right"/>
 </div>
 
+<div class="container">
+    <div id="CryptoLabel" class="text-white">Coin Symbol: </div>
+    <div id="CryptoPrice" class="text-white">USD Price: </div>
+</div>
+
+<div class="container">
+    <input type="button" class="btn btn-dark" id="Submit" value="Get Crypto"/>
+</div>
 
 
 
