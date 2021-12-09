@@ -2,7 +2,7 @@
 
 namespace NHASoftware.Controllers
 {
-    public class Covid : Controller
+    public class Crypto : Controller
     {
         public IActionResult Index()
         {

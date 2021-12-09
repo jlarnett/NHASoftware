@@ -17,6 +17,14 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+//This configures CORS. Allows external API Calls
+builder.Services.AddCors(options => 
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); 
+    });
+});
 
 //Automapper configuration.
 var mapperConfig = new MapperConfiguration(mc =>
@@ -48,6 +56,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+//Enables cors property.
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
