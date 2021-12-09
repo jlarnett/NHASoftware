@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewData["title"] = "Crypto Index";
+}
+
+<h1>Crypto Index!</h1>
+<div>
+    <div id="CryptoLabel">Symbol: </div>
+    <div id="CryptoPrice">Symbol Price: </div>
+    
+    <input type="button" class="btn btn-dark" id="Submit" value="Get Crypto"/>
+</div>
+
+
+
+
+@section Scripts
+{
+    <script src="~/Scripts/GetCryptoPrice.js" type="text/javascript"></script>
+}

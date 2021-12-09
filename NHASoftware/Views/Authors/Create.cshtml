@@ -4,21 +4,27 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Create Author</h1>
 
-<h4>Author</h4>
 <hr />
-            <div class="form-group">
-                <label asp-for="Name" class="cool-label"></label>
-                <input id="name" class="form-control"/>
-            </div>
-            <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <input id="address" class="form-control"/>
-            </div>
-                <input type="button" id="Submit" value="Upate Authors."/>
+
+<div class="container">
+    <div>
+        <label asp-for="Name" class="control-label"></label>
+        <input id="name" class="form-control"/>
+    </div>
+    <div >
+        <label asp-for="Address" class="control-label"></label>
+        <input id="address" class="form-control"/>
+    </div>
+</div>
+
 <div>
-    <a asp-action="Index">Back to List</a>
+    <input type="button" id="Submit" class="btn btn-dark" value="Upate Authors."/>
+</div>
+
+<div>
+    <a asp-action="Index">Return Author List</a>
 </div>
 
 @section Scripts {
