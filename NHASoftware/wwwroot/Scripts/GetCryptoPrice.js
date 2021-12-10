@@ -3,6 +3,7 @@
     cryptoSymbol = "BTCUSDT";
 
     //Assigns the cryptosymbol variable depending which picture the user clicks.
+
     $("#BitcoinPicture").click(function() {
         cryptoSymbol = "BTCUSDT";
         $(".selected").removeClass("selected");
@@ -11,6 +12,18 @@
 
     $("#EthereumPicture").click(function() {
         cryptoSymbol = "ETHUSDT";
+        $(".selected").removeClass("selected");
+        $(this).addClass("selected");
+    });
+
+    $("#dogePicture").click(function() {
+        cryptoSymbol = "DOGEUSDT";
+        $(".selected").removeClass("selected");
+        $(this).addClass("selected");
+    });
+
+    $("#litecoinPicture").click(function() {
+        cryptoSymbol = "LTCUSDT";
         $(".selected").removeClass("selected");
         $(this).addClass("selected");
     });

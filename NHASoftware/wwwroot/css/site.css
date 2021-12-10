@@ -22,7 +22,7 @@ body {
 .container {
     margin-left: 20px;
     margin-top: 40px;
-    margin-bottom: 40px;
+    margin-bottom: 100px;
     margin-right: 40px;
     max-width: 98%;
 }
@@ -37,9 +37,11 @@ body {
 
 .selected {
     border: solid 1px yellow;
-    margin: 10px;
-    box-shadow: 0px 12px 22px 1px #333;
 }
 .footerMargin {
-    height: 10%;
+    height: 05%;
+}
+
+.footerContainer {
+    margin-left: 20px;
 }
