@@ -18,6 +18,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 
 
+
+
 //CORS policy setup. Allows calls to binace api. 
 var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -46,7 +48,7 @@ builder.Services.AddSingleton(mapper);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
     app.UseMigrationsEndPoint();
 }
