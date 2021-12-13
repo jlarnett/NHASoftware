@@ -83,13 +83,13 @@ namespace NHASoftware.Controllers.WebAPIs
         // POST: api/Authors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Author>> PostAuthor([Bind(nameof(AuthorDTO.Name), nameof(AuthorDTO.Address))] AuthorDTO authorDTO)
+        public JsonResult PostAuthor([Bind(nameof(AuthorDTO.Name), nameof(AuthorDTO.Address))] AuthorDTO authorDTO)
         {
             Author newAuthor = _mapper.Map<AuthorDTO, Author>(authorDTO);
             _context.Authors.Add(newAuthor);
-            await _context.SaveChangesAsync();
+            _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAuthor", new { id = newAuthor.Id }, newAuthor);
+            return new JsonResult(new { success = true});
         }
 
         // DELETE: api/Authors/5

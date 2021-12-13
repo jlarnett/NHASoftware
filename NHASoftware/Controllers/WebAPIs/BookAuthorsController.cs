@@ -90,10 +90,23 @@ namespace NHASoftware.Controllers.WebAPIs
                 //Receives DTO with bookID and array of assigned authorIds
                 //Checks if whether record exist between authors. If it doesn't it is added to database.
 
+                List<BookAuthor> currentBookAuthors = _context.BookAuthors.Where(ba => ba.BookId == bookAuthorDTO.bookId).ToList();
+                List<int> currentBookAuthorsIds = new List<int>();
+
+                foreach (var bc in currentBookAuthors)
+                {
+                    currentBookAuthorsIds.Add(bc.AuthorId);
+                }
+
                 foreach (var authorid in bookAuthorDTO.Authors)
                 {
                     BookAuthor bookAuthor = _context.BookAuthors.Find(int.Parse(authorid), bookAuthorDTO.bookId);
 
+                    if (currentBookAuthorsIds.Contains(int.Parse(authorid)))
+                    {
+                        currentBookAuthorsIds.Remove(int.Parse(authorid));
+                    }
+                    
                     if (bookAuthor == null)
                     {
                         BookAuthor book = new BookAuthor();
@@ -106,6 +119,13 @@ namespace NHASoftware.Controllers.WebAPIs
                     else
                     {
                     }
+                }
+
+                foreach (var deletedItems in currentBookAuthorsIds)
+                {
+                    var book = _context.BookAuthors.Find(deletedItems, bookAuthorDTO.bookId);
+                    _context.BookAuthors.Remove(book);
+                    _context.SaveChanges();
                 }
 
                 //Returns json bool results
