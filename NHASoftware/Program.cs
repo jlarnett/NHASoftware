@@ -5,22 +5,35 @@ using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
 using NHASoftware.Profiles;
 
+//Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// gets the connectionString from Configuration.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+
+//Automapper configuration.
+var mapperConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile());
+});
+
+IMapper mapper = mapperConfig.CreateMapper();
+
+#region ManageBuilderServices
+
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddControllersWithViews();
 
+#region CorsPolicy
 
+//CORS policy setup. Allows calls to binace api ----------------------------------------------------------------------->
 
-
-//CORS policy setup. Allows calls to binace api. 
 var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 builder.Services.AddCors(options =>
@@ -33,22 +46,19 @@ builder.Services.AddCors(options =>
         });
 });
 
-//CORS policy setup End. 
+//CORS policy setup End ------------------------------------------------------------------------------------------------->
 
+#endregion
 
-//Automapper configuration.
-var mapperConfig = new MapperConfiguration(mc =>
-{
-    mc.AddProfile(new MappingProfile());
-});
-
-IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
+#endregion
+
+//Creates the Webapplication object by calling the WebBuilder.Build() method. All services should be added before here. 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
+if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
 }
@@ -64,7 +74,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-//Enables cors property with the binance api policy..
+//Enables app cors property with the Binance api policy.
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
