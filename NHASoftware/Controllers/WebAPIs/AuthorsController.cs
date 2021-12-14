@@ -81,14 +81,17 @@ namespace NHASoftware.Controllers.WebAPIs
         }
 
         // POST: api/Authors
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public JsonResult PostAuthor([Bind(nameof(AuthorDTO.Name), nameof(AuthorDTO.Address), nameof(AuthorDTO.Id))] AuthorDTO authorDTO)
+        public JsonResult PostAuthor([Bind("Name", "Address")]AuthorDTO authorDTO)
         {
+            //Create new author. User automapper to change dto into Author.
+            //Adds author & saves changes.
+            //Returns JsonResult
+
             Author newAuthor = _mapper.Map<AuthorDTO, Author>(authorDTO);
 
-            _context.Authors.Add(newAuthor);
-            _context.SaveChangesAsync();
+            var author = _context.Authors.Add(newAuthor);
+            _context.SaveChanges();
 
             return new JsonResult(new { success = true});
         }
