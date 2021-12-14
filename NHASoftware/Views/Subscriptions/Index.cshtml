@@ -1,4 +1,5 @@
-﻿@model IEnumerable<NHASoftware.Models.Subscription>
+﻿@using Microsoft.CodeAnalysis.VisualBasic.Syntax
+@model IEnumerable<NHASoftware.Models.Subscription>
 
 @{
     ViewData["Title"] = "Index";
@@ -8,8 +9,13 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Add Personal Subscription</a>
 </p>
+
+<a asp-action="GenerateSubscriptionReport" class="btn btn-dark">Generate Report</a>
+
+<br/>
+
 <table class="table">
     <thead>
         <tr>
@@ -26,23 +32,36 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    
+    @if (Model != null)
+    {
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubscriptionName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubscriptionDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubscriptionCost)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.SubscriptionId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.SubscriptionId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.SubscriptionId">Delete</a>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubscriptionName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubscriptionDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubscriptionCost)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.SubscriptionId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.SubscriptionId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.SubscriptionId">Delete</a>
-            </td>
+            <td>No Subscriptions Available</td>
         </tr>
-}
+    }
+
+
     </tbody>
 </table>
