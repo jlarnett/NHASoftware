@@ -3,6 +3,7 @@
         var author = {};
         author.name = $("#name").val();
         author.address = $("#address").val();
+        author.id = $("#IdHolder").attr("value");
 
         $.ajax({
             url: '/api/Authors',

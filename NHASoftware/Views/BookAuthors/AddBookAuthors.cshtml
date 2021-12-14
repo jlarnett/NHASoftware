@@ -1,52 +1,63 @@
-﻿@model NHASoftware.ViewModels.AddBookAuthorViewModel
+﻿@using Microsoft.CodeAnalysis.VisualBasic.Syntax
+@model NHASoftware.ViewModels.AddBookAuthorViewModel
 
 <h4>Assign Author To Book</h4>
-<hr />
 
-<body>
-<div>
+<!--For loop that loops through all possible Authors-->
+
+<table id="AuthorSelectionTable" class="table table-bordered table-hover">
     
-    <!--For loop that loops through all possible Authors-->
-    
-    <div id="book" value="@Model.BookId"></div>
-    
-    <table id="AuthorSelectionTable" class="table table-bordered table-hover">
-        
-        @foreach (var author in @Model.SelectedAuthors)
-        {
-            @Model.Authors.Remove(author);
+    <thead>
+    <tr>
+        <th>Selected</th>
+        <th>Author Name</th>
+        <th>Author Address</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var author in @Model.SelectedAuthors)
+    {
 
-            var checkBoxId = "chk" + author.Name;
-            var tdId = "td" + author.Id;
+        var test = @Model.Authors.Remove(author);
 
-            <tr>
-                <td width="20%"><input type="checkbox" checked="checked" id="@checkBoxId" class="form-check" value="@author.Id"/></td>
-                <td id="@tdId" width="20%">@author.Name</td>
-                <td id="@tdId" width="60%">@author.Address</td>
-            </tr>
-        }
-        
-        @foreach (var author in @Model.Authors)
-        {
+        var checkBoxId = "chk" + author.Name;
+        var tdId = "td" + author.Id;
 
-            var checkBoxId = "chk" + author.Name;
-            var tdId = "td" + author.Id;
+        <tr>
+            <td>
+                <div class="form-check">
+                    <input type="checkbox" checked="true" id="@checkBoxId" class="form-check-input" value="@author.Id"/>
+                </div>
+            </td>
 
-            <tr>
-                <td width="20%"><input type="checkbox" id="@checkBoxId" class="form-check" value="@author.Id"/></td>
-                <td id="@tdId" width="20%">@author.Name</td>
-                <td id="@tdId" width="60%">@author.Address</td>
-            </tr>
+            <td id="@tdId" width="20%">@author.Name</td>
+            <td id="@tdId" width="60%">@author.Address</td>
+        </tr>
+    }
 
-        }
-    </table>
+    @foreach (var author in @Model.Authors)
+    {
+
+        var checkBoxId = "chk" + author.Name;
+        var tdId = "td" + author.Id;
+
+        <tr>
+            <td width="20%"><input type="checkbox" id="@checkBoxId" class="form-check" value="@author.Id"/></td>
+            <td id="@tdId" width="20%">@author.Name</td>
+            <td id="@tdId" width="60%">@author.Address</td>
+        </tr>
+    }
+    </tbody>
+
+
+</table>
     
     <div>
-        <input type="button" id="Submit" value="Upate Authors."/>
+        <input type="button" id="Submit" class="btn btn-dark" value="Update Authors."/>
     </div>
-</div>
-</body>
 
+<div id="book" value="@Model.BookId"></div>
+    
 
 @section Scripts {
     <script src="~/Scripts/AddBookAuthor.js" type="text/javascript"></script>

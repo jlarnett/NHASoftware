@@ -8,19 +8,25 @@
 
 <hr />
 
-<div class="container">
-    <div>
-        <label asp-for="Name" class="control-label"></label>
-        <input id="name" class="form-control"/>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
-    <div >
-        <label asp-for="Address" class="control-label"></label>
-        <input id="address" class="form-control"/>
-    </div>
-</div>
-
-<div>
-    <input type="button" id="Submit" class="btn btn-dark" value="Upate Authors."/>
 </div>
 
 <div>
@@ -28,5 +34,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/Scripts/AddAuthor.js" type="text/javascript"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
