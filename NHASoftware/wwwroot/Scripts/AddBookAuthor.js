@@ -23,7 +23,7 @@
                 data: JSON.stringify(bookAuthor),
                 success: function(data) {
                     if (data.success) {
-                        window.location.href = "/books/index" ;
+                        window.location.href = "/books/index";
                     }
                 }
             });
