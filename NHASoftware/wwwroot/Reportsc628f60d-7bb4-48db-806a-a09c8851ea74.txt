@@ -1,3 +1,5 @@
-TestSubscription        25.00
-HULU        30.00
-Total Monthly Cost:    $55.00
+|TestSubscription              |1    |25.00     
+|HULU                          |24   |30.00     
+|Netflix                       |1    |9.00      
+|Resharper                     |24   |12.00     
+|Total Monthly Cost                  |$76.00     

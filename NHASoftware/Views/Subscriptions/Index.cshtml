@@ -6,62 +6,35 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Add Personal Subscription</a>
-</p>
-
-<a asp-action="GenerateSubscriptionReport" class="btn btn-dark">Generate Report</a>
+<h1>Subscriptions</h1>
 
 <br/>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.SubscriptionName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SubscriptionDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SubscriptionCost)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+<div class="container">
+    <a asp-action="GenerateSubscriptionReport" class="btn btn-dark">Generate Report</a>
+</div>
+
+<div class="container">
     
-    @if (Model != null)
-    {
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SubscriptionName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SubscriptionDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SubscriptionCost)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.SubscriptionId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.SubscriptionId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.SubscriptionId">Delete</a>
-                </td>
-            </tr>
-        }
-    }
-    else
-    {
+    <p><a asp-action="Create">Add Subscription</a></p>
+
+    <table id="subscriptions" class="table table-bordered table-hover">
+        <thead>
         <tr>
-            <td>No Subscriptions Available</td>
+            <th>Subscription Id</th>
+            <th>Subscription Name</th>
+            <th>Subscription Day</th>
+            <th>Subscription Cost</th>
+            <th>Actions</th>
         </tr>
-    }
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
 
+@section Scripts
+{
+    <script src="~/Scripts/GetSubscriptionsAPI.js" type="text/javascript"></script>
+}
 
-    </tbody>
-</table>

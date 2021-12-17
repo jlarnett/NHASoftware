@@ -72,6 +72,7 @@ namespace NHASoftware.Controllers
         [Authorize]
         public async Task<IActionResult> Create([Bind("SubscriptionId,SubscriptionName,SubscriptionDate,SubscriptionCost,User,UserId")] Subscription subscription)
         {
+            subscription.SubscriptionDay = subscription.SubscriptionDate.Day;
 
             if (ModelState.IsValid)
             {
@@ -168,41 +169,45 @@ namespace NHASoftware.Controllers
 
         private bool SubscriptionExists(int id)
         {
+            /***************************************************************************************************
+            *  Checks if subscription with id exist in database.
+            ***************************************************************************************************/
+
             return _context.Subscriptions.Any(e => e.SubscriptionId == id);
         }
 
         [Authorize]
         public async Task<IActionResult> GenerateSubscriptionReport()
         {
-            int counterCatch = 0;
+            /***************************************************************************************************
+             *  Gets All User subscriptions from database context
+             *  Gets the Root path and finds correct folder for report.
+             *  Uses streamWriter to write formatted strings to file. 
+             ***************************************************************************************************/
+
+
             decimal totalPrice = 0;
 
             string UserId = _userManager.GetUserId(HttpContext.User);
             List<Subscription> subscriptions = _context.Subscriptions.Where(c => c.UserId == UserId).ToList();
 
-            string[] lines = new string[subscriptions.Count + 1];
-
-            for (int i = 0; i < subscriptions.Count; i++)
-            {
-                lines[i] = subscriptions[i].SubscriptionName + "        " + subscriptions[i].SubscriptionCost.ToString();
-                totalPrice += subscriptions[i].SubscriptionCost;
-                counterCatch = i;
-            }
-
-            lines[counterCatch + 1] = "Total Monthly Cost:    $" + totalPrice.ToString();
-
             string webRootPath = _webHostEnvironment.WebRootPath;
-
             string path = "";
             path = Path.Combine(webRootPath, "Reports");
 
             using StreamWriter file = new(path + UserId + ".txt");
 
-            foreach (var line in lines)
+            foreach (var sub in subscriptions)
             {
-                await file.WriteLineAsync(line);
+                string subscriptionString = String.Format("|{0,-30}|{1,-5}|{2,-10}", sub.SubscriptionName, sub.SubscriptionDate.Day.ToString(), sub.SubscriptionCost.ToString());
+                await file.WriteLineAsync(subscriptionString);
+                totalPrice += sub.SubscriptionCost;
             }
 
+            string total = "Total Monthly Cost";
+            string totalPriceString = String.Format("|{0,-36}|${1,-10}", total, totalPrice.ToString());
+
+            await file.WriteLineAsync(totalPriceString);
             return RedirectToAction("Index");
         }
     }
