@@ -14,6 +14,8 @@ namespace NHASoftware.Profiles
             CreateMap<AuthorDTO, Author>().ForMember(a => a.Id, opt => opt.Ignore());
             CreateMap<BookAuthorsDTO, BookAuthor>();
             CreateMap<BookAuthor, BookAuthorsDTO>();
+            CreateMap<SubscriptionDTO, Subscription>();
+            CreateMap<Subscription, SubscriptionDTO>();
         }
     }
 }

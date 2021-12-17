@@ -8,6 +8,7 @@ namespace NHASoftware.Models
         public int SubscriptionId { get; set; }
         public string SubscriptionName { get; set; }
         public DateTime SubscriptionDate { get; set; }
+        public int SubscriptionDay { get; set; }
         public decimal SubscriptionCost { get; set; }
 
         public IdentityUser? User { get; set; }
