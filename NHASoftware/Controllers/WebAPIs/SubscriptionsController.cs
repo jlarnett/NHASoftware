@@ -33,12 +33,9 @@ namespace NHASoftware.Controllers.WebAPIs
         public async Task<ActionResult<IEnumerable<SubscriptionDTO>>> GetSubscriptions()
         {
 
-            var subscriptions = _context.Subscriptions.Where(s=> s.UserId == _userManager.GetUserId(HttpContext.User)).ToListAsync();
-            var subscriptionDtos = subscriptions.Result.ToList().Select((_mapper.Map<Subscription, SubscriptionDTO>));
+            var subscriptions = await _context.Subscriptions.Where(s=> s.UserId == _userManager.GetUserId(HttpContext.User)).ToListAsync();
+            var subscriptionDtos = subscriptions.ToList().Select((_mapper.Map<Subscription, SubscriptionDTO>));
 
-            foreach (var sub in subscriptionDtos)
-            {
-            }
             return Ok(subscriptionDtos);
         }
 
@@ -58,7 +55,7 @@ namespace NHASoftware.Controllers.WebAPIs
 
         // PUT: api/Subscriptions/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubscription(int id, Subscription subscription)
+        public async Task<IActionResult> PutSubscription(int id, SubscriptionDTO subscription)
         {
             if (id != subscription.SubscriptionId)
             {
