@@ -29,6 +29,9 @@ namespace NHASoftware.Data
         public DbSet<Author> Authors { get; set; }
         public DbSet<BookAuthor> BookAuthors { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<TaskFrequency>  Frequencies { get; set; }
+        public DbSet<TaskItem> Tasks { get; set; }
+
 
     }
 }
