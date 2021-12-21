@@ -19,10 +19,13 @@ namespace NHASoftware.Controllers
 
         public IActionResult Index()
         {
-            int authorCount = _context.Authors.Count();
-            int bookCount = _context.Books.Count();
+            //int authorCount = _context.Authors.Count();
+            //int bookCount = _context.Books.Count();
 
-            return View(new IndexPageViewModel(authorCount, bookCount));
+            int subCount = _context.Subscriptions.Count();
+            int taskCount = _context.Tasks.Count();
+
+            return View(new IndexPageViewModel(subCount, taskCount));
         }
 
         public IActionResult Privacy()
