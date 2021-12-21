@@ -18,11 +18,6 @@
                 <input asp-for="TaskDescription" class="form-control" />
                 <span asp-validation-for="TaskDescription" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="TaskIsFinished" /> @Html.DisplayNameFor(model => model.TaskIsFinished)
-                </label>
-            </div>
             <div class="form-group">
                 <label asp-for="TaskStartDate" class="control-label"></label>
                 <input asp-for="TaskStartDate" class="form-control" />
@@ -34,16 +29,16 @@
                 <span asp-validation-for="TaskExecutionTime" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FrequencyId" class="control-label"></label>
-                <select asp-for="FrequencyId" class ="form-control" asp-items="ViewBag.FrequencyId"></select>
+                @Html.HiddenFor(m => m.UserId)
+                @Html.HiddenFor(m => m.FrequencyId)
+                @Html.HiddenFor(m => m.TaskIsFinished)
             </div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
-            </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
+
+
         </form>
     </div>
 </div>

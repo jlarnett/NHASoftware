@@ -15,6 +15,8 @@ namespace NHASoftware.Models
         [Column(TypeName = "Date")]
         public DateTime TaskStartDate { get; set; }
 
+        [DataType(DataType.Time)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
         public TimeSpan TaskExecutionTime { get; set; }
 
         public TaskFrequency Frequency { get; set; }
