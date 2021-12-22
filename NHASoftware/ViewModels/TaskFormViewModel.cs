@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
+using NHASoftware.Models;
 
-namespace NHASoftware.Models
+namespace NHASoftware.ViewModels
 {
-    public class TaskItem
+    public class TaskFormViewModel
     {
-        [Key]
         public int TaskId { get; set; }
         public string TaskDescription { get; set; }
         public bool TaskIsFinished { get; set; }
@@ -17,13 +17,13 @@ namespace NHASoftware.Models
 
         [DataType(DataType.Time)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
-        public TimeSpan TaskExecutionTime { get; set; }
+        public TimeSpan? TaskExecutionTime { get; set; }
 
-        public TaskFrequency Frequency { get; set; }
+        public TaskFrequency? Frequency { get; set; }
         public int FrequencyId { get; set; }
 
         public IdentityUser? User { get; set; }
         [Required]
-        public string? UserId { get; set; }
+        public string UserId { get; set; }
     }
 }

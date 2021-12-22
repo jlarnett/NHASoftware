@@ -13,48 +13,23 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TaskDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TaskIsFinished)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TaskStartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TaskExecutionTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Frequency)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.TaskDescription)</th>
+            <th>@Html.DisplayNameFor(model => model.TaskStartDate)</th>
+            <th>@Html.DisplayNameFor(model => model.TaskExecutionTime)</th>
+            <th>@Html.DisplayNameFor(model => model.Frequency)</th>
+            <th>@Html.DisplayNameFor(model => model.TaskIsFinished)</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TaskDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TaskIsFinished)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TaskStartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TaskExecutionTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Frequency.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
+            <td>@Html.DisplayFor(modelItem => item.TaskDescription)</td>
+            <td>@Html.DisplayFor(modelItem => item.TaskStartDate)</td>
+            <td>@item.TaskExecutionTime</td>
+            <td>@Html.DisplayFor(modelItem => item.Frequency.FrequencyName)</td>
+            <td>@Html.DisplayFor(modelItem => item.TaskIsFinished)</td>
+
             <td>
                 <a asp-action="Edit" asp-route-id="@item.TaskId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.TaskId">Details</a> |

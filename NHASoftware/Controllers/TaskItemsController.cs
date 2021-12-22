@@ -1,23 +1,29 @@
 ﻿#nullable disable
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
 using NHASoftware.Models;
+using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
 {
     public class TaskItemsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly  UserManager<IdentityUser> _userManager;
 
-        public TaskItemsController(ApplicationDbContext context)
+        public TaskItemsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: TaskItems
@@ -48,11 +54,17 @@ namespace NHASoftware.Controllers
         }
 
         // GET: TaskItems/Create
+        [Authorize]
         public IActionResult Create()
         {
-            ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "Id");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
+            ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "FrequencyName");
+
+            var vm = new TaskFormViewModel()
+            {
+                TaskStartDate = DateTime.Today,
+                UserId = _userManager.GetUserId(HttpContext.User)
+            };
+            return View(vm);
         }
 
         // POST: TaskItems/Create
@@ -60,8 +72,18 @@ namespace NHASoftware.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TaskId,TaskDescription,TaskIsFinished,TaskStartDate,TaskExecutionTime,FrequencyId,UserId")] TaskItem taskItem)
+        public async Task<IActionResult> Create([Bind("TaskId,TaskDescription,TaskStartDate,TaskExecutionTime,FrequencyId, UserId")] TaskFormViewModel taskVM)
         {
+
+            var taskItem = new TaskItem()
+            {
+                TaskExecutionTime = taskVM.TaskExecutionTime.Value,
+                TaskDescription = taskVM.TaskDescription,
+                TaskStartDate = taskVM.TaskStartDate,
+                FrequencyId = taskVM.FrequencyId,
+                UserId = taskVM.UserId
+            };
+
             if (ModelState.IsValid)
             {
                 _context.Add(taskItem);
@@ -69,8 +91,7 @@ namespace NHASoftware.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "Id", taskItem.FrequencyId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", taskItem.UserId);
-            return View(taskItem);
+            return View("Index");
         }
 
         // GET: TaskItems/Edit/5
