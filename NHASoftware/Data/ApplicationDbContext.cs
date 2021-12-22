@@ -15,20 +15,25 @@ namespace NHASoftware.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<BookAuthor>().HasKey(sc => new { sc.AuthorId, sc.BookId });
+            #region OldManyToManyMapping
 
-            builder.Entity<BookAuthor>().HasOne<Author>(ab => ab.Author).WithMany(a => a.BookAuthors)
-                .HasForeignKey(ab => ab.AuthorId);
+                //builder.Entity<BookAuthor>().HasKey(sc => new { sc.AuthorId, sc.BookId });
+                //builder.Entity<BookAuthor>().HasOne<Author>(ab => ab.Author).WithMany(a => a.BookAuthors)
+                //    .HasForeignKey(ab => ab.AuthorId);
+                //builder.Entity<BookAuthor>().HasOne<Book>(ab => ab.Book).WithMany(b => b.BookAuthors).HasForeignKey(ab => ab.BookId);
 
-            builder.Entity<BookAuthor>().HasOne<Book>(ab => ab.Book).WithMany(b => b.BookAuthors).HasForeignKey(ab => ab.BookId);
+            #endregion
 
-            
         }
 
-        public DbSet<Book> Books { get; set; }
-        public DbSet<Author> Authors { get; set; }
-        public DbSet<BookAuthor> BookAuthors { get; set; }
+        //public DbSet<Book> Books { get; set; }
+        //public DbSet<Author> Authors { get; set; }
+        //public DbSet<BookAuthor> BookAuthors { get; set; }
+
         public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<TaskFrequency>  Frequencies { get; set; }
+        public DbSet<TaskItem> Tasks { get; set; }
+
 
     }
 }

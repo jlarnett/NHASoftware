@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NHASoftware.Data;
 
@@ -11,13 +12,14 @@ using NHASoftware.Data;
 namespace NHASoftware.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211218185300_newTaskId")]
+    partial class newTaskId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -313,6 +315,37 @@ namespace NHASoftware.Migrations
                     b.ToTable("Subscriptions");
                 });
 
+            modelBuilder.Entity("NHASoftware.Models.Task", b =>
+                {
+                    b.Property<int>("TaskId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaskId"), 1L, 1);
+
+                    b.Property<int>("FrequencyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TaskDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TaskIsFinished")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("TaskId");
+
+                    b.HasIndex("FrequencyId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Tasks");
+                });
+
             modelBuilder.Entity("NHASoftware.Models.TaskFrequency", b =>
                 {
                     b.Property<int>("Id")
@@ -331,43 +364,6 @@ namespace NHASoftware.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Frequencies");
-                });
-
-            modelBuilder.Entity("NHASoftware.Models.TaskItem", b =>
-                {
-                    b.Property<int>("TaskId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaskId"), 1L, 1);
-
-                    b.Property<int>("FrequencyId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TaskDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<TimeSpan>("TaskExecutionTime")
-                        .HasColumnType("time");
-
-                    b.Property<bool>("TaskIsFinished")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("TaskStartDate")
-                        .HasColumnType("Date");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("TaskId");
-
-                    b.HasIndex("FrequencyId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -451,7 +447,7 @@ namespace NHASoftware.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("NHASoftware.Models.TaskItem", b =>
+            modelBuilder.Entity("NHASoftware.Models.Task", b =>
                 {
                     b.HasOne("NHASoftware.Models.TaskFrequency", "Frequency")
                         .WithMany()
