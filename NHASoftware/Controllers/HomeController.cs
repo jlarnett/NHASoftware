@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NHASoftware.Models;
 using System.Diagnostics;
+using Hangfire;
 using NHASoftware.Data;
 using NHASoftware.ViewModels;
 
@@ -10,17 +11,17 @@ namespace NHASoftware.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<HomeController> _logger;
-
+        private FrequencyHandler frequencyHandler;
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
             _context = context;
+            frequencyHandler = new FrequencyHandler(context);
         }
 
         public IActionResult Index()
         {
-            //int authorCount = _context.Authors.Count();
-            //int bookCount = _context.Books.Count();
+            RecurringJob.AddOrUpdate(() => frequencyHandler.GetRelevantTask(), "0 20 * * *", TimeZoneInfo.Local);
 
             int subCount = _context.Subscriptions.Count();
             int taskCount = _context.Tasks.Count();

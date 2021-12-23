@@ -1,5 +1,7 @@
 
+using System.Configuration;
 using AutoMapper;
+using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
@@ -52,6 +54,12 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSingleton(mapper);
 
+//Hangfire service setup.
+builder.Services.AddHangfire(options =>
+{
+    options.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
 #endregion
 
 //Creates the Webapplication object by calling the WebBuilder.Build() method. All services should be added before here. 
@@ -80,9 +88,15 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseHangfireDashboard();
+app.UseHangfireServer();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();
+
+
+
