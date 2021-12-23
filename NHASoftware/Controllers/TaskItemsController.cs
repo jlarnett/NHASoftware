@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +20,14 @@ namespace NHASoftware.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly  UserManager<IdentityUser> _userManager;
+        private FrequencyHandler frequencyHandler;
+
 
         public TaskItemsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _userManager = userManager;
+            frequencyHandler = new FrequencyHandler(_context);
         }
 
         // GET: TaskItems
@@ -81,11 +85,14 @@ namespace NHASoftware.Controllers
                 TaskDescription = taskVM.TaskDescription,
                 TaskStartDate = taskVM.TaskStartDate,
                 FrequencyId = taskVM.FrequencyId,
-                UserId = taskVM.UserId
+                UserId = taskVM.UserId,
+                JobCrated = false,
+                NextTaskDate = frequencyHandler.GenerateNextDate(taskVM.TaskStartDate, _context.Frequencies.Find(taskVM.FrequencyId))
             };
 
             if (ModelState.IsValid)
             {
+                //Cron string setup.
                 _context.Add(taskItem);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -184,5 +191,7 @@ namespace NHASoftware.Controllers
         {
             return _context.Tasks.Any(e => e.TaskId == id);
         }
+
+
     }
 }

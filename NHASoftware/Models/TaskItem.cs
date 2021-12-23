@@ -25,5 +25,9 @@ namespace NHASoftware.Models
         public IdentityUser? User { get; set; }
         [Required]
         public string? UserId { get; set; }
+
+        public DateTime NextTaskDate { get; set; }
+
+        public bool JobCrated { get; set; }
     }
 }

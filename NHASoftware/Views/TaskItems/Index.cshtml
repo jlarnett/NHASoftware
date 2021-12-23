@@ -17,6 +17,7 @@
             <th>@Html.DisplayNameFor(model => model.TaskStartDate)</th>
             <th>@Html.DisplayNameFor(model => model.TaskExecutionTime)</th>
             <th>@Html.DisplayNameFor(model => model.Frequency)</th>
+            <th>@Html.DisplayNameFor(model => model.NextTaskDate)</th>
             <th>@Html.DisplayNameFor(model => model.TaskIsFinished)</th>
             <th>Actions</th>
         </tr>
@@ -28,6 +29,7 @@
             <td>@Html.DisplayFor(modelItem => item.TaskStartDate)</td>
             <td>@item.TaskExecutionTime</td>
             <td>@Html.DisplayFor(modelItem => item.Frequency.FrequencyName)</td>
+            <td>@Html.DisplayFor(modelItem => item.NextTaskDate)</td>
             <td>@Html.DisplayFor(modelItem => item.TaskIsFinished)</td>
 
             <td>
