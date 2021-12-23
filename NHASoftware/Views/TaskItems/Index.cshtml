@@ -1,0 +1,43 @@
+﻿@model IEnumerable<NHASoftware.Models.TaskItem>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.TaskDescription)</th>
+            <th>@Html.DisplayNameFor(model => model.TaskStartDate)</th>
+            <th>@Html.DisplayNameFor(model => model.TaskExecutionTime)</th>
+            <th>@Html.DisplayNameFor(model => model.Frequency)</th>
+            <th>@Html.DisplayNameFor(model => model.NextTaskDate)</th>
+            <th>@Html.DisplayNameFor(model => model.TaskIsFinished)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.TaskDescription)</td>
+            <td>@Html.DisplayFor(modelItem => item.TaskStartDate)</td>
+            <td>@item.TaskExecutionTime</td>
+            <td>@Html.DisplayFor(modelItem => item.Frequency.FrequencyName)</td>
+            <td>@Html.DisplayFor(modelItem => item.NextTaskDate)</td>
+            <td>@Html.DisplayFor(modelItem => item.TaskIsFinished)</td>
+
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.TaskId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.TaskId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.TaskId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
