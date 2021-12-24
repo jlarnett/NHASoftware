@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NHASoftware.Data;
 
@@ -11,9 +12,10 @@ using NHASoftware.Data;
 namespace NHASoftware.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211221030950_fixedprimarykeytask")]
+    partial class fixedprimarykeytask
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,6 +226,63 @@ namespace NHASoftware.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("NHASoftware.Models.Author", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Authors");
+                });
+
+            modelBuilder.Entity("NHASoftware.Models.Book", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("NHASoftware.Models.BookAuthor", b =>
+                {
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AuthorId", "BookId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("BookAuthors");
+                });
+
             modelBuilder.Entity("NHASoftware.Models.Subscription", b =>
                 {
                     b.Property<int>("SubscriptionId")
@@ -287,18 +346,9 @@ namespace NHASoftware.Migrations
                     b.Property<int>("FrequencyId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("JobCrated")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("NextTaskDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("TaskDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<TimeSpan>("TaskExecutionTime")
-                        .HasColumnType("time");
 
                     b.Property<bool>("TaskIsFinished")
                         .HasColumnType("bit");
@@ -370,6 +420,25 @@ namespace NHASoftware.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("NHASoftware.Models.BookAuthor", b =>
+                {
+                    b.HasOne("NHASoftware.Models.Author", "Author")
+                        .WithMany("BookAuthors")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NHASoftware.Models.Book", "Book")
+                        .WithMany("BookAuthors")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Book");
+                });
+
             modelBuilder.Entity("NHASoftware.Models.Subscription", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
@@ -398,6 +467,16 @@ namespace NHASoftware.Migrations
                     b.Navigation("Frequency");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NHASoftware.Models.Author", b =>
+                {
+                    b.Navigation("BookAuthors");
+                });
+
+            modelBuilder.Entity("NHASoftware.Models.Book", b =>
+                {
+                    b.Navigation("BookAuthors");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,13 +2,13 @@
 {
     public class IndexPageViewModel
     {
-        public int AuthorCount { get; set; }
-        public int BookCount { get; set; }
+        public int TaskCount { get; set; }
+        public int SubscriptionCount { get; set; }
 
-        public IndexPageViewModel(int authorCount, int bookCount)
+        public IndexPageViewModel(int subCount, int taskCount)
         {
-            AuthorCount = authorCount;
-            BookCount = bookCount;
+            TaskCount = subCount;
+            SubscriptionCount = subCount;
         }
     }
 }
