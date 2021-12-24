@@ -1,6 +1,7 @@
 ﻿using Hangfire;
 using NHASoftware.Data;
 using NHASoftware.Models;
+using NHASoftware.Services;
 
 namespace NHASoftware
 {
@@ -8,10 +9,13 @@ namespace NHASoftware
     {
         public List<TaskItem> taskItems { get; set; }
         private readonly ApplicationDbContext _context;
+        private TaskSender taskSender;
 
-        public FrequencyHandler(ApplicationDbContext context)
+
+        public FrequencyHandler(ApplicationDbContext context, IEmailService emailService)
         {
             _context = context;
+            taskSender = new TaskSender(emailService, context);
         }
 
         public DateTime GenerateNextDate(DateTime startDate, TaskFrequency frequency)
@@ -57,7 +61,7 @@ namespace NHASoftware
             foreach (var item in taskItems)
             {
                 string cronString = String.Format("{0} {1} {2} * *", item.TaskExecutionTime.Minutes, item.TaskExecutionTime.Hours, item.NextTaskDate.Day);
-                RecurringJob.AddOrUpdate("TaskId: " + item.TaskId, () => TaskSender.SendTaskReminder(item), cronString, TimeZoneInfo.Local);
+                RecurringJob.AddOrUpdate("TaskId: " + item.TaskId, () => taskSender.SendTaskReminder(item), cronString, TimeZoneInfo.Local);
 
                 item.JobCrated = true;
                 _context.SaveChangesAsync();

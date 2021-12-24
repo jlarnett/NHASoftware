@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
 using NHASoftware.Profiles;
+using NHASoftware.Services;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
@@ -59,6 +60,10 @@ builder.Services.AddHangfire(options =>
 {
     options.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+//Mail Kit service setup
+builder.Services.Configure<NHASoftware.Configuration.EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 #endregion
 
