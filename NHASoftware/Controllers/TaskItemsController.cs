@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
 using NHASoftware.Models;
+using NHASoftware.Services;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
@@ -22,12 +23,11 @@ namespace NHASoftware.Controllers
         private readonly  UserManager<IdentityUser> _userManager;
         private FrequencyHandler frequencyHandler;
 
-
-        public TaskItemsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public TaskItemsController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IEmailService emailService)
         {
             _context = context;
             _userManager = userManager;
-            frequencyHandler = new FrequencyHandler(_context);
+            frequencyHandler = new FrequencyHandler(_context, emailService);
         }
 
         // GET: TaskItems
@@ -53,6 +53,7 @@ namespace NHASoftware.Controllers
             {
                 return NotFound();
             }
+
 
             return View(taskItem);
         }
