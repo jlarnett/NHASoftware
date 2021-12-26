@@ -20,9 +20,18 @@ namespace NHASoftware
 
         public DateTime GenerateNextDate(DateTime startDate, TaskFrequency frequency)
         {
+            /**********************************************************************************************
+            *  Takes in the inputed task date & finds the next trigger date. If future returns inputted date.
+            *  else it only takes monthly frequency currently. Adds one month to inputted date.
+            *  also has ability to just use days that isn't implemented in the cron string yet.
+            **********************************************************************************************/
             DateTime newDate;
 
-            if (startDate > DateTime.Today)
+            //Adds minutes to the date so that today value Next Dates are generated correctly.
+            newDate = startDate.AddMinutes(1400);
+            
+
+            if (newDate > DateTime.Today)
             {
                 return startDate;
             }
@@ -34,14 +43,6 @@ namespace NHASoftware
             if (frequency.FrequencyName.ToLower() == "monthly")
             {
                 return newDate.AddMonths(1);
-            }
-            else if (frequency.FrequencyName.ToLower() == "quarterly")
-            {
-                return newDate.AddMonths(3);
-            }
-            else if (frequency.FrequencyName.ToLower() == "yearly")
-            {
-                return newDate.AddYears(1);
             }
             else
             {
