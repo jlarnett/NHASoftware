@@ -5,6 +5,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
+using NHASoftware.Models;
 using NHASoftware.Profiles;
 using NHASoftware.Services;
 
@@ -28,7 +29,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
@@ -93,7 +94,16 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseHangfireDashboard();
+
+
+//App Hangfire Configuration.
+
+app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+{
+    //Passes the authorization to app. 
+    Authorization = new []{new MyAuthorizationFilter()}
+});
+
 app.UseHangfireServer();
 
 app.MapControllerRoute(

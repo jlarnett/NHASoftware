@@ -25,6 +25,11 @@ namespace NHASoftware.Controllers
 
         public TaskItemsController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IEmailService emailService)
         {
+            /*******************************************************************************************
+             *  I believe dependency injection is where controllers receive service items.
+             *  Instantiated in the controller constructor so it can be managed simply.
+             ********************************************************************************************/
+
             _context = context;
             _userManager = userManager;
             frequencyHandler = new FrequencyHandler(_context, emailService);
@@ -73,8 +78,6 @@ namespace NHASoftware.Controllers
         }
 
         // POST: TaskItems/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("TaskId,TaskDescription,TaskStartDate,TaskExecutionTime,FrequencyId, UserId")] TaskFormViewModel taskVM)
@@ -102,9 +105,14 @@ namespace NHASoftware.Controllers
             return View("Index");
         }
 
-        // GET: TaskItems/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            /****************************************************************************************
+            *      POST: TaskItems/Edit/5
+            *      NOT IMPLEMENTED
+            ****************************************************************************************/
+
+
             if (id == null)
             {
                 return NotFound();
@@ -120,13 +128,16 @@ namespace NHASoftware.Controllers
             return View(taskItem);
         }
 
-        // POST: TaskItems/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("TaskId,TaskDescription,TaskIsFinished,TaskStartDate,TaskExecutionTime,FrequencyId,UserId")] TaskItem taskItem)
         {
+            /****************************************************************************************
+            *      POST: TaskItems/Edit/5
+            *      NOT IMPLEMENTED
+            ****************************************************************************************/
+
             if (id != taskItem.TaskId)
             {
                 return NotFound();
@@ -157,9 +168,16 @@ namespace NHASoftware.Controllers
             return View(taskItem);
         }
 
-        // GET: TaskItems/Delete/5
+
         public async Task<IActionResult> Delete(int? id)
         {
+
+            /****************************************************************************************
+            *      GET: TaskItems/Delete/5
+            *      Delete controller action takes task id & checks whether it exist. If found
+            *      Returns the 'Delete' confirmation view. 
+            ****************************************************************************************/
+
             if (id == null)
             {
                 return NotFound();
@@ -182,9 +200,17 @@ namespace NHASoftware.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            /****************************************************************************************
+             *      Deletes the task & removes the recurring job from Hangfire. 
+             ****************************************************************************************/
+
             var taskItem = await _context.Tasks.FindAsync(id);
+
             _context.Tasks.Remove(taskItem);
+            RecurringJob.RemoveIfExists("TaskId: " + taskItem.TaskId);
+
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -196,3 +222,5 @@ namespace NHASoftware.Controllers
 
     }
 }
+
+

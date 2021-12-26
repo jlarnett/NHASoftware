@@ -15,20 +15,27 @@ namespace NHASoftware
 
         public TaskSender(IEmailService emailService, ApplicationDbContext context)
         {
+            /************************************************************************************
+             *      Gets the email service interface.
+             ************************************************************************************/
+
             _emailService = emailService;
             _context = context;
         }
 
         public bool SendTaskReminder(TaskItem item)
         {
-            //Takes task item from the recurring job & hopefully sends email to user?
+            /*************************************************************************************
+             *  Takes task item from the recurring job & Sends Email to user.
+             *************************************************************************************/
+
             var user = _context.Users.Find(item.UserId);
 
             EmailData emailData = new EmailData()
             {
                 EmailToId = user.Email,
-                EmailSubject = "Task Reminder",
-                EmailBody = item.TaskDescription,
+                EmailSubject = "Task Reminder for: " + item.TaskDescription,
+                EmailBody = String.Format("This is your email reminder to complete this task: {0}", item.TaskDescription),
                 EmailToName = user.Email
             };
 
