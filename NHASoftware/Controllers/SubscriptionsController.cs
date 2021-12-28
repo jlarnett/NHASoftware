@@ -58,7 +58,7 @@ namespace NHASoftware.Controllers
             Subscription model = new Subscription()
             {
                 UserId =  _userManager.GetUserId(HttpContext.User),
-                User = _context.Users.Find(_userManager.GetUserId(HttpContext.User))
+                User = (ApplicationUser)_context.Users.Find(_userManager.GetUserId(HttpContext.User))
             };
 
             return View(model);
