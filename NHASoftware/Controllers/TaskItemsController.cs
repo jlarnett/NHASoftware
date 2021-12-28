@@ -35,14 +35,19 @@ namespace NHASoftware.Controllers
             frequencyHandler = new FrequencyHandler(_context, emailService);
         }
 
-        // GET: TaskItems
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Tasks.Include(t => t.Frequency).Include(t => t.User);
+            /******************************************************************************************************
+             *  GET: TaskItems
+             *  Returns a list of Task for the specified user. 
+             *******************************************************************************************************/
+
+            var applicationDbContext = _context.Tasks.Include(t => t.Frequency).Include(t => t.User).Where(u => u.UserId == _userManager.GetUserId(HttpContext.User));
             return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: TaskItems/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -63,10 +68,14 @@ namespace NHASoftware.Controllers
             return View(taskItem);
         }
 
-        // GET: TaskItems/Create
         [Authorize]
         public IActionResult Create()
         {
+            /******************************************************************************************************
+            *  GET: TaskItems/Create
+            *  Creates view model and assigns the userId and task start date of today.
+            *******************************************************************************************************/
+
             ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "FrequencyName");
 
             var vm = new TaskFormViewModel()
@@ -77,11 +86,15 @@ namespace NHASoftware.Controllers
             return View(vm);
         }
 
-        // POST: TaskItems/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("TaskId,TaskDescription,TaskStartDate,TaskExecutionTime,FrequencyId, UserId")] TaskFormViewModel taskVM)
         {
+            /*******************************************************************************************
+             *      POST: TaskItems/Create
+             *      Create the task item from view model.
+             *******************************************************************************************/
 
             var taskItem = new TaskItem()
             {
@@ -111,7 +124,6 @@ namespace NHASoftware.Controllers
             *      POST: TaskItems/Edit/5
             *      NOT IMPLEMENTED
             ****************************************************************************************/
-
 
             if (id == null)
             {
@@ -171,7 +183,6 @@ namespace NHASoftware.Controllers
 
         public async Task<IActionResult> Delete(int? id)
         {
-
             /****************************************************************************************
             *      GET: TaskItems/Delete/5
             *      Delete controller action takes task id & checks whether it exist. If found
@@ -195,12 +206,12 @@ namespace NHASoftware.Controllers
             return View(taskItem);
         }
 
-        // POST: TaskItems/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             /****************************************************************************************
+             *      POST: TaskItems/Delete/5
              *      Deletes the task & removes the recurring job from Hangfire. 
              ****************************************************************************************/
 
@@ -218,8 +229,6 @@ namespace NHASoftware.Controllers
         {
             return _context.Tasks.Any(e => e.TaskId == id);
         }
-
-
     }
 }
 

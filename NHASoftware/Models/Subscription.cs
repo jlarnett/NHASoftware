@@ -11,7 +11,7 @@ namespace NHASoftware.Models
         public int SubscriptionDay { get; set; }
         public decimal SubscriptionCost { get; set; }
 
-        public IdentityUser? User { get; set; }
+        public ApplicationUser? User { get; set; }
 
         [Required]
         public string UserId { get; set; }
