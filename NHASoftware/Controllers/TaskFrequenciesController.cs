@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -21,12 +22,14 @@ namespace NHASoftware.Controllers
         }
 
         // GET: TaskFrequencies
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Frequencies.ToListAsync());
         }
 
         // GET: TaskFrequencies/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -45,6 +48,7 @@ namespace NHASoftware.Controllers
         }
 
         // GET: TaskFrequencies/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -55,6 +59,7 @@ namespace NHASoftware.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,FrequencyName,FrequencyValue")] TaskFrequency taskFrequency)
         {
             if (ModelState.IsValid)
@@ -67,6 +72,7 @@ namespace NHASoftware.Controllers
         }
 
         // GET: TaskFrequencies/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -87,6 +93,7 @@ namespace NHASoftware.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FrequencyName,FrequencyValue")] TaskFrequency taskFrequency)
         {
             if (id != taskFrequency.Id)
@@ -118,6 +125,7 @@ namespace NHASoftware.Controllers
         }
 
         // GET: TaskFrequencies/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -138,6 +146,7 @@ namespace NHASoftware.Controllers
         // POST: TaskFrequencies/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var taskFrequency = await _context.Frequencies.FindAsync(id);

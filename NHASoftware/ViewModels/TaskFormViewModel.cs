@@ -22,7 +22,7 @@ namespace NHASoftware.ViewModels
         public TaskFrequency? Frequency { get; set; }
         public int FrequencyId { get; set; }
 
-        public IdentityUser? User { get; set; }
+        public ApplicationUser? User { get; set; }
         [Required]
         public string UserId { get; set; }
     }

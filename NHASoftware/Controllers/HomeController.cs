@@ -16,6 +16,9 @@ namespace NHASoftware.Controllers
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IEmailService emailService)
         {
+            /*************************************************************************************
+             *  Dependency injection services
+             *************************************************************************************/
             _logger = logger;
             _context = context;
             frequencyHandler = new FrequencyHandler(context, emailService);
@@ -23,7 +26,8 @@ namespace NHASoftware.Controllers
 
         public IActionResult Index()
         {
-            RecurringJob.AddOrUpdate(() => frequencyHandler.GetRelevantTask(), "0 20 * * *", TimeZoneInfo.Local);
+
+            CreatePrimaryHangfireJobs();
 
             int subCount = _context.Subscriptions.Count();
             int taskCount = _context.Tasks.Count();
@@ -40,6 +44,14 @@ namespace NHASoftware.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private void CreatePrimaryHangfireJobs()
+        {
+            RecurringJob.AddOrUpdate(() => frequencyHandler.GetRelevantTask(), "0 20 * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate(() => frequencyHandler.GetRelevantTask(), "0 6 * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate(() => frequencyHandler.GetRelevantTask(), "0 12 * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate(() => frequencyHandler.GetRelevantTask(), "0 18 * * *", TimeZoneInfo.Local);
         }
     }
 }
