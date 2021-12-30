@@ -13,26 +13,6 @@ using NHASoftware.Services;
 
 namespace NHASoftware.Models
 {
-    public class InputModel
-    {
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
-
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
-            MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "Password")]
-        public string Password { get; set; }
-
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; }
-
-    }
 
     [AllowAnonymous]
     public class RegisterModel : PageModel
@@ -40,12 +20,13 @@ namespace NHASoftware.Models
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailService _emailSender;
+        private readonly IEmailSender _emailSender;
 
         [BindProperty] 
         public InputModel Input { get; set; }
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
-        public RegisterModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<RegisterModel> logger, IEmailService emailSender)
+        public string ReturnUrl { get; set; }
+        public RegisterModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<RegisterModel> logger, IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -87,16 +68,9 @@ namespace NHASoftware.Models
                         values: new { area = "Identity", userId = user.Id, code = code },
                         protocol: Request.Scheme);
 
-
-                    EmailData email = new EmailData()
-                    {
-                        EmailSubject = "NHA Confirmation Email",
-                        EmailToId = Input.Email,
-                        EmailBody = "Confirm your email" +
-                                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>."
-                    };
-
-                    _emailSender.SendEmail(email);
+                    await _emailSender.SendEmailAsync(Input.Email, "NHA Registration Confirmation",
+                        "Confirm your email" +
+                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
@@ -118,6 +92,27 @@ namespace NHASoftware.Models
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        public class InputModel
+        {
+            [Required]
+            [EmailAddress]
+            [Display(Name = "Email")]
+            public string Email { get; set; }
+
+            [Required]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
+                MinimumLength = 6)]
+            [DataType(DataType.Password)]
+            [Display(Name = "Password")]
+            public string Password { get; set; }
+
+            [DataType(DataType.Password)]
+            [Display(Name = "Confirm password")]
+            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            public string ConfirmPassword { get; set; }
+
         }
     }
 }

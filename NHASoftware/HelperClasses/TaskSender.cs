@@ -1,4 +1,6 @@
-﻿using System.Runtime.Loader;
+﻿
+using System.Runtime.Loader;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using NHASoftware.Controllers;
 using NHASoftware.Controllers.WebAPIs;
 using NHASoftware.Data;
@@ -10,10 +12,10 @@ namespace NHASoftware
 {
     public class TaskSender
     {
-        private IEmailService _emailService = null;
+        private IEmailSender _emailService = null;
         private ApplicationDbContext _context;
 
-        public TaskSender(IEmailService emailService, ApplicationDbContext context)
+        public TaskSender(IEmailSender emailService, ApplicationDbContext context)
         {
             /************************************************************************************
              *      Gets the email service interface.
@@ -23,23 +25,14 @@ namespace NHASoftware
             _context = context;
         }
 
-        public bool SendTaskReminder(TaskItem item)
+        public async Task SendTaskReminder(TaskItem item)
         {
             /*************************************************************************************
              *  Takes task item from the recurring job & Sends Email to user.
              *************************************************************************************/
 
             var user = _context.Users.Find(item.UserId);
-
-            EmailData emailData = new EmailData()
-            {
-                EmailToId = user.Email,
-                EmailSubject = "Task Reminder for: " + item.TaskDescription,
-                EmailBody = String.Format("This is your email reminder to complete this task: {0}", item.TaskDescription),
-                EmailToName = user.Email
-            };
-
-            return _emailService.SendEmail(emailData);
+            await _emailService.SendEmailAsync(user.Email, "Task Reminder For", item.TaskDescription);
         }
     }
 }
