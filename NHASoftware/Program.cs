@@ -9,12 +9,18 @@ using NHASoftware.Data;
 using NHASoftware.Models;
 using NHASoftware.Profiles;
 using NHASoftware.Services;
+using Azure.Identity;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
 
+var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
+builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
+
 // gets the connectionString from Configuration.
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
+
+
 
 //Automapper configuration.
 var mapperConfig = new MapperConfiguration(mc =>
@@ -26,6 +32,11 @@ IMapper mapper = mapperConfig.CreateMapper();
 
 #region ManageBuilderServices
 
+
+
+
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -34,6 +45,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
+
+
+
 
 #region CorsPolicy
 
@@ -68,7 +82,7 @@ builder.Services.Configure<NHASoftware.Configuration.SendGridEmailSenderOptions>
 {
     options.ApiKey = builder.Configuration["SendGrid:ApiKey"];
     options.SenderEmail = builder.Configuration["SendGrid:SenderEmail"];
-    options.SenderName = builder.Configuration["SendGrid:SenderName"];
+    options.SenderName = "NHA Industry";
 });
 builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
 
