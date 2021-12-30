@@ -17,10 +17,10 @@ namespace NHASoftware.Controllers
     public class SubscriptionsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly  UserManager<IdentityUser> _userManager;
+        private readonly  UserManager<ApplicationUser> _userManager;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public SubscriptionsController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IWebHostEnvironment webHostEnvironment)
+        public SubscriptionsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _userManager = userManager;

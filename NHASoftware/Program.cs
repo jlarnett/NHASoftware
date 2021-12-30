@@ -3,6 +3,7 @@ using System.Configuration;
 using AutoMapper;
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
 using NHASoftware.Models;
@@ -13,7 +14,7 @@ using NHASoftware.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // gets the connectionString from Configuration.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
 
 //Automapper configuration.
 var mapperConfig = new MapperConfiguration(mc =>
@@ -62,9 +63,15 @@ builder.Services.AddHangfire(options =>
     options.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-//Mail Kit service setup
-builder.Services.Configure<NHASoftware.Configuration.EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddTransient<IEmailService, EmailService>();
+//Send Grid service setup
+builder.Services.Configure<NHASoftware.Configuration.SendGridEmailSenderOptions>(options =>
+{
+    options.ApiKey = builder.Configuration["SendGrid:ApiKey"];
+    options.SenderEmail = builder.Configuration["SendGrid:SenderEmail"];
+    options.SenderName = builder.Configuration["SendGrid:SenderName"];
+});
+builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
+
 
 #endregion
 
