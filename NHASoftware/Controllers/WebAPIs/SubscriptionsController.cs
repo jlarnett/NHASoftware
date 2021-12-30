@@ -19,9 +19,9 @@ namespace NHASoftware.Controllers.WebAPIs
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        private readonly  UserManager<IdentityUser> _userManager;
+        private readonly  UserManager<ApplicationUser> _userManager;
 
-        public SubscriptionsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, UserManager<IdentityUser> userManager, IMapper mapper)
+        public SubscriptionsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, UserManager<ApplicationUser> userManager, IMapper mapper)
         {
             _context = context;
             _userManager = userManager;

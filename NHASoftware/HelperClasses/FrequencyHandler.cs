@@ -1,4 +1,5 @@
 ﻿using Hangfire;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using NHASoftware.Data;
 using NHASoftware.Models;
 using NHASoftware.Services;
@@ -12,7 +13,7 @@ namespace NHASoftware
         private TaskSender taskSender;
 
 
-        public FrequencyHandler(ApplicationDbContext context, IEmailService emailService)
+        public FrequencyHandler(ApplicationDbContext context, IEmailSender emailService)
         {
             _context = context;
             taskSender = new TaskSender(emailService, context);
