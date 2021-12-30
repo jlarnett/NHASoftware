@@ -2,6 +2,7 @@
 using NHASoftware.Models;
 using System.Diagnostics;
 using Hangfire;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using NHASoftware.Data;
 using NHASoftware.Services;
 using NHASoftware.ViewModels;
@@ -14,7 +15,7 @@ namespace NHASoftware.Controllers
         private readonly ILogger<HomeController> _logger;
         private FrequencyHandler frequencyHandler;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IEmailService emailService)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IEmailSender emailService)
         {
             /*************************************************************************************
              *  Dependency injection services

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,10 +21,10 @@ namespace NHASoftware.Controllers
     public class TaskItemsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly  UserManager<IdentityUser> _userManager;
+        private readonly  UserManager<ApplicationUser> _userManager;
         private FrequencyHandler frequencyHandler;
 
-        public TaskItemsController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IEmailService emailService)
+        public TaskItemsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEmailSender emailService)
         {
             /*******************************************************************************************
              *  I believe dependency injection is where controllers receive service items.
