@@ -1,6 +1,6 @@
 
-using System.Configuration;
 using AutoMapper;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -10,16 +10,25 @@ using NHASoftware.Models;
 using NHASoftware.Profiles;
 using NHASoftware.Services;
 using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
 
-var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
-builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
-
 // gets the connectionString from Configuration.
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
 
+builder.Host.ConfigureAppConfiguration((context, config) =>
+{
+    if (context.HostingEnvironment.IsProduction())
+    {
+        var builtConfig = config.Build();
+        var secretClient = new SecretClient(
+            new Uri($"https://{builtConfig["KeyVaultName"]}.vault.azure.net/"),
+            new DefaultAzureCredential());
+        config.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
+    }
+});
 
 
 //Automapper configuration.
