@@ -1,6 +1,6 @@
 
-using System.Configuration;
 using AutoMapper;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -9,12 +9,28 @@ using NHASoftware.Data;
 using NHASoftware.Models;
 using NHASoftware.Profiles;
 using NHASoftware.Services;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
 
 // gets the connectionString from Configuration.
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
+
+builder.Host.ConfigureAppConfiguration((context, config) =>
+{
+    if (context.HostingEnvironment.IsProduction())
+    {
+        var builtConfig = config.Build();
+        var secretClient = new SecretClient(
+            new Uri($"https://{builtConfig["KeyVaultName"]}.vault.azure.net/"),
+            new DefaultAzureCredential());
+
+        config.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
+    }
+});
+
 
 //Automapper configuration.
 var mapperConfig = new MapperConfiguration(mc =>
@@ -26,6 +42,11 @@ IMapper mapper = mapperConfig.CreateMapper();
 
 #region ManageBuilderServices
 
+
+
+
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -34,6 +55,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
+
+
+
 
 #region CorsPolicy
 
@@ -64,12 +88,28 @@ builder.Services.AddHangfire(options =>
 });
 
 //Send Grid service setup
+
 builder.Services.Configure<NHASoftware.Configuration.SendGridEmailSenderOptions>(options =>
 {
+
     options.ApiKey = builder.Configuration["SendGrid:ApiKey"];
     options.SenderEmail = builder.Configuration["SendGrid:SenderEmail"];
-    options.SenderName = builder.Configuration["SendGrid:SenderName"];
+    options.SenderName = "NHA Industry";
+
+
+    //Test API Output
+
+    string webRootPath = builder.Environment.WebRootPath;
+    string path = "";
+    path = Path.Combine(webRootPath, "Reports");
+
+    using StreamWriter file = new(path + "SendGridAPIReport1" + ".txt");
+    file.WriteLine(options.ApiKey);
+    file.WriteLine(options.SenderEmail);
+
+
 });
+
 builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
 
 
