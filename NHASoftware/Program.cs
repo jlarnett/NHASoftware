@@ -26,6 +26,7 @@ builder.Host.ConfigureAppConfiguration((context, config) =>
         var secretClient = new SecretClient(
             new Uri($"https://{builtConfig["KeyVaultName"]}.vault.azure.net/"),
             new DefaultAzureCredential());
+
         config.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
     }
 });
@@ -87,6 +88,21 @@ builder.Services.AddHangfire(options =>
 });
 
 //Send Grid service setup
+
+//Test API Output
+
+string webRootPath = builder.Environment.WebRootPath;
+string path = "";
+path = Path.Combine(webRootPath, "Reports");
+
+using StreamWriter file = new(path + "SendGridAPIReport" + ".txt");
+
+string api = builder.Configuration["SendGrid:ApiKey"];
+string sender = builder.Configuration["SendGrid:SenderEmail"];
+
+file.WriteLine(api);
+file.WriteLine(sender);
+
 builder.Services.Configure<NHASoftware.Configuration.SendGridEmailSenderOptions>(options =>
 {
     options.ApiKey = builder.Configuration["SendGrid:ApiKey"];
