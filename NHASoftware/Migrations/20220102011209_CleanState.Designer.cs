@@ -12,8 +12,8 @@ using NHASoftware.Data;
 namespace NHASoftware.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220101230148_Reset")]
-    partial class Reset
+    [Migration("20220102011209_CleanState")]
+    partial class CleanState
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
