@@ -4,7 +4,7 @@
 
 namespace NHASoftware.Migrations
 {
-    public partial class updatedTaskFK : Migration
+    public partial class InitialReset : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Identity;
 
 namespace NHASoftware.Models
@@ -29,5 +30,8 @@ namespace NHASoftware.Models
         public DateTime NextTaskDate { get; set; }
 
         public bool JobCrated { get; set; }
+
+        public Subscription? Subscription { get; set; }
+        public int? SubscriptionId { get; set; }
     }
 }
