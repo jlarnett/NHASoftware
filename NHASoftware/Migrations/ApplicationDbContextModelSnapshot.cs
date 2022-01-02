@@ -178,6 +178,9 @@ namespace NHASoftware.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("LastLoginDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -296,6 +299,9 @@ namespace NHASoftware.Migrations
                     b.Property<DateTime>("NextTaskDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("SubscriptionId")
+                        .HasColumnType("int");
+
                     b.Property<string>("TaskDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -316,6 +322,8 @@ namespace NHASoftware.Migrations
                     b.HasKey("TaskId");
 
                     b.HasIndex("FrequencyId");
+
+                    b.HasIndex("SubscriptionId");
 
                     b.HasIndex("UserId");
 
@@ -392,6 +400,10 @@ namespace NHASoftware.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("NHASoftware.Models.Subscription", "Subscription")
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId");
+
                     b.HasOne("NHASoftware.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -399,6 +411,8 @@ namespace NHASoftware.Migrations
                         .IsRequired();
 
                     b.Navigation("Frequency");
+
+                    b.Navigation("Subscription");
 
                     b.Navigation("User");
                 });

@@ -20,6 +20,9 @@ var connectionString = builder.Configuration["ConnectionStrings:DefaultConnectio
 
 builder.Host.ConfigureAppConfiguration((context, config) =>
 {
+    /************************************************************
+     *  This is setup for Azure Key Vault. 
+     ************************************************************/
     if (context.HostingEnvironment.IsProduction())
     {
         var builtConfig = config.Build();
@@ -31,34 +34,24 @@ builder.Host.ConfigureAppConfiguration((context, config) =>
     }
 });
 
-
-//Automapper configuration.
 var mapperConfig = new MapperConfiguration(mc =>
 {
+    //Automapper configuration.
     mc.AddProfile(new MappingProfile());
 });
-
 IMapper mapper = mapperConfig.CreateMapper();
 
 #region ManageBuilderServices
 
 
-
-
-
-
+//Application database config
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+
 builder.Services.AddControllersWithViews();
-
-
-
-
 #region CorsPolicy
 
 //CORS policy setup. Allows calls to binace api ----------------------------------------------------------------------->
@@ -88,26 +81,12 @@ builder.Services.AddHangfire(options =>
 });
 
 //Send Grid service setup
-
 builder.Services.Configure<NHASoftware.Configuration.SendGridEmailSenderOptions>(options =>
 {
-
+    // Gets sendgrid secrets from azure key config / azure key vault. 
     options.ApiKey = builder.Configuration["SendGrid:ApiKey"];
     options.SenderEmail = builder.Configuration["SendGrid:SenderEmail"];
     options.SenderName = "NHA Industry";
-
-
-    //Test API Output
-
-    string webRootPath = builder.Environment.WebRootPath;
-    string path = "";
-    path = Path.Combine(webRootPath, "Reports");
-
-    using StreamWriter file = new(path + "SendGridAPIReport1" + ".txt");
-    file.WriteLine(options.ApiKey);
-    file.WriteLine(options.SenderEmail);
-
-
 });
 
 builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
