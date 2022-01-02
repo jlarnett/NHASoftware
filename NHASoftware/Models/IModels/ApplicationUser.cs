@@ -7,5 +7,8 @@ namespace NHASoftware.Models
     {
         [NotNull]
         public double UserCash { get; set; } = 0;
+
+        [NotNull]
+        public DateTime LastLoginDate { get; set; } = DateTime.Today;
     }
 }
