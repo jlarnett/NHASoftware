@@ -31,7 +31,6 @@ namespace NHASoftware
             //Adds minutes to the date so that today value Next Dates are generated correctly.
             newDate = startDate.AddMinutes(1400);
             
-
             if (newDate > DateTime.Today)
             {
                 return startDate;
@@ -44,6 +43,10 @@ namespace NHASoftware
             if (frequency.FrequencyName.ToLower() == "monthly")
             {
                 return newDate.AddMonths(1);
+            }
+            else if (frequency.FrequencyName.ToLower().Equals("daily"))
+            {
+                return newDate.AddDays(1);
             }
             else
             {
@@ -62,11 +65,32 @@ namespace NHASoftware
 
             foreach (var item in taskItems)
             {
-                string cronString = String.Format("{0} {1} {2} * *", item.TaskExecutionTime.Minutes, item.TaskExecutionTime.Hours, item.NextTaskDate.Day);
+                item.Frequency = _context.Frequencies.Find(item.FrequencyId);
+                string cronString = ReturnFrequencyCronDate(item);
                 RecurringJob.AddOrUpdate("TaskId: " + item.TaskId, () => taskSender.SendTaskReminder(item), cronString, TimeZoneInfo.Local);
 
                 item.JobCrated = true;
                 _context.SaveChangesAsync();
+            }
+        }
+
+        private string ReturnFrequencyCronDate(TaskItem item)
+        {
+            /***************************************************************************************
+             *  This method helps the handler generate correct cron string based on frequency.
+             ***************************************************************************************/
+
+            if (item.Frequency.FrequencyName == "monthly")
+            {
+                return String.Format("{0} {1} {2} * *", item.TaskExecutionTime.Minutes, item.TaskExecutionTime.Hours, item.NextTaskDate.Day);
+            }
+            else if(item.Frequency.FrequencyName == "Daily")
+            {
+                return String.Format("{0} {1} {2} * *", item.TaskExecutionTime.Minutes, item.TaskExecutionTime.Hours, "*");
+            }
+            else
+            {
+                return String.Format("{0} {1} {2} * *", item.TaskExecutionTime.Minutes, item.TaskExecutionTime.Hours, "*/" + item.Frequency.FrequencyValue);
             }
         }
     }

@@ -185,7 +185,6 @@ namespace NHASoftware.Controllers
              *  Uses streamWriter to write formatted strings to file. 
              ***************************************************************************************************/
 
-
             decimal totalPrice = 0;
 
             string UserId = _userManager.GetUserId(HttpContext.User);

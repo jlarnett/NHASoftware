@@ -17,10 +17,10 @@ namespace NHASoftware.Data
 
             #region OldManyToManyMapping
 
-                //builder.Entity<BookAuthor>().HasKey(sc => new { sc.AuthorId, sc.BookId });
-                //builder.Entity<BookAuthor>().HasOne<Author>(ab => ab.Author).WithMany(a => a.BookAuthors)
-                //    .HasForeignKey(ab => ab.AuthorId);
-                //builder.Entity<BookAuthor>().HasOne<Book>(ab => ab.Book).WithMany(b => b.BookAuthors).HasForeignKey(ab => ab.BookId);
+            //builder.Entity<BookAuthor>().HasKey(sc => new { sc.AuthorId, sc.BookId });
+            //builder.Entity<BookAuthor>().HasOne<Author>(ab => ab.Author).WithMany(a => a.BookAuthors)
+            //    .HasForeignKey(ab => ab.AuthorId);
+            //builder.Entity<BookAuthor>().HasOne<Book>(ab => ab.Book).WithMany(b => b.BookAuthors).HasForeignKey(ab => ab.BookId);
 
             #endregion
 

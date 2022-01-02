@@ -51,7 +51,8 @@ namespace NHASoftware.Models
                 {
                     UserName = Input.Email,
                     Email = Input.Email,
-                    UserCash = 0.00
+                    UserCash = 0.00,
+                    LastLoginDate = DateTime.Today
                 };
 
 
