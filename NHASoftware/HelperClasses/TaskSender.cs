@@ -28,11 +28,22 @@ namespace NHASoftware
         public async Task SendTaskReminder(TaskItem item)
         {
             /*************************************************************************************
-             *  Takes task item from the recurring job & Sends Email to user.
+             *  Takes task item from the recurring job & Sends Email to user. Along with all
              *************************************************************************************/
 
+            string reminderMessage = "Task Reminder For: " + item.TaskDescription + "\n";
+            var taskSubscriptions = _context.Subscriptions.Where(c => c.TaskItemId == item.TaskId);
+
+            if (taskSubscriptions.Any())
+            {
+                foreach (var sub in taskSubscriptions)
+                {
+                    reminderMessage += sub.SubscriptionName + ": " + sub.SubscriptionCost + "\n";
+                }
+            }
+
             var user = _context.Users.Find(item.UserId);
-            await _emailService.SendEmailAsync(user.Email, "Task Reminder For", item.TaskDescription);
+            await _emailService.SendEmailAsync(user.Email, "Task Reminder For " + item.TaskDescription, reminderMessage);
         }
     }
 }

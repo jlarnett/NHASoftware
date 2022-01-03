@@ -1,13 +1,11 @@
-﻿@model NHASoftware.Models.Subscription
+﻿@model NHASoftware.ViewModels.SubscriptionFormViewModel
 
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
-
-<h4>Subscription</h4>
+<h1>Create New Subscription</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -31,6 +29,12 @@
             @Html.HiddenFor(m => m.UserId)
             @Html.HiddenFor(m => m.User)
             @Html.HiddenFor(m => m.SubscriptionDay)
+            
+            <div class="form-group">
+                <label asp-for="TaskItemId" class="control-label"></label>
+                <select asp-for="TaskItemId" class="form-control" asp-items="ViewBag.TaskId"></select>
+                <span asp-validation-for="TaskItemId" class="text-danger"></span>
+            </div>
 
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

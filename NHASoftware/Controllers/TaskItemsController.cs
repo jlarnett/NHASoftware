@@ -105,8 +105,10 @@ namespace NHASoftware.Controllers
                 FrequencyId = taskVM.FrequencyId,
                 UserId = taskVM.UserId,
                 JobCrated = false,
-                NextTaskDate = frequencyHandler.GenerateNextDate(taskVM.TaskStartDate, _context.Frequencies.Find(taskVM.FrequencyId))
+                NextTaskDate = frequencyHandler.GenerateNextDate(taskVM.TaskStartDate, _context.Frequencies.Find(taskVM.FrequencyId)),
             };
+
+
 
             if (ModelState.IsValid)
             {
@@ -116,6 +118,7 @@ namespace NHASoftware.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "Id", taskItem.FrequencyId);
+
             return View("Index");
         }
 

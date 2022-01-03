@@ -29,13 +29,11 @@ namespace NHASoftware.Controllers
             _context = context;
             _userManager = userManager;
 
-            frequencyHandler = new FrequencyHandler(context, emailService);
-            this.taskHandler = new TaskHandler(context, userManager);
+            this.taskHandler = new TaskHandler(context, userManager, emailService);
         }
 
         public IActionResult Index()
         {
-
             CreatePrimaryHangfireJobs();
             CreateDailyInactiveCheckJob();
 
@@ -58,14 +56,14 @@ namespace NHASoftware.Controllers
 
         private void CreatePrimaryHangfireJobs()
         {
-            RecurringJob.AddOrUpdate("Evening Task Check", () => frequencyHandler.GetRelevantTask(), "0 20 * * *", TimeZoneInfo.Local);
-            RecurringJob.AddOrUpdate("Morning Task Check",() => frequencyHandler.GetRelevantTask(), "0 6 * * *", TimeZoneInfo.Local);
-            RecurringJob.AddOrUpdate("Noon Task Check",() => frequencyHandler.GetRelevantTask(), "0 12 * * *", TimeZoneInfo.Local);
-            RecurringJob.AddOrUpdate("Late Day Task Check", () => frequencyHandler.GetRelevantTask(), "0 18 * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate("Morning Task Check", () => taskHandler.CreateNewTaskJobs(), "0 6 * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate("Noon Task Check", () => taskHandler.CreateNewTaskJobs(), "0 12 * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate("Evening Day Task Check", () => taskHandler.CreateNewTaskJobs(), "0 18 * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate("Night Day Task Check", () => taskHandler.CreateNewTaskJobs(), "0 24 * * *", TimeZoneInfo.Local);
         }
         private void CreateDailyInactiveCheckJob()
         {
-            RecurringJob.AddOrUpdate("TaskHandler", () => taskHandler.ClearDatedJobs(), "0 6 * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate("Outdated Account TaskHandler Job Clear", () => taskHandler.ClearDatedJobs(), "0 6 * * *", TimeZoneInfo.Local);
         }
     }
 }

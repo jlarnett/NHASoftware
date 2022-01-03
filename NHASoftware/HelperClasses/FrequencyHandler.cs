@@ -8,15 +8,11 @@ namespace NHASoftware
 {
     public class FrequencyHandler
     {
-        public List<TaskItem> taskItems { get; set; }
         private readonly ApplicationDbContext _context;
-        private TaskSender taskSender;
 
-
-        public FrequencyHandler(ApplicationDbContext context, IEmailSender emailService)
+        public FrequencyHandler(ApplicationDbContext context)
         {
             _context = context;
-            taskSender = new TaskSender(emailService, context);
         }
 
         public DateTime GenerateNextDate(DateTime startDate, TaskFrequency frequency)
@@ -54,27 +50,7 @@ namespace NHASoftware
             }
         }
         
-        public void GetRelevantTask()
-        {
-            /**********************************************************************************************
-             *  This is ran daily. Gets all the task that hangfire job need created for.
-             *  Creates the recurring job in hangfire.
-             **********************************************************************************************/
-
-            taskItems = _context.Tasks.Where(t => t.NextTaskDate.Month <= DateTime.Today.Month && t.NextTaskDate.Year <= DateTime.Today.Year && t.JobCrated != true).ToList();
-
-            foreach (var item in taskItems)
-            {
-                item.Frequency = _context.Frequencies.Find(item.FrequencyId);
-                string cronString = ReturnFrequencyCronDate(item);
-                RecurringJob.AddOrUpdate("TaskId: " + item.TaskId, () => taskSender.SendTaskReminder(item), cronString, TimeZoneInfo.Local);
-
-                item.JobCrated = true;
-                _context.SaveChangesAsync();
-            }
-        }
-
-        private string ReturnFrequencyCronDate(TaskItem item)
+        public string ReturnFrequencyCronDate(TaskItem item)
         {
             /***************************************************************************************
              *  This method helps the handler generate correct cron string based on frequency.

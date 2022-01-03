@@ -14,5 +14,8 @@ namespace NHASoftware.Models
 
         [Required]
         public string UserId { get; set; }
+
+        public TaskItem? TaskItem { get; set; }
+        public int? TaskItemId { get; set; }
     }
 }
