@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Build.Framework;
 using NHASoftware.Models;
 
@@ -7,25 +8,26 @@ namespace NHASoftware.ViewModels
     public class SubscriptionFormViewModel
     {
         public int SubscriptionId { get; set; }
+        [Display(Name = "Description")]
         public string SubscriptionName { get; set; }
+
+        [Display(Name = "Execution Date")]
         public DateTime SubscriptionDate { get; set; }
+
         public int SubscriptionDay { get; set; }
+
+
+        [Display(Name = "Cost")]
         public decimal SubscriptionCost { get; set; }
+
+        public ApplicationUser? User { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Required]
         public string UserId { get; set; }
 
-        public SubscriptionFormViewModel()
-        {
-            SubscriptionId = 0;
-        }
+        public TaskItem? TaskItem { get; set; }
 
-        public SubscriptionFormViewModel(Subscription sub)
-        {
-            SubscriptionId = sub.SubscriptionId;
-            SubscriptionName = sub.SubscriptionName;
-            SubscriptionDate = sub.SubscriptionDate;
-            SubscriptionDay = sub.SubscriptionDay;
-            SubscriptionCost = sub.SubscriptionCost;
-            UserId = sub.UserId;
-        }
+        [Display(Name = "Linked Task Item")]
+        public int? TaskItemId { get; set; }
     }
 }
