@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting.Internal;
 using NHASoftware.Data;
 using NHASoftware.Models;
+using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
 {
@@ -51,28 +52,61 @@ namespace NHASoftware.Controllers
             return View(subscription);
         }
 
-        // GET: Subscriptions/Create
+
         [Authorize]
         public IActionResult Create()
         {
-            Subscription model = new Subscription()
+            // GET: Subscriptions/Create
+            /***************************************************************************************************
+            *  Returns a Create View. SelectList is populated with all task related to userId.
+            ***************************************************************************************************/
+
+            var  list = new SelectList(_context.Tasks.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription");
+            var list2 = list.Prepend(new SelectListItem()
+            {
+                Value = "-1",
+                Text = ""
+
+            });
+
+            ViewData["TaskId"] = list2;
+
+            var vm = new SubscriptionFormViewModel()
             {
                 UserId =  _userManager.GetUserId(HttpContext.User),
-                User = (ApplicationUser)_context.Users.Find(_userManager.GetUserId(HttpContext.User))
+                User = (ApplicationUser)_context.Users.Find(_userManager.GetUserId(HttpContext.User)),
+                SubscriptionDate = DateTime.Today
             };
 
-            return View(model);
+            return View(vm);
         }
 
-        // POST: Subscriptions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("SubscriptionId,SubscriptionName,SubscriptionDate,SubscriptionCost,User,UserId")] Subscription subscription)
+        public async Task<IActionResult> Create([Bind("SubscriptionId,SubscriptionName,SubscriptionDate,SubscriptionCost,User,UserId,TaskItemId")] SubscriptionFormViewModel vm)
         {
-            subscription.SubscriptionDay = subscription.SubscriptionDate.Day;
+            // POST: Subscriptions/Create
+            /***************************************************************************************************
+            *  Creates new subscription. Takes SubscriptionFormViewModel.
+            *  Each Subscription allows a linked task now. That can be tied to hangfire system. 
+            ***************************************************************************************************/
+
+            var subscription = new Subscription()
+            {
+                SubscriptionDay = vm.SubscriptionDay,
+                SubscriptionName = vm.SubscriptionName,
+                SubscriptionDate = vm.SubscriptionDate,
+                SubscriptionCost = vm.SubscriptionCost,
+                User = vm.User,
+                UserId = vm.UserId
+            };
+
+            if (vm.TaskItemId != null && vm.TaskItemId != -1)
+            {
+                subscription.TaskItemId = vm.TaskItemId.Value;
+            }
 
             if (ModelState.IsValid)
             {
@@ -81,7 +115,11 @@ namespace NHASoftware.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(subscription);
+
+            ViewData["TaskId"] =
+                new SelectList(_context.Tasks.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription", subscription.TaskItemId);
+
+            return View("Index");
         }
 
         // GET: Subscriptions/Edit/5
@@ -102,8 +140,6 @@ namespace NHASoftware.Controllers
         }
 
         // POST: Subscriptions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("SubscriptionId,SubscriptionName,SubscriptionDate,SubscriptionCost")] Subscription subscription)

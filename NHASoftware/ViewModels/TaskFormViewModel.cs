@@ -25,5 +25,6 @@ namespace NHASoftware.ViewModels
         public ApplicationUser? User { get; set; }
         [Required]
         public string UserId { get; set; }
+
     }
 }
