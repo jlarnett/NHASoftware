@@ -33,7 +33,7 @@ namespace NHASoftware.Controllers
 
             _context = context;
             _userManager = userManager;
-            frequencyHandler = new FrequencyHandler(_context, emailService);
+            frequencyHandler = new FrequencyHandler(_context);
         }
 
         public async Task<IActionResult> Index()
