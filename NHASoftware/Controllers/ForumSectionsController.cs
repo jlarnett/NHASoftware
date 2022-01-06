@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
 using NHASoftware.Models;
+using NHASoftware.Models.ForumModels;
 
 namespace NHASoftware.Controllers
 {

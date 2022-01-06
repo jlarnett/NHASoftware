@@ -3,10 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
+using NHASoftware.Models;
 using NHASoftware.Models.ForumModels;
 
 namespace NHASoftware.Controllers
@@ -14,10 +17,12 @@ namespace NHASoftware.Controllers
     public class ForumPostsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ForumPostsController(ApplicationDbContext context)
+        public ForumPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: ForumPosts
@@ -47,10 +52,15 @@ namespace NHASoftware.Controllers
         }
 
         // GET: ForumPosts/Create
-        public IActionResult Create()
+        [Authorize]
+        public IActionResult Create(int id)
         {
-            ViewData["ForumTopicId"] = new SelectList(_context.ForumTopics, "Id", "Id");
-            return View();
+            var forumPost = new ForumPost();
+            forumPost.UserId = _userManager.GetUserId(HttpContext.User);
+            forumPost.ForumTopicId = id;
+            forumPost.CreationDate = DateTime.Now;
+
+            return View(forumPost);
         }
 
         // POST: ForumPosts/Create
@@ -58,7 +68,7 @@ namespace NHASoftware.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ForumText,CreationDate,UserId,ForumTopicId")] ForumPost forumPost)
+        public async Task<IActionResult> Create([Bind("Id,Title,ForumText,CreationDate, UserId, ForumTopicId")] ForumPost forumPost)
         {
             if (ModelState.IsValid)
             {

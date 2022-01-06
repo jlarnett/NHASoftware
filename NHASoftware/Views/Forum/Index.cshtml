@@ -1,0 +1,59 @@
+﻿@model NHASoftware.ViewModels.ForumIndexViewModel
+
+@{
+    ViewData["Title"] = "Forums";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Forums</h1>
+
+<div>
+    <a asp-action="Index" asp-controller="ForumSections" class="link-light">Forum Sections</a>
+    <a asp-action="Index" asp-controller="ForumTopics"class="link-light">Forum Topics</a>
+    <a asp-action="Index" asp-controller="ForumPosts"class="link-light">Forum Post</a>
+    <a asp-action="Index" asp-controller="ForumComments"class="link-light link-primary">Forum Comments</a>
+</div>
+
+<div>
+        @{
+            foreach (var section in @Model.ForumSections)
+            {
+                var name = section.Name;
+
+                <details open class="forum-group">
+                    <summary class="forum-stats">
+                        <h2 class="forum-group__heading">@name</h2>
+                        <div class="thread-plate-titles thread-plate-titles--rootview">
+                            <h4 class="thread-plate-title thread-plate-title--root-threads">Threads</h4>
+                            <h4 class="thread-plate-title thread-plate-title--root-posts">Posts</h4>
+                            <h4 class="thread-plate-title thread-plate-title--root-latest">Latest Post</h4>
+                        </div>
+                    </summary>
+
+                    <div class="border">
+                        @foreach (var topic in Model.Forums)
+                        {
+                            if (section.Id == topic.Key)
+                            {
+                                <article class="group-thread group-thread--rootview" data-id="">
+                                    <a class="group-thread__link" asp-action="Details" asp-controller="ForumTopics" asp-route-id="@topic.Value.Id">
+                                        <div class="group-thread__details">
+                                            <h3 class="group-thread__heading">@topic.Value.Title</h3>
+                                            <p class="group-thread__summary">@topic.Value.Description</p>
+                                        </div>
+                                        <span class="forum-stat forum-stat--thread">619,851</span>
+                                        <span class="forum-stat forum-stat--posts">9,280,587</span>
+                                        <span class="forum-stat forum-stat--latest">05/01/22 01:34</span>
+                                    </a>
+                                </article>
+                            }
+                        }
+
+                    </div>
+
+                </details>
+
+            }
+        }
+</div>
+

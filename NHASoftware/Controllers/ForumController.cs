@@ -1,12 +1,41 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Rest;
+using NHASoftware.Data;
+using NHASoftware.Models.ForumModels;
+using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
 {
     public class ForumController : Controller
     {
+        private readonly ApplicationDbContext _context;
+
+        public ForumController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
-            return View();
+            var forumSections = _context.ForumSections.ToList();
+            var forumTopics = _context.ForumTopics.ToList();
+
+
+            List<KeyValuePair<int, ForumTopic>> topicSectionMap = new List<KeyValuePair<int, ForumTopic>>();
+
+            foreach (var topic in forumTopics)
+            {
+                topicSectionMap.Add(new KeyValuePair<int, ForumTopic>(topic.ForumSectionId, topic));
+            }
+
+            var indexModel = new ForumIndexViewModel()
+            {
+                ForumSections = forumSections,
+                ForumTopics = forumTopics,
+                Forums = topicSectionMap
+            };
+
+            return View(indexModel);
         }
     }
 }

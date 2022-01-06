@@ -45,3 +45,167 @@ body {
 .footerContainer {
     margin-left: 20px;
 }
+article {
+    display: block;
+}
+
+.forum-group--open .group-thread--rootview, html.details .group-thread--rootview {
+    display: block;
+}
+.topic-link {
+    width: 99%;
+    display: inline-block;
+    padding: 5px;
+    margin: 5px;
+    border: 2px ridge white;
+    text-decoration: none;
+}
+
+.topic-details {
+    font-size: 1em;
+    float: left;
+    width: 40%;
+    border-right: 2px ridge darkgray;
+}
+
+.topic-details-description {
+    margin-right: 5px;
+    margin-left: 20px;
+    float: left;
+}
+
+.group-thread .forum-stat {
+    border-left: 1px solid #1e313c;
+    border-right: solid 1px #000;
+    color: #d7dbe1;
+    display: block;
+    float: left;
+    font-size: 1.2em;
+    height: 38px;
+    line-height: 30px;
+    margin-top: 7px;
+    padding: 5px 15px 0 0;
+    position: relative;
+    text-align: right;
+}
+
+.group-thread {
+    background: transparent url(https://www.runescape.com/img/rs3/forums/panel.jpg) repeat bottom left;
+    box-shadow: 0 -4px 5px -1px #000, 0 4px 5px -1px #000;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 4px;
+    font-size: .8em;
+}
+.thread-plate-title--root-threads {
+    padding-right: 13px;
+    text-align: right;
+}
+.group-thread__link {
+    float: left;
+    height: 88%;
+    overflow: hidden;
+    padding: 5px 10px;
+}
+.forum-group .group-thread .forum-stat--latest:last-child {
+    text-align: right;
+}
+.thread-plate-title {
+    color: #d7dbe1;
+    display: inline-block;
+    font-family: "MuseoSans";
+    font-size: 1.4em;
+    overflow: hidden;
+    text-align: left;
+}
+
+.thread-plate-title--root-posts {
+    padding-right: 13px;
+    text-align: right;
+    width: 106px;
+}
+.group-thread__heading {
+    color: #e1bb34;
+    font-family: "MuseoSans";
+    font-size: 1.6em;
+    letter-spacing: normal;
+    font-weight: normal;
+}
+.forum-group[open] .thread-plate-titles--rootview, .forum-group--open .thread-plate-titles--rootview {
+    display: block;
+}
+.thread-plate-title--root-latest {
+    padding-right: 4px;
+    text-align: right;
+    width: 116px;
+}
+.thread-plate-titles {
+    margin: 5px 0;
+    padding-right: 25px;
+    text-align: right;
+}
+.forum-stats {
+    cursor: pointer;
+    display: block;
+    margin: 5px 0;
+    overflow: hidden;
+    padding-right: 25px;
+    background-color: gray;
+
+}
+.group-thread__summary {
+    color: #d7dbe1;
+    font-size: 1.2em;
+    white-space: pre-wrap;
+}
+.forum-group__heading {
+    float: left;
+    font-size: 2.5em;
+    height: 50px;
+    margin: 0px 0 8px;
+    max-width: 567px;
+    overflow: hidden;
+    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #e1bb34;
+}
+.group-thread .forum-stat {
+    border-left: 1px solid #1e313c;
+    border-right: solid 1px #000;
+    color: #d7dbe1;
+    display: block;
+    float: left;
+    font-size: 1.4em;
+    height: 100px;
+    line-height: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px 30px 0 0;
+    position: relative;
+    text-align: right;
+}
+
+.group-thread__details {
+    border-right: solid 1px #000;
+    float: left;
+    margin-top: 8px;
+    width: 1460px;
+}
+
+.forum-stat--thread {
+    width: 100px;
+    margin-top: 50%;
+}
+
+.forum-stat--posts {
+    width: 85px;
+    margin-top: 100px;
+}
+
+.forum-group {
+    min-height: 57px;
+    overflow: hidden;
+    padding-bottom: 27px;
+    position: relative;
+}

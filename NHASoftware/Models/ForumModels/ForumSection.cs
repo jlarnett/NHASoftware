@@ -1,4 +1,4 @@
-﻿namespace NHASoftware.Models
+﻿namespace NHASoftware.Models.ForumModels
 {
     public class ForumSection
     {

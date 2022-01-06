@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
 using NHASoftware.Models.ForumModels;
+using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
 {
@@ -35,21 +36,30 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
+            var topicPosts = _context.ForumPost.Where(c => c.ForumTopicId == id).ToList();
+
             var forumTopic = await _context.ForumTopics
                 .Include(f => f.ForumSection)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (forumTopic == null)
             {
                 return NotFound();
             }
 
-            return View(forumTopic);
+            var vm = new ForumTopicDetailsView()
+            {
+                topic = forumTopic,
+                Posts = topicPosts
+            };
+
+            return View(vm);
         }
 
         // GET: ForumTopics/Create
         public IActionResult Create()
         {
-            ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Id");
+            ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Name");
             return View();
         }
 
@@ -66,7 +76,7 @@ namespace NHASoftware.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Id", forumTopic.ForumSectionId);
+            ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Name", forumTopic.ForumSectionId);
             return View(forumTopic);
         }
 
