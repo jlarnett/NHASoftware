@@ -1,49 +1,69 @@
-﻿@model NHASoftware.Models.ForumModels.ForumPost
+﻿@model NHASoftware.ViewModels.ForumPostDetailModel
 
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
-
 <div>
-    <h4>ForumPost</h4>
+    <h2>@Model.ForumPost.Title</h2>
+    <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="" class=" btn-primary btn-dark btn-link">Create Comment</a>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ForumText)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ForumText)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreationDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreationDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ForumTopic)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ForumTopic.Id)
-        </dd>
-    </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+
+<div class="main">
+    <article class="group-thread group-thread--rootview" data-id="@Model.ForumPost.Id">
+        @{
+            var id = @Model.ForumPost.Id;
+        }
+        <a class="group-thread__link" href="/ForumPosts/delete/@id">
+            <div class="group-thread__details">
+                <h3 class="group-thread__heading">@Model.ForumPost.User.Email</h3>
+                <h3 class="group-thread__heading">@Model.ForumPost.Title</h3>
+                <p class="group-thread__summary">@Model.ForumPost.ForumText</p>
+            </div>
+            <span class="forum-stat forum-stat--thread">@Model.ForumPost.CommentCount</span>
+            <span class="forum-stat forum-stat--latest">@Model.ForumPost.CreationDate</span>
+        </a>
+    </article>
+
+    <table id="PostTable" class="tableCustom">
+        <thead>
+        <tr>
+            <th></th>
+        </tr>
+        </thead>
+    </table>
 </div>
+
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var comments = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumComments))');
+
+            var arrayLength = comments.length;
+
+            var table = $("#PostTable").DataTable();
+
+
+            for (var i = 0; i < arrayLength; i++) {
+                console.log(comments[i]);
+                table.row.add( ["<article class='group-thread group-thread--rootview' data-id='" + comments[i].id + "'>" +
+                    "<a class='group-thread__link' href='/ForumComments/Delete/" + comments[i].id + "'>" +
+                    "<div class='group-thread__details'>" +
+                    "<h3 class='group-thread__heading'>" + comments[i].user.email + "</h3>" +
+                    "<p class='group-thread__summary'>" + comments[i].commentText + "</p>" +
+                    "</div>" +
+                    "<span class='forum-stat forum-stat--thread'>" + 0 + "</span>" +
+                    "<span class='forum-stat forum-stat--latest'>" + comments[i].creationDate + "</span>" +
+                    "</a>" +
+                    "</article>" ] ).draw();
+            }
+        });
+    </script>
+
+}

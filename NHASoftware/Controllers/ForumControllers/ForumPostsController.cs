@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
 using NHASoftware.Models;
 using NHASoftware.Models.ForumModels;
+using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
 {
@@ -43,12 +44,19 @@ namespace NHASoftware.Controllers
             var forumPost = await _context.ForumPost
                 .Include(f => f.ForumTopic)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (forumPost == null)
             {
                 return NotFound();
             }
 
-            return View(forumPost);
+            var detailVm = new ForumPostDetailModel()
+            {
+                ForumPost = forumPost,
+                ForumComments = _context.ForumComments.Where(c => c.ForumPostId == id).Include(p => p.User).ToList()
+            };
+
+            return View(detailVm);
         }
 
         // GET: ForumPosts/Create
@@ -59,24 +67,33 @@ namespace NHASoftware.Controllers
             forumPost.UserId = _userManager.GetUserId(HttpContext.User);
             forumPost.ForumTopicId = id;
             forumPost.CreationDate = DateTime.Now;
+            forumPost.CommentCount = 0;
 
             return View(forumPost);
         }
 
-        // POST: ForumPosts/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ForumText,CreationDate, UserId, ForumTopicId")] ForumPost forumPost)
+        public async Task<IActionResult> Create([Bind("Title,ForumText,CreationDate, UserId, ForumTopicId, CommentCount")] ForumPost forumPost)
         {
+            /*******************************************************************************************************
+             *      POST: ForumPosts/Create
+             *      Adds forumPost to database if the model is valid.
+             *      Increments the Post Count & Thread Count & latestPost.
+             *******************************************************************************************************/
+
             if (ModelState.IsValid)
             {
+                var topic = await _context.ForumTopics.FirstAsync(c => c.Id == forumPost.ForumTopicId);
+
+                topic.PostCount += 1;
+                topic.ThreadCount += 1;
+                topic.LastestPost = DateTime.Now;
+
                 _context.Add(forumPost);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "ForumTopics", new {id = forumPost.ForumTopicId});
             }
-            ViewData["ForumTopicId"] = new SelectList(_context.ForumTopics, "Id", "Id", forumPost.ForumTopicId);
             return View(forumPost);
         }
 

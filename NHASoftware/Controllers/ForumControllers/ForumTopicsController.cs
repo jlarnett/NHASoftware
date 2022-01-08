@@ -60,16 +60,24 @@ namespace NHASoftware.Controllers
         public IActionResult Create()
         {
             ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Name");
-            return View();
+
+            var topic = new ForumTopic()
+            {
+                PostCount = 0,
+                ThreadCount = 0
+            };
+
+            return View(topic);
         }
 
-        // POST: ForumTopics/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,ForumSectionId")] ForumTopic forumTopic)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,ForumSectionId,PostCount, ThreadCount")] ForumTopic forumTopic)
         {
+            /****************************************************************************************************
+             *  POST: ForumTopics/Create
+             ***************************************************************************************************/
+
             if (ModelState.IsValid)
             {
                 _context.Add(forumTopic);

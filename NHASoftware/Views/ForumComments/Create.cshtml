@@ -19,14 +19,10 @@
                 <span asp-validation-for="CommentText" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CreationDate" class="control-label"></label>
-                <input asp-for="CreationDate" class="form-control" />
-                <span asp-validation-for="CreationDate" class="text-danger"></span>
+                @Html.HiddenFor(c => c.CreationDate)
             </div>
             <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
+                @Html.HiddenFor(c => c.UserId)
             </div>
             <div class="form-group">
                 <label asp-for="ForumPostId" class="control-label"></label>

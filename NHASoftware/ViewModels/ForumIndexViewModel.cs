@@ -6,7 +6,6 @@ namespace NHASoftware.ViewModels
     {
         public List<ForumSection> ForumSections { get; set; }
         public List<ForumTopic> ForumTopics { get; set; }
-
         public List<KeyValuePair<int, ForumTopic>> Forums { get; set; }
         
     }
