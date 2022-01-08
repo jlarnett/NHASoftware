@@ -1,0 +1,48 @@
+﻿@model NHASoftware.ViewModels.ForumTopicDetailsView
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Model.topic.Title</h1>
+
+<div>
+    <a asp-controller="ForumPosts" asp-area="" asp-action="Create" asp-route-id="@Model.topic.Id" class=" btn-primary btn-dark btn-link">Create Post</a>
+</div>
+
+<hr />
+
+<div>
+    <table id="ForumPostTable" class="tableCustom">
+
+    </table>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var post = JSON.parse('@Html.Raw(Json.Serialize(Model.Posts))');
+
+            var table = $("#ForumPostTable").DataTable({
+                data: post,
+                columns:
+                [
+                    {
+                        data: "Title",
+                        render: function (data, type, post) 
+                        {
+                            return "<article class='group-thread group-thread--rootview' data-id='" + post.id + "'><a class='group-thread__link' href='/ForumPosts/Details/" + post.id + "'><div class='group-thread__details'><h3 class='group-thread__heading'>" + post.title +"</h3><p class='group-thread__summary'>" + post.forumText + "</p></div><span class='forum-stat forum-stat--thread'>619,851</span><span class='forum-stat forum-stat--posts'>9,280,587</span><span class='forum-stat forum-stat--latest'>05/01/22 01:34</span></a></article>";
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+
+}
+
+
+
+

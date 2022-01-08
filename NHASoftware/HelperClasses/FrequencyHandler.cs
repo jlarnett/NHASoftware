@@ -17,11 +17,12 @@ namespace NHASoftware
 
         public DateTime GenerateNextDate(DateTime startDate, TaskFrequency frequency)
         {
-            /**********************************************************************************************
+            /**************************************************************************************************************
             *  Takes in the inputted task date & finds the next trigger date. If future returns inputted date.
-            *  else it only takes monthly frequency currently. Adds one month to inputted date.
-            *  also has ability to just use days that isn't implemented in the cron string yet.
-            **********************************************************************************************/
+            *  else it only takes monthly, daily, custom frequency. Custom dates simply use the day value provided.
+            *  
+            ****************************************************************************************************************/
+
             DateTime newDate;
 
             //Adds minutes to the date so that today value Next Dates are generated correctly.
