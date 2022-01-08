@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NHASoftware.Data;
 
@@ -11,9 +12,10 @@ using NHASoftware.Data;
 namespace NHASoftware.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220104043545_CreatedForumModels")]
+    partial class CreatedForumModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -248,15 +250,17 @@ namespace NHASoftware.Migrations
                     b.Property<int>("ForumPostId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId1")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ForumPostId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("ForumComments");
                 });
@@ -268,9 +272,6 @@ namespace NHASoftware.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("CommentCount")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
@@ -286,33 +287,19 @@ namespace NHASoftware.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId1")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ForumTopicId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("ForumPost");
-                });
-
-            modelBuilder.Entity("NHASoftware.Models.ForumModels.ForumSection", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ForumSections");
                 });
 
             modelBuilder.Entity("NHASoftware.Models.ForumModels.ForumTopic", b =>
@@ -330,15 +317,6 @@ namespace NHASoftware.Migrations
                     b.Property<int>("ForumSectionId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("LastestPost")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PostCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ThreadCount")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -348,6 +326,23 @@ namespace NHASoftware.Migrations
                     b.HasIndex("ForumSectionId");
 
                     b.ToTable("ForumTopics");
+                });
+
+            modelBuilder.Entity("NHASoftware.Models.ForumSection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ForumSections");
                 });
 
             modelBuilder.Entity("NHASoftware.Models.Subscription", b =>
@@ -511,9 +506,7 @@ namespace NHASoftware.Migrations
 
                     b.HasOne("NHASoftware.Models.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("ForumPost");
 
@@ -530,7 +523,7 @@ namespace NHASoftware.Migrations
 
                     b.HasOne("NHASoftware.Models.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("ForumTopic");
 
@@ -539,7 +532,7 @@ namespace NHASoftware.Migrations
 
             modelBuilder.Entity("NHASoftware.Models.ForumModels.ForumTopic", b =>
                 {
-                    b.HasOne("NHASoftware.Models.ForumModels.ForumSection", "ForumSection")
+                    b.HasOne("NHASoftware.Models.ForumSection", "ForumSection")
                         .WithMany()
                         .HasForeignKey("ForumSectionId")
                         .OnDelete(DeleteBehavior.Cascade)

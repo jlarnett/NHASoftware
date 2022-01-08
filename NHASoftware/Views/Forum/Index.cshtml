@@ -1,0 +1,90 @@
+﻿@model NHASoftware.ViewModels.ForumIndexViewModel
+
+@{
+    ViewData["Title"] = "Forums";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Forums</h1>
+
+<div>
+    <a asp-action="Index" asp-controller="ForumSections" class="link-light">Forum Sections</a>
+    <a asp-action="Index" asp-controller="ForumTopics"class="link-light">Forum Topics</a>
+</div>
+
+<div>
+    @{
+        foreach (var section in @Model.ForumSections)
+        {
+            /************************************************************************************************************
+             *  Creates <Detail> for each section. Also creates the table so that topics can be added to each section
+             *  efficiently in javascript later.
+             ***********************************************************************************************************/
+
+            var name = section.Name;
+            var id = section.Id;
+
+            <details open class="forum-group">
+                <summary class="forum-stats">
+                    <h2 class="forum-group__heading">@name</h2>
+                    <div class="thread-plate-titles thread-plate-titles--rootview">
+                        <h4 class="thread-plate-title thread-plate-title--root-threads">Threads</h4>
+                        <h4 class="thread-plate-title thread-plate-title--root-posts">Posts</h4>
+                        <h4 class="thread-plate-title thread-plate-title--root-latest">Latest Post</h4>
+                    </div>
+                </summary>
+                    
+                <table id="@id" class="tableCustom">
+                    <thead>
+                    <tr>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th></th>
+                    </tr>
+                    </tfoot>
+                </table>
+
+            </details>
+
+        }
+    }
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/ForumIndexScript.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            //This script populates all ForumSection tables with the correct ForumTopics.
+
+            var ForumsKV = JSON.parse('@Html.Raw(Json.Serialize(Model.Forums))');
+
+            var arrayLength = ForumsKV.length;
+            var keys = [];
+
+
+            for (var i = 0; i < arrayLength; i++) {
+                if (keys.includes(ForumsKV[i].key)) {
+
+                } else {
+                    var table = $("#" + ForumsKV[i].key).DataTable();
+                    keys.push(ForumsKV[i].key);
+                }
+            }
+
+            for (var i = 0; i < arrayLength; i++) {
+
+                var table2 = $("#" + ForumsKV[i].key).DataTable();
+                console.log(ForumsKV[i].value);
+                table2.row.add( ["<article class='group-thread group-thread--rootview' data-id='" + ForumsKV[i].value.id + "'><a class='group-thread__link' href='/ForumTopics/Details/" + ForumsKV[i].value.id + "'><div class='group-thread__details'><h3 class='group-thread__heading'>" + ForumsKV[i].value.title + "</h3><p class='group-thread__summary'>" + ForumsKV[i].value.description + "</p></div><span class='forum-stat forum-stat--thread'>"+ ForumsKV[i].value.threadCount + "</span><span class='forum-stat forum-stat--posts'>" + ForumsKV[i].value.postCount + "</span><span class='forum-stat forum-stat--latest'>" + ForumsKV[i].value.lastestPost + "</span></a></article>" ] ).draw();
+            }
+        });
+
+    </script>
+    
+}
+

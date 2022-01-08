@@ -5,10 +5,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<h1>Create New Task Frequency</h1>
 
-<h4>TaskFrequency</h4>
+<div class="text-body text-white">
+    When creating a new frequency. Frequencies named "Monthly" or "Daily" use custom logic to determine correct job dates.
+    Otherwise the frequency value in days will be used to determine correct job schedule
+</div>
+
 <hr />
+
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">

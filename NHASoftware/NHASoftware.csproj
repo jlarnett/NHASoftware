@@ -45,7 +45,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Views\Forum\" />
     <Folder Include="wwwroot\Reports\" />
   </ItemGroup>
 
