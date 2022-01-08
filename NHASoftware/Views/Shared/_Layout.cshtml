@@ -28,30 +28,20 @@
 
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        
+
+                        <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+
                         @if (User.IsInRole("admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="TaskFrequencies" asp-action="Index">Task Frequency</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a>
-                            </li>
-                        }
+                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="TaskFrequencies" asp-action="Index">Task Frequency</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a></li>
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="TaskItems" asp-action="Index">Tasks Items</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a>
-                        </li>
-                        <li>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Subscriptions" asp-action="Index">Subscriptions</a>
-                        </li>
-                        
+                        }
+                        <li class="nav-item"> <a class="nav-link text-dark" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="TaskItems" asp-action="Index">Tasks Items</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
+                        <li><a class="nav-link text-dark" asp-area="" asp-controller="Subscriptions" asp-action="Index">Subscriptions</a></li>
+
 
                     </ul>
                     <partial name="_LoginPartial"/>
