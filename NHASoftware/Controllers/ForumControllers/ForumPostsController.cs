@@ -17,6 +17,7 @@ namespace NHASoftware.Controllers
 {
     public class ForumPostsController : Controller
     {
+        //DI Services
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
@@ -36,6 +37,11 @@ namespace NHASoftware.Controllers
         // GET: ForumPosts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            /*******************************************************************************************************
+            *      GET: ForumPosts/Details
+            *      Returns ForumPost Details View. Uses detailVm
+            *******************************************************************************************************/
+
             if (id == null)
             {
                 return NotFound();
@@ -43,6 +49,7 @@ namespace NHASoftware.Controllers
 
             var forumPost = await _context.ForumPost
                 .Include(f => f.ForumTopic)
+                .Include(f => f.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (forumPost == null)
@@ -63,11 +70,18 @@ namespace NHASoftware.Controllers
         [Authorize]
         public IActionResult Create(int id)
         {
-            var forumPost = new ForumPost();
-            forumPost.UserId = _userManager.GetUserId(HttpContext.User);
-            forumPost.ForumTopicId = id;
-            forumPost.CreationDate = DateTime.Now;
-            forumPost.CommentCount = 0;
+            /*******************************************************************************************************
+            *      GET: ForumPosts/Create
+            *      Returns forumPost Create View. Populates some server side information.
+            *******************************************************************************************************/
+
+            var forumPost = new ForumPost()
+            {
+                UserId = _userManager.GetUserId(HttpContext.User),
+                ForumTopicId = id,
+                CreationDate = DateTime.Now,
+                CommentCount = 0
+            };
 
             return View(forumPost);
         }
@@ -100,12 +114,18 @@ namespace NHASoftware.Controllers
         // GET: ForumPosts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            /*******************************************************************************************************
+            *      GET: ForumPosts/Edit/3
+            *      Returns the ForumPost edit view. 
+            *******************************************************************************************************/
+
             if (id == null)
             {
                 return NotFound();
             }
 
             var forumPost = await _context.ForumPost.FindAsync(id);
+
             if (forumPost == null)
             {
                 return NotFound();
@@ -115,12 +135,15 @@ namespace NHASoftware.Controllers
         }
 
         // POST: ForumPosts/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ForumText,CreationDate,UserId,ForumTopicId")] ForumPost forumPost)
         {
+            /*******************************************************************************************************
+            *      POST: ForumPosts/Edit/3
+            *      Updates the post in database.
+            *******************************************************************************************************/
+
             if (id != forumPost.Id)
             {
                 return NotFound();
@@ -151,8 +174,14 @@ namespace NHASoftware.Controllers
         }
 
         // GET: ForumPosts/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
+            /**********************************************************************************************************************************
+            *      GET: ForumPosts/Delete/3
+            *      Checks is id exists. Verifies the user trying to delete post is same as post. Returns DeleteConfirmed View
+            ***********************************************************************************************************************************/
+
             if (id == null)
             {
                 return NotFound();
@@ -161,9 +190,14 @@ namespace NHASoftware.Controllers
             var forumPost = await _context.ForumPost
                 .Include(f => f.ForumTopic)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (forumPost == null)
             {
                 return NotFound();
+            }
+            else if (forumPost.UserId != _userManager.GetUserId(HttpContext.User))
+            {
+                return RedirectToAction("Details", "ForumPosts", new {id = forumPost.Id});
             }
 
             return View(forumPost);
@@ -174,6 +208,11 @@ namespace NHASoftware.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            /**********************************************************************************************************************************
+            *      POST: ForumPosts/Delete/3
+            *      Deletes post from database.
+            ***********************************************************************************************************************************/
+
             var forumPost = await _context.ForumPost.FindAsync(id);
             _context.ForumPost.Remove(forumPost);
             await _context.SaveChangesAsync();

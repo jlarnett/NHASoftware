@@ -5,11 +5,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<head>
+    <link rel="stylesheet" href="css/ForumStyles.css">
+</head>
+
+
 <h1>Forums</h1>
 
 <div>
-    <a asp-action="Index" asp-controller="ForumSections" class="link-light">Forum Sections</a>
-    <a asp-action="Index" asp-controller="ForumTopics"class="link-light">Forum Topics</a>
+    @if (User.IsInRole("admin"))
+    {
+        <a asp-action="Create" asp-controller="ForumSections" class="link-light">Add Forum Section</a>
+        <a asp-action="Create" asp-controller="ForumTopics"class="link-light">Add Section Topic</a>
+    }
+
 </div>
 
 <div>
@@ -78,9 +87,17 @@
 
             for (var i = 0; i < arrayLength; i++) {
 
+                //bug is happening here where all dates are defaulting to the current datetime. 
+
                 var table2 = $("#" + ForumsKV[i].key).DataTable();
-                console.log(ForumsKV[i].value);
-                table2.row.add( ["<article class='group-thread group-thread--rootview' data-id='" + ForumsKV[i].value.id + "'><a class='group-thread__link' href='/ForumTopics/Details/" + ForumsKV[i].value.id + "'><div class='group-thread__details'><h3 class='group-thread__heading'>" + ForumsKV[i].value.title + "</h3><p class='group-thread__summary'>" + ForumsKV[i].value.description + "</p></div><span class='forum-stat forum-stat--thread'>"+ ForumsKV[i].value.threadCount + "</span><span class='forum-stat forum-stat--posts'>" + ForumsKV[i].value.postCount + "</span><span class='forum-stat forum-stat--latest'>" + ForumsKV[i].value.lastestPost + "</span></a></article>" ] ).draw();
+
+                var str = spacetime(ForumsKV[i].value.latestDate);
+                var date2 = str.format('{month}-{date-pad}-{year} {time}{am pm}');
+                console.log(ForumsKV);
+                console.log(str);
+                console.log(date2);
+
+                table2.row.add( ["<article class='group-thread group-thread--rootview' data-id='" + ForumsKV[i].value.id + "'><a class='group-thread__link' href='/ForumTopics/Details/" + ForumsKV[i].value.id + "'><div class='group-thread__details'><h3 class='group-thread__heading'>" + ForumsKV[i].value.title + "</h3><p class='group-thread__summary'>" + ForumsKV[i].value.description + "</p></div><span class='forum-stat forum-stat--thread'>"+ ForumsKV[i].value.threadCount + "</span><span class='forum-stat forum-stat--posts'>" + ForumsKV[i].value.postCount + "</span><span class='forum-stat forum-stat--latest'>" + date2 + "</span></a></article>" ] ).draw();
             }
         });
 
