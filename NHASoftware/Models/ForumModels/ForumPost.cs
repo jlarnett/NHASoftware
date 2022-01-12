@@ -11,5 +11,7 @@
         public string? UserId { get; set; }
         public ForumTopic? ForumTopic { get; set; }
         public int ForumTopicId { get; set; }
+        public int LikeCount { get; set; }
+        public int DislikeCount { get; set; }
     }
 }

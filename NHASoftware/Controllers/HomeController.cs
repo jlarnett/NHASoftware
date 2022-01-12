@@ -16,7 +16,6 @@ namespace NHASoftware.Controllers
         private ApplicationDbContext _context;
         private ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
-        private FrequencyHandler frequencyHandler;
         private TaskHandler taskHandler;
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IEmailSender emailService, UserManager<ApplicationUser> userManager)

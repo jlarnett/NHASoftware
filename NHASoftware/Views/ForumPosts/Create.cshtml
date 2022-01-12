@@ -15,13 +15,15 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
+                <input asp-for="Title" class="form-control " />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ForumText" class="control-label"></label>
-                <input asp-for="ForumText" aria-multiline="true"/>
-                <span asp-validation-for="ForumText" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="ForumText">Forum Text</label>
+                    <textarea asp-for="ForumText" class="form-control post-create-input text-wrap:normal" type="text" placeholder="Add Forum post text "></textarea>
+                    <span asp-validation-for="ForumText" class="text-danger"></span>
+                </div>
             </div>
             <div class="form-group">
                 @Html.HiddenFor(m => m.CreationDate)

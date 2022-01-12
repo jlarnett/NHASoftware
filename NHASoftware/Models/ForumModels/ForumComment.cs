@@ -9,5 +9,7 @@
         public string UserId { get; set; }
         public ForumPost? ForumPost { get; set; }
         public int ForumPostId { get; set; }
+        public int LikeCount { get; set; }
+        public int DislikeCount { get; set; }
     }
 }
