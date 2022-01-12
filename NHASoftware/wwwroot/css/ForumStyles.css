@@ -1,0 +1,236 @@
+﻿/********************************************************************************
+    Articles E.G. Forums Style Config
+********************************************************************************/
+article {
+    display: block;
+}
+
+.group-thread__heading {
+    color: #e1bb34;
+    font-family: "MuseoSans";
+    font-size: 1.6em;
+    letter-spacing: normal;
+    font-weight: normal;
+}
+
+.group-thread {
+    background: transparent url(https://www.runescape.com/img/rs3/forums/panel.jpg) repeat bottom left;
+    box-shadow: 0 -4px 5px -1px #000, 0 4px 5px -1px #000;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 4px;
+    font-size: .8em;
+}
+
+.group-thread__link {
+    float: left;
+    height: 88%;
+    overflow: hidden;
+    padding: 5px 10px;
+}
+
+.group-thread__details {
+    border-right: solid 1px #000;
+    float: left;
+    margin-top: 8px;
+    width: 75%;
+}
+
+.group-thread__summary {
+    color: #d7dbe1;
+    font-size: 1.2em;
+    white-space: pre-wrap;
+}
+
+.group-thread:hover {
+    filter: brightness(1.5);
+}
+
+.group-thread .forum-stat {
+    border-left: 1px solid #1e313c;
+    border-right: solid 1px #000;
+    color: #d7dbe1;
+    display: block;
+    float: left;
+    font-size: 1.2em;
+    height: 38px;
+    line-height: 30px;
+    margin-top: 7px;
+    padding: 5px 15px 0 0;
+    position: relative;
+    text-align: right;
+}
+
+.group-thread .forum-stat {
+    border-left: 1px solid #1e313c;
+    border-right: solid 1px #000;
+    color: #d7dbe1;
+    display: block;
+    float: left;
+    font-size: 1.4em;
+    height: 100px;
+    line-height: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px 30px 0 0;
+    position: relative;
+    text-align: right;
+    max-height: 136px;
+}
+
+
+/********************************************************************************
+    Forum Group  Styling
+********************************************************************************/
+
+.forum-group {
+    min-height: 57px;
+    overflow: hidden;
+    padding-bottom: 27px;
+    position: relative;
+}
+
+.forum-group__heading {
+    float: left;
+    font-size: 2.5em;
+    max-height: 200px;
+    margin: 5px 10px;
+    max-width: 70%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    position: relative;
+    white-space: normal;
+    color: #e1bb34;
+    word-wrap: break-spaces;
+}
+
+.forum-group[open] .thread-plate-titles--rootview, .forum-group--open .thread-plate-titles--rootview {
+    display: block;
+}
+
+.forum-group .group-thread .forum-stat--latest:last-child {
+    text-align: right;
+}
+
+.forum-group--open .group-thread--rootview, html.details .group-thread--rootview {
+    display: block;
+}
+
+
+/********************************************************************************
+    Forum Stat
+********************************************************************************/
+
+.forum-stats {
+    cursor: pointer;
+    display: block;
+    margin: 5px 0;
+    overflow: hidden;
+    padding-right: 25px;
+    background-color: #1b252c;
+    border: 1px solid #404448;
+    background: transparent url(https://www.runescape.com/img/rs3/forums/panel.jpg) repeat bottom left;
+}
+
+/********************************************************************************
+    Thread plate setup. E.G. Details Top Bar
+********************************************************************************/
+
+.thread-plate-titles {
+    text-align: right;
+}
+
+.thread-plate-title {
+    color: #d7dbe1;
+    display: inline-block;
+    font-family: "MuseoSans";
+    font-size: 1.4em;
+    overflow: hidden;
+    text-align: left;
+}
+
+.thread-plate-title--root-posts {
+    text-align: center;
+    width: 5%;
+    border-right: solid 1px #000;
+}
+
+.thread-plate-title--root-threads {
+    text-align: center;
+    width: 5%;
+    border-right: solid 1px #000;
+}
+
+.thread-plate-title--root-latest {
+    text-align: center;
+    width: 15%;
+    margin-top: 15px;
+    border-right: solid 1px #000;
+}
+
+.forum-stats {
+    padding: 0px;
+}
+
+.forum-stat--thread {
+    width: 5%;
+}
+
+.forum-stat--posts {
+    width: 5%;
+}
+
+.forum-stat--latest {
+    width: 15%
+}
+
+
+
+/*******************************************************************************
+    Topic Styles
+*******************************************************************************/
+
+.topic-link {
+    width: 99%;
+    display: inline-block;
+    padding: 5px;
+    margin: 5px;
+    border: 2px ridge white;
+    text-decoration: none;
+}
+
+.topic-details {
+    font-size: 1em;
+    float: left;
+    width: 40%;
+    border-right: 2px ridge darkgray;
+}
+
+.topic-details-description {
+    margin-right: 5px;
+    margin-left: 20px;
+    float: left;
+}
+
+/********************************************************************************
+    Custom CSS Classes
+********************************************************************************/
+
+.tableCustom {
+    margin: 0;
+    width: 100%;
+}
+
+.cmt-action {
+    width: 100px;
+    line-height: 50px;
+    display: block;
+    margin: 2px;
+    text-align: center;
+}
+
+.action-article {
+    height: 132px;
+    padding: 20px 40px;
+}
