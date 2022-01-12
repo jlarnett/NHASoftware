@@ -5,9 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<head>
+    <link rel="stylesheet" href="~/css/ForumStyles.css">
+</head>
+
 <div>
     <h2>@Model.ForumPost.Title</h2>
-    <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="" class=" btn-primary btn-dark btn-link">Create Comment</a>
+    <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="@Model.ForumPost.Id" class=" btn-primary btn-dark btn-link">Create Comment</a>
     <hr />
 </div>
 
@@ -31,7 +35,8 @@
     <table id="PostTable" class="tableCustom">
         <thead>
         <tr>
-            <th></th>
+            <th>Comments</th>
+            <th>Actions</th>
         </tr>
         </thead>
     </table>
@@ -41,29 +46,36 @@
 
 @section Scripts
 {
-    <script type="text/javascript">
-        $(document).ready(function() {
-            var comments = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumComments))');
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var comments = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumComments))');
 
-            var arrayLength = comments.length;
+                var arrayLength = comments.length;
 
-            var table = $("#PostTable").DataTable();
+                var table = $("#PostTable").DataTable({
+                    "columns": [
+                        null,
+                        {"width": "10%"}
+                    ]
+                });
 
+                for (var i = 0; i < arrayLength; i++) {
+                    var str = spacetime(comments[i].creationDate);
+                    var date = str.format('{month}-{date-pad}-{year} {time}{am pm}');
+                    
 
-            for (var i = 0; i < arrayLength; i++) {
-                console.log(comments[i]);
-                table.row.add( ["<article class='group-thread group-thread--rootview' data-id='" + comments[i].id + "'>" +
-                    "<a class='group-thread__link' href='/ForumComments/Delete/" + comments[i].id + "'>" +
-                    "<div class='group-thread__details'>" +
-                    "<h3 class='group-thread__heading'>" + comments[i].user.email + "</h3>" +
-                    "<p class='group-thread__summary'>" + comments[i].commentText + "</p>" +
-                    "</div>" +
-                    "<span class='forum-stat forum-stat--thread'>" + 0 + "</span>" +
-                    "<span class='forum-stat forum-stat--latest'>" + comments[i].creationDate + "</span>" +
-                    "</a>" +
-                    "</article>" ] ).draw();
-            }
-        });
+                    table.row.add( ["<article class='group-thread group-thread--rootview' data-id='" + comments[i].id + "'>" +
+                        "<a class='group-thread__link'>" +
+                        "<div class='group-thread__details'>" +
+                        "<h3 class='group-thread__heading'>" + comments[i].user.email + "</h3>" +
+                        "<p class='group-thread__summary'>" + comments[i].commentText + "</p>" +
+                        "</div>" +
+                        "<span class='forum-stat forum-stat--thread'>" + 0 + "</span>" +
+                        "<span class='forum-stat forum-stat--latest'>" + date + "</span>" +
+                        "</a>" +
+                        "</article>", "<article class='group-thread group-thread--rootview action-article'>" + "<a class='btn-primary btn-link cmt-action' href='/ForumComments/delete/" + comments[i].id  + "'>Delete</a>" + "<a class='btn-primary btn-link cmt-action' href='/ForumComments/edit/" + comments[i].id  + "'>Edit</a></article>"] ).draw();
+                }
+            });
     </script>
 
 }

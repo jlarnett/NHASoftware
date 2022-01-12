@@ -5,6 +5,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<head>
+    <link rel="stylesheet" href="~/css/ForumStyles.css">
+</head>
+
 <h1>@Model.topic.Title</h1>
 
 <div>
@@ -15,7 +19,6 @@
 
 <div>
     <table id="ForumPostTable" class="tableCustom">
-
     </table>
 </div>
 
@@ -23,17 +26,26 @@
 {
     <script type="text/javascript">
         $(document).ready(function() {
-            var post = JSON.parse('@Html.Raw(Json.Serialize(Model.Posts))');
+
+            function jsonEscape(str) {
+                return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t");
+            }
+
+            var prePost = '@Html.Raw(Json.Serialize(@Model.Posts))';
+            var post = JSON.parse(jsonEscape(prePost));
 
             var table = $("#ForumPostTable").DataTable({
                 data: post,
                 columns:
                 [
                     {
-                        data: "Title",
+                        data: "id",
                         render: function (data, type, post) 
                         {
-                            return "<article class='group-thread group-thread--rootview' data-id='" + post.id + "'><a class='group-thread__link' href='/ForumPosts/Details/" + post.id + "'><div class='group-thread__details'><h3 class='group-thread__heading'>" + post.title +"</h3><p class='group-thread__summary'>" + post.forumText + "</p></div><span class='forum-stat forum-stat--thread'>619,851</span><span class='forum-stat forum-stat--posts'>9,280,587</span><span class='forum-stat forum-stat--latest'>05/01/22 01:34</span></a></article>";
+                            var str = spacetime(post.creationDate);
+                            var date = str.format('{month}-{date-pad}-{year} {time}{am pm}');
+
+                            return "<article class='group-thread group-thread--rootview' data-id='" + post.id + "'><a class='group-thread__link' href='/ForumPosts/Details/" + post.id + "'><div class='group-thread__details'><h3 class='group-thread__heading'>" + post.title +"</h3><p class='group-thread__summary'>" + post.forumText + "</p></div><span class='forum-stat forum-stat--thread'>"+ post.commentCount + "</span><span class='forum-stat forum-stat--posts'>9,280,587</span><span class='forum-stat forum-stat--latest'>" + date + "</span></a></article>";
                         }
                     }
                 ]
