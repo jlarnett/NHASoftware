@@ -16,6 +16,9 @@ namespace NHASoftware.Data
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<Subscription>().HasOne(e => e.TaskItem).WithMany(e => e.Subscriptions)
+                .OnDelete(DeleteBehavior.SetNull);
+
             #region OldManyToManyMapping
 
             //builder.Entity<BookAuthor>().HasKey(sc => new { sc.AuthorId, sc.BookId });

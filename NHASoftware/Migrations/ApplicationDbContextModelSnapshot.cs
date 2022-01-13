@@ -563,8 +563,9 @@ namespace NHASoftware.Migrations
             modelBuilder.Entity("NHASoftware.Models.Subscription", b =>
                 {
                     b.HasOne("NHASoftware.Models.TaskItem", "TaskItem")
-                        .WithMany()
-                        .HasForeignKey("TaskItemId");
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("TaskItemId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("NHASoftware.Models.ApplicationUser", "User")
                         .WithMany()
@@ -594,6 +595,11 @@ namespace NHASoftware.Migrations
                     b.Navigation("Frequency");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NHASoftware.Models.TaskItem", b =>
+                {
+                    b.Navigation("Subscriptions");
                 });
 #pragma warning restore 612, 618
         }
