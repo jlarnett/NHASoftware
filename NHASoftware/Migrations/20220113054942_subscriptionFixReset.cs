@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace NHASoftware.Migrations
 {
-    public partial class Initial : Migration
+    public partial class subscriptionFixReset : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -48,6 +49,19 @@ namespace NHASoftware.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ForumSections",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ForumSections", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -171,24 +185,25 @@ namespace NHASoftware.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Subscriptions",
+                name: "ForumTopics",
                 columns: table => new
                 {
-                    SubscriptionId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SubscriptionName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SubscriptionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SubscriptionDay = table.Column<int>(type: "int", nullable: false),
-                    SubscriptionCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ThreadCount = table.Column<int>(type: "int", nullable: false),
+                    PostCount = table.Column<int>(type: "int", nullable: false),
+                    LastestPost = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ForumSectionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Subscriptions", x => x.SubscriptionId);
+                    table.PrimaryKey("PK_ForumTopics", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Subscriptions_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        name: "FK_ForumTopics_ForumSections_ForumSectionId",
+                        column: x => x.ForumSectionId,
+                        principalTable: "ForumSections",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -206,8 +221,7 @@ namespace NHASoftware.Migrations
                     FrequencyId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     NextTaskDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    JobCrated = table.Column<bool>(type: "bit", nullable: false),
-                    SubscriptionId = table.Column<int>(type: "int", nullable: true)
+                    JobCrated = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -224,11 +238,97 @@ namespace NHASoftware.Migrations
                         principalTable: "Frequencies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ForumPost",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ForumText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CommentCount = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ForumTopicId = table.Column<int>(type: "int", nullable: false),
+                    LikeCount = table.Column<int>(type: "int", nullable: false),
+                    DislikeCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ForumPost", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tasks_Subscriptions_SubscriptionId",
-                        column: x => x.SubscriptionId,
-                        principalTable: "Subscriptions",
-                        principalColumn: "SubscriptionId");
+                        name: "FK_ForumPost_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ForumPost_ForumTopics_ForumTopicId",
+                        column: x => x.ForumTopicId,
+                        principalTable: "ForumTopics",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Subscriptions",
+                columns: table => new
+                {
+                    SubscriptionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SubscriptionName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SubscriptionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SubscriptionDay = table.Column<int>(type: "int", nullable: false),
+                    SubscriptionCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TaskItemId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subscriptions", x => x.SubscriptionId);
+                    table.ForeignKey(
+                        name: "FK_Subscriptions_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Subscriptions_Tasks_TaskItemId",
+                        column: x => x.TaskItemId,
+                        principalTable: "Tasks",
+                        principalColumn: "TaskId",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ForumComments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CommentText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ForumPostId = table.Column<int>(type: "int", nullable: false),
+                    LikeCount = table.Column<int>(type: "int", nullable: false),
+                    DislikeCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ForumComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ForumComments_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ForumComments_ForumPost_ForumPostId",
+                        column: x => x.ForumPostId,
+                        principalTable: "ForumPost",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -271,6 +371,36 @@ namespace NHASoftware.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ForumComments_ForumPostId",
+                table: "ForumComments",
+                column: "ForumPostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ForumComments_UserId",
+                table: "ForumComments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ForumPost_ForumTopicId",
+                table: "ForumPost",
+                column: "ForumTopicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ForumPost_UserId",
+                table: "ForumPost",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ForumTopics_ForumSectionId",
+                table: "ForumTopics",
+                column: "ForumSectionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subscriptions_TaskItemId",
+                table: "Subscriptions",
+                column: "TaskItemId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Subscriptions_UserId",
                 table: "Subscriptions",
                 column: "UserId");
@@ -279,11 +409,6 @@ namespace NHASoftware.Migrations
                 name: "IX_Tasks_FrequencyId",
                 table: "Tasks",
                 column: "FrequencyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tasks_SubscriptionId",
-                table: "Tasks",
-                column: "SubscriptionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_UserId",
@@ -309,19 +434,31 @@ namespace NHASoftware.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Tasks");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "Frequencies");
+                name: "ForumComments");
 
             migrationBuilder.DropTable(
                 name: "Subscriptions");
 
             migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "ForumPost");
+
+            migrationBuilder.DropTable(
+                name: "Tasks");
+
+            migrationBuilder.DropTable(
+                name: "ForumTopics");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Frequencies");
+
+            migrationBuilder.DropTable(
+                name: "ForumSections");
         }
     }
 }
