@@ -12,8 +12,8 @@ using NHASoftware.Data;
 namespace NHASoftware.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220102004346_InitialReset")]
-    partial class InitialReset
+    [Migration("20220113054942_subscriptionFixReset")]
+    partial class subscriptionFixReset
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -232,6 +232,138 @@ namespace NHASoftware.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("NHASoftware.Models.ForumModels.ForumComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CommentText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DislikeCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ForumPostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LikeCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ForumPostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ForumComments");
+                });
+
+            modelBuilder.Entity("NHASoftware.Models.ForumModels.ForumPost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CommentCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DislikeCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ForumText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ForumTopicId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LikeCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ForumTopicId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ForumPost");
+                });
+
+            modelBuilder.Entity("NHASoftware.Models.ForumModels.ForumSection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ForumSections");
+                });
+
+            modelBuilder.Entity("NHASoftware.Models.ForumModels.ForumTopic", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ForumSectionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastestPost")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PostCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ThreadCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ForumSectionId");
+
+                    b.ToTable("ForumTopics");
+                });
+
             modelBuilder.Entity("NHASoftware.Models.Subscription", b =>
                 {
                     b.Property<int>("SubscriptionId")
@@ -253,11 +385,16 @@ namespace NHASoftware.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("TaskItemId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("SubscriptionId");
+
+                    b.HasIndex("TaskItemId");
 
                     b.HasIndex("UserId");
 
@@ -301,9 +438,6 @@ namespace NHASoftware.Migrations
                     b.Property<DateTime>("NextTaskDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("SubscriptionId")
-                        .HasColumnType("int");
-
                     b.Property<string>("TaskDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -324,8 +458,6 @@ namespace NHASoftware.Migrations
                     b.HasKey("TaskId");
 
                     b.HasIndex("FrequencyId");
-
-                    b.HasIndex("SubscriptionId");
 
                     b.HasIndex("UserId");
 
@@ -383,13 +515,67 @@ namespace NHASoftware.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("NHASoftware.Models.Subscription", b =>
+            modelBuilder.Entity("NHASoftware.Models.ForumModels.ForumComment", b =>
                 {
+                    b.HasOne("NHASoftware.Models.ForumModels.ForumPost", "ForumPost")
+                        .WithMany()
+                        .HasForeignKey("ForumPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("NHASoftware.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ForumPost");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NHASoftware.Models.ForumModels.ForumPost", b =>
+                {
+                    b.HasOne("NHASoftware.Models.ForumModels.ForumTopic", "ForumTopic")
+                        .WithMany()
+                        .HasForeignKey("ForumTopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NHASoftware.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("ForumTopic");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NHASoftware.Models.ForumModels.ForumTopic", b =>
+                {
+                    b.HasOne("NHASoftware.Models.ForumModels.ForumSection", "ForumSection")
+                        .WithMany()
+                        .HasForeignKey("ForumSectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ForumSection");
+                });
+
+            modelBuilder.Entity("NHASoftware.Models.Subscription", b =>
+                {
+                    b.HasOne("NHASoftware.Models.TaskItem", "TaskItem")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("TaskItemId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("NHASoftware.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TaskItem");
 
                     b.Navigation("User");
                 });
@@ -402,10 +588,6 @@ namespace NHASoftware.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("NHASoftware.Models.Subscription", "Subscription")
-                        .WithMany()
-                        .HasForeignKey("SubscriptionId");
-
                     b.HasOne("NHASoftware.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -414,9 +596,12 @@ namespace NHASoftware.Migrations
 
                     b.Navigation("Frequency");
 
-                    b.Navigation("Subscription");
-
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NHASoftware.Models.TaskItem", b =>
+                {
+                    b.Navigation("Subscriptions");
                 });
 #pragma warning restore 612, 618
         }

@@ -30,5 +30,7 @@ namespace NHASoftware.Models
         public DateTime NextTaskDate { get; set; }
 
         public bool JobCrated { get; set; }
+
+        public IList<Subscription>? Subscriptions { get; set; }
     }
 }

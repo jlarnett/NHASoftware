@@ -8,11 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20220101230148_Reset.cs" />
-    <Compile Remove="Migrations\20220101230148_Reset.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Remove="wwwroot\js\AddBookAuthor.js" />
   </ItemGroup>
 

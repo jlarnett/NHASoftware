@@ -202,6 +202,7 @@ namespace NHASoftware.Controllers
                 .Include(t => t.Frequency)
                 .Include(t => t.User)
                 .FirstOrDefaultAsync(m => m.TaskId == id);
+
             if (taskItem == null)
             {
                 return NotFound();
@@ -220,6 +221,10 @@ namespace NHASoftware.Controllers
              ****************************************************************************************/
 
             var taskItem = await _context.Tasks.FindAsync(id);
+            
+            //Critical To deleting. Otherwise a BS exception is thrown for cascading delete.
+            var subscription = _context.Subscriptions.Single(e => e.TaskItem == taskItem);
+
 
             _context.Tasks.Remove(taskItem);
             RecurringJob.RemoveIfExists("TaskId: " + taskItem.TaskId);
