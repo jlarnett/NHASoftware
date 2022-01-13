@@ -17,21 +17,29 @@
 
 
 <div class="main">
-    <article class="group-thread group-thread--rootview" data-id="@Model.ForumPost.Id">
+    <article class="group-thread group-thread--rootview testerClass" data-id="@Model.ForumPost.Id">
         @{
             var id = @Model.ForumPost.Id;
         }
-        <a class="group-thread__link" href="/ForumPosts/delete/@id">
+
+        <div class="group-thread__link post-detail-thread">
             <div class="group-thread__details">
                 <h3 class="group-thread__heading">@Model.ForumPost.User.Email</h3>
                 <h3 class="group-thread__heading">@Model.ForumPost.Title</h3>
                 <p class="group-thread__summary">@Model.ForumPost.ForumText</p>
             </div>
-            <span class="forum-stat forum-stat--thread">@Model.ForumPost.CommentCount</span>
-            <span class="forum-stat forum-stat--latest">@Model.ForumPost.CreationDate</span>
-        </a>
-    </article>
+            <div>
+                <span class="forum-stat forum-stat--thread">@Model.ForumPost.CommentCount</span>
+                <span class="forum-stat forum-stat--latest">@Model.ForumPost.CreationDate</span>
+            </div>
+            <div class="forum-post-actions">
+                    <a class="btn-primary btn-link post-action" href="/ForumPosts/delete/@id">Delete</a>
+                    <a class="btn-primary btn-link post-action" href="/ForumPosts/edit/@id">Edit</a>
+            </div>
+        </div>
 
+    </article>
+    
     <table id="PostTable" class="tableCustom">
         <thead>
         <tr>

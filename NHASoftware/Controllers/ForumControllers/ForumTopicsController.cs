@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -45,6 +46,12 @@ namespace NHASoftware.Controllers
             if (forumTopic == null)
             {
                 return NotFound();
+            }
+
+            foreach (var post in topicPosts)
+            {
+                //Replaces the forumText line breaks with correct html element
+                post.ForumText = Regex.Replace(post.ForumText, @"\r\n?|\n", "<br>");
             }
 
             var vm = new ForumTopicDetailsView()

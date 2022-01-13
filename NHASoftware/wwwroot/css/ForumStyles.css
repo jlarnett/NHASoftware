@@ -230,7 +230,36 @@ article {
     text-align: center;
 }
 
+.post-action {
+    display: inline-block;
+
+}
+
 .action-article {
     height: 132px;
     padding: 20px 40px;
+    float: left;
 }
+
+.forum-post-actions {
+    display: inline-block;
+    float: right;
+    width: 5%;
+    text-align: center;
+
+}
+
+.post-detail-thread {
+    width: 85%;
+    float: left;
+    display: block;
+    clear: both;
+}
+
+.testerClass {
+
+}
+
+.main {
+    clear: both;
+         }
