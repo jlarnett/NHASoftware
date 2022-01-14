@@ -125,8 +125,7 @@ namespace NHASoftware.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             /****************************************************************************************
-            *      POST: TaskItems/Edit/5
-            *      NOT IMPLEMENTED
+            *      GET: TaskItems/Edit/5
             ****************************************************************************************/
 
             if (id == null)
@@ -135,13 +134,26 @@ namespace NHASoftware.Controllers
             }
 
             var taskItem = await _context.Tasks.FindAsync(id);
+
             if (taskItem == null)
             {
                 return NotFound();
             }
+
+            var vm = new TaskFormViewModel()
+            {
+                TaskStartDate = taskItem.TaskStartDate,
+                UserId = taskItem.UserId,
+                FrequencyId = taskItem.FrequencyId,
+                TaskId = taskItem.TaskId,
+                TaskExecutionTime = taskItem.TaskExecutionTime,
+                TaskDescription = taskItem.TaskDescription,
+                TaskIsFinished = taskItem.TaskIsFinished,
+            };
+
             ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "Id", taskItem.FrequencyId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", taskItem.UserId);
-            return View(taskItem);
+
+            return View(vm);
         }
 
 
