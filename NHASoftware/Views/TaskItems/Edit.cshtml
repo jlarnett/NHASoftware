@@ -9,6 +9,7 @@
 
 <h4>TaskItem</h4>
 <hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
@@ -26,7 +27,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="TaskExecutionTime" class="control-label"></label>
-                <input asp-for="TaskExecutionTime" class="form-control" />
+                <input type="time" for="TaskExecutionTime" class="form-control" data-val="true" id="TaskExecutionTime" name="TaskExecutionTime"/>
                 <span asp-validation-for="TaskExecutionTime" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -51,4 +52,15 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var timeControl = document.querySelector('input[type="time"]');
+            var time = JSON.parse('@Html.Raw(Json.Serialize(Model.TaskExecutionTime))');
+            console.log(time);
+            timeControl.value = time;
+        });
+
+    </script>
 }
