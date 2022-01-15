@@ -105,7 +105,7 @@ namespace NHASoftware.Controllers
                 FrequencyId = taskVM.FrequencyId,
                 UserId = taskVM.UserId,
                 JobCrated = false,
-                NextTaskDate = frequencyHandler.GenerateNextDate(taskVM.TaskStartDate, _context.Frequencies.Find(taskVM.FrequencyId)),
+                NextTaskDate = frequencyHandler.GenerateNextDate(taskVM.TaskStartDate, _context.Frequencies.Find(taskVM.FrequencyId))
             };
 
 
@@ -122,11 +122,11 @@ namespace NHASoftware.Controllers
             return View("Index");
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             /****************************************************************************************
-            *      POST: TaskItems/Edit/5
-            *      NOT IMPLEMENTED
+            *      GET: TaskItems/Edit/5
             ****************************************************************************************/
 
             if (id == null)
@@ -135,29 +135,60 @@ namespace NHASoftware.Controllers
             }
 
             var taskItem = await _context.Tasks.FindAsync(id);
+
             if (taskItem == null)
             {
                 return NotFound();
             }
+
+            var vm = new TaskFormViewModel()
+            {
+                TaskStartDate = taskItem.TaskStartDate,
+                UserId = taskItem.UserId,
+                FrequencyId = taskItem.FrequencyId,
+                TaskId = taskItem.TaskId,
+                TaskExecutionTime = taskItem.TaskExecutionTime,
+                TaskDescription = taskItem.TaskDescription,
+                TaskIsFinished = taskItem.TaskIsFinished,
+            };
+
             ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "Id", taskItem.FrequencyId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", taskItem.UserId);
-            return View(taskItem);
+
+            return View(vm);
         }
 
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TaskId,TaskDescription,TaskIsFinished,TaskStartDate,TaskExecutionTime,FrequencyId,UserId")] TaskItem taskItem)
+        public async Task<IActionResult> Edit(int id, [Bind("TaskId,TaskDescription,TaskStartDate,TaskExecutionTime,FrequencyId, UserId")] TaskFormViewModel vm)
         {
             /****************************************************************************************
             *      POST: TaskItems/Edit/5
-            *      NOT IMPLEMENTED
+            *      Updates taskItem in database. Need to figure out how I am going to handle updating Hangfire 
             ****************************************************************************************/
 
-            if (id != taskItem.TaskId)
+            if (id != vm.TaskId)
             {
                 return NotFound();
             }
+
+            if (vm.UserId != _userManager.GetUserId(HttpContext.User))
+            {
+                return RedirectToAction("Index", "TaskItems");
+            }
+
+            var taskItem = new TaskItem()
+            {
+                TaskStartDate = vm.TaskStartDate,
+                UserId = vm.UserId,
+                FrequencyId = vm.FrequencyId,
+                TaskId = vm.TaskId,
+                TaskExecutionTime = vm.TaskExecutionTime.Value,
+                TaskDescription = vm.TaskDescription,
+                TaskIsFinished = vm.TaskIsFinished,
+                NextTaskDate = frequencyHandler.GenerateNextDate(vm.TaskStartDate, _context.Frequencies.Find(vm.FrequencyId))
+            };
 
             if (ModelState.IsValid)
             {
@@ -179,9 +210,8 @@ namespace NHASoftware.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "Id", taskItem.FrequencyId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", taskItem.UserId);
-            return View(taskItem);
+            ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "FrequencyName", taskItem.FrequencyId);
+            return View(vm);
         }
 
 
