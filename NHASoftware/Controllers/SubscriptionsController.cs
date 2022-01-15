@@ -93,6 +93,7 @@ namespace NHASoftware.Controllers
             *  Each Subscription allows a linked task now. That can be tied to hangfire system. 
             ***************************************************************************************************/
 
+
             var subscription = new Subscription()
             {
                 SubscriptionDay = vm.SubscriptionDay,
@@ -116,15 +117,27 @@ namespace NHASoftware.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["TaskId"] =
-                new SelectList(_context.Tasks.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription", subscription.TaskItemId);
+            var  list = new SelectList(_context.Tasks.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription");
+            var list2 = list.Prepend(new SelectListItem()
+            {
+                Value = "-1",
+                Text = ""
+
+            });
+
+            ViewData["TaskId"] = list2;
 
             return View("Index");
         }
 
-        // GET: Subscriptions/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
+            // GET: Subscriptions/Edit/5
+            /***************************************************************************************************
+            *  Edits Subscription. Creates list prepend to allow blank selection
+            ***************************************************************************************************/
+
             if (id == null)
             {
                 return NotFound();
@@ -136,17 +149,58 @@ namespace NHASoftware.Controllers
             {
                 return NotFound();
             }
-            return View(subscription);
+
+            if (_userManager.GetUserId(HttpContext.User) != subscription.UserId)
+            {
+                return RedirectToAction("Index", "Subscriptions");
+            }
+
+            var vm = new SubscriptionFormViewModel()
+            {
+                UserId =  subscription.UserId,
+                TaskItemId = subscription.TaskItemId,
+                SubscriptionCost = subscription.SubscriptionCost,
+                SubscriptionDate = subscription.SubscriptionDate,
+                SubscriptionName = subscription.SubscriptionName,
+                SubscriptionId = subscription.SubscriptionId,
+                SubscriptionDay = subscription.SubscriptionDay
+            };
+
+            ViewData["TaskId"] =
+                new SelectList(_context.Tasks.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription", subscription.TaskItemId);
+
+            return View(vm);
         }
 
         // POST: Subscriptions/Edit/5
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SubscriptionId,SubscriptionName,SubscriptionDate,SubscriptionCost")] Subscription subscription)
+        public async Task<IActionResult> Edit(int id, [Bind("SubscriptionId,SubscriptionName,SubscriptionDate,SubscriptionCost,User,UserId,TaskItemId")] SubscriptionFormViewModel subscriptionVM)
         {
-            if (id != subscription.SubscriptionId)
+            if (id != subscriptionVM.SubscriptionId)
             {
                 return NotFound();
+            }
+
+            if (_userManager.GetUserId(HttpContext.User) != subscriptionVM.UserId)
+            {
+                return NotFound();
+            }
+
+            var subscription = new Subscription()
+            {
+                UserId =  subscriptionVM.UserId,
+                SubscriptionCost = subscriptionVM.SubscriptionCost,
+                SubscriptionDate = subscriptionVM.SubscriptionDate,
+                SubscriptionName = subscriptionVM.SubscriptionName,
+                SubscriptionId = subscriptionVM.SubscriptionId,
+                SubscriptionDay = subscriptionVM.SubscriptionDay
+            };
+
+            if (subscriptionVM.TaskItemId != null && subscriptionVM.TaskItemId != -1)
+            {
+                subscription.TaskItemId = subscriptionVM.TaskItemId.Value;
             }
 
             if (ModelState.IsValid)
@@ -169,7 +223,10 @@ namespace NHASoftware.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(subscription);
+
+
+
+            return View(subscriptionVM);
         }
 
         // GET: Subscriptions/Delete/5
