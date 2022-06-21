@@ -117,7 +117,7 @@ namespace NHASoftware.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "Id", taskItem.FrequencyId);
+            ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "FrequencyName", taskItem.FrequencyId);
 
             return View("Index");
         }
@@ -152,8 +152,7 @@ namespace NHASoftware.Controllers
                 TaskIsFinished = taskItem.TaskIsFinished,
             };
 
-            ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "Id", taskItem.FrequencyId);
-
+            ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "FrequencyName", taskItem.FrequencyId);
             return View(vm);
         }
 
@@ -187,13 +186,16 @@ namespace NHASoftware.Controllers
                 TaskExecutionTime = vm.TaskExecutionTime.Value,
                 TaskDescription = vm.TaskDescription,
                 TaskIsFinished = vm.TaskIsFinished,
-                NextTaskDate = frequencyHandler.GenerateNextDate(vm.TaskStartDate, _context.Frequencies.Find(vm.FrequencyId))
+                NextTaskDate = frequencyHandler.GenerateNextDate(vm.TaskStartDate, _context.Frequencies.Find(vm.FrequencyId)),
+                JobCrated = false
             };
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    //Remove old Hangfire job & Sets Job created = false. This allows the daily jobs to pickup new task.
+                    RecurringJob.RemoveIfExists("TaskId: " + taskItem.TaskId);
                     _context.Update(taskItem);
                     await _context.SaveChangesAsync();
                 }
@@ -213,7 +215,6 @@ namespace NHASoftware.Controllers
             ViewData["FrequencyId"] = new SelectList(_context.Frequencies, "Id", "FrequencyName", taskItem.FrequencyId);
             return View(vm);
         }
-
 
         public async Task<IActionResult> Delete(int? id)
         {
