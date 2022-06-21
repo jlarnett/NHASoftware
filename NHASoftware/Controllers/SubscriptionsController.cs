@@ -166,9 +166,15 @@ namespace NHASoftware.Controllers
                 SubscriptionDay = subscription.SubscriptionDay
             };
 
-            ViewData["TaskId"] =
-                new SelectList(_context.Tasks.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription", subscription.TaskItemId);
+            var  list = new SelectList(_context.Tasks.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription");
+            var list2 = list.Prepend(new SelectListItem()
+            {
+                Value = "-1",
+                Text = ""
 
+            });
+
+            ViewData["TaskId"] = list2;
             return View(vm);
         }
 
@@ -224,7 +230,15 @@ namespace NHASoftware.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            var  list = new SelectList(_context.Tasks.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription");
+            var list2 = list.Prepend(new SelectListItem()
+            {
+                Value = "-1",
+                Text = ""
 
+            });
+
+            ViewData["TaskId"] = list2;
 
             return View(subscriptionVM);
         }
