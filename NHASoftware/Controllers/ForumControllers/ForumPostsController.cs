@@ -35,6 +35,11 @@ namespace NHASoftware.Controllers
         }
 
         // GET: ForumPosts/Details/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">The forumId you want to view the details page of.</param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(int? id)
         {
             /*******************************************************************************************************
@@ -63,6 +68,8 @@ namespace NHASoftware.Controllers
                 ForumComments = _context.ForumComments.Where(c => c.ForumPostId == id).Include(p => p.User).ToList()
             };
 
+           
+            detailVm.ForumPost.ForumText.Replace("\r\n", "<br/>");
             return View(detailVm);
         }
 
