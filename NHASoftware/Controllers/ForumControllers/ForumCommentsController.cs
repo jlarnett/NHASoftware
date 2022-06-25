@@ -30,7 +30,7 @@ namespace NHASoftware.Controllers
         {
             var applicationDbContext = _context.ForumComments.Include(f => f.ForumPost);
             return View(await applicationDbContext.ToListAsync());
-        }
+       }
 
         // GET: ForumComments/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -48,6 +48,7 @@ namespace NHASoftware.Controllers
             var forumComment = await _context.ForumComments
                 .Include(f => f.ForumPost)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (forumComment == null)
             {
                 return NotFound();

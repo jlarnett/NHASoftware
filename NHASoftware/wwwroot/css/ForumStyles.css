@@ -52,21 +52,23 @@ article {
     color: #d7dbe1;
     display: block;
     float: left;
-    font-size: 1.2em;
-    height: 38px;
-    line-height: 30px;
-    margin-top: 7px;
-    padding: 5px 15px 0 0;
+    font-size: 1.4em;
+    height: 100px;
+    line-height: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px 30px 0 0;
     position: relative;
     text-align: right;
+    max-height: 136px;
 }
 
-.group-thread .forum-stat {
+.post-end-group-thread {
     border-left: 1px solid #1e313c;
     border-right: solid 1px #000;
     color: #d7dbe1;
     display: block;
-    float: left;
+    float: right;
     font-size: 1.4em;
     height: 100px;
     line-height: 50px;
@@ -218,7 +220,7 @@ article {
 ********************************************************************************/
 
 .tableCustom {
-    margin: 0;
+    margin: 10;
     width: 100%;
 }
 
@@ -231,8 +233,9 @@ article {
 }
 
 .post-action {
-    display: inline-block;
-
+    width: 100px;
+    height: 100px;
+    text-align: center;
 }
 
 .action-article {
@@ -242,9 +245,9 @@ article {
 }
 
 .forum-post-actions {
-    display: inline-block;
+    display: flex;
     float: right;
-    width: 5%;
+    width: 10%;
     text-align: center;
 
 }
@@ -254,10 +257,6 @@ article {
     float: left;
     display: block;
     clear: both;
-}
-
-.testerClass {
-
 }
 
 .main {
