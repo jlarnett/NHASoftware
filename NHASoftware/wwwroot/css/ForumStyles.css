@@ -2,7 +2,7 @@
     Articles E.G. Forums Style Config
 ********************************************************************************/
 article {
-    display: inline-block;
+    display: block;
 }
 
 .group-thread__heading {
@@ -50,7 +50,7 @@ article {
     border-left: 1px solid #1e313c;
     border-right: solid 1px #000;
     color: #d7dbe1;
-    display: inline-block;
+    display: block;
     float: left;
     font-size: 1.4em;
     height: 100px;
@@ -67,7 +67,7 @@ article {
     border-left: 1px solid #1e313c;
     border-right: solid 1px #000;
     color: #d7dbe1;
-    display: inline-block;
+    display: block;
     float: right;
     font-size: 1.4em;
     height: 100px;
