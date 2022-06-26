@@ -17,33 +17,10 @@
 
 
 <div class="main">
-@*    <article class="group-thread group-thread--rootview" data-id="@Model.ForumPost.Id">*@
         @{
             var id = @Model.ForumPost.Id;
         }
 
-@*        <div class="group-thread__link post-detail-thread">
-            <div class="group-thread__details">
-                <h3 class="group-thread__heading">@Model.ForumPost.User.Email</h3>
-                <h3 class="group-thread__heading">@Model.ForumPost.Title</h3>
-                <p class="group-thread__summary">@Model.ForumPost.ForumText</p>
-            </div>
-            <div>
-                <span class="forum-stat forum-stat--thread">@Model.ForumPost.CommentCount</span>
-                <span class="forum-stat forum-stat--latest">@Model.ForumPost.CreationDate</span>
-            </div>
-        </div>
-    </article>
-    <article class="post-end-group-thread group-thread group-thread--rootview">
-
-        <div class="group-thread__link post-detail-thread">
-            <div class="forum-post-actions">
-                    <a class="btn-primary btn-link post-action" href="/ForumPosts/delete/@id">Delete</a>
-                    <a class="btn-primary btn-link post-action" href="/ForumPosts/edit/@id">Edit</a>
-            </div>
-        </div>
-    </article>
-*@
         <table id="PostTable" class="tableCustom">
         <thead>
         <tr>
@@ -96,7 +73,7 @@
                         "<span class='forum-stat forum-stat--thread'>" + 0 + "</span>" +
                         "<span class='forum-stat forum-stat--latest'>" + date + "</span>" +
                         "</a>" +
-                        "</article>", "<article class='group-thread group-thread--rootview action-article'>" + "<a class='btn-primary btn-link cmt-action' href='/ForumComments/delete/" + comments[i].id  + "'>Delete</a>" + "<a class='btn-primary btn-link cmt-action' href='/ForumComments/edit/" + comments[i].id  + "'>Edit</a></article>"] ).draw();
+                        "</article>", "<article class='Post-Actions-Thread action-article'>" + "<a class='btn-primary btn-link cmt-action' href='/ForumComments/delete/" + comments[i].id  + "'>Delete</a>" + "<a class='btn-primary btn-link cmt-action' href='/ForumComments/delete/" + comments[i].id  + "'>Like Post</a>" +"<a class='btn-primary btn-link cmt-action' href='/ForumComments/edit/" + comments[i].id  + "'>Edit</a></article>"] ).draw();
                 }
 
                 var table2 = $("#PostTable").DataTable({
@@ -127,7 +104,7 @@
                     "<span class='forum-stat forum-stat--thread'>" + post.likeCount + "</span>" +
                     "<span class='forum-stat forum-stat--latest'>" + date2 + "</span>" +
                     "</a>" +
-                    "</article>", "<article class='group-thread group-thread--rootview action-article'>" + "<a class='btn-primary btn-link cmt-action' href='/ForumPosts/delete/" + @id  + "'>Delete</a>" + "<a class='btn-primary btn-link cmt-action' href='/ForumPosts/edit/" + @id  + "'>Edit</a></article>"] ).draw();
+                    "</article>", "<article class='Post-Actions-Thread group-thread--rootview action-article'>" + "<div class='Forum-Post-Action-Container'>" + "<a class='btn-primary btn-link cmt-action' href='/ForumPosts/delete/" + @id  + "'>Delete</a>" + "<a class='btn-primary btn-link cmt-action' href='/ForumPosts/delete/" + @id  + "'>Like Post</a>" + "<a class='btn-primary btn-link cmt-action' href='/ForumPosts/edit/" + @id  + "'>Edit</a>" + "</div>" + "</article>"] ).draw();
             });
     </script>
 
