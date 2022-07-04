@@ -16,13 +16,16 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
 
-        public IndexModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context)
+
+        public IndexModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, IWebHostEnvironment environment)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
+            _hostEnvironment = environment;
         }
 
         /// <summary>
@@ -61,6 +64,8 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
 
             [Display(Name = "Display Name")]
             public string DisplayName {get;set;}
+
+            public IFormFile ProfilePicture { get; set;}
         }
 
         private async Task LoadAsync(ApplicationUser user)
@@ -74,7 +79,7 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
             Input = new InputModel
             {
                 PhoneNumber = phoneNumber,
-                DisplayName = display
+                DisplayName = display,
             };
         }
 
@@ -115,7 +120,41 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
-            
+
+            if(Input.ProfilePicture != null)
+            {
+                //Creating the correct Path to save the folder
+                string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "Images");
+                string profileFolder = Path.Combine(uploadsFolder, "ProfilePictures");
+
+                //Assigning unique GUID + filename to create unique name for path. 
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + Input.ProfilePicture.FileName;
+                string filePath = Path.Combine(profileFolder, uniqueFileName);
+
+                //Writes the file to the path
+                Input.ProfilePicture.CopyTo(new FileStream(filePath, FileMode.Create));
+
+
+                //Getting the user & updating the profile picture photo path in user database. 
+                var updatedUser = _context.Users.Find(user.Id);
+
+                string oldProfilePicture = "";
+
+                if(updatedUser.ProfilePicturePath != null)
+                {
+                    oldProfilePicture = Path.Combine(profileFolder, updatedUser.ProfilePicturePath);
+                }
+
+                updatedUser.ProfilePicturePath = uniqueFileName;
+                _context.SaveChanges();
+
+                if(oldProfilePicture != "");
+                {
+                    FileInfo info = new FileInfo(oldProfilePicture);
+                    //info.Delete();
+                }
+            }
+
 
             if(Input.DisplayName != user.DisplayName)
             {
