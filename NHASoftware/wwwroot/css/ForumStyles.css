@@ -8,6 +8,14 @@ article {
 .group-thread__heading {
     color: #e1bb34;
     font-family: "MuseoSans";
+    font-size: 2.5em;
+    letter-spacing: normal;
+    font-weight: normal;
+}
+
+.forum-post-user {
+    color: #f70fe0;
+    font-family: "MuseoSans";
     font-size: 1.6em;
     letter-spacing: normal;
     font-weight: normal;

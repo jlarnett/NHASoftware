@@ -2,14 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using NHASoftware.Models;
+using NHASoftware.Data;
 
 namespace NHASoftware.Areas.Identity.Pages.Account.Manage
 {
@@ -17,13 +15,17 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public IndexModel(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+
+
+        public IndexModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, IWebHostEnvironment environment)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
+            _hostEnvironment = environment;
         }
 
         /// <summary>
@@ -59,18 +61,25 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            [Display(Name = "Display Name")]
+            public string DisplayName {get;set;}
+
+            public IFormFile ProfilePicture { get; set;}
         }
 
         private async Task LoadAsync(ApplicationUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            var display = user.DisplayName;
 
             Username = userName;
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                DisplayName = display,
             };
         }
 
@@ -101,6 +110,7 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
             }
 
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+
             if (Input.PhoneNumber != phoneNumber)
             {
                 var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
@@ -110,6 +120,56 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
+
+            if(Input.ProfilePicture != null)
+            {
+                //Creating the correct Path to save the folder
+                string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "Images");
+                string profileFolder = Path.Combine(uploadsFolder, "ProfilePictures");
+
+                //Assigning unique GUID + filename to create unique name for path. 
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + Input.ProfilePicture.FileName;
+                string filePath = Path.Combine(profileFolder, uniqueFileName);
+
+                //Writes the file to the path
+                Input.ProfilePicture.CopyTo(new FileStream(filePath, FileMode.Create));
+
+
+                //Getting the user & updating the profile picture photo path in user database. 
+                var updatedUser = _context.Users.Find(user.Id);
+
+                string oldProfilePicture = "";
+
+                if(updatedUser.ProfilePicturePath != null)
+                {
+                    oldProfilePicture = Path.Combine(profileFolder, updatedUser.ProfilePicturePath);
+                }
+
+                updatedUser.ProfilePicturePath = uniqueFileName;
+                _context.SaveChanges();
+
+                if(oldProfilePicture != "");
+                {
+                    FileInfo info = new FileInfo(oldProfilePicture);
+                    //info.Delete();
+                }
+            }
+
+
+            if(Input.DisplayName != user.DisplayName)
+            {
+                var currentUser = await _context.Users.FindAsync(user.Id);
+                currentUser.DisplayName = Input.DisplayName;
+                var dataChanges = _context.SaveChanges();
+
+                if(dataChanges == 0)
+                {
+                    StatusMessage = "Unexpected error happpened when trying to update Display Name";
+                    return RedirectToPage();
+
+                }
+            }
+
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";

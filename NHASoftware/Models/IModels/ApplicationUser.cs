@@ -10,5 +10,12 @@ namespace NHASoftware.Models
 
         [NotNull]
         public DateTime LastLoginDate { get; set; } = DateTime.Today;
+
+
+        [AllowNull]
+        public string DisplayName { get; set; }
+
+        [AllowNull]
+        public string ProfilePicturePath { get; set; }
     }
 }

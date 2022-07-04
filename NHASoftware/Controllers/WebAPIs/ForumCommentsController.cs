@@ -81,6 +81,42 @@ namespace NHASoftware.Controllers.WebAPIs
             return NoContent();
         }
 
+        
+        // PUT: api/ForumCommentsLike/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("LikeCommment/{id}")]
+        public async Task<IActionResult> LikeComment(int id)
+        {
+            var comment = await _context.ForumComments.FindAsync(id);
+
+            if(comment == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                comment.LikeCount ++;
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ForumCommentExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
         // POST: api/ForumComments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
