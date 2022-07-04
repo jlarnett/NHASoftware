@@ -124,12 +124,13 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
             if(Input.ProfilePicture != null)
             {
                 //Creating the correct Path to save the folder
-                string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "Images");
-                string profileFolder = Path.Combine(uploadsFolder, "ProfilePictures");
+                string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "ProfilePictures");
+                //string profileFolder = Path.Combine(uploadsFolder, "ProfilePictures");
+
 
                 //Assigning unique GUID + filename to create unique name for path. 
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + Input.ProfilePicture.FileName;
-                string filePath = Path.Combine(profileFolder, uniqueFileName);
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
                 //Writes the file to the path
                 Input.ProfilePicture.CopyTo(new FileStream(filePath, FileMode.Create));
@@ -142,7 +143,7 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
 
                 if(updatedUser.ProfilePicturePath != null)
                 {
-                    oldProfilePicture = Path.Combine(profileFolder, updatedUser.ProfilePicturePath);
+                    oldProfilePicture = Path.Combine(uploadsFolder, updatedUser.ProfilePicturePath);
                 }
 
                 updatedUser.ProfilePicturePath = uniqueFileName;

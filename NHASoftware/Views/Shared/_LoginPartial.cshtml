@@ -6,7 +6,7 @@
 @if (SignInManager.IsSignedIn(User))
 {
     ApplicationUser user = await UserManager.GetUserAsync(User);
-    string profilePicture = "~/Images/ProfilePictures/" + user.ProfilePicturePath;  
+    string profilePicture = "~/ProfilePictures/" + user.ProfilePicturePath;  
 
     <li class="nav-item">
         <img id="ProfilePicture" src="@Url.Content(profilePicture)" class="rounded login-profile-picture"/>
