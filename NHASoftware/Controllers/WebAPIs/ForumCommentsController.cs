@@ -24,11 +24,12 @@ namespace NHASoftware.Controllers.WebAPIs
         // GET: api/ForumComments
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ForumComment>>> GetForumComments()
-        {
-          if (_context.ForumComments == null)
-          {
-              return NotFound();
-          }
+        { 
+            if (_context.ForumComments == null)
+            { 
+                return NotFound();
+            }
+
             return await _context.ForumComments.ToListAsync();
         }
 
@@ -36,10 +37,11 @@ namespace NHASoftware.Controllers.WebAPIs
         [HttpGet("{id}")]
         public async Task<ActionResult<ForumComment>> GetForumComment(int id)
         {
-          if (_context.ForumComments == null)
-          {
-              return NotFound();
-          }
+          
+            if (_context.ForumComments == null)
+            {
+                return NotFound();
+            }
             var forumComment = await _context.ForumComments.FindAsync(id);
 
             if (forumComment == null)
@@ -84,7 +86,7 @@ namespace NHASoftware.Controllers.WebAPIs
         
         // PUT: api/ForumCommentsLike/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("LikeCommment/{id}")]
+        [HttpPut("Like/{id:int}")]
         public async Task<IActionResult> LikeComment(int id)
         {
             var comment = await _context.ForumComments.FindAsync(id);
@@ -122,14 +124,14 @@ namespace NHASoftware.Controllers.WebAPIs
         [HttpPost]
         public async Task<ActionResult<ForumComment>> PostForumComment(ForumComment forumComment)
         {
-          if (_context.ForumComments == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.ForumComments'  is null.");
-          }
-            _context.ForumComments.Add(forumComment);
-            await _context.SaveChangesAsync();
+              if (_context.ForumComments == null)
+              {
+                  return Problem("Entity set 'ApplicationDbContext.ForumComments'  is null.");
+              }
+              _context.ForumComments.Add(forumComment);
+              await _context.SaveChangesAsync(); 
 
-            return CreatedAtAction("GetForumComment", new { id = forumComment.Id }, forumComment);
+              return CreatedAtAction("GetForumComment", new { id = forumComment.Id }, forumComment);
         }
 
         // DELETE: api/ForumComments/5

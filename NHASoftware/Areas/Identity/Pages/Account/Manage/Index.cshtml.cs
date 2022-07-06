@@ -98,6 +98,7 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+
             if (user == null)
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
@@ -121,12 +122,53 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            bool PictureUpdated = TryUpdateProfilePicture(user);
+            bool DisplayNameUpdated = TryUpdateDisplayName(user);
+
+            if (!PictureUpdated || !DisplayNameUpdated)
+            {
+                return RedirectToPage();
+            }
+
+            await _signInManager.RefreshSignInAsync(user);
+            StatusMessage = "Your profile has been updated";
+            return RedirectToPage();
+        }
+
+        /// <summary>
+        /// Tries to Update the Users Display Name
+        /// </summary>
+        /// <param name="user">The User to update</param>
+        /// <returns></returns>
+        private bool TryUpdateDisplayName(ApplicationUser user)
+        {
+            if(Input.DisplayName != user.DisplayName)
+            {
+                var currentUser = _context.Users.Find(user.Id);
+                currentUser.DisplayName = Input.DisplayName;
+                var dataChanges = _context.SaveChanges();
+
+                if(dataChanges == 0)
+                {
+                    StatusMessage = "Unexpected error happpened when trying to update Display Name";
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Tries to update the Users Profile Picture. 
+        /// </summary>
+        /// <param name="user">The User to update.</param>
+        /// <returns></returns>
+        private bool TryUpdateProfilePicture(ApplicationUser user)
+        {
             if(Input.ProfilePicture != null)
             {
                 //Creating the correct Path to save the folder
                 string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "ProfilePictures");
-                //string profileFolder = Path.Combine(uploadsFolder, "ProfilePictures");
-
 
                 //Assigning unique GUID + filename to create unique name for path. 
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + Input.ProfilePicture.FileName;
@@ -139,42 +181,18 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
                 //Getting the user & updating the profile picture photo path in user database. 
                 var updatedUser = _context.Users.Find(user.Id);
 
-                string oldProfilePicture = "";
-
-                if(updatedUser.ProfilePicturePath != null)
-                {
-                    oldProfilePicture = Path.Combine(uploadsFolder, updatedUser.ProfilePicturePath);
-                }
-
                 updatedUser.ProfilePicturePath = uniqueFileName;
-                _context.SaveChanges();
-
-                if(oldProfilePicture != "");
-                {
-                    FileInfo info = new FileInfo(oldProfilePicture);
-                    //info.Delete();
-                }
-            }
-
-
-            if(Input.DisplayName != user.DisplayName)
-            {
-                var currentUser = await _context.Users.FindAsync(user.Id);
-                currentUser.DisplayName = Input.DisplayName;
                 var dataChanges = _context.SaveChanges();
 
-                if(dataChanges == 0)
+                if (dataChanges == 0)
                 {
-                    StatusMessage = "Unexpected error happpened when trying to update Display Name";
-                    return RedirectToPage();
-
+                    StatusMessage = "Unexpected error happened when trying to update DisplayName";
+                    return false;
                 }
             }
 
-
-            await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
-            return RedirectToPage();
+            return true;
         }
     }
+
 }

@@ -13,9 +13,9 @@ namespace NHASoftware.Models
 
 
         [AllowNull]
-        public string DisplayName { get; set; }
+        public string? DisplayName { get; set; }
 
         [AllowNull]
-        public string ProfilePicturePath { get; set; }
+        public string? ProfilePicturePath { get; set; }
     }
 }
