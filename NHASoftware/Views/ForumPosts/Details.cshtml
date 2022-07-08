@@ -52,7 +52,7 @@
 
             function LoadPostTable() {
 
-                var table2 = $("#PostTable").DataTable({
+                var postTable = $("#PostTable").DataTable({
                     searching: false,
                     paging: false,
                     info: false,
@@ -66,7 +66,7 @@
                 var str2 = spacetime(post.creationDate);
                 var date2 = str2.format('{month} {date-pad} {year} {time}{am pm}');
 
-                table2.row.add(["<article class='group-thread group-thread--rootview' data-id='" + 1000 + "'>" +
+                postTable.row.add(["<article class='group-thread group-thread--rootview' data-id='" + 1000 + "'>" +
                     "<a class='group-thread__link'>" +
 
                     "<div class='group-thread__details'>" +
@@ -78,7 +78,7 @@
                     "<span class='forum-stat forum-stat--thread'>" + post.likeCount + "</span>" +
                     "<span class='forum-stat forum-stat--latest'>" + date2 + "</span>" +
                     "</a>" +
-                    "</article>", "<article class='Post-Actions-Thread group-thread--rootview action-article'>" + "<div class='Forum-Post-Action-Container'>" + "<a class='btn-primary btn-link cmt-action .js-delete' comment-id=" + @id  + ">Delete</a>" + "<a class='btn-primary btn-link cmt-action .js-like' comment-id=" + @id  + ">Like Post</a>" + "<a class='btn-primary btn-link cmt-action .js-delete' href='/ForumPosts/edit/" + @id  + "'>Edit</a>" + "</div>" + "</article>"] ).draw();
+                    "</article>", "<article class='Post-Actions-Thread group-thread--rootview action-article'>" + "<div class='Forum-Post-Action-Container'>" + "<button class='btn-primary btn-link cmt-action js-delete-post' post-id=" + @id  + ">Delete</button>" + "<button class='btn-primary btn-link cmt-action js-like-post' post-id=" + @id  + ">Like Post</button>" + "<button class='btn-primary btn-link cmt-action js-edit-post' href='/ForumPosts/edit/" + @id  + "'>Edit</button>" + "</div>" + "</article>"] ).draw();
             }
 
             function LoadCommentsTable() {
@@ -116,14 +116,49 @@
 
             $("#CommentsTable").on("click", ".js-like-comment", function () {
 
-                console.log("Button triggered ajax");
                 var button = $(this);
 
                 $.ajax ({ 
                     url: "/api/Like/Comment/" + button.attr("comment-id"),
                     method: "PUT",
-                    success: function () {
-                        console.log("Successfully sent to api");
+                    success: function (data) {
+                        if (data.success) {
+                            console.log("Successfully sent to api");
+                            window.location.reload();
+                        }
+                    }
+                });
+            });
+
+            $("#CommentsTable").on("click", ".js-delete-comment", function () {
+
+                var button = $(this);
+
+                $.ajax ({
+                    url: "/api/ForumComments/" + button.attr("comment-id"),
+                    method: "DELETE",
+                    success: function (data) {
+
+                        if (data.success) {
+                            console.log("Successfully sent to api");
+                            window.location.reload();
+                        }
+                    }
+                });
+            });
+
+            $("#PostTable").on("click", ".js-like-post", function () {
+
+                var button = $(this);
+
+                $.ajax({
+                    url: "/api/Like/post/" + button.attr("post-id"),
+                    method: "PUT",
+                    success: function (data) {
+                        if (data.success) {
+                            console.log("Successfully sent to api");
+                            window.location.reload();
+                        }
                     }
                 });
             });

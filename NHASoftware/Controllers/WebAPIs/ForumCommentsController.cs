@@ -136,22 +136,25 @@ namespace NHASoftware.Controllers.WebAPIs
 
         // DELETE: api/ForumComments/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteForumComment(int id)
+        public async Task<JsonResult> DeleteForumComment(int id)
         {
             if (_context.ForumComments == null)
             {
-                return NotFound();
+                return new JsonResult(new { success = false });
             }
+
             var forumComment = await _context.ForumComments.FindAsync(id);
+
             if (forumComment == null)
             {
-                return NotFound();
+                return new JsonResult(new { success = false });
             }
 
             _context.ForumComments.Remove(forumComment);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return new JsonResult(new { success = true });
+
         }
 
         private bool ForumCommentExists(int id)
