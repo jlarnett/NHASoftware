@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <None Include="wwwroot\Scripts\AddBookAuthor.js" />
+	  
   </ItemGroup>
 	
 	<ItemGroup>

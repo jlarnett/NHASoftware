@@ -25,6 +25,8 @@
         <thead>
         <tr>
             <th>Post</th>
+            <th>Likes</th>
+            <th>Date Posted</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -46,93 +48,125 @@
 
 @section Scripts
 {
-        <script type="text/javascript">
-            $(document).ready(function() {
+    <script type="text/javascript">
 
-                function LoadPostTable() {
+        $(document).ready(function() {
 
-                    var table2 = $("#PostTable").DataTable({
-                        searching: false,
-                        paging: false,
-                        info: false,
-                        "columns": [
-                            null,
-                            {"width": "10%"}
-                        ]
-                    });
+            function LoadPostTable() {
 
-                    var post = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumPost))');
-                    var str2 = spacetime(post.creationDate);
-                    var date2 = str2.format('{month} {date-pad} {year} {time}{am pm}');
-
-                    table2.row.add(["<article class='group-thread group-thread--rootview' data-id='" + 1000 + "'>" +
-                        "<a class='group-thread__link'>" +
-
-                        "<div class='group-thread__details'>" +
-                        "<h3 class='forum-post-user'>" + post.user.displayName + "</h3>" +
-                        "<h3 class='group-thread__heading'>" + post.title + "</h3>" +
-                        "<p class='group-thread__summary'>" + post.forumText + "</p>" +
-
-                        "</div>" +
-                        "<span class='forum-stat forum-stat--thread'>" + post.likeCount + "</span>" +
-                        "<span class='forum-stat forum-stat--latest'>" + date2 + "</span>" +
-                        "</a>" +
-                        "</article>", "<article class='Post-Actions-Thread group-thread--rootview action-article'>" + "<div class='Forum-Post-Action-Container'>" + "<a class='btn-primary btn-link cmt-action .js-delete' comment-id=" + @id  + ">Delete</a>" + "<a class='btn-primary btn-link cmt-action .js-like' comment-id=" + @id  + ">Like Post</a>" + "<a class='btn-primary btn-link cmt-action .js-delete' href='/ForumPosts/edit/" + @id  + "'>Edit</a>" + "</div>" + "</article>"] ).draw();
-                }
-
-                function LoadCommentsTable() {
-
-                    var comments = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumComments))');
-                    var arrayLength = comments.length;
-
-                    var commentsTable = $("#CommentsTable").DataTable({
-                        "columns": [
-                            null,
-                            {"width": "10%"}
-                        ]
-                    });
-
-                    for (var i = 0; i < arrayLength; i++) {
-                        var str = spacetime(comments[i].creationDate);
-                        var date = str.format('{month} {date-pad} {year} {time}{am pm}');
-                    
-
-                        commentsTable.row.add( ["<article class='group-thread group-thread--rootview' data-id='" + comments[i].id + "'>" +
-                            "<a class='group-thread__link'>" +
-                            "<div class='group-thread__details'>" +
-                            "<h3 class='forum-post-user'>" + comments[i].user.displayName + "</h3>" +
-                            "<p class='group-thread__summary'>" + comments[i].commentText + "</p>" +
-                            "</div>" +
-                            "<span class='forum-stat forum-stat--thread'>" + 0 + "</span>" +
-                            "<span class='forum-stat forum-stat--latest'>" + date + "</span>" +
-                            "</a>" +
-                            "</article>", "<article class='Post-Actions-Thread action-article'>" + "<a class='btn-primary btn-link cmt-action js-delete-comment' comment-id=" + comments[i].id  + ">Delete</a>" + "<a class='btn-primary btn-link cmt-action js-like-comment' comment-id=" + comments[i].id  + ">Like Post</a>" +"<a class='btn-primary btn-link cmt-action js-edit-comment' comment-id=" + comments[i].id  + ">Edit</a></article>"] ).draw();
-                    }
-                }
-
-
-
-
-                
-                $(".js-like-Comment").on("click", function () {
-
-                    console.log("Button triggered ajax")
-                    var button = $(this);
-
-                    $.ajax ({ 
-                        url: "/api/LikeComment/" + button.attr("comment-id"),
-                        method: "PUT",
-                        success: function () 
-                        {
-                            console.log("Successfully sent to api")
-                        }
-                    });
+                var postTable = $("#PostTable").DataTable({
+                    searching: false,
+                    paging: false,
+                    info: false,
+                    "columns": [
+                        null,
+                        {"width": "10%"},
+                        {"width": "10%"},
+                        {"width": "10%"}
+                    ]
                 });
 
-                LoadPostTable();
-                LoadCommentsTable();
+                var post = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumPost))');
+                var str2 = spacetime(post.creationDate);
+                var date2 = str2.format('{month} {date-pad} {year} {time}{am pm}');
 
+                postTable.row.add(["<article class='group-thread group-thread--rootview' data-id='" + 1000 + "'>" +
+                    "<a class='group-thread__link'>" +
+
+                    "<div class='group-thread__details'>" +
+                    "<h3 class='forum-post-user'>" + post.user.displayName + "</h3>" +
+                    "<h3 class='group-thread__heading'>" + post.title + "</h3>" +
+                    "<p class='group-thread__summary'>" + post.forumText + "</p></div></a></article>", 
+                    "<article class='group-thread group-thread--rootview'><span>" + post.likeCount + "</span></article>",
+                    "<article class='group-thread group-thread--rootview'><span>" + date2 + "</span></article>",
+                    "<article class='Post-Actions-Thread group-thread--rootview action-article'>" + "<div class='Forum-Post-Action-Container'>" + "<button class='btn-primary btn-link cmt-action js-delete-post' post-id=" + @id  + ">Delete</button>" + "<button class='btn-primary btn-link cmt-action js-like-post' post-id=" + @id  + ">Like Post</button>" + "<button class='btn-primary btn-link cmt-action js-edit-post' href='/ForumPosts/edit/" + @id  + "'>Edit</button>" + "</div>" + "</article>"] ).draw();
+            }
+
+            function LoadCommentsTable() {
+
+                var comments = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumComments))');
+                var arrayLength = comments.length;
+
+                var commentsTable = $("#CommentsTable").DataTable({
+                    "columns": [
+                        null,
+                        {"width": "10%"}
+                    ]
+                });
+
+                for (var i = 0; i < arrayLength; i++) {
+                    var str = spacetime(comments[i].creationDate);
+                    var date = str.format('{month} {date-pad} {year} {time}{am pm}');
+                    
+
+                    commentsTable.row.add( ["<article class='group-thread group-thread--rootview' data-id='" + comments[i].id + "'>" +
+                        "<a class='group-thread__link'>" +
+                        "<div class='group-thread__details'>" +
+                        "<h3 class='forum-post-user'>" + comments[i].user.displayName + "</h3>" +
+                        "<p class='group-thread__summary'>" + comments[i].commentText + "</p>" +
+                        "</div>" +
+                        "<span class='forum-stat forum-stat--thread'>" + comments[i].likeCount + "</span>" +
+                        "<span class='forum-stat forum-stat--latest'>" + date + "</span>" +
+                        "</a>" +
+                        "</article>", "<article class='Post-Actions-Thread action-article'>" + "<button class='btn-primary btn-link cmt-action js-delete-comment' comment-id=" + comments[i].id  + ">Delete</button>" + "<button class='btn-primary btn-link cmt-action js-like-comment' comment-id=" + comments[i].id  + ">Like Post</button>" +"<button class='btn-primary btn-link cmt-action js-edit-comment' comment-id=" + comments[i].id  + ">Edit</button></article>"] ).draw();
+                }
+            }
+
+            LoadPostTable();
+            LoadCommentsTable();
+
+            $("#CommentsTable").on("click", ".js-like-comment", function () {
+
+                var button = $(this);
+
+                $.ajax ({ 
+                    url: "/api/Like/Comment/" + button.attr("comment-id"),
+                    method: "PUT",
+                    success: function (data) {
+                        if (data.success) {
+                            console.log("Successfully sent to api");
+                            window.location.reload();
+                        }
+                    }
+                });
             });
+
+            $("#CommentsTable").on("click", ".js-delete-comment", function () {
+
+                var button = $(this);
+
+                $.ajax ({
+                    url: "/api/ForumComments/" + button.attr("comment-id"),
+                    method: "DELETE",
+                    success: function (data) {
+
+                        if (data.success) {
+                            console.log("Successfully sent to api");
+                            window.location.reload();
+                        }
+                    }
+                });
+            });
+
+            $("#PostTable").on("click", ".js-like-post", function () {
+
+                var button = $(this);
+
+                $.ajax({
+                    url: "/api/Like/post/" + button.attr("post-id"),
+                    method: "PUT",
+                    success: function (data) {
+                        if (data.success) {
+                            console.log("Successfully sent to api");
+                            window.location.reload();
+                        }
+                    }
+                });
+            });
+
+
+
+        });
 
 
     </script>
