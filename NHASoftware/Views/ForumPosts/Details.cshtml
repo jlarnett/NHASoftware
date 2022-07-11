@@ -25,6 +25,8 @@
         <thead>
         <tr>
             <th>Post</th>
+            <th>Likes</th>
+            <th>Date Posted</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -58,6 +60,8 @@
                     info: false,
                     "columns": [
                         null,
+                        {"width": "10%"},
+                        {"width": "10%"},
                         {"width": "10%"}
                     ]
                 });
@@ -72,13 +76,10 @@
                     "<div class='group-thread__details'>" +
                     "<h3 class='forum-post-user'>" + post.user.displayName + "</h3>" +
                     "<h3 class='group-thread__heading'>" + post.title + "</h3>" +
-                    "<p class='group-thread__summary'>" + post.forumText + "</p>" +
-
-                    "</div>" +
-                    "<span class='forum-stat forum-stat--thread'>" + post.likeCount + "</span>" +
-                    "<span class='forum-stat forum-stat--latest'>" + date2 + "</span>" +
-                    "</a>" +
-                    "</article>", "<article class='Post-Actions-Thread group-thread--rootview action-article'>" + "<div class='Forum-Post-Action-Container'>" + "<button class='btn-primary btn-link cmt-action js-delete-post' post-id=" + @id  + ">Delete</button>" + "<button class='btn-primary btn-link cmt-action js-like-post' post-id=" + @id  + ">Like Post</button>" + "<button class='btn-primary btn-link cmt-action js-edit-post' href='/ForumPosts/edit/" + @id  + "'>Edit</button>" + "</div>" + "</article>"] ).draw();
+                    "<p class='group-thread__summary'>" + post.forumText + "</p></div></a></article>", 
+                    "<article class='group-thread group-thread--rootview'><span>" + post.likeCount + "</span></article>",
+                    "<article class='group-thread group-thread--rootview'><span>" + date2 + "</span></article>",
+                    "<article class='Post-Actions-Thread group-thread--rootview action-article'>" + "<div class='Forum-Post-Action-Container'>" + "<button class='btn-primary btn-link cmt-action js-delete-post' post-id=" + @id  + ">Delete</button>" + "<button class='btn-primary btn-link cmt-action js-like-post' post-id=" + @id  + ">Like Post</button>" + "<button class='btn-primary btn-link cmt-action js-edit-post' href='/ForumPosts/edit/" + @id  + "'>Edit</button>" + "</div>" + "</article>"] ).draw();
             }
 
             function LoadCommentsTable() {
