@@ -39,6 +39,9 @@
                 <select asp-for="ForumTopicId" class="form-control" asp-items="ViewBag.ForumTopicId"></select>
                 <span asp-validation-for="ForumTopicId" class="text-danger"></span>
             </div>
+            
+            @Html.HiddenFor(p => p.LikeCount)
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

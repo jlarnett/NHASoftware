@@ -144,7 +144,7 @@ namespace NHASoftware.Controllers
         // POST: ForumPosts/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ForumText,CreationDate,UserId,ForumTopicId")] ForumPost forumPost)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ForumText,CreationDate,UserId,ForumTopicId, LikeCount")] ForumPost forumPost)
         {
             /*******************************************************************************************************
             *      POST: ForumPosts/Edit/3
