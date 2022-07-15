@@ -30,6 +30,15 @@ article {
     font-size: 1em;
 }
 
+.forum-post-thread {
+    background: transparent url(https://www.runescape.com/img/rs3/forums/panel.jpg) repeat bottom left;
+    box-shadow: 0 -4px 5px -1px #000, 0 4px 5px -1px #000;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 4px;
+    font-size: 1em;
+}
+
 .Post-Actions-Thread {
     background: transparent url(https://www.runescape.com/img/rs3/forums/panel.jpg) repeat bottom left;
     box-shadow: 0 -4px 5px -1px #000, 0 4px 5px -1px #000;
@@ -47,7 +56,7 @@ article {
 
 .group-thread__link {
     float: left;
-    height: 88%;
+    height: 100%;
     overflow: hidden;
     padding: 5px 10px;
 }
@@ -56,7 +65,7 @@ article {
     border-right: solid 1px #000;
     float: left;
     margin-top: 8px;
-    width: 75%;
+    width: 70%;
 }
 
 .group-thread__summary {
@@ -243,8 +252,10 @@ article {
 ********************************************************************************/
 
 .tableCustom {
-    margin: 10;
     width: 100%;
+    height: 100%;
+    table-layout: fixed;
+    align-items: stretch;
 }
 
 .cmt-action {
@@ -291,4 +302,98 @@ article {
 
 .main {
     clear: both;
-         }
+}
+
+
+/*
+    This is the seperator of modern forum post styling
+*/
+
+.modern-forum-post-container {
+    background: transparent url(https://www.runescape.com/img/rs3/forums/panel.jpg) repeat bottom left;
+    box-shadow: 0 -4px 5px -1px #000, 0 4px 5px -1px #000;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 4px;
+    font-size: 1em;
+    border-radius: 20px;
+}
+
+
+.modern-forum-post-row-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.modern-post-profile {
+    width: 15%;
+    text-align: center;
+    padding: 5px;
+    float: left;
+    border-right: 2px solid black;
+}
+
+.modern-post-profile-picture-container {
+}
+
+.modern-post-profile-picture {
+    height: 250px;
+    width: 250px;
+}
+
+.modern-comment-profile-picture {
+    height: 100px;
+    width: 100px;
+}
+
+.modern-post-profile-displayname {
+    font-size: 2.5em;
+    color: #f70fe0;
+}
+
+.modern-post-details {
+    margin-left: 40px;
+}
+
+.modern-post-title {
+    color: #e1bb34;
+    font-family: "MuseoSans";
+    font-size: 2.5em;
+    letter-spacing: normal;
+    font-weight: normal;
+
+    overflow: hidden;
+    white-space: nowrap; /* Don't forget this one */
+    text-overflow: ellipsis;
+}
+
+.modern-post-action-like-picture {
+    height: 30px;
+    width: 30px;
+    margin-right: 10px;
+}
+
+.modern-post-actions {
+    display: flex;
+    flex-direction: row;
+    margin-top: 50px;
+    margin-left: 900px;
+    margin-right: 100px;
+    text-align: center;
+}
+
+.modern-post-actions-like {
+    display: flex;
+    flex-direction: row;
+}
+
+.modern-post-action {
+    margin-left: 50px;
+}
+
+.modern-post-text {
+    font-size: 1.25em;
+}
+
+
+
