@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -90,6 +91,7 @@ namespace NHASoftware.Controllers
                 CommentCount = 0
             };
 
+            ViewData["reffer"] = Request.Headers["Referer"].ToString();
             return View(forumPost);
         }
 
@@ -138,6 +140,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
             ViewData["ForumTopicId"] = new SelectList(_context.ForumTopics, "Id", "Id", forumPost.ForumTopicId);
+            ViewData["reffer"] = Request.Headers["Referer"].ToString();
             return View(forumPost);
         }
 
@@ -174,7 +177,7 @@ namespace NHASoftware.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new {id});
             }
             ViewData["ForumTopicId"] = new SelectList(_context.ForumTopics, "Id", "Id", forumPost.ForumTopicId);
             return View(forumPost);

@@ -73,7 +73,8 @@ namespace NHASoftware.Controllers
                 PostCount = 0,
                 ThreadCount = 0
             };
-
+            
+            ViewData["reffer"] = Request.Headers["Referer"].ToString();
             return View(topic);
         }
 
@@ -89,7 +90,7 @@ namespace NHASoftware.Controllers
             {
                 _context.Add(forumTopic);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Forum");
             }
             ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Name", forumTopic.ForumSectionId);
             return View(forumTopic);
