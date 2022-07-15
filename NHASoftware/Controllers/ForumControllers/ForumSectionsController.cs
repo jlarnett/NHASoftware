@@ -48,6 +48,7 @@ namespace NHASoftware.Controllers
         // GET: ForumSections/Create
         public IActionResult Create()
         {
+            ViewData["reffer"] = Request.Headers["Referer"].ToString();
             return View();
         }
 
@@ -62,8 +63,9 @@ namespace NHASoftware.Controllers
             {
                 _context.Add(forumSection);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Forum");
             }
+            
             return View(forumSection);
         }
 

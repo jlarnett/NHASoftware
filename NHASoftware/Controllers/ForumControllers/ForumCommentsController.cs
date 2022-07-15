@@ -72,6 +72,7 @@ namespace NHASoftware.Controllers
                 ForumPostId = id
             };
 
+            ViewData["reffer"] = Request.Headers["Referer"].ToString();
             return View(comment);
         }
 
@@ -104,7 +105,7 @@ namespace NHASoftware.Controllers
                 _context.Add(forumComment);
                 await _context.SaveChangesAsync();
                 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "ForumPosts", new {id=forumComment.ForumPostId});
             }
             return View(forumComment);
         }
@@ -134,13 +135,14 @@ namespace NHASoftware.Controllers
                 return RedirectToAction("Details", "ForumPosts", new { id = forumComment.ForumPostId });
             }
             ViewData["ForumPostId"] = new SelectList(_context.ForumPost, "Id", "Id", forumComment.ForumPostId);
+            ViewData["reffer"] = Request.Headers["Referer"].ToString();
             return View(forumComment);
         }
 
         // POST: ForumComments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CommentText,CreationDate,UserId,ForumPostId")] ForumComment forumComment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CommentText,CreationDate,UserId,ForumPostId,LikeCount")] ForumComment forumComment)
         {
             /*******************************************************************************************************
             *      POST: ForumComments/Edit
@@ -170,7 +172,7 @@ namespace NHASoftware.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "ForumPosts", new {id = forumComment.ForumPostId});
             }
             ViewData["ForumPostId"] = new SelectList(_context.ForumPost, "Id", "Id", forumComment.ForumPostId);
             return View(forumComment);

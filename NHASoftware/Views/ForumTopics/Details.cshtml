@@ -42,7 +42,7 @@
                             var str = spacetime(post.creationDate);
                             var date = str.format('{month}-{date-pad}-{year} {time}{am pm}');
 
-                            return "<article class='group-thread group-thread--rootview' data-id='" + post.id + "'><a class='group-thread__link' href='/ForumPosts/Details/" + post.id + "'><div class='group-thread__details'><h3 class='group-thread__heading'>" + post.title +"</h3><p class='group-thread__summary' style='white-space: pre-line'>" + post.forumText + "</p></div><span class='forum-stat forum-stat--thread'>"+ post.commentCount + "</span><span class='forum-stat forum-stat--posts'>9,280,587</span><span class='forum-stat forum-stat--latest'>" + date + "</span></a></article>";
+                            return "<article class='group-thread group-thread--rootview' data-id='" + post.id + "'><a class='group-thread__link' href='/ForumPosts/Details/" + post.id + "'><div class='group-thread__details'><h3 class='group-thread__heading'>" + post.title +"</h3><p class='group-thread__summary' style='white-space: pre-line'>" + post.forumText + "</p></div><span class='forum-stat forum-stat--thread'>"+ post.commentCount + "</span><span class='forum-stat forum-stat--posts'>" + post.likeCount + "</span><span class='forum-stat forum-stat--latest'>" + date + "</span></a></article>";
                         }
                     }
                 ]

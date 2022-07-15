@@ -181,7 +181,8 @@ article {
     font-family: "MuseoSans";
     font-size: 1.4em;
     overflow: hidden;
-    text-align: left;
+    text-align: right;
+    margin-right: 35px;
 }
 
 .thread-plate-title--root-posts {

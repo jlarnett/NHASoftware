@@ -25,7 +25,10 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to Forum Sections List</a>
+    @if (!string.IsNullOrWhiteSpace(ViewData["Reffer"].ToString()))
+    {
+        <a href="@ViewData["reffer"]">Return to Post</a>
+    }
 </div>
 
 @section Scripts {

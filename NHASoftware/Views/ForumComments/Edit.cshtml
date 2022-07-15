@@ -20,19 +20,16 @@
                 <span asp-validation-for="CommentText" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CreationDate" class="control-label"></label>
-                <input asp-for="CreationDate" class="form-control" />
-                <span asp-validation-for="CreationDate" class="text-danger"></span>
+                @Html.HiddenFor(c => c.CreationDate)
             </div>
             <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
+                @Html.HiddenFor(c => c.UserId)
             </div>
             <div class="form-group">
-                <label asp-for="ForumPostId" class="control-label"></label>
-                <select asp-for="ForumPostId" class="form-control" asp-items="ViewBag.ForumPostId"></select>
-                <span asp-validation-for="ForumPostId" class="text-danger"></span>
+                @Html.HiddenFor(c => c.ForumPostId)
+            </div>
+            <div class="form-group">
+                @Html.HiddenFor(c => c.LikeCount)
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -42,7 +39,10 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @if (!string.IsNullOrWhiteSpace(ViewData["Reffer"].ToString()))
+    {
+        <a href="@ViewData["reffer"]">Return to Post</a>
+    }
 </div>
 
 @section Scripts {
