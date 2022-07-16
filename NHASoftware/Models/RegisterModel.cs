@@ -54,9 +54,10 @@ namespace NHASoftware.Models
                     UserName = Input.Email,
                     Email = Input.Email,
                     UserCash = 0.00,
-                    LastLoginDate = DateTime.Today
+                    LastLoginDate = DateTime.Today,
+                    ProfilePicturePath = "DefaultProfilePicture.png",
+                    DisplayName = "Gangsta"
                 };
-
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 

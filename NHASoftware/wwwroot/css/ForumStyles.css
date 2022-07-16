@@ -28,6 +28,7 @@ article {
     flex-direction: column;
     margin-bottom: 4px;
     font-size: 1em;
+    border-radius: 25px;
 }
 
 .forum-post-thread {
@@ -182,7 +183,6 @@ article {
     font-size: 1.4em;
     overflow: hidden;
     text-align: right;
-    margin-right: 35px;
 }
 
 .thread-plate-title--root-posts {
@@ -201,11 +201,12 @@ article {
     text-align: center;
     width: 15%;
     margin-top: 15px;
+    margin-right: 80px;
     border-right: solid 1px #000;
 }
 
 .forum-stats {
-    padding: 0px;
+    padding: 20px;
 }
 
 .forum-stat--thread {
@@ -217,7 +218,7 @@ article {
 }
 
 .forum-stat--latest {
-    width: 15%
+    width: 15%;
 }
 
 
