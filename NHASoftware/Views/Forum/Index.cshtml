@@ -1,4 +1,7 @@
-﻿@model NHASoftware.ViewModels.ForumIndexViewModel
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using NHASoftware.Controllers
+@model NHASoftware.ViewModels.ForumIndexViewModel
 
 @{
     ViewData["Title"] = "Forums";
@@ -36,11 +39,6 @@
             <details open class="forum-group">
                 <summary class="forum-stats">
                     <h2 class="forum-group__heading">@name</h2>
-                    <div class="thread-plate-titles thread-plate-titles--rootview">
-                        <h4 class="thread-plate-title thread-plate-title--root-threads">Threads</h4>
-                        <h4 class="thread-plate-title thread-plate-title--root-posts">Posts</h4>
-                        <h4 class="thread-plate-title thread-plate-title--root-latest">Latest Post</h4>
-                    </div>
                 </summary>
                     
                 <table id="@id" class="tableCustom">
@@ -79,7 +77,8 @@
             for (var i = 0; i < arrayLength; i++) {
                 if (keys.includes(ForumsKV[i].key)) {
 
-                } else {
+                } 
+                else {
                     var table = $("#" + ForumsKV[i].key).DataTable();
                     keys.push(ForumsKV[i].key);
                 }
@@ -87,18 +86,89 @@
 
             for (var i = 0; i < arrayLength; i++) {
 
-                //bug is happening here where all dates are defaulting to the current datetime. 
-
                 var table2 = $("#" + ForumsKV[i].key).DataTable();
-
                 var str = spacetime(ForumsKV[i].value.latestDate);
                 var date2 = str.format('{month}-{date-pad}-{year} {time}{am pm}');
-                console.log(ForumsKV);
-                console.log(str);
-                console.log(date2);
 
-                table2.row.add( ["<article class='group-thread group-thread--rootview' data-id='" + ForumsKV[i].value.id + "'><a class='group-thread__link' href='/ForumTopics/Details/" + ForumsKV[i].value.id + "'><div class='group-thread__details'><h3 class='group-thread__heading'>" + ForumsKV[i].value.title + "</h3><p class='group-thread__summary'>" + ForumsKV[i].value.description + "</p></div><span class='forum-stat forum-stat--thread'>"+ ForumsKV[i].value.threadCount + "</span><span class='forum-stat forum-stat--posts'>" + ForumsKV[i].value.postCount + "</span><span class='forum-stat forum-stat--latest'>" + date2 + "</span></a></article>" ] ).draw();
+                //table2.row.add(["<article class='group-thread group-thread--rootview' data-id='" + ForumsKV[i].value.id + "'><a class='group-thread__link' href='/ForumTopics/Details/" + ForumsKV[i].value.id + "'><div class='group-thread__details'><h3 class='group-thread__heading'>" + ForumsKV[i].value.title + "</h3><p class='group-thread__summary'>" + ForumsKV[i].value.description + "</p></div><span class='forum-stat forum-stat--thread'>" + ForumsKV[i].value.threadCount + "</span><span class='forum-stat forum-stat--posts'>" + ForumsKV[i].value.postCount + "</span><span class='forum-stat forum-stat--latest'>" + date2 + "</span></a></article>"]).draw();
+
+                table2.row.add(["<div class='modern-forum-post-container'> <a class='modern-thread-link' topic-id='" + ForumsKV[i].value.id + "'>" +
+                                    "<div class='modern-forum-post-row-container'>" +
+                                        "<div class='modern-forum-topic-title'>" + "<h3 class='modern-post-text'>" + ForumsKV[i].value.title + "</h3>" + "</div>" +
+                                    "</div>" +
+                                    "<div>" +
+                                        "<p class='modern-formum-topic-summary'>" + ForumsKV[i].value.description + "</p>" +
+                                    "</div>" +
+                                    "<div class='modern-post-actions'>" +
+                                        CheckForAdminButtons(ForumsKV[i]) +
+                                        "<div class='modern-post-actions-like modern-post-action'>" +
+                                            "<input type='image' src='/Images/ThreadIcon.png' class='modern-threads-picture js-thread-comment' comment-id='" + "commentid" + "'/>" +
+                                            "<h3>" + ForumsKV[i].value.threadCount + "</h3>" +
+                                        "</div>" +
+                                        "<div class='modern-post-actions-like modern-post-action'>" +
+                                            "<input type='image' src='/Images/PostIcon.png' class='modern-threads-picture js-thread-comment' comment-id='" + "commentid" + "'/>" +
+                                            "<h3>" + ForumsKV[i].value.postCount + "</h3>" +
+                                        "</div>" +
+                                        "<div class='modern-post-action'>" +
+                                            "<h5>" + "Latest Post: " + date2 + "</h5>" +
+                                        "</div>" +
+                                    "</div>" +
+                    "</a></div>"]).draw();
             }
+
+
+
+
+            function CheckForAdminButtons(data) 
+            {
+                @{
+                    bool adminButtonsActive;
+                    @if (User.IsInRole("admin") || User.IsInRole("forum admin"))
+                    {
+                        adminButtonsActive = true;
+                    }
+                    else
+                    {
+                        adminButtonsActive = false;
+                    }
+                }
+
+                var adminButtons = JSON.parse('@Html.Raw(Json.Serialize(adminButtonsActive))');
+
+                if (adminButtons === true) {
+                    return "<div class='modern-post-action'>" +
+                        "<button class='btn-primary btn-link js-edit-topic' topic-id='" +
+                        data.value.id +
+                        "'>Edit Forum Topic</button>" +
+                        "</div>" +
+                        "<div class='modern-post-action'>" +
+                        "<button class='btn-primary btn-link js-delete-topic' topic-id='" +
+                        data.value.id +
+                        "'>Delete Forum Topic</button>" +
+                        "</div>";
+                } 
+                else {
+                    return "";
+                }
+            }
+
+            $(".modern-thread-link").on("click", function () {
+                var button = $(this);
+                window.location.href = "/ForumTopics/Details/" + button.attr("topic-id");
+            });
+
+            $(".js-edit-topic").on("click", function () {
+                event.stopPropagation();
+                var button = $(this);
+                window.location.href = "/ForumTopics/edit/" + button.attr("topic-id");
+            });
+
+            $(".js-delete-topic").on("click", function () {
+                event.stopPropagation();
+                var button = $(this);
+                window.location.href = "/ForumTopics/delete/" + button.attr("topic-id");
+            });
+
         });
 
     </script>
