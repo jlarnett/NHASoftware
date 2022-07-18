@@ -120,15 +120,15 @@
                                                         "<div class='modern-post-details'>" + "<p class='modern-post-text'>" + comments[i].commentText + "</p>" + "</div>" +
                                                         "</div>" +
                                                 "<div class='modern-post-actions'>" +
-                        "<div class='modern-post-action'>" +
-                            "<h3 >" + date + "</h3>" +
-                        "</div>" +
-                        "<div class='modern-post-actions-like modern-post-action'>" +
-                        "<input type='image' src='/Images/LikeIcon.png' class='modern-post-action-like-picture js-like-comment' comment-id='" + comments[i].id + "'/>" +
-                        "<h3>" + comments[i].likeCount + "</h3>" +
-                        "</div>" + checkIfCommentUser(comments[i]) +
-                        "</div>" +
-                        "</div>"] ).draw();
+                                                    "<div class='modern-post-action'>" +
+                                                        "<h3 >" + date + "</h3>" +
+                                                    "</div>" +
+                                                    "<div class='modern-post-actions-like modern-post-action'>" +
+                                                        "<input type='image' src='/Images/LikeIcon.png' class='modern-post-action-like-picture js-like-comment' comment-id='" + comments[i].id + "'/>" +
+                                                        "<h3>" + comments[i].likeCount + "</h3>" +
+                                                    "</div>" + checkIfCommentUser(comments[i]) +
+                                                "</div>" +
+                                            "</div>"] ).draw();
 
                 }
             }
@@ -153,7 +153,8 @@
                         data.id +
                         "'>Delete Comment</button>" +
                         "</div>";
-                } else {
+                } 
+                else {
                     return "";
                 }
 

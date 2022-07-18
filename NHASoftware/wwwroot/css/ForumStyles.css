@@ -28,6 +28,7 @@ article {
     flex-direction: column;
     margin-bottom: 4px;
     font-size: 1em;
+    border-radius: 25px;
 }
 
 .forum-post-thread {
@@ -182,7 +183,6 @@ article {
     font-size: 1.4em;
     overflow: hidden;
     text-align: right;
-    margin-right: 35px;
 }
 
 .thread-plate-title--root-posts {
@@ -201,11 +201,12 @@ article {
     text-align: center;
     width: 15%;
     margin-top: 15px;
+    margin-right: 80px;
     border-right: solid 1px #000;
 }
 
 .forum-stats {
-    padding: 0px;
+    padding: 20px;
 }
 
 .forum-stat--thread {
@@ -217,7 +218,7 @@ article {
 }
 
 .forum-stat--latest {
-    width: 15%
+    width: 15%;
 }
 
 
@@ -306,9 +307,9 @@ article {
 }
 
 
-/*
+/*****************************************************************************************************
     This is the seperator of modern forum post styling
-*/
+******************************************************************************************************/
 
 .modern-forum-post-container {
     background: transparent url(https://www.runescape.com/img/rs3/forums/panel.jpg) repeat bottom left;
@@ -318,6 +319,10 @@ article {
     margin-bottom: 4px;
     font-size: 1em;
     border-radius: 20px;
+}
+
+.modern-forum-post-container:hover {
+    filter: brightness(1.5);
 }
 
 
@@ -374,11 +379,17 @@ article {
     margin-right: 10px;
 }
 
+.modern-threads-picture {
+    height: 30px;
+    width: 30px;
+    margin-right: 10px;
+}
+
 .modern-post-actions {
     display: flex;
     flex-direction: row;
-    margin-top: 50px;
-    margin-left: 900px;
+    margin-top: 10px;
+    margin-left: 750px;
     margin-right: 100px;
     text-align: center;
 }
@@ -396,5 +407,27 @@ article {
     font-size: 1.25em;
 }
 
+.modern-forum-topic-title {
+    color: #e1bb34;
+    font-family: "MuseoSans";
+    font-size: 2.5em;
+    letter-spacing: normal;
+    font-weight: normal;
+    overflow: hidden;
+    white-space: nowrap; /* Don't forget this one */
+    text-overflow: ellipsis;
+    margin-left: 30px;
+}
+
+.modern-formum-topic-summary {
+    color: #d7dbe1;
+    font-size: 1.2em;
+    white-space: pre-wrap;
+    margin-left: 30px;
+}
+
+.modern-thread-link {
+    text-decoration: none;
+}
 
 
