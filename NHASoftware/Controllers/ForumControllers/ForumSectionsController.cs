@@ -82,6 +82,8 @@ namespace NHASoftware.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["reffer"] = Request.Headers.Referer.ToString();
             return View(forumSection);
         }
 
@@ -115,7 +117,7 @@ namespace NHASoftware.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Forum");
             }
             return View(forumSection);
         }
@@ -135,6 +137,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
+            ViewData["reffer"] = Request.Headers.Referer.ToString();
             return View(forumSection);
         }
 
@@ -146,7 +149,7 @@ namespace NHASoftware.Controllers
             var forumSection = await _context.ForumSections.FindAsync(id);
             _context.ForumSections.Remove(forumSection);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Forum");
         }
 
         private bool ForumSectionExists(int id)

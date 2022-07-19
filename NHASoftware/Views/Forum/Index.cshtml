@@ -21,7 +21,11 @@
         <a asp-action="Create" asp-controller="ForumSections" class="link-light">Add Forum Section</a>
         <a asp-action="Create" asp-controller="ForumTopics"class="link-light">Add Section Topic</a>
     }
+</div>
 
+<div class="modern-forum-index-header-text">
+    <p>The ability to add, edit, and delete Forum Sections and topics is limited to admins & forum admins. To become an forum admin for NHA Forums please email nhaindustries@gmail.com with your account email and reasons why you should become forum admin. Alternatively if you are just interested in getting a topic or section added to the forum you can mention that in the email.</p>
+    <p>Forum rules are extremely free. Free Speech is the only metric here. The only things that can't be posted about includes sexual assualt & violent crimes. Please respect these rules.</p>
 </div>
 
 <div>
@@ -37,10 +41,26 @@
             var id = section.Id;
 
             <details open class="forum-group">
-                <summary class="forum-stats">
-                    <h2 class="forum-group__heading">@name</h2>
-                </summary>
-                    
+
+                @if (User.IsInRole("forum admin") || User.IsInRole("admin"))
+                {
+                    <summary class="forum-stats">
+                        <h2 class="forum-group__heading">@name</h2>
+                        <div class="modern-section-actions">
+                            <button class="btn-link btn-primary js-edit-section" section-id="@id">Edit Section</button>
+                            <button class="btn-link btn-primary js-delete-section" section-id="@id">Delete Section</button>
+                        </div>
+                    </summary>
+                }
+                else
+                {
+                    <summary class="forum-stats">
+                        <h2 class="forum-group__heading">@name</h2>
+                    </summary>
+                }
+
+
+
                 <table id="@id" class="tableCustom">
                     <thead>
                     <tr>
@@ -167,6 +187,16 @@
                 event.stopPropagation();
                 var button = $(this);
                 window.location.href = "/ForumTopics/delete/" + button.attr("topic-id");
+            });
+
+            $(".js-edit-section").on("click", function () {
+                var button = $(this);
+                window.location.href = "/ForumSections/edit/" + button.attr("section-id");
+            });
+
+            $(".js-delete-section").on("click", function () {
+                var button = $(this);
+                window.location.href = "/ForumSections/delete/" + button.attr("section-id");
             });
 
         });

@@ -30,6 +30,11 @@
                 <span asp-validation-for="ForumSectionId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                @Html.HiddenFor(t => t.PostCount)
+                @Html.HiddenFor(t => t.ThreadCount)
+                @Html.HiddenFor(t => t.LastestPost)
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
@@ -37,7 +42,10 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @if (!string.IsNullOrWhiteSpace(ViewData["Reffer"].ToString()))
+    {
+        <a href="@ViewData["reffer"]">Return to Forums</a>
+    }
 </div>
 
 @section Scripts {
