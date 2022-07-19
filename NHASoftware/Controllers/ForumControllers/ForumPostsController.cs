@@ -210,6 +210,7 @@ namespace NHASoftware.Controllers
                 return RedirectToAction("Details", "ForumPosts", new {id = forumPost.Id});
             }
 
+            ViewData["reffer"] = Request.Headers["Referer"].ToString();
             return View(forumPost);
         }
 
@@ -224,9 +225,12 @@ namespace NHASoftware.Controllers
             ***********************************************************************************************************************************/
 
             var forumPost = await _context.ForumPost.FindAsync(id);
+
+            var oldPostTopicId = forumPost.ForumTopicId;
             _context.ForumPost.Remove(forumPost);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction("Details", "ForumTopics", new{id=oldPostTopicId});
         }
 
         private bool ForumPostExists(int id)

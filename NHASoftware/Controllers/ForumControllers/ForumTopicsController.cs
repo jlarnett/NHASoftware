@@ -109,6 +109,8 @@ namespace NHASoftware.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["reffer"] = Request.Headers["Referer"].ToString();
             ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Id", forumTopic.ForumSectionId);
             return View(forumTopic);
         }
@@ -116,7 +118,7 @@ namespace NHASoftware.Controllers
         // POST: ForumTopics/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,ForumSectionId")] ForumTopic forumTopic)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,ForumSectionId,ThreadCount,PostCount,LatestPost")] ForumTopic forumTopic)
         {
             if (id != forumTopic.Id)
             {
@@ -141,7 +143,7 @@ namespace NHASoftware.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Forum");
             }
             ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Id", forumTopic.ForumSectionId);
             return View(forumTopic);
@@ -163,6 +165,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
+            ViewData["reffer"] = Request.Headers["Referer"].ToString();
             return View(forumTopic);
         }
 
@@ -174,7 +177,7 @@ namespace NHASoftware.Controllers
             var forumTopic = await _context.ForumTopics.FindAsync(id);
             _context.ForumTopics.Remove(forumTopic);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Forum");
         }
 
         private bool ForumTopicExists(int id)

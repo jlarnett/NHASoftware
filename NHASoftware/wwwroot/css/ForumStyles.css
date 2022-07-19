@@ -126,15 +126,14 @@ article {
 }
 
 .forum-group__heading {
-    float: left;
+    /*float: left;*/
     font-size: 2.5em;
     max-height: 200px;
     margin: 5px 10px;
-    max-width: 70%;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    position: relative;
+    /*display: flex;*/
+    /*flex-wrap: wrap;*/
+    /*flex-direction: column;*/
+    /*position: relative;*/
     white-space: normal;
     color: #e1bb34;
     word-wrap: break-spaces;
@@ -166,6 +165,7 @@ article {
     background-color: #1b252c;
     border: 1px solid #404448;
     background: transparent url(https://www.runescape.com/img/rs3/forums/panel.jpg) repeat bottom left;
+    border-radius: 20px;
 }
 
 /********************************************************************************
@@ -428,6 +428,14 @@ article {
 
 .modern-thread-link {
     text-decoration: none;
+}
+
+.modern-section-actions {
+    float: right;
+}
+
+.modern-forum-index-header-text {
+    font-size: 1.2em;
 }
 
 
