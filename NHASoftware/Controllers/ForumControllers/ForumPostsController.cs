@@ -256,14 +256,17 @@ namespace NHASoftware.Controllers
                 if (userId == forumPost.UserId || IsUserForumAdmin())
                 {
                     var topic = await _context.ForumTopics.FirstAsync(c => c.Id == forumPost.ForumTopicId);
+                    var postCommentsNumber = _context.ForumComments.Count(c => c.ForumPostId == forumPost.Id);
 
-                    topic.PostCount -= 1;
+                    topic.PostCount -= postCommentsNumber + 1;
                     topic.ThreadCount -= 1;
                     topic.LastestPost = DateTime.Now;
 
                     var oldPostTopicId = forumPost.ForumTopicId;
+
                     _context.ForumPost.Remove(forumPost);
                     await _context.SaveChangesAsync();
+
                     return RedirectToAction("Details", "ForumTopics", new{id=oldPostTopicId});
                 }
                 else
