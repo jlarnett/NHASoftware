@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -130,7 +131,8 @@ namespace NHASoftware.Controllers
             {
                 return NotFound();
             }
-            else if (forumComment.UserId != _userManager.GetUserId(HttpContext.User))
+
+            if (forumComment.UserId != _userManager.GetUserId(HttpContext.User) && !IsUserForumAdmin())
             {
                 return RedirectToAction("Details", "ForumPosts", new { id = forumComment.ForumPostId });
             }
@@ -139,7 +141,12 @@ namespace NHASoftware.Controllers
             return View(forumComment);
         }
 
-        // POST: ForumComments/Edit/5
+        /// <summary>
+        /// POST: Edits forum comment. ForumComments/Edit/5
+        /// </summary>
+        /// <param name="id">comment ID</param>
+        /// <param name="forumComment">forumComment that properties are binded too.</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CommentText,CreationDate,UserId,ForumPostId,LikeCount")] ForumComment forumComment)
@@ -156,29 +163,41 @@ namespace NHASoftware.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                if (forumComment.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier) || IsUserForumAdmin())
                 {
-                    _context.Update(forumComment);
-                    await _context.SaveChangesAsync();
+                    try
+                    {
+                        _context.Update(forumComment);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!ForumCommentExists(forumComment.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction("Details", "ForumPosts", new {id = forumComment.ForumPostId});
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!ForumCommentExists(forumComment.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return Unauthorized();
                 }
-                return RedirectToAction("Details", "ForumPosts", new {id = forumComment.ForumPostId});
             }
             ViewData["ForumPostId"] = new SelectList(_context.ForumPost, "Id", "Id", forumComment.ForumPostId);
             return View(forumComment);
         }
 
-        // GET: ForumComments/Delete/5
+        /// <summary>
+        /// GET: Return ForumComments Delete Confirmed page. Verifies user trying to delete matches comment
+        /// ForumComments/Delete/5
+        /// </summary>
+        /// <param name="id">Forum Comment ID.</param>
+        /// <returns></returns>
         [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -200,7 +219,8 @@ namespace NHASoftware.Controllers
             {
                 return NotFound();
             }
-            else if (forumComment.UserId != _userManager.GetUserId(HttpContext.User))
+
+            if (forumComment.UserId != _userManager.GetUserId(HttpContext.User) && !IsUserForumAdmin())
             {
                 return RedirectToAction("Details", "ForumPosts", new {id = forumComment.ForumPostId});
             }
@@ -208,25 +228,49 @@ namespace NHASoftware.Controllers
             return View(forumComment);
         }
 
-        // POST: ForumComments/Delete/5
+        /// <summary>
+        /// POST Method Deletes the forum comment: ForumComments/Delete/5
+        /// </summary>
+        /// <param name="id">Comment ID</param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            /*******************************************************************************************************
-            *      POST: ForumComments/Delete/5
-            *      Deletes the comment from database.
-            *******************************************************************************************************/
 
             var forumComment = await _context.ForumComments.FindAsync(id);
-            _context.ForumComments.Remove(forumComment);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (forumComment != null)
+            {
+                if (userId == forumComment.UserId || IsUserForumAdmin())
+                {
+                    _context.ForumComments.Remove(forumComment);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Details", "ForumPosts", new {id=forumComment.ForumPostId});
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+
+            return NotFound();
         }
 
         private bool ForumCommentExists(int id)
         {
             return _context.ForumComments.Any(e => e.Id == id);
+        }
+
+        private bool IsUserForumAdmin()
+        {
+            if (User.IsInRole("admin") || User.IsInRole("forum admin"))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

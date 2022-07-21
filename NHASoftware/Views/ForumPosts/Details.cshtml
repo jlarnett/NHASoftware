@@ -134,15 +134,18 @@
             }
 
             function checkIfCommentUser(data) {
-
-
                 @{
                     string userId = UserManager.GetUserId(User);
                 }
 
-                var userIdString = JSON.parse('@Html.Raw(Json.Serialize(userId))');
+                @{
+                    bool adminUser = User.IsInRole("admin") || User.IsInRole("forum admin");
+                }
 
-                if (userIdString === data.user.id) {
+                var userIdString = JSON.parse('@Html.Raw(Json.Serialize(userId))');
+                var adminUserBool = JSON.parse('@Html.Raw(Json.Serialize(adminUser))');
+
+                if (userIdString === data.user.id || adminUserBool) {
                     return "<div class='modern-post-action'>" +
                         "<button class='btn-primary btn-link js-edit-comment' comment-id='" +
                         data.id +
