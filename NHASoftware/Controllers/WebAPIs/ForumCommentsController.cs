@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,11 @@ namespace NHASoftware.Controllers.WebAPIs
             _context = context;
         }
 
-        // GET: api/ForumComments
+        /// <summary>
+        /// GET: api/ForumComments
+        /// Returns a list of all forumComments
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ForumComment>>> GetForumComments()
         { 
@@ -33,7 +38,12 @@ namespace NHASoftware.Controllers.WebAPIs
             return await _context.ForumComments.ToListAsync();
         }
 
-        // GET: api/ForumComments/5
+        /// <summary>
+        /// GET: api/ForumComments/5
+        /// Returns the forum comment of the supplied id. 
+        /// </summary>
+        /// <param name="id">id of the forum comment you want details of. </param>
+        /// <returns>forum comment</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<ForumComment>> GetForumComment(int id)
         {
@@ -54,87 +64,57 @@ namespace NHASoftware.Controllers.WebAPIs
 
         // PUT: api/ForumComments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutForumComment(int id, ForumComment forumComment)
-        {
-            if (id != forumComment.Id)
-            {
-                return BadRequest();
-            }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutForumComment(int id, ForumComment forumComment)
+        //{
+        //    if (id != forumComment.Id)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(forumComment).State = EntityState.Modified;
+        //    _context.Entry(forumComment).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ForumCommentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!ForumCommentExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
-
-        
-        // PUT: api/ForumCommentsLike/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("Like/{id:int}")]
-        public async Task<IActionResult> LikeComment(int id)
-        {
-            var comment = await _context.ForumComments.FindAsync(id);
-
-            if(comment == null)
-            {
-                return BadRequest();
-            }
-            else
-            {
-                comment.LikeCount ++;
-            }
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ForumCommentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         // POST: api/ForumComments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<ForumComment>> PostForumComment(ForumComment forumComment)
-        {
-              if (_context.ForumComments == null)
-              {
-                  return Problem("Entity set 'ApplicationDbContext.ForumComments'  is null.");
-              }
-              _context.ForumComments.Add(forumComment);
-              await _context.SaveChangesAsync(); 
+        //[HttpPost]
+        //public async Task<ActionResult<ForumComment>> PostForumComment(ForumComment forumComment)
+        //{
+        //      if (_context.ForumComments == null)
+        //      {
+        //          return Problem("Entity set 'ApplicationDbContext.ForumComments'  is null.");
+        //      }
+        //      _context.ForumComments.Add(forumComment);
+        //      await _context.SaveChangesAsync(); 
 
-              return CreatedAtAction("GetForumComment", new { id = forumComment.Id }, forumComment);
-        }
+        //      return CreatedAtAction("GetForumComment", new { id = forumComment.Id }, forumComment);
+        //}
 
-        // DELETE: api/ForumComments/5
+        /// <summary>
+        /// DELETE: api/ForumComments/5
+        /// Deletes the forum Comment with the supplied id. 
+        /// </summary>
+        /// <param name="id">id of the forum comment you want removed from database. </param>
+        /// <returns></returns>
+        
         [HttpDelete("{id}")]
         public async Task<JsonResult> DeleteForumComment(int id)
         {
@@ -150,16 +130,40 @@ namespace NHASoftware.Controllers.WebAPIs
                 return new JsonResult(new { success = false });
             }
 
-            _context.ForumComments.Remove(forumComment);
-            await _context.SaveChangesAsync();
-
-            return new JsonResult(new { success = true });
-
+            if (User.FindFirstValue(ClaimTypes.NameIdentifier) == forumComment.UserId || IsUserForumAdmin())
+            {
+                _context.ForumComments.Remove(forumComment);
+                await _context.SaveChangesAsync();
+                return new JsonResult(new { success = true });
+            }
+            else
+            {
+                return new JsonResult(new { success = false });
+            }
         }
 
+        /// <summary>
+        /// Checks if the supplied ids forum Comment exist in the database.
+        /// </summary>
+        /// <param name="id">id of the comment you want to check existence of. </param>
+        /// <returns></returns>
         private bool ForumCommentExists(int id)
         {
             return (_context.ForumComments?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        
+        /// <summary>
+        /// Checks whether the current user is a admin or forum admin. 
+        /// </summary>
+        /// <returns>Returns BOOL True if current user is a forum admin or higher. </returns>
+        private bool IsUserForumAdmin()
+        {
+            if (User.IsInRole("admin") || User.IsInRole("forum admin"))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
