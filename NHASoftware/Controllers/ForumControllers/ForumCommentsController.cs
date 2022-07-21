@@ -89,19 +89,20 @@ namespace NHASoftware.Controllers
             if (ModelState.IsValid)
             {
                 //Gets total comments for post & increments it. 
-                int commentCount =  _context.ForumComments.Count(c=> c.ForumPostId == forumComment.ForumPostId);
                 var post = await _context.ForumPost.FindAsync(forumComment.ForumPostId);
-                post.CommentCount = commentCount +1;
 
-
-                //Checking topic postCount & updating latest post.
-                int postThreads = _context.ForumPost.Count(c => c.ForumTopicId == post.ForumTopicId);
-                int postComments = _context.ForumComments.Count(c => c.ForumPost.ForumTopicId == post.ForumTopicId);
-                var total = postThreads + postComments;
+                if (post != null)
+                {
+                    post.CommentCount++;
+                }
 
                 var postTopic = await _context.ForumTopics.FindAsync(post.ForumTopicId);
-                postTopic.PostCount = total;
-                postTopic.LastestPost = DateTime.Now;
+
+                if (postTopic != null)
+                {
+                    postTopic.PostCount++;
+                    postTopic.LastestPost = DateTime.Now;
+                }
 
                 _context.Add(forumComment);
                 await _context.SaveChangesAsync();

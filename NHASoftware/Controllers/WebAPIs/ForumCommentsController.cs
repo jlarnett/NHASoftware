@@ -132,6 +132,13 @@ namespace NHASoftware.Controllers.WebAPIs
 
             if (User.FindFirstValue(ClaimTypes.NameIdentifier) == forumComment.UserId || IsUserForumAdmin())
             {
+                var post = _context.ForumPost.FindAsync(forumComment.ForumPostId);
+                var topic = _context.ForumTopics.FindAsync(post.Result.ForumTopicId);
+
+
+                post.Result.CommentCount--;
+                topic.Result.PostCount--;
+
                 _context.ForumComments.Remove(forumComment);
                 await _context.SaveChangesAsync();
                 return new JsonResult(new { success = true });
