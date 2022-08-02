@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
+using NHASoftware.HelperClasses;
 using NHASoftware.Models;
 using NHASoftware.Models.ForumModels;
 using NHASoftware.ViewModels;
@@ -297,12 +298,7 @@ namespace NHASoftware.Controllers
         /// <returns>Returns Bool if logged in user IS admin or forum admin</returns>
         private bool IsUserForumAdmin()
         {
-            if (User.IsInRole("admin") || User.IsInRole("forum admin"))
-            {
-                return true;
-            }
-
-            return false;
+            return PermissionChecker.instance.IsUserForumAdmin(User);
         }
     }
 }

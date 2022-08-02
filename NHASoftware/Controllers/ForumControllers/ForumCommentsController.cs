@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
+using NHASoftware.HelperClasses;
 using NHASoftware.Models;
 using NHASoftware.Models.ForumModels;
 
@@ -26,21 +27,25 @@ namespace NHASoftware.Controllers
             _userManager = userManager;
         }
 
-        // GET: ForumComments
+        /// <summary>
+        /// GET: ForumComments
+        /// Gets the ForumComments index page. Gets all comments to list. 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.ForumComments.Include(f => f.ForumPost);
             return View(await applicationDbContext.ToListAsync());
        }
 
-        // GET: ForumComments/Details/5
+        /// <summary>
+        /// GET: ForumComments/Details/5
+        /// returns forum comment detail view. Not Implemented anywhere. Might still work. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(int? id)
         {
-            /*******************************************************************************************************
-            *      GET: ForumComments/details/5
-            *      Returns Comment detail view. Not implemented anywhere. Might still work.
-            *******************************************************************************************************/
-
             if (id == null)
             {
                 return NotFound();
@@ -58,14 +63,15 @@ namespace NHASoftware.Controllers
             return View(forumComment);
         }
 
+        /// <summary>
+        /// GET: ForumComments/Create/5
+        /// Returns the Comment Create View. Populates some server side information. 
+        /// </summary>
+        /// <param name="id">Forum Post Id.</param>
+        /// <returns></returns>
         [Authorize]
         public IActionResult Create(int id)
         {
-            /*******************************************************************************************************
-            *      GET: ForumComments/Create
-            *      Returns Comment Create View. Populates some server side information. 
-            *******************************************************************************************************/
-
             var comment = new ForumComment()
             {
                 CreationDate = DateTime.Now,
@@ -77,15 +83,16 @@ namespace NHASoftware.Controllers
             return View(comment);
         }
 
+        /// <summary>
+        /// POST: ForumComments/Create
+        /// Creates a new forum comment. Post to the database using Entity framework. 
+        /// </summary>
+        /// <param name="forumComment">The variable all incoming properties are binded to</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CommentText,CreationDate,UserId,ForumPostId")] ForumComment forumComment)
         {
-            /*******************************************************************************************************
-            *      Post: ForumComments/Create
-            *      Create comment. rechecks postCount ^ commentCount.
-            *******************************************************************************************************/
-
             if (ModelState.IsValid)
             {
                 //Gets total comments for post & increments it. 
@@ -112,15 +119,15 @@ namespace NHASoftware.Controllers
             return View(forumComment);
         }
 
-        // GET: ForumComments/Edit/5
+        /// <summary>
+        /// GET: ForumComments/Edit/5
+        /// Checks if the id exist & returns the forumComment edit view. 
+        /// </summary>
+        /// <param name="id">Comment Id you want to attempt to edit. </param>
+        /// <returns></returns>
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
-            /*******************************************************************************************************
-            *      GET: ForumComments/Edit
-            *      Checks if id exist & returns Comment Edit View
-            *******************************************************************************************************/
-
             if (id == null)
             {
                 return NotFound();
@@ -143,7 +150,8 @@ namespace NHASoftware.Controllers
         }
 
         /// <summary>
-        /// POST: Edits forum comment. ForumComments/Edit/5
+        /// POST: ForumComments/Edit/5
+        /// Updates forum comment. 
         /// </summary>
         /// <param name="id">comment ID</param>
         /// <param name="forumComment">forumComment that properties are binded too.</param>
@@ -152,10 +160,6 @@ namespace NHASoftware.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CommentText,CreationDate,UserId,ForumPostId,LikeCount")] ForumComment forumComment)
         {
-            /*******************************************************************************************************
-            *      POST: ForumComments/Edit
-            *      Updates the comment.
-            *******************************************************************************************************/
 
             if (id != forumComment.Id)
             {
@@ -202,11 +206,6 @@ namespace NHASoftware.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
-            /*******************************************************************************************************
-            *      GET: ForumComments/Delete/5
-            *      Checks comment exists. Returns Delete confirmation page. Verifies user trying to delete matches comment.
-            *******************************************************************************************************/
-
             if (id == null)
             {
                 return NotFound();
@@ -259,19 +258,23 @@ namespace NHASoftware.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Checks whether forum comment exists. 
+        /// </summary>
+        /// <param name="id">Comment Id to check database for</param>
+        /// <returns>returns true if comment exists</returns>
         private bool ForumCommentExists(int id)
         {
             return _context.ForumComments.Any(e => e.Id == id);
         }
 
+        /// <summary>
+        /// Checks if the User role is either an admin or forum admin. 
+        /// </summary>
+        /// <returns>returns true if user is admin or forum admin</returns>
         private bool IsUserForumAdmin()
         {
-            if (User.IsInRole("admin") || User.IsInRole("forum admin"))
-            {
-                return true;
-            }
-
-            return false;
+            return PermissionChecker.instance.IsUserForumAdmin(User);
         }
     }
 }

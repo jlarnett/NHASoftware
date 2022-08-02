@@ -114,7 +114,6 @@ namespace NHASoftware.Controllers.WebAPIs
         /// </summary>
         /// <param name="id">id of the forum comment you want removed from database. </param>
         /// <returns></returns>
-        
         [HttpDelete("{id}")]
         public async Task<JsonResult> DeleteForumComment(int id)
         {
@@ -133,11 +132,17 @@ namespace NHASoftware.Controllers.WebAPIs
             if (User.FindFirstValue(ClaimTypes.NameIdentifier) == forumComment.UserId || IsUserForumAdmin())
             {
                 var post = _context.ForumPost.FindAsync(forumComment.ForumPostId);
-                var topic = _context.ForumTopics.FindAsync(post.Result.ForumTopicId);
 
+                if (post.Result != null)
+                {
+                    var topic = _context.ForumTopics.FindAsync(post.Result.ForumTopicId);
+                    post.Result.CommentCount--;
 
-                post.Result.CommentCount--;
-                topic.Result.PostCount--;
+                    if (topic.Result != null)
+                    {
+                        topic.Result.PostCount--;
+                    }
+                }
 
                 _context.ForumComments.Remove(forumComment);
                 await _context.SaveChangesAsync();
