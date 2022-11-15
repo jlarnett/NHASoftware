@@ -131,7 +131,7 @@ namespace NHASoftware.Controllers.WebAPIs
 
             if (User.FindFirstValue(ClaimTypes.NameIdentifier) == forumComment.UserId || IsUserForumAdmin())
             {
-                var post = _context.ForumPost.FindAsync(forumComment.ForumPostId);
+                var post = _context.ForumPosts.FindAsync(forumComment.ForumPostId);
 
                 if (post.Result != null)
                 {

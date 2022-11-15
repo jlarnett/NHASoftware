@@ -96,7 +96,7 @@ namespace NHASoftware.Controllers
             if (ModelState.IsValid)
             {
                 //Gets total comments for post & increments it. 
-                var post = await _context.ForumPost.FindAsync(forumComment.ForumPostId);
+                var post = await _context.ForumPosts.FindAsync(forumComment.ForumPostId);
 
                 if (post != null)
                 {
@@ -144,7 +144,7 @@ namespace NHASoftware.Controllers
             {
                 return RedirectToAction("Details", "ForumPosts", new { id = forumComment.ForumPostId });
             }
-            ViewData["ForumPostId"] = new SelectList(_context.ForumPost, "Id", "Id", forumComment.ForumPostId);
+            ViewData["ForumPostId"] = new SelectList(_context.ForumPosts, "Id", "Id", forumComment.ForumPostId);
             ViewData["reffer"] = Request.Headers["Referer"].ToString();
             return View(forumComment);
         }
@@ -193,7 +193,7 @@ namespace NHASoftware.Controllers
                     return Unauthorized();
                 }
             }
-            ViewData["ForumPostId"] = new SelectList(_context.ForumPost, "Id", "Id", forumComment.ForumPostId);
+            ViewData["ForumPostId"] = new SelectList(_context.ForumPosts, "Id", "Id", forumComment.ForumPostId);
             return View(forumComment);
         }
 

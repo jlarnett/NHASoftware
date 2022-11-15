@@ -1,15 +1,9 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
 using NHASoftware.HelperClasses;
@@ -38,7 +32,7 @@ namespace NHASoftware.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.ForumPost.Include(f => f.ForumTopic);
+            var applicationDbContext = _context.ForumPosts.Include(f => f.ForumTopic);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -55,7 +49,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumPost = await _context.ForumPost
+            var forumPost = await _context.ForumPosts
                 .Include(f => f.ForumTopic)
                 .Include(f => f.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -142,7 +136,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumPost = await _context.ForumPost.FindAsync(id);
+            var forumPost = await _context.ForumPosts.FindAsync(id);
 
             if (forumPost == null)
             {
@@ -220,7 +214,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumPost = await _context.ForumPost
+            var forumPost = await _context.ForumPosts
                 .Include(f => f.ForumTopic)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
@@ -248,7 +242,7 @@ namespace NHASoftware.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var forumPost = await _context.ForumPost.FindAsync(id);
+            var forumPost = await _context.ForumPosts.FindAsync(id);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
 
@@ -265,7 +259,7 @@ namespace NHASoftware.Controllers
 
                     var oldPostTopicId = forumPost.ForumTopicId;
 
-                    _context.ForumPost.Remove(forumPost);
+                    _context.ForumPosts.Remove(forumPost);
                     await _context.SaveChangesAsync();
 
                     return RedirectToAction("Details", "ForumTopics", new{id=oldPostTopicId});
@@ -289,7 +283,7 @@ namespace NHASoftware.Controllers
         /// <returns>Returns true if ForumPost exist.</returns>
         private bool ForumPostExists(int id)
         {
-            return _context.ForumPost.Any(e => e.Id == id);
+            return _context.ForumPosts.Any(e => e.Id == id);
         }
 
         /// <summary>

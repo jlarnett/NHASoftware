@@ -44,7 +44,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var topicPosts = _context.ForumPost.Where(c => c.ForumTopicId == id).ToList();
+            var topicPosts = _context.ForumPosts.Where(c => c.ForumTopicId == id).ToList();
 
             var forumTopic = await _context.ForumTopics
                 .Include(f => f.ForumSection)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Models;
+using NHASoftware.Models.AnimeModels;
 using NHASoftware.Models.ForumModels;
 
 namespace NHASoftware.Data
@@ -37,12 +38,11 @@ namespace NHASoftware.Data
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<TaskFrequency>  Frequencies { get; set; }
         public DbSet<TaskItem> Tasks { get; set; }
-
         public DbSet<ForumSection> ForumSections { get; set; }
         public DbSet<ForumTopic> ForumTopics { get; set; }
-        public DbSet<ForumPost> ForumPost { get; set; }
+        public DbSet<ForumPost> ForumPosts { get; set; }
         public DbSet<ForumComment> ForumComments { get; set; }
-
-
+        public DbSet<AnimePage> AnimePages { get; set; }
+        public DbSet<AnimeEpisode> AnimeEpisodes { get; set; }
     }
 }

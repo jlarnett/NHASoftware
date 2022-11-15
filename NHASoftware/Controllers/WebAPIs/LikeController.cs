@@ -68,7 +68,7 @@ namespace NHASoftware.Controllers.WebAPIs
         {
             //return "You accessed the Like API!" + id.ToString();
 
-            var post = await _context.ForumPost.FindAsync(id);
+            var post = await _context.ForumPosts.FindAsync(id);
 
             if(post == null)
             {
@@ -107,7 +107,7 @@ namespace NHASoftware.Controllers.WebAPIs
 
         private bool ForumPostExists(int id)
         {
-            return _context.ForumPost.Any(e => e.Id == id);
+            return _context.ForumPosts.Any(e => e.Id == id);
         }
     }
 }
