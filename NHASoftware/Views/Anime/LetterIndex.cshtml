@@ -5,8 +5,15 @@
 }
 
 <head>
-    <link rel="stylesheet" href="css/AnimePages.css">
+    <link rel="stylesheet" href="~/css/AnimePages.css">
 </head>
 
 <h1>@Model.AlphabetLetter</h1>
 
+@{
+    foreach (var anime in Model.AnimeList)
+    {
+        <a asp-action="AnimePage" asp-route-id="@anime.Id" asp-controller="Anime" class="link-light animepage-links">@anime.AnimeName</a>
+        <br/>
+    }
+}

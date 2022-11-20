@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Rest;
 using NHASoftware.Data;
 using NHASoftware.Models.ForumModels;
+using NHASoftware.Services;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
 {
     public class ForumController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IForumRepository _forumRepository;
 
-        public ForumController(ApplicationDbContext context)
+        public ForumController(ApplicationDbContext context, IForumRepository forumRepository)
         {
-            _context = context;
+            _forumRepository = forumRepository;
         }
 
         /// <summary>
@@ -21,11 +21,10 @@ namespace NHASoftware.Controllers
         /// Optimized to (0(n)) by using HashMap. (Not really needed, but I don't like O(n^2))
         /// </summary>
         /// <returns></returns>
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var forumSections = _context.ForumSections.ToList();
-            var forumTopics = _context.ForumTopics.ToList();
-
+            var forumSections = await _forumRepository.GetForumSectionsAsync();
+            var forumTopics = await _forumRepository.GetForumTopicsAsync();
 
             List<KeyValuePair<int, ForumTopic>> topicSectionMap = new List<KeyValuePair<int, ForumTopic>>();
 

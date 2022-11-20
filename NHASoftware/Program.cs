@@ -92,6 +92,7 @@ builder.Services.Configure<NHASoftware.Configuration.SendGridEmailSenderOptions>
 
 builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
 builder.Services.AddSingleton<IFileExtensionValidator, FileExtensionValidator>();
+builder.Services.AddTransient<IForumRepository, ForumRepository>();
 
 
 #endregion

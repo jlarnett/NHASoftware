@@ -1,5 +1,6 @@
 ﻿#nullable disable
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -59,14 +60,14 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
+            forumPost.ForumText = Regex.Replace(forumPost.ForumText, @"\r\n?|\n", "<br>");
+
             var detailVm = new ForumPostDetailModel()
             {
                 ForumPost = forumPost,
                 ForumComments = _context.ForumComments.Where(c => c.ForumPostId == id).Include(p => p.User).ToList()
             };
-
            
-            detailVm.ForumPost.ForumText.Replace("\r\n", "<br/>");
             return View(detailVm);
         }
 

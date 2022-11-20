@@ -22,6 +22,8 @@
         @{
             var id = @Model.ForumPost.Id;
             string profilePicture = "~/ProfilePictures/" + Model.ForumPost.User.ProfilePicturePath;
+            string forumPostText = Model.ForumPost.ForumText;
+
         }
         
         
@@ -37,7 +39,7 @@
                 </div>
                 <div class="modern-post-details">
                     <h2 class="modern-post-title">@Model.ForumPost.Title</h2>
-                    <p class="modern-post-text">@Model.ForumPost.ForumText</p>
+                    <div class="modern-post-text">@Html.Raw(forumPostText)</div>
                 </div>
             </div>
             <div class="modern-post-actions">

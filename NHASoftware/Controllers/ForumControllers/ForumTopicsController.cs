@@ -58,7 +58,7 @@ namespace NHASoftware.Controllers
             foreach (var post in topicPosts)
             {
                 //Replaces the forumText line breaks with correct html element
-                post.ForumText = Regex.Replace(post.ForumText, @"\r\n?|\n", "<br>");
+                post.ForumText = Regex.Replace(post.ForumText, @"\r\n?|\n", "");
             }
 
             var vm = new ForumTopicDetailsView()
