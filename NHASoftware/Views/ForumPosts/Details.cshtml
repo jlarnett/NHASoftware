@@ -31,7 +31,7 @@
             <div class="modern-forum-post-row-container">
                 <div class="modern-post-profile">
                     <div class="modern-post-profile-picture-container">
-                        <img src="@Url.Content(profilePicture)" class="modern-post-profile-picture"/>
+                        <img src="@Url.Content(profilePicture)" class="modern-post-profile-picture img-rounded"/>
                     </div>
                     <div class="modern-post-profile-displayname">
                         @Model.ForumPost.User.DisplayName
@@ -55,10 +55,10 @@
                     if (SignInManager.IsSignedIn(User) && user.Id == Model.ForumPost.UserId)
                     {
                         <div class="modern-post-action">
-                            <button class="btn-primary btn-link" id="EditPost" post-id="@id">Edit Post</button>
+                            <button class="btn-dark" id="EditPost" post-id="@id">Edit Post</button>
                         </div>
                         <div class="modern-post-action">
-                            <button class="btn-primary btn-link" id="DeletePost" post-id="@id">Delete Post</button>
+                            <button class="btn-dark" id="DeletePost" post-id="@id">Delete Post</button>
                         </div>
                     }
                 }
@@ -149,12 +149,12 @@
 
                 if (userIdString === data.user.id || adminUserBool) {
                     return "<div class='modern-post-action'>" +
-                        "<button class='btn-primary btn-link js-edit-comment' comment-id='" +
+                        "<button class='btn-primary js-edit-comment' comment-id='" +
                         data.id +
                         "'>Edit Comment</button>" +
                         "</div>" +
                         "<div class='modern-post-action'>" +
-                        "<button class='btn-primary btn-link js-delete-comment' comment-id='" +
+                        "<button class='btn-primary js-delete-comment' comment-id='" +
                         data.id +
                         "'>Delete Comment</button>" +
                         "</div>";

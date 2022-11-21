@@ -9,16 +9,19 @@ using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
 using NHASoftware.Models;
 using NHASoftware.Models.ForumModels;
+using NHASoftware.Services;
 
 namespace NHASoftware.Controllers
 {
     public class ForumSectionsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IForumRepository _forumRepository;
 
-        public ForumSectionsController(ApplicationDbContext context)
+        public ForumSectionsController(ApplicationDbContext context, IForumRepository forumRepository)
         {
             _context = context;
+            this._forumRepository = forumRepository;
         }
 
         /// <summary>
@@ -44,8 +47,8 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumSection = await _context.ForumSections
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var forumSection = await _forumRepository.GetForumSectionAsync(id);
+
             if (forumSection == null)
             {
                 return NotFound();

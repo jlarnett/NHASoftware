@@ -16,8 +16,8 @@
 <div>
     @if (User.IsInRole("admin"))
     {
-        <a asp-action="Create" asp-controller="ForumSections" class="link-light">Add Forum Section</a>
-        <a asp-action="Create" asp-controller="ForumTopics"class="link-light">Add Section Topic</a>
+        <a asp-action="Create" asp-controller="ForumSections" class="btn-dark">Add Forum Section</a>
+        <a asp-action="Create" asp-controller="ForumTopics"class="btn-dark">Add Section Topic</a>
     }
 </div>
 
@@ -45,8 +45,8 @@
                     <summary class="forum-stats">
                         <h2 class="forum-group__heading">@name</h2>
                         <div class="modern-section-actions">
-                            <button class="btn-link btn-primary js-edit-section" section-id="@id">Edit Section</button>
-                            <button class="btn-link btn-primary js-delete-section" section-id="@id">Delete Section</button>
+                            <button class="btn-primary js-edit-section" section-id="@id">Edit Section</button>
+                            <button class="btn-primary js-delete-section" section-id="@id">Delete Section</button>
                         </div>
                     </summary>
                 }
@@ -155,14 +155,14 @@
 
                 if (adminButtons === true) {
                     return "<div class='modern-post-action'>" +
-                        "<button class='btn-primary btn-link js-edit-topic' topic-id='" +
+                        "<button class='btn-dark js-edit-topic' topic-id='" +
                         data.value.id +
-                        "'>Edit Forum Topic</button>" +
+                        "'>Edit Topic</button>" +
                         "</div>" +
                         "<div class='modern-post-action'>" +
-                        "<button class='btn-primary btn-link js-delete-topic' topic-id='" +
+                        "<button class='btn-dark js-delete-topic' topic-id='" +
                         data.value.id +
-                        "'>Delete Forum Topic</button>" +
+                        "'>Delete Topic</button>" +
                         "</div>";
                 } 
                 else {

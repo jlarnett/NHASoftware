@@ -60,6 +60,7 @@ namespace NHASoftware.Controllers
                 .Include(t => t.Frequency)
                 .Include(t => t.User)
                 .FirstOrDefaultAsync(m => m.TaskId == id);
+
             if (taskItem == null)
             {
                 return NotFound();

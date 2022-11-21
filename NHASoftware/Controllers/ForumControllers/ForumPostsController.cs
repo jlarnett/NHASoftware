@@ -10,6 +10,7 @@ using NHASoftware.Data;
 using NHASoftware.HelperClasses;
 using NHASoftware.Models;
 using NHASoftware.Models.ForumModels;
+using NHASoftware.Services;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
@@ -19,11 +20,13 @@ namespace NHASoftware.Controllers
         //DI Services
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IForumRepository _forumRepository;
 
-        public ForumPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ForumPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IForumRepository forumRepository)
         {
             _context = context;
             _userManager = userManager;
+            this._forumRepository = forumRepository;
         }
 
         /// <summary>
@@ -50,10 +53,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumPost = await _context.ForumPosts
-                .Include(f => f.ForumTopic)
-                .Include(f => f.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var forumPost = await _forumRepository.GetForumPostAsync(id);
 
             if (forumPost == null)
             {
@@ -65,7 +65,7 @@ namespace NHASoftware.Controllers
             var detailVm = new ForumPostDetailModel()
             {
                 ForumPost = forumPost,
-                ForumComments = _context.ForumComments.Where(c => c.ForumPostId == id).Include(p => p.User).ToList()
+                ForumComments = await _forumRepository.GetForumPostCommentsAsync(id)
             };
            
             return View(detailVm);
