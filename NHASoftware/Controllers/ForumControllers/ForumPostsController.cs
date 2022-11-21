@@ -1,19 +1,16 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Azure.Core;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
+using NHASoftware.HelperClasses;
 using NHASoftware.Models;
 using NHASoftware.Models.ForumModels;
+using NHASoftware.Services;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
@@ -23,11 +20,13 @@ namespace NHASoftware.Controllers
         //DI Services
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IForumRepository _forumRepository;
 
-        public ForumPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ForumPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IForumRepository forumRepository)
         {
             _context = context;
             _userManager = userManager;
+            this._forumRepository = forumRepository;
         }
 
         /// <summary>
@@ -37,7 +36,7 @@ namespace NHASoftware.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.ForumPost.Include(f => f.ForumTopic);
+            var applicationDbContext = _context.ForumPosts.Include(f => f.ForumTopic);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -54,24 +53,21 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumPost = await _context.ForumPost
-                .Include(f => f.ForumTopic)
-                .Include(f => f.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var forumPost = await _forumRepository.GetForumPostAsync(id);
 
             if (forumPost == null)
             {
                 return NotFound();
             }
 
+            forumPost.ForumText = Regex.Replace(forumPost.ForumText, @"\r\n?|\n", "<br>");
+
             var detailVm = new ForumPostDetailModel()
             {
                 ForumPost = forumPost,
-                ForumComments = _context.ForumComments.Where(c => c.ForumPostId == id).Include(p => p.User).ToList()
+                ForumComments = await _forumRepository.GetForumPostCommentsAsync(id)
             };
-
            
-            detailVm.ForumPost.ForumText.Replace("\r\n", "<br/>");
             return View(detailVm);
         }
 
@@ -141,7 +137,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumPost = await _context.ForumPost.FindAsync(id);
+            var forumPost = await _context.ForumPosts.FindAsync(id);
 
             if (forumPost == null)
             {
@@ -219,7 +215,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumPost = await _context.ForumPost
+            var forumPost = await _context.ForumPosts
                 .Include(f => f.ForumTopic)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
@@ -247,7 +243,7 @@ namespace NHASoftware.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var forumPost = await _context.ForumPost.FindAsync(id);
+            var forumPost = await _context.ForumPosts.FindAsync(id);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
 
@@ -264,7 +260,7 @@ namespace NHASoftware.Controllers
 
                     var oldPostTopicId = forumPost.ForumTopicId;
 
-                    _context.ForumPost.Remove(forumPost);
+                    _context.ForumPosts.Remove(forumPost);
                     await _context.SaveChangesAsync();
 
                     return RedirectToAction("Details", "ForumTopics", new{id=oldPostTopicId});
@@ -288,7 +284,7 @@ namespace NHASoftware.Controllers
         /// <returns>Returns true if ForumPost exist.</returns>
         private bool ForumPostExists(int id)
         {
-            return _context.ForumPost.Any(e => e.Id == id);
+            return _context.ForumPosts.Any(e => e.Id == id);
         }
 
         /// <summary>
@@ -297,12 +293,7 @@ namespace NHASoftware.Controllers
         /// <returns>Returns Bool if logged in user IS admin or forum admin</returns>
         private bool IsUserForumAdmin()
         {
-            if (User.IsInRole("admin") || User.IsInRole("forum admin"))
-            {
-                return true;
-            }
-
-            return false;
+            return PermissionChecker.instance.IsUserForumAdmin(User);
         }
     }
 }

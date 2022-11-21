@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using NHASoftware.Models;
 using NHASoftware.Data;
+using NHASoftware.HelperClasses;
 
 namespace NHASoftware.Areas.Identity.Pages.Account.Manage
 {
@@ -17,15 +18,16 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IFileExtensionValidator _fileExtensionValidator;
 
-
-
-        public IndexModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, IWebHostEnvironment environment)
+        public IndexModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, 
+            ApplicationDbContext context, IWebHostEnvironment environment, IFileExtensionValidator fileExtensionValidator)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
             _hostEnvironment = environment;
+            _fileExtensionValidator = fileExtensionValidator;
         }
 
         /// <summary>
@@ -167,31 +169,55 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
         {
             if(Input.ProfilePicture != null)
             {
-                //Creating the correct Path to save the folder
-                string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "ProfilePictures");
-
-                //Assigning unique GUID + filename to create unique name for path. 
-                string uniqueFileName = Guid.NewGuid().ToString() + "_" + Input.ProfilePicture.FileName;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                //Writes the file to the path
-                Input.ProfilePicture.CopyTo(new FileStream(filePath, FileMode.Create));
-
-
                 //Getting the user & updating the profile picture photo path in user database. 
                 var updatedUser = _context.Users.Find(user.Id);
+                string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "ProfilePictures");
 
-                updatedUser.ProfilePicturePath = uniqueFileName;
-                var dataChanges = _context.SaveChanges();
-
-                if (dataChanges == 0)
+                //Checking for file extension validation. 
+                if (_fileExtensionValidator.CheckValidImageExtensions(Input.ProfilePicture.FileName))
                 {
-                    StatusMessage = "Unexpected error happened when trying to update DisplayName";
+                    //Delete old profile picture from files.
+                    if (updatedUser!.ProfilePicturePath != null)
+                    {
+                        string oldProfilePicturePath = Path.Combine(uploadsFolder, updatedUser.ProfilePicturePath);
+
+                        if (System.IO.File.Exists(oldProfilePicturePath))
+                        {
+                            System.IO.File.Delete(oldProfilePicturePath);
+                        }
+                        else
+                        {
+                            StatusMessage = "Error Unable to locate profile picture despite, Profile Picture Path being populated";
+                        }
+                    }
+
+                    //Assigning unique GUID + filename to create unique name for path. 
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + Input.ProfilePicture.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    //Writes the file to the path
+                    Input.ProfilePicture.CopyTo(new FileStream(filePath, FileMode.Create));
+
+                    updatedUser.ProfilePicturePath = uniqueFileName;
+                    var dataChanges = _context.SaveChanges();
+
+                    if (dataChanges == 0)
+                    {
+                        StatusMessage = "Error Unexpected error happened when trying to save changes to database. 0 Changes made to database!";
+                        return false;
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    StatusMessage = "Error File Extension did not match valid image extensions";
                     return false;
                 }
+
             }
 
-            return true;
+            return false;
         }
     }
 

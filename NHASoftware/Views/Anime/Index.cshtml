@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Anime";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" href="css/AnimePages.css">
+</head>
+
+<div>
+    <h2>Alphabetical Anime Index</h2>
+    <p>Select one of the letters to be view all animes beginning with that letter. The animes will be listed in alphabetical order. </p>
+    
+    @{
+        string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        int letterCounter = 0;
+
+        foreach (var letter in alphabet)
+        {
+            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-light index-letters">@letter</a>
+            letterCounter++;
+        }
+    }
+</div>
+

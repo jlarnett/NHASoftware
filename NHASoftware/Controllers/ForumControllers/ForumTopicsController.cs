@@ -22,14 +22,21 @@ namespace NHASoftware.Controllers
             _context = context;
         }
 
-        // GET: ForumTopics
+        /// <summary>
+        /// GET: ForumTopics
+        /// </summary>
+        /// <returns>Returns the forumTopic index page.</returns>
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.ForumTopics.Include(f => f.ForumSection);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: ForumTopics/Details/5
+        /// <summary>
+        /// GET: ForumTopics/Details/5
+        /// </summary>
+        /// <param name="id">Forum Topic Id you want the details for</param>
+        /// <returns>Returns the Forum Topics Details</returns>
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,7 +44,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var topicPosts = _context.ForumPost.Where(c => c.ForumTopicId == id).ToList();
+            var topicPosts = _context.ForumPosts.Where(c => c.ForumTopicId == id).ToList();
 
             var forumTopic = await _context.ForumTopics
                 .Include(f => f.ForumSection)
@@ -51,7 +58,7 @@ namespace NHASoftware.Controllers
             foreach (var post in topicPosts)
             {
                 //Replaces the forumText line breaks with correct html element
-                post.ForumText = Regex.Replace(post.ForumText, @"\r\n?|\n", "<br>");
+                post.ForumText = Regex.Replace(post.ForumText, @"\r\n?|\n", "");
             }
 
             var vm = new ForumTopicDetailsView()
@@ -63,7 +70,10 @@ namespace NHASoftware.Controllers
             return View(vm);
         }
 
-        // GET: ForumTopics/Create
+        /// <summary>
+        /// GET: ForumTopics/Create
+        /// </summary>
+        /// <returns>Returns the Create forum topic view</returns>
         public IActionResult Create()
         {
             ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Name");
@@ -78,13 +88,16 @@ namespace NHASoftware.Controllers
             return View(topic);
         }
 
+        /// <summary>
+        /// POST: ForumTopics/Create
+        /// Creates new forumTopic in database.
+        /// </summary>
+        /// <param name="forumTopic">Object the values are binded to</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Description,ForumSectionId,PostCount, ThreadCount")] ForumTopic forumTopic)
         {
-            /****************************************************************************************************
-             *  POST: ForumTopics/Create
-             ***************************************************************************************************/
 
             if (ModelState.IsValid)
             {
@@ -96,7 +109,12 @@ namespace NHASoftware.Controllers
             return View(forumTopic);
         }
 
-        // GET: ForumTopics/Edit/5
+        /// <summary>
+        /// GET: ForumTopics/Edit/5
+        /// Returns the forum Topic Edit View
+        /// </summary>
+        /// <param name="id">Forum Topic Id you want to update</param>
+        /// <returns></returns>
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -115,7 +133,13 @@ namespace NHASoftware.Controllers
             return View(forumTopic);
         }
 
-        // POST: ForumTopics/Edit/5
+        /// <summary>
+        /// POST: ForumTopics/Edit/5
+        /// Updates the supplied forumTopic
+        /// </summary>
+        /// <param name="id">ID of the forum topic you want updated</param>
+        /// <param name="forumTopic">Object the topic details are binded to</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,ForumSectionId,ThreadCount,PostCount,LatestPost")] ForumTopic forumTopic)
@@ -149,7 +173,12 @@ namespace NHASoftware.Controllers
             return View(forumTopic);
         }
 
-        // GET: ForumTopics/Delete/5
+        /// <summary>
+        /// GET: ForumTopics/Delete/5
+        /// Checks if the forum topic id exist & returns the Delete Confirmed View. 
+        /// </summary>
+        /// <param name="id">ID of the topic you want deleted. </param>
+        /// <returns></returns>
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -169,7 +198,12 @@ namespace NHASoftware.Controllers
             return View(forumTopic);
         }
 
-        // POST: ForumTopics/Delete/5
+        /// <summary>
+        /// POST: ForumTopics/Delete/5
+        /// Deletes the supplied forum topic. 
+        /// </summary>
+        /// <param name="id">topic id you want deleted from database</param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -180,6 +214,11 @@ namespace NHASoftware.Controllers
             return RedirectToAction("Index", "Forum");
         }
 
+        /// <summary>
+        /// Checks if the forum topic exist
+        /// </summary>
+        /// <param name="id">Forum Topic Id</param>
+        /// <returns>returns true if the forum topic exists</returns>
         private bool ForumTopicExists(int id)
         {
             return _context.ForumTopics.Any(e => e.Id == id);

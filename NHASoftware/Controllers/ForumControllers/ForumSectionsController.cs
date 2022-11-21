@@ -9,25 +9,37 @@ using Microsoft.EntityFrameworkCore;
 using NHASoftware.Data;
 using NHASoftware.Models;
 using NHASoftware.Models.ForumModels;
+using NHASoftware.Services;
 
 namespace NHASoftware.Controllers
 {
     public class ForumSectionsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IForumRepository _forumRepository;
 
-        public ForumSectionsController(ApplicationDbContext context)
+        public ForumSectionsController(ApplicationDbContext context, IForumRepository forumRepository)
         {
             _context = context;
+            this._forumRepository = forumRepository;
         }
 
-        // GET: ForumSections
+        /// <summary>
+        /// GET: ForumSections
+        /// Returns the forum section index page
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             return View(await _context.ForumSections.ToListAsync());
         }
 
-        // GET: ForumSections/Details/5
+        /// <summary>
+        /// GET: ForumSections/Details/5
+        /// Returns the forum Sections Details View. 
+        /// </summary>
+        /// <param name="id">forum Section Id you want to view the details of</param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,8 +47,8 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumSection = await _context.ForumSections
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var forumSection = await _forumRepository.GetForumSectionAsync(id);
+
             if (forumSection == null)
             {
                 return NotFound();
@@ -45,16 +57,23 @@ namespace NHASoftware.Controllers
             return View(forumSection);
         }
 
-        // GET: ForumSections/Create
+        /// <summary>
+        /// GET: ForumSections/Create
+        /// Returns the forum section create view.
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Create()
         {
             ViewData["reffer"] = Request.Headers["Referer"].ToString();
             return View();
         }
 
-        // POST: ForumSections/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// POST: ForumSections/Create
+        /// Creates forum section in database.
+        /// </summary>
+        /// <param name="forumSection">Object to bind properties too</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] ForumSection forumSection)
@@ -69,7 +88,12 @@ namespace NHASoftware.Controllers
             return View(forumSection);
         }
 
-        // GET: ForumSections/Edit/5
+        /// <summary>
+        /// GET: ForumSections/Edit/5
+        /// Returns the forum section Edit View
+        /// </summary>
+        /// <param name="id">Section Id to edit</param>
+        /// <returns></returns>
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -87,9 +111,15 @@ namespace NHASoftware.Controllers
             return View(forumSection);
         }
 
-        // POST: ForumSections/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// POST: ForumSections/Edit/5
+        /// Updates the forum Section
+        /// </summary>
+        /// <param name="id">Forum Section Id to update.</param>
+        /// <param name="forumSection">Object all properties are binded to</param>
+        /// <returns></returns>
+        /// To protect from overposting attacks, enable the specific properties you want to bind to.
+        /// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] ForumSection forumSection)
@@ -122,7 +152,12 @@ namespace NHASoftware.Controllers
             return View(forumSection);
         }
 
-        // GET: ForumSections/Delete/5
+        /// <summary>
+        /// GET: ForumSections/Delete/5
+        /// Checks if the forum section id exist & returns the DeleteConfirmed view. 
+        /// </summary>
+        /// <param name="id">forum section Id. </param>
+        /// <returns></returns>
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -141,7 +176,12 @@ namespace NHASoftware.Controllers
             return View(forumSection);
         }
 
-        // POST: ForumSections/Delete/5
+        /// <summary>
+        /// POST: ForumSections/Delete/5
+        /// Deletes the forum section from database using EF. 
+        /// </summary>
+        /// <param name="id">Forum Section Id to delete</param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -152,6 +192,11 @@ namespace NHASoftware.Controllers
             return RedirectToAction("Index", "Forum");
         }
 
+        /// <summary>
+        /// Checks if the Forum Section Exist.
+        /// </summary>
+        /// <param name="id">Forum Section Id</param>
+        /// <returns>Returns true if the forum section exist. </returns>
         private bool ForumSectionExists(int id)
         {
             return _context.ForumSections.Any(e => e.Id == id);

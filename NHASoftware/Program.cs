@@ -11,6 +11,7 @@ using NHASoftware.Profiles;
 using NHASoftware.Services;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using NHASoftware.HelperClasses;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
@@ -90,6 +91,8 @@ builder.Services.Configure<NHASoftware.Configuration.SendGridEmailSenderOptions>
 });
 
 builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
+builder.Services.AddSingleton<IFileExtensionValidator, FileExtensionValidator>();
+builder.Services.AddTransient<IForumRepository, ForumRepository>();
 
 
 #endregion
