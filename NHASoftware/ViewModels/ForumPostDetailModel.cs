@@ -1,4 +1,4 @@
-﻿using NHASoftware.Models.ForumModels;
+﻿using NHASoftware.Entities.Forums;
 
 namespace NHASoftware.ViewModels
 {

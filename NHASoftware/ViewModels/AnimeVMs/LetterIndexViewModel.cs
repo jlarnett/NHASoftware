@@ -1,4 +1,4 @@
-﻿using NHASoftware.Models.AnimeModels;
+﻿using NHASoftware.Entities.Anime;
 
 namespace NHASoftware.ViewModels.AnimeVMs
 {

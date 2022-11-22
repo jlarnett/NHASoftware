@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Identity;
-using NHASoftware.Models;
+using NHASoftware.Entities;
+using NHASoftware.Entities.Identity;
 
 namespace NHASoftware.ViewModels
 {

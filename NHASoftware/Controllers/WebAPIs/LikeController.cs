@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NHASoftware.Data;
+using NHASoftware.DBContext;
 
 namespace NHASoftware.Controllers.WebAPIs
 {

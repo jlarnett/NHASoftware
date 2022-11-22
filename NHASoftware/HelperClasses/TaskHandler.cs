@@ -1,8 +1,9 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using NHASoftware.Data;
-using NHASoftware.Models;
+using NHASoftware.DBContext;
+using NHASoftware.Entities;
+using NHASoftware.Entities.Identity;
 
 namespace NHASoftware.HelperClasses
 {

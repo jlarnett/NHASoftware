@@ -1,18 +1,14 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using NHASoftware.Data;
+using NHASoftware.DBContext;
+using NHASoftware.Entities.Forums;
+using NHASoftware.Entities.Identity;
 using NHASoftware.HelperClasses;
-using NHASoftware.Models;
-using NHASoftware.Models.ForumModels;
 
 namespace NHASoftware.Controllers
 {
@@ -20,23 +16,14 @@ namespace NHASoftware.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IWarden _accessWarden;
 
-        public ForumCommentsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ForumCommentsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IWarden accessWarden)
         {
             _context = context;
             _userManager = userManager;
+            _accessWarden = accessWarden;
         }
-
-        /// <summary>
-        /// GET: ForumComments
-        /// Gets the ForumComments index page. Gets all comments to list. 
-        /// </summary>
-        /// <returns></returns>
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.ForumComments.Include(f => f.ForumPost);
-            return View(await applicationDbContext.ToListAsync());
-       }
 
         /// <summary>
         /// GET: ForumComments/Details/5
@@ -274,7 +261,7 @@ namespace NHASoftware.Controllers
         /// <returns>returns true if user is admin or forum admin</returns>
         private bool IsUserForumAdmin()
         {
-            return PermissionChecker.instance.IsUserForumAdmin(User);
+            return _accessWarden.IsForumAdmin(User);
         }
     }
 }

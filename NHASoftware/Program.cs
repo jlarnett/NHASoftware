@@ -5,13 +5,15 @@ using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using NHASoftware.Data;
-using NHASoftware.Models;
 using NHASoftware.Profiles;
 using NHASoftware.Services;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using NHASoftware.DBContext;
+using NHASoftware.Entities.Identity;
+using NHASoftware.HangfireFilters;
 using NHASoftware.HelperClasses;
+using NHASoftware.Services.Forums;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
@@ -93,6 +95,7 @@ builder.Services.Configure<NHASoftware.Configuration.SendGridEmailSenderOptions>
 builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
 builder.Services.AddSingleton<IFileExtensionValidator, FileExtensionValidator>();
 builder.Services.AddTransient<IForumRepository, ForumRepository>();
+builder.Services.AddTransient<IWarden, AccessWarden>();
 
 
 #endregion

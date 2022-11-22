@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NHASoftware.Data;
-using NHASoftware.Models.ForumModels;
-using NHASoftware.Services;
+using NHASoftware.DBContext;
+using NHASoftware.Entities.Forums;
+using NHASoftware.Services.Forums;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
@@ -10,7 +10,7 @@ namespace NHASoftware.Controllers
     {
         private readonly IForumRepository _forumRepository;
 
-        public ForumController(ApplicationDbContext context, IForumRepository forumRepository)
+        public ForumController(IForumRepository forumRepository)
         {
             _forumRepository = forumRepository;
         }

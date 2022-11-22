@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using NHASoftware.DTOs;
-using NHASoftware.Models;
+using NHASoftware.Entities;
 
 namespace NHASoftware.Profiles
 {
@@ -8,12 +8,7 @@ namespace NHASoftware.Profiles
     {
         public MappingProfile()
         {
-            //Where we create mappings
             //Example CreateMap<Message, MessageDto>();
-            CreateMap<Author, AuthorDTO>();
-            CreateMap<AuthorDTO, Author>().ForMember(a => a.Id, opt => opt.Ignore());
-            CreateMap<BookAuthorsDTO, BookAuthor>();
-            CreateMap<BookAuthor, BookAuthorsDTO>();
             CreateMap<SubscriptionDTO, Subscription>();
             CreateMap<Subscription, SubscriptionDTO>();
         }

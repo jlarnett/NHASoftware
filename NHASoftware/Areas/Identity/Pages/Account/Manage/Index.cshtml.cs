@@ -6,8 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using NHASoftware.Models;
-using NHASoftware.Data;
+using NHASoftware.DBContext;
+using NHASoftware.Entities.Identity;
 using NHASoftware.HelperClasses;
 
 namespace NHASoftware.Areas.Identity.Pages.Account.Manage

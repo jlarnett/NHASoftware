@@ -1,14 +1,11 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using NHASoftware.Data;
-using NHASoftware.Models.ForumModels;
+using NHASoftware.DBContext;
+using NHASoftware.Entities.Forums;
+using NHASoftware.Services.Forums;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
@@ -16,20 +13,12 @@ namespace NHASoftware.Controllers
     public class ForumTopicsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IForumRepository _forumRepository;
 
-        public ForumTopicsController(ApplicationDbContext context)
+        public ForumTopicsController(ApplicationDbContext context, IForumRepository forumRepository)
         {
             _context = context;
-        }
-
-        /// <summary>
-        /// GET: ForumTopics
-        /// </summary>
-        /// <returns>Returns the forumTopic index page.</returns>
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.ForumTopics.Include(f => f.ForumSection);
-            return View(await applicationDbContext.ToListAsync());
+            _forumRepository = forumRepository;
         }
 
         /// <summary>
@@ -44,11 +33,9 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
+            var forumTopic = await _forumRepository.GetForumTopicAsync(id);
             var topicPosts = _context.ForumPosts.Where(c => c.ForumTopicId == id).ToList();
 
-            var forumTopic = await _context.ForumTopics
-                .Include(f => f.ForumSection)
-                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (forumTopic == null)
             {
@@ -105,6 +92,7 @@ namespace NHASoftware.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "Forum");
             }
+
             ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Name", forumTopic.ForumSectionId);
             return View(forumTopic);
         }
@@ -122,14 +110,15 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumTopic = await _context.ForumTopics.FindAsync(id);
+            var forumTopic = await _forumRepository.GetForumTopicAsync(id);
+
             if (forumTopic == null)
             {
                 return NotFound();
             }
 
             ViewData["reffer"] = Request.Headers["Referer"].ToString();
-            ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Id", forumTopic.ForumSectionId);
+            ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Name", forumTopic.ForumSectionId);
             return View(forumTopic);
         }
 
@@ -169,7 +158,7 @@ namespace NHASoftware.Controllers
                 }
                 return RedirectToAction("Index", "Forum");
             }
-            ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Id", forumTopic.ForumSectionId);
+            ViewData["ForumSectionId"] = new SelectList(_context.ForumSections, "Id", "Name", forumTopic.ForumSectionId);
             return View(forumTopic);
         }
 
@@ -186,9 +175,8 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumTopic = await _context.ForumTopics
-                .Include(f => f.ForumSection)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var forumTopic = await _forumRepository.GetForumTopicAsync(id);
+
             if (forumTopic == null)
             {
                 return NotFound();
@@ -208,8 +196,9 @@ namespace NHASoftware.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var forumTopic = await _context.ForumTopics.FindAsync(id);
+            var forumTopic = await _forumRepository.GetForumTopicAsync(id);
             _context.ForumTopics.Remove(forumTopic);
+
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Forum");
         }

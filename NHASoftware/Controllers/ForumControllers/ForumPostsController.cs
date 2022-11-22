@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using NHASoftware.Data;
+using NHASoftware.DBContext;
+using NHASoftware.Entities.Forums;
+using NHASoftware.Entities.Identity;
 using NHASoftware.HelperClasses;
-using NHASoftware.Models;
-using NHASoftware.Models.ForumModels;
-using NHASoftware.Services;
+using NHASoftware.Services.Forums;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
@@ -21,23 +21,15 @@ namespace NHASoftware.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IForumRepository _forumRepository;
+        private readonly IWarden _accessWarden;
 
-        public ForumPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IForumRepository forumRepository)
+        public ForumPostsController(ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager, IForumRepository forumRepository, IWarden accessWarden)
         {
             _context = context;
             _userManager = userManager;
-            this._forumRepository = forumRepository;
-        }
-
-        /// <summary>
-        /// GET: ForumPosts
-        /// Returns a list of all ForumPosts
-        /// </summary>
-        /// <returns></returns>
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.ForumPosts.Include(f => f.ForumTopic);
-            return View(await applicationDbContext.ToListAsync());
+            _forumRepository = forumRepository;
+            _accessWarden = accessWarden;
         }
 
         /// <summary>
@@ -137,7 +129,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumPost = await _context.ForumPosts.FindAsync(id);
+            var forumPost = await _forumRepository.GetForumPostAsync(id);
 
             if (forumPost == null)
             {
@@ -146,7 +138,7 @@ namespace NHASoftware.Controllers
 
             if (forumPost.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier) || IsUserForumAdmin())
             {
-                ViewData["ForumTopicId"] = new SelectList(_context.ForumTopics, "Id", "Id", forumPost.ForumTopicId);
+                ViewData["ForumTopicId"] = new SelectList(_context.ForumTopics, "Id", "Title", forumPost.ForumTopicId);
                 ViewData["reffer"] = Request.Headers["Referer"].ToString();
                 return View(forumPost);
             }
@@ -215,9 +207,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumPost = await _context.ForumPosts
-                .Include(f => f.ForumTopic)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var forumPost = await _forumRepository.GetForumPostAsync(id);
 
             if (forumPost == null)
             {
@@ -243,15 +233,14 @@ namespace NHASoftware.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var forumPost = await _context.ForumPosts.FindAsync(id);
+            var forumPost = await _forumRepository.GetForumPostAsync(id);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
 
             if (forumPost != null)
             {
                 if (userId == forumPost.UserId || IsUserForumAdmin())
                 {
-                    var topic = await _context.ForumTopics.FirstAsync(c => c.Id == forumPost.ForumTopicId);
+                    var topic = await _forumRepository.GetForumTopicAsync(forumPost.ForumTopicId);
                     var postCommentsNumber = _context.ForumComments.Count(c => c.ForumPostId == forumPost.Id);
 
                     topic.PostCount -= postCommentsNumber + 1;
@@ -293,7 +282,7 @@ namespace NHASoftware.Controllers
         /// <returns>Returns Bool if logged in user IS admin or forum admin</returns>
         private bool IsUserForumAdmin()
         {
-            return PermissionChecker.instance.IsUserForumAdmin(User);
+            return _accessWarden.IsForumAdmin(User);
         }
     }
 }

@@ -1,12 +1,6 @@
-﻿
-using System.Runtime.Loader;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using NHASoftware.Controllers;
-using NHASoftware.Controllers.WebAPIs;
-using NHASoftware.Data;
-using NHASoftware.Models;
-using NHASoftware.Services;
-using NuGet.DependencyResolver;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using NHASoftware.DBContext;
+using NHASoftware.Entities;
 
 namespace NHASoftware
 {
