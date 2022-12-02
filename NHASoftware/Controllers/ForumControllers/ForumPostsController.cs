@@ -62,10 +62,18 @@ namespace NHASoftware.Controllers
                 .FixDoubleQuoteEscapeCharactersForHtml()
                 .ToString();
 
+            var comments = await _unitOfWork.ForumCommentRepository.GetForumPostCommentsAsync(id);
+
+            foreach (var comment in comments)
+            {
+                comment.CommentText = _htmlbuilder.initialize(comment.CommentText).ConvertNewLinesToHtml()
+                    .FixDoubleQuoteEscapeCharactersForHtml().ToString();
+            }
+
             var detailVm = new ForumPostDetailModel()
             {
                 ForumPost = forumPost,
-                ForumComments = await _unitOfWork.ForumCommentRepository.GetForumPostCommentsAsync(id)
+                ForumComments = comments
             };
            
             return View(detailVm);
