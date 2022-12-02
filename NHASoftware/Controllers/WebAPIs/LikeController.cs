@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.DBContext;
+using NHASoftware.Services.Forums;
+using NHASoftware.Services.RepositoryPatternFoundationals;
 
 namespace NHASoftware.Controllers.WebAPIs
 {
@@ -9,10 +11,12 @@ namespace NHASoftware.Controllers.WebAPIs
     public class LikeController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public LikeController(ApplicationDbContext context)
+        public LikeController(ApplicationDbContext context, IUnitOfWork unitOfWork)
         {
             _context = context;
+            _unitOfWork = unitOfWork;
         }
 
 
@@ -26,12 +30,11 @@ namespace NHASoftware.Controllers.WebAPIs
         {
             //return "You accessed the Like API!" + id.ToString();
 
-            var comment = await _context.ForumComments.FindAsync(id);
+            var comment = await _unitOfWork.ForumCommentRepository.GetByIdAsync(id);
 
             if(comment == null)
             {
                 return new JsonResult(new { success = false });
-
             }
             else
             {
@@ -40,7 +43,7 @@ namespace NHASoftware.Controllers.WebAPIs
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -64,16 +67,13 @@ namespace NHASoftware.Controllers.WebAPIs
         /// <param name="id">The forum post comment to add a like too. </param>
         /// <returns></returns>
         [HttpPut("Post/{id}")]
-        public async Task<IActionResult> Putike(int id)
+        public async Task<IActionResult> AddLikeToPost(int id)
         {
-            //return "You accessed the Like API!" + id.ToString();
-
-            var post = await _context.ForumPosts.FindAsync(id);
+            var post = await _unitOfWork.ForumPostRepository.GetForumPostWithLazyLoadingAsync(id);
 
             if(post == null)
             {
                 return new JsonResult(new { success = false });
-
             }
             else
             {
@@ -82,7 +82,7 @@ namespace NHASoftware.Controllers.WebAPIs
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
             }
             catch (DbUpdateConcurrencyException)
             {

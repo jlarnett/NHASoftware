@@ -4,18 +4,19 @@ using Microsoft.EntityFrameworkCore;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Forums;
 using NHASoftware.Services.Forums;
+using NHASoftware.Services.RepositoryPatternFoundationals;
 
 namespace NHASoftware.Controllers
 {
     public class ForumSectionsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IForumRepository _forumRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ForumSectionsController(ApplicationDbContext context, IForumRepository forumRepository)
+        public ForumSectionsController(ApplicationDbContext context, IUnitOfWork unitOfWork)
         {
             _context = context;
-            _forumRepository = forumRepository;
+            _unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -41,8 +42,8 @@ namespace NHASoftware.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(forumSection);
-                await _context.SaveChangesAsync();
+                _unitOfWork.ForumSectionRepository.Add(forumSection);
+                await _unitOfWork.CompleteAsync();
                 return RedirectToAction("Index", "Forum");
             }
             
@@ -62,7 +63,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumSection = await _forumRepository.GetForumSectionAsync(id);
+            var forumSection = await _unitOfWork.ForumSectionRepository.GetByIdAsync(id);
 
             if (forumSection == null)
             {
@@ -95,8 +96,8 @@ namespace NHASoftware.Controllers
             {
                 try
                 {
-                    _context.Update(forumSection);
-                    await _context.SaveChangesAsync();
+                    _unitOfWork.ForumSectionRepository.Update(forumSection);
+                    await _unitOfWork.CompleteAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -127,7 +128,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumSection = await _forumRepository.GetForumSectionAsync(id);
+            var forumSection = await _unitOfWork.ForumSectionRepository.GetByIdAsync(id);
 
             if (forumSection == null)
             {
@@ -148,10 +149,10 @@ namespace NHASoftware.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var forumSection = await _forumRepository.GetForumSectionAsync(id);
-            _context.ForumSections.Remove(forumSection);
+            var forumSection = await _unitOfWork.ForumSectionRepository.GetByIdAsync(id);
+            _unitOfWork.ForumSectionRepository.Remove(forumSection);
+            await _unitOfWork.CompleteAsync();
 
-            await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Forum");
         }
 

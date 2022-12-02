@@ -1,4 +1,4 @@
-﻿namespace NHASoftware.HelperClasses
+﻿namespace NHAHelpers.AlphabetSimplify
 {
     public class AlphabetDecipher
     {

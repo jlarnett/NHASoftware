@@ -45,8 +45,14 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Services\AccessWarden\tests\" />
+    <Folder Include="Services\Forums\Tests\" />
     <Folder Include="wwwroot\ProfilePictures\" />
     <Folder Include="wwwroot\Reports\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NHAHelpers\NHAHelpers.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,18 +4,18 @@ using NHASoftware.Configuration;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
-namespace NHASoftware.Services
+namespace NHASoftware.Services.SendGrid
 {
     public class SendGridEmailSender : IEmailSender
     {
         public SendGridEmailSender(IOptions<SendGridEmailSenderOptions> options)
         {
-            this.Options = options.Value;
+            Options = options.Value;
         }
- 
+
         public SendGridEmailSenderOptions Options { get; set; }
- 
-        public async Task SendEmailAsync(string email, string subject, string message) 
+
+        public async Task SendEmailAsync(string email, string subject, string message)
         {
             await Execute(Options.ApiKey, subject, message, email);
         }

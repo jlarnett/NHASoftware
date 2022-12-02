@@ -5,9 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
-
-<h4>ForumPost</h4>
+<h1>Edit Post</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -15,12 +13,12 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
+                <label asp-for="Title" class="form-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ForumText" class="control-label"></label>
+                <label asp-for="ForumText" class="form-label"></label>
                 <!-- <input asp-for="ForumText" class="form-control" /> -->
                 <textarea asp-for="ForumText" class="form-control post-create-input text-wrap:normal" type="text"></textarea>
                 <span asp-validation-for="ForumText" class="text-danger"></span>
@@ -33,7 +31,7 @@
             </div>
             
             <div class="form-group">
-                <label asp-for="ForumTopicId" class="control-label"></label>
+                <label asp-for="ForumTopicId" class="form-label"></label>
                 <select asp-for="ForumTopicId" class="form-control" asp-items="ViewBag.ForumTopicId"></select>
                 <span asp-validation-for="ForumTopicId" class="text-danger"></span>
             </div>
@@ -56,4 +54,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/Scripts/SummerNoteSetup.js" type="text/javascript"></script>
 }

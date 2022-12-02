@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Forums;
 using NHASoftware.Entities.Identity;
-using NHASoftware.HelperClasses;
+using NHASoftware.Services.AccessWarden;
+using NHASoftware.Services.RepositoryPatternFoundationals;
 
 namespace NHASoftware.Controllers
 {
@@ -17,12 +18,17 @@ namespace NHASoftware.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWarden _accessWarden;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ForumCommentsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IWarden accessWarden)
+        public ForumCommentsController(ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            IWarden accessWarden,
+            IUnitOfWork unitOfWork)
         {
             _context = context;
             _userManager = userManager;
             _accessWarden = accessWarden;
+            _unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -38,9 +44,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumComment = await _context.ForumComments
-                .Include(f => f.ForumPost)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var forumComment = await _unitOfWork.ForumCommentRepository.GetForumCommentWithLazyLoadingAsync(id);
 
             if (forumComment == null)
             {
@@ -83,14 +87,14 @@ namespace NHASoftware.Controllers
             if (ModelState.IsValid)
             {
                 //Gets total comments for post & increments it. 
-                var post = await _context.ForumPosts.FindAsync(forumComment.ForumPostId);
+                var post = await _unitOfWork.ForumPostRepository.GetByIdAsync(forumComment.ForumPostId);
 
                 if (post != null)
                 {
                     post.CommentCount++;
                 }
 
-                var postTopic = await _context.ForumTopics.FindAsync(post.ForumTopicId);
+                var postTopic = await _unitOfWork.ForumTopicRepository.GetByIdAsync(post.ForumTopicId);
 
                 if (postTopic != null)
                 {
@@ -98,9 +102,9 @@ namespace NHASoftware.Controllers
                     postTopic.LastestPost = DateTime.Now;
                 }
 
-                _context.Add(forumComment);
-                await _context.SaveChangesAsync();
-                
+                _unitOfWork.ForumCommentRepository.Add(forumComment);
+                await _unitOfWork.CompleteAsync();
+
                 return RedirectToAction("Details", "ForumPosts", new {id=forumComment.ForumPostId});
             }
             return View(forumComment);
@@ -120,7 +124,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumComment = await _context.ForumComments.FindAsync(id);
+            var forumComment = await _unitOfWork.ForumCommentRepository.GetForumCommentWithLazyLoadingAsync(id);
 
             if (forumComment == null)
             {
@@ -131,7 +135,7 @@ namespace NHASoftware.Controllers
             {
                 return RedirectToAction("Details", "ForumPosts", new { id = forumComment.ForumPostId });
             }
-            ViewData["ForumPostId"] = new SelectList(_context.ForumPosts, "Id", "Id", forumComment.ForumPostId);
+            ViewData["ForumPostId"] = new SelectList(await _unitOfWork.ForumPostRepository.GetAllAsync(), "Id", "Id", forumComment.ForumPostId);
             ViewData["reffer"] = Request.Headers["Referer"].ToString();
             return View(forumComment);
         }
@@ -159,8 +163,8 @@ namespace NHASoftware.Controllers
                 {
                     try
                     {
-                        _context.Update(forumComment);
-                        await _context.SaveChangesAsync();
+                        _unitOfWork.ForumCommentRepository.Update(forumComment);
+                        await _unitOfWork.CompleteAsync();
                     }
                     catch (DbUpdateConcurrencyException)
                     {
@@ -180,7 +184,7 @@ namespace NHASoftware.Controllers
                     return Unauthorized();
                 }
             }
-            ViewData["ForumPostId"] = new SelectList(_context.ForumPosts, "Id", "Id", forumComment.ForumPostId);
+            ViewData["ForumPostId"] = new SelectList(await _unitOfWork.ForumPostRepository.GetAllAsync(), "Id", "Id", forumComment.ForumPostId);
             return View(forumComment);
         }
 
@@ -198,9 +202,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumComment = await _context.ForumComments
-                .Include(f => f.ForumPost)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var forumComment = await _unitOfWork.ForumCommentRepository.GetForumCommentWithLazyLoadingAsync(id);
 
             if (forumComment == null)
             {
@@ -225,15 +227,15 @@ namespace NHASoftware.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
 
-            var forumComment = await _context.ForumComments.FindAsync(id);
+            var forumComment = await _unitOfWork.ForumCommentRepository.GetByIdAsync(id);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (forumComment != null)
             {
                 if (userId == forumComment.UserId || IsUserForumAdmin())
                 {
-                    _context.ForumComments.Remove(forumComment);
-                    await _context.SaveChangesAsync();
+                    _unitOfWork.ForumCommentRepository.Remove(forumComment);
+                    await _unitOfWork.CompleteAsync();
                     return RedirectToAction("Details", "ForumPosts", new {id=forumComment.ForumPostId});
                 }
                 else

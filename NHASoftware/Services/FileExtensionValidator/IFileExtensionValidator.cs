@@ -1,4 +1,4 @@
-﻿namespace NHASoftware.HelperClasses
+﻿namespace NHASoftware.Services.FileExtensionValidator
 {
     public interface IFileExtensionValidator
     {

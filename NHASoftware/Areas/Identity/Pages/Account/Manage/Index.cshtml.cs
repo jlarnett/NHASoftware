@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Identity;
-using NHASoftware.HelperClasses;
+using NHASoftware.Services.FileExtensionValidator;
 
 namespace NHASoftware.Areas.Identity.Pages.Account.Manage
 {
