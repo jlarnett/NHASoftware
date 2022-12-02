@@ -80,8 +80,6 @@
 
 @section Scripts
 {
-    <script src="~/Scripts/ForumIndexScript.js" type="text/javascript"></script>
-
     <script type="text/javascript">
         $(document).ready(function() {
             //This script populates all ForumSection tables with the correct ForumTopics.
@@ -108,8 +106,6 @@
                 var str = spacetime(ForumsKV[i].value.latestDate);
                 var date2 = str.format('{month}-{date-pad}-{year} {time}{am pm}');
 
-                //table2.row.add(["<article class='group-thread group-thread--rootview' data-id='" + ForumsKV[i].value.id + "'><a class='group-thread__link' href='/ForumTopics/Details/" + ForumsKV[i].value.id + "'><div class='group-thread__details'><h3 class='group-thread__heading'>" + ForumsKV[i].value.title + "</h3><p class='group-thread__summary'>" + ForumsKV[i].value.description + "</p></div><span class='forum-stat forum-stat--thread'>" + ForumsKV[i].value.threadCount + "</span><span class='forum-stat forum-stat--posts'>" + ForumsKV[i].value.postCount + "</span><span class='forum-stat forum-stat--latest'>" + date2 + "</span></a></article>"]).draw();
-
                 table2.row.add(["<div class='modern-forum-post-container'> <a class='modern-thread-link' topic-id='" + ForumsKV[i].value.id + "'>" +
                                     "<div class='modern-forum-post-row-container'>" +
                                         "<div class='modern-forum-topic-title'>" + "<h3 class='modern-post-text'>" + ForumsKV[i].value.title + "</h3>" + "</div>" +
@@ -133,9 +129,6 @@
                                     "</div>" +
                     "</a></div>"]).draw();
             }
-
-
-
 
             function CheckForAdminButtons(data) 
             {

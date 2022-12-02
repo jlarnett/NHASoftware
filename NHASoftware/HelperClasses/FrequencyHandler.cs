@@ -1,8 +1,5 @@
-﻿using Hangfire;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using NHASoftware.Data;
-using NHASoftware.Models;
-using NHASoftware.Services;
+﻿using NHASoftware.DBContext;
+using NHASoftware.Entities;
 
 namespace NHASoftware
 {

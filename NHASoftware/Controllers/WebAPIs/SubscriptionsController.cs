@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NHASoftware.Data;
+using NHASoftware.DBContext;
 using NHASoftware.DTOs;
-using NHASoftware.Models;
+using NHASoftware.Entities;
+using NHASoftware.Entities.Identity;
 
 namespace NHASoftware.Controllers.WebAPIs
 {

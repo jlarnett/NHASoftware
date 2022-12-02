@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NHASoftware.Data;
-using NHASoftware.HelperClasses;
-using NHASoftware.Models.AnimeModels;
+using NHAHelpers.AlphabetSimplify;
+using NHASoftware.DBContext;
+using NHASoftware.Entities.Anime;
 using NHASoftware.ViewModels.AnimeVMs;
 
 namespace NHASoftware.Controllers.AnimeControllers

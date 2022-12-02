@@ -5,13 +5,18 @@ using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using NHASoftware.Data;
-using NHASoftware.Models;
 using NHASoftware.Profiles;
-using NHASoftware.Services;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using NHASoftware.HelperClasses;
+using NHASoftware.DBContext;
+using NHASoftware.Entities.Identity;
+using NHASoftware.HangfireFilters;
+using NHASoftware.Services.Forums;
+using NHASoftware.Services.AccessWarden;
+using NHASoftware.Services.FileExtensionValidator;
+using NHASoftware.Services.SendGrid;
+using NHASoftware.Services.RepositoryPatternFoundationals;
+using NHAHelpers.HtmlStringCleaner;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
@@ -92,8 +97,16 @@ builder.Services.Configure<NHASoftware.Configuration.SendGridEmailSenderOptions>
 
 builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
 builder.Services.AddSingleton<IFileExtensionValidator, FileExtensionValidator>();
-builder.Services.AddTransient<IForumRepository, ForumRepository>();
+builder.Services.AddTransient<IWarden, AccessWarden>();
+builder.Services.AddTransient<IHtmlStringBuilder, HtmlStringCleaner>();
 
+//Setup for generic repository
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddTransient<IForumPostRepository, ForumPostRepository>();
+builder.Services.AddTransient<IForumCommentRepository, ForumCommentRepository>();
+builder.Services.AddTransient<IForumTopicRepository, ForumTopicRepository>();
+builder.Services.AddTransient<IForumSectionRepository, ForumSectionRepository>();
 
 #endregion
 

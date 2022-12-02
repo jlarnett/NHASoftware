@@ -1,18 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NHASoftware.Data;
-using NHASoftware.Models.ForumModels;
-using NHASoftware.Services;
+using NHASoftware.DBContext;
+using NHASoftware.Entities.Forums;
+using NHASoftware.Services.Forums;
+using NHASoftware.Services.RepositoryPatternFoundationals;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
 {
     public class ForumController : Controller
     {
-        private readonly IForumRepository _forumRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ForumController(ApplicationDbContext context, IForumRepository forumRepository)
+        public ForumController(IUnitOfWork unitOfWork)
         {
-            _forumRepository = forumRepository;
+            _unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -23,8 +24,8 @@ namespace NHASoftware.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index()
         {
-            var forumSections = await _forumRepository.GetForumSectionsAsync();
-            var forumTopics = await _forumRepository.GetForumTopicsAsync();
+            var forumSections = await _unitOfWork.ForumSectionRepository.GetAllAsync();
+            var forumTopics = await _unitOfWork.ForumTopicRepository.GetAllAsync();
 
             List<KeyValuePair<int, ForumTopic>> topicSectionMap = new List<KeyValuePair<int, ForumTopic>>();
 

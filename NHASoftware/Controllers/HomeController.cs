@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NHASoftware.Models;
 using System.Diagnostics;
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using NHASoftware.Data;
+using NHASoftware.DBContext;
+using NHASoftware.Entities.Identity;
 using NHASoftware.HelperClasses;
 using NHASoftware.Services;
 using NHASoftware.ViewModels;

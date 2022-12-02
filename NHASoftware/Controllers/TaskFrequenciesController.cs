@@ -1,14 +1,9 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using NHASoftware.Data;
-using NHASoftware.Models;
+using NHASoftware.DBContext;
+using NHASoftware.Entities;
 
 namespace NHASoftware.Controllers
 {

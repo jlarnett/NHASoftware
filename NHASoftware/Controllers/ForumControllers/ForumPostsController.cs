@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using NHASoftware.Data;
-using NHASoftware.HelperClasses;
-using NHASoftware.Models;
-using NHASoftware.Models.ForumModels;
-using NHASoftware.Services;
+using NHAHelpers.HtmlStringCleaner;
+using NHASoftware.DBContext;
+using NHASoftware.Entities.Forums;
+using NHASoftware.Entities.Identity;
+using NHASoftware.Services.AccessWarden;
+using NHASoftware.Services.Forums;
+using NHASoftware.Services.RepositoryPatternFoundationals;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
@@ -20,24 +22,18 @@ namespace NHASoftware.Controllers
         //DI Services
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IForumRepository _forumRepository;
+        private readonly IWarden _accessWarden;
+        private readonly IHtmlStringBuilder _htmlbuilder;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ForumPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IForumRepository forumRepository)
+        public ForumPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, 
+            IWarden accessWarden, IHtmlStringBuilder htmlbuilder, IUnitOfWork unitOfWork)
         {
             _context = context;
             _userManager = userManager;
-            this._forumRepository = forumRepository;
-        }
-
-        /// <summary>
-        /// GET: ForumPosts
-        /// Returns a list of all ForumPosts
-        /// </summary>
-        /// <returns></returns>
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.ForumPosts.Include(f => f.ForumTopic);
-            return View(await applicationDbContext.ToListAsync());
+            _accessWarden = accessWarden;
+            _htmlbuilder = htmlbuilder;
+            _unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -53,19 +49,23 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumPost = await _forumRepository.GetForumPostAsync(id);
+            var forumPost = await _unitOfWork.ForumPostRepository.GetForumPostWithLazyLoadingAsync(id);
 
             if (forumPost == null)
             {
                 return NotFound();
             }
 
-            forumPost.ForumText = Regex.Replace(forumPost.ForumText, @"\r\n?|\n", "<br>");
+            forumPost.ForumText = _htmlbuilder
+                .initialize(forumPost.ForumText)
+                .ConvertNewLinesToHtml()
+                .FixDoubleQuoteEscapeCharactersForHtml()
+                .ToString();
 
             var detailVm = new ForumPostDetailModel()
             {
                 ForumPost = forumPost,
-                ForumComments = await _forumRepository.GetForumPostCommentsAsync(id)
+                ForumComments = await _unitOfWork.ForumCommentRepository.GetForumPostCommentsAsync(id)
             };
            
             return View(detailVm);
@@ -106,14 +106,15 @@ namespace NHASoftware.Controllers
         {
             if (ModelState.IsValid)
             {
-                var topic = await _context.ForumTopics.FirstAsync(c => c.Id == forumPost.ForumTopicId);
+                var topic = await _unitOfWork.ForumTopicRepository.GetByIdAsync(forumPost.ForumTopicId);
 
                 topic.PostCount += 1;
                 topic.ThreadCount += 1;
                 topic.LastestPost = DateTime.Now;
 
-                _context.Add(forumPost);
-                await _context.SaveChangesAsync();
+                _unitOfWork.ForumPostRepository.Add(forumPost);
+                await _unitOfWork.CompleteAsync();
+
                 return RedirectToAction("Details", "ForumTopics", new {id = forumPost.ForumTopicId});
             }
             return View(forumPost);
@@ -137,7 +138,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumPost = await _context.ForumPosts.FindAsync(id);
+            var forumPost = await _unitOfWork.ForumPostRepository.GetForumPostWithLazyLoadingAsync(id);
 
             if (forumPost == null)
             {
@@ -146,7 +147,7 @@ namespace NHASoftware.Controllers
 
             if (forumPost.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier) || IsUserForumAdmin())
             {
-                ViewData["ForumTopicId"] = new SelectList(_context.ForumTopics, "Id", "Id", forumPost.ForumTopicId);
+                ViewData["ForumTopicId"] = new SelectList(await _unitOfWork.ForumTopicRepository.GetAllAsync(), "Id", "Title", forumPost.ForumTopicId);
                 ViewData["reffer"] = Request.Headers["Referer"].ToString();
                 return View(forumPost);
             }
@@ -180,8 +181,8 @@ namespace NHASoftware.Controllers
                 {
                     try
                     {
-                        _context.Update(forumPost);
-                        await _context.SaveChangesAsync();
+                        _unitOfWork.ForumPostRepository.Update(forumPost);
+                        await _unitOfWork.CompleteAsync();
                     }
                     catch (DbUpdateConcurrencyException)
                     {
@@ -197,7 +198,7 @@ namespace NHASoftware.Controllers
                     return RedirectToAction("Details", new {id});
                 }
             }
-            ViewData["ForumTopicId"] = new SelectList(_context.ForumTopics, "Id", "Id", forumPost.ForumTopicId);
+            ViewData["ForumTopicId"] = new SelectList(await _unitOfWork.ForumTopicRepository.GetAllAsync(), "Id", "Id", forumPost.ForumTopicId);
             return View(forumPost);
         }
 
@@ -215,9 +216,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var forumPost = await _context.ForumPosts
-                .Include(f => f.ForumTopic)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var forumPost = await _unitOfWork.ForumPostRepository.GetForumPostWithLazyLoadingAsync(id);
 
             if (forumPost == null)
             {
@@ -243,16 +242,15 @@ namespace NHASoftware.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var forumPost = await _context.ForumPosts.FindAsync(id);
+            var forumPost = await _unitOfWork.ForumPostRepository.GetForumPostWithLazyLoadingAsync(id);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
 
             if (forumPost != null)
             {
                 if (userId == forumPost.UserId || IsUserForumAdmin())
                 {
-                    var topic = await _context.ForumTopics.FirstAsync(c => c.Id == forumPost.ForumTopicId);
-                    var postCommentsNumber = _context.ForumComments.Count(c => c.ForumPostId == forumPost.Id);
+                    var topic = await _unitOfWork.ForumTopicRepository.GetByIdAsync(forumPost.ForumTopicId);
+                    var postCommentsNumber = await _unitOfWork.ForumCommentRepository.GetNumberOfCommentsForPost(forumPost.Id);
 
                     topic.PostCount -= postCommentsNumber + 1;
                     topic.ThreadCount -= 1;
@@ -260,8 +258,8 @@ namespace NHASoftware.Controllers
 
                     var oldPostTopicId = forumPost.ForumTopicId;
 
-                    _context.ForumPosts.Remove(forumPost);
-                    await _context.SaveChangesAsync();
+                    _unitOfWork.ForumPostRepository.Remove(forumPost);
+                    await _unitOfWork.CompleteAsync();
 
                     return RedirectToAction("Details", "ForumTopics", new{id=oldPostTopicId});
                 }
@@ -293,7 +291,7 @@ namespace NHASoftware.Controllers
         /// <returns>Returns Bool if logged in user IS admin or forum admin</returns>
         private bool IsUserForumAdmin()
         {
-            return PermissionChecker.instance.IsUserForumAdmin(User);
+            return _accessWarden.IsForumAdmin(User);
         }
     }
 }

@@ -11,8 +11,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using NHASoftware.Data;
-using NHASoftware.Models;
+using NHASoftware.DBContext;
+using NHASoftware.Entities;
+using NHASoftware.Entities.Identity;
 using NHASoftware.Services;
 using NHASoftware.ViewModels;
 
