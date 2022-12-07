@@ -17,6 +17,9 @@ using NHASoftware.Services.FileExtensionValidator;
 using NHASoftware.Services.SendGrid;
 using NHASoftware.Services.RepositoryPatternFoundationals;
 using NHAHelpers.HtmlStringCleaner;
+using NHASoftware.Services.Anime;
+using NHASoftware.Services.CacheGoblin;
+using NHASoftware.Services.CookieMonster;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
@@ -71,6 +74,7 @@ builder.Services.AddCors(options =>
         {
             builder.WithOrigins("https://api.binance.com/");
             builder.WithHeaders("Access-Control-Allow-Headers");
+            builder.WithHeaders("Access-Control-Allow-Origin");
         });
 });
 
@@ -98,15 +102,22 @@ builder.Services.Configure<NHASoftware.Configuration.SendGridEmailSenderOptions>
 builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
 builder.Services.AddSingleton<IFileExtensionValidator, FileExtensionValidator>();
 builder.Services.AddTransient<IWarden, AccessWarden>();
-builder.Services.AddTransient<IHtmlStringBuilder, HtmlStringCleaner>();
+builder.Services.AddTransient<IHtmlStringCleaner, HtmlStringCleaner>();
 
-//Setup for generic repository
+//Setup for generic repository system
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddTransient<IForumPostRepository, ForumPostRepository>();
 builder.Services.AddTransient<IForumCommentRepository, ForumCommentRepository>();
 builder.Services.AddTransient<IForumTopicRepository, ForumTopicRepository>();
 builder.Services.AddTransient<IForumSectionRepository, ForumSectionRepository>();
+builder.Services.AddTransient<IAnimePageRepository, AnimePageRepository>();
+
+
+//Cookie service
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient<ICookieMonster, CookieMonster>();
+builder.Services.AddSingleton(typeof(ICacheGoblin<>), typeof(CacheGoblin<>));
 
 #endregion
 

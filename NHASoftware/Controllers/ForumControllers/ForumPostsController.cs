@@ -23,11 +23,11 @@ namespace NHASoftware.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWarden _accessWarden;
-        private readonly IHtmlStringBuilder _htmlbuilder;
+        private readonly IHtmlStringCleaner _htmlbuilder;
         private readonly IUnitOfWork _unitOfWork;
 
         public ForumPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, 
-            IWarden accessWarden, IHtmlStringBuilder htmlbuilder, IUnitOfWork unitOfWork)
+            IWarden accessWarden, IHtmlStringCleaner htmlbuilder, IUnitOfWork unitOfWork)
         {
             _context = context;
             _userManager = userManager;

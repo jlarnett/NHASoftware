@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NHASoftware.ConsumableEntities;
 using NHASoftware.DBContext;
+using NHASoftware.Services.CacheGoblin;
+using NHASoftware.Services.CookieMonster;
 using NHASoftware.Services.Forums;
 using NHASoftware.Services.RepositoryPatternFoundationals;
 
@@ -12,11 +16,17 @@ namespace NHASoftware.Controllers.WebAPIs
     {
         private readonly ApplicationDbContext _context;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICookieMonster _cookieMonster;
+        private readonly ICacheGoblin<CookieTrackingObject> _commentCacheGoblin;
+        private readonly ICacheGoblin<CookieTrackingObject> _postCacheGoblin;
 
-        public LikeController(ApplicationDbContext context, IUnitOfWork unitOfWork)
+        public LikeController(ApplicationDbContext context, IUnitOfWork unitOfWork, ICookieMonster cookieMonster, ICacheGoblin<CookieTrackingObject> commentCacheGoblin, ICacheGoblin<CookieTrackingObject> postCacheGoblin)
         {
             _context = context;
             _unitOfWork = unitOfWork;
+            _cookieMonster = cookieMonster;
+            _commentCacheGoblin = commentCacheGoblin;
+            _postCacheGoblin = postCacheGoblin;
         }
 
 
@@ -26,48 +36,95 @@ namespace NHASoftware.Controllers.WebAPIs
         /// <param name="id">The forum post comment to add a like too. </param>
         /// <returns></returns>
         [HttpPut("Comment/{id}")]
-        public async Task<IActionResult> PutLike(int id)
+        public async Task<IActionResult> TryLikeComment(int id)
         {
-            //return "You accessed the Like API!" + id.ToString();
+            var currentSessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
 
-            var comment = await _unitOfWork.ForumCommentRepository.GetByIdAsync(id);
+            if (currentSessionId != null)
+            {
+                var user = new CookieTrackingObject
+                {
+                    CookieGuid = currentSessionId,
+                    ObjectIdentifierId = id
+                };
 
-            if(comment == null)
-            {
-                return new JsonResult(new { success = false });
-            }
-            else
-            {
-                comment.LikeCount ++;
-            }
+                var commentLikeExists = _commentCacheGoblin.Exists(user);
 
-            try
-            {
-                await _unitOfWork.CompleteAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ForumCommentExists(id))
+                if (commentLikeExists)
                 {
                     return new JsonResult(new { success = false });
-
                 }
                 else
                 {
-                    throw;
+                    _commentCacheGoblin.Add(user);
+                    return await TryIncrementCommentLikes(id);
                 }
             }
-
-            return new JsonResult(new { success = true });
+            else
+            {
+                _cookieMonster.CreateCookie(CookieKeys.Session, Guid.NewGuid().ToString());
+                _commentCacheGoblin.Add(new CookieTrackingObject()
+                {
+                    CookieGuid = _cookieMonster.TryRetrieveCookie(CookieKeys.Session),
+                    ObjectIdentifierId = id
+                });
+                return await TryIncrementCommentLikes(id);
+            }
         }
 
         /// <summary>
-        /// Adds a like to forum post comment. endpoint = api/Like/Comment/id
+        /// Adds a like to forum post comment. endpoint = api/Like/Post/id
         /// </summary>
         /// <param name="id">The forum post comment to add a like too. </param>
         /// <returns></returns>
         [HttpPut("Post/{id}")]
-        public async Task<IActionResult> AddLikeToPost(int id)
+        public async Task<IActionResult> TryLikePost(int id)
+        {
+            var currentSessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
+
+            if (currentSessionId != null)
+            {
+                var user = new CookieTrackingObject
+                {
+                    CookieGuid = currentSessionId,
+                    ObjectIdentifierId = id
+                };
+
+                var postLikeExists = _postCacheGoblin.Exists(user);
+
+                if (postLikeExists)
+                {
+                    return new JsonResult(new { success = false });
+                }
+                else
+                {
+                    _postCacheGoblin.Add(user);
+                    return await TryIncrementPostLikes(id);
+                }
+            }
+            else
+            {
+                _cookieMonster.CreateCookie(CookieKeys.Session, Guid.NewGuid().ToString());
+                _postCacheGoblin.Add(new CookieTrackingObject()
+                {
+                    CookieGuid = _cookieMonster.TryRetrieveCookie(CookieKeys.Session),
+                    ObjectIdentifierId = id
+                });
+                return await TryIncrementPostLikes(id);
+            }
+        }
+
+        private bool ForumCommentExists(int id)
+        {
+            return _context.ForumComments.Any(e => e.Id == id);
+        }
+
+        private bool ForumPostExists(int id)
+        {
+            return _context.ForumPosts.Any(e => e.Id == id);
+        }
+
+        private async Task<IActionResult> TryIncrementPostLikes(int id)
         {
             var post = await _unitOfWork.ForumPostRepository.GetForumPostWithLazyLoadingAsync(id);
 
@@ -100,14 +157,37 @@ namespace NHASoftware.Controllers.WebAPIs
             return new JsonResult(new { success = true });
         }
 
-        private bool ForumCommentExists(int id)
+        private async Task<IActionResult> TryIncrementCommentLikes(int id)
         {
-            return _context.ForumComments.Any(e => e.Id == id);
-        }
+            var comment = await _unitOfWork.ForumCommentRepository.GetByIdAsync(id);
 
-        private bool ForumPostExists(int id)
-        {
-            return _context.ForumPosts.Any(e => e.Id == id);
+            if(comment == null)
+            {
+                return new JsonResult(new { success = false });
+            }
+            else
+            {
+                comment.LikeCount ++;
+            }
+
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ForumCommentExists(id))
+                {
+                    return new JsonResult(new { success = false });
+
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return new JsonResult(new { success = true });
         }
     }
 }

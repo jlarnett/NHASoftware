@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    $('#CommentText').summernote({
+    $('#AnimeSummary').summernote({
         height: 400,
         width: 1500,
         toolbar: [

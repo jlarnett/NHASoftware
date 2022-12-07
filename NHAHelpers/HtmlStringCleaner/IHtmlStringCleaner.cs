@@ -1,6 +1,6 @@
 ﻿namespace NHAHelpers.HtmlStringCleaner;
 
-public interface IHtmlStringBuilder
+public interface IHtmlStringCleaner
 {
     HtmlStringCleaner ConvertNewLinesToHtml();
     HtmlStringCleaner FixDoubleQuoteEscapeCharactersForHtml();

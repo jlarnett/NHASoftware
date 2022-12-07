@@ -1,0 +1,38 @@
+﻿@model NHASoftware.Entities.Anime.AnimePage
+
+<h4>AnimePage</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateAnimePage">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="AnimeName" class="control-label"></label>
+                <input asp-for="AnimeName" class="form-control" />
+                <span asp-validation-for="AnimeName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AnimeSummary" class="control-label"></label>
+                <textarea asp-for="AnimeSummary" class="form-control"></textarea>
+                <span asp-validation-for="AnimeSummary" class="text-danger"></span>
+            </div>
+            
+            @Html.HiddenFor(c => c.UpVotes)
+            @Html.HiddenFor(c => c.DownVotes)
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="Anime">Return Anime Wiki</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/Scripts/SummerNoteSetupAnime.js" type="text/javascript"></script>
+
+}

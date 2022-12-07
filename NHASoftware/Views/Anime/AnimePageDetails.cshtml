@@ -1,34 +1,11 @@
 ﻿@model NHASoftware.Entities.Anime.AnimePage
 
 <div>
-    <h4>@Model.AnimeName</h4>
+    <h2>@Model.AnimeName</h2>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AnimeName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AnimeName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AnimeSummary)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AnimeSummary)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpVotes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpVotes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DownVotes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DownVotes)
-        </dd>
-    </dl>
+    <div clas="AnimeSummary">
+        @Html.Raw(@Model.AnimeSummary)
+    </div>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |

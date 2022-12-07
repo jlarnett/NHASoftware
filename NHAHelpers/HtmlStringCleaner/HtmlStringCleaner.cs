@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
 namespace NHAHelpers.HtmlStringCleaner;
-    public class HtmlStringCleaner : IHtmlStringBuilder
+    public class HtmlStringCleaner : IHtmlStringCleaner
     {
         public string output { get; set; }
 

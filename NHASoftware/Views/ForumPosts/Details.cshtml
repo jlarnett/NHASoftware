@@ -1,9 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using NHASoftware.Entities.Identity
+@using NHASoftware.Services.AccessWarden
 @model NHASoftware.ViewModels.ForumPostDetailModel
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject IWarden AccessWarden
 
 @{
     ViewData["Title"] = "Details";
@@ -12,6 +14,7 @@
 
 <head>
     <link rel="stylesheet" href="~/css/ForumStyles.css">
+    <script src="~/Scripts/ForumPostDetails.js"></script>
 </head>
 
 <div>
@@ -87,86 +90,23 @@
         $(document).ready(function() {
 
 
-                var post = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumPost))');
-                var str2 = spacetime(post.creationDate);
-                var date2 = str2.format('{month} {date-pad} {year} {time}{am pm}');
+            var post = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumPost))');
+            var str2 = spacetime(post.creationDate);
+            var date2 = str2.format('{month} {date-pad} {year} {time}{am pm}');
 
-                $("#PostDate").text(date2);
+            $("#PostDate").text(date2);
 
-            function LoadCommentsTable() {
+            var comments = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumComments))');
 
-                var comments = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumComments))');
-                var arrayLength = comments.length;
-
-                var commentsTable = $("#CommentsTable").DataTable({
-                    "columns": [
-                        null
-                    ]
-                });
-
-                for (var i = 0; i < arrayLength; i++) {
-                    var str = spacetime(comments[i].creationDate);
-                    var date = str.format('{month} {date-pad} {year} {time}{am pm}');
-
-
-                    var commentPicture = "/ProfilePictures/" + comments[i].user.profilePicturePath;
-
-
-                    commentsTable.row.add( ["<div class='modern-forum-post-container'>" +
-                                                "<div class='modern-forum-post-row-container'>" +
-                                                    "<div class='modern-post-profile'>" +
-                                                        "<div class='modern-post-profile-picture-container'>" +
-                                                            "<img src='" + commentPicture + "' class='modern-comment-profile-picture'/>" +
-                                                        "</div>" +
-                                                            "<div class='modern-post-profile-displayname'>" + comments[i].user.displayName + "</div>" +
-                                                    "</div>" +
-                                                        "<div class='modern-post-details'>" + "<p class='modern-post-text'>" + comments[i].commentText + "</p>" + "</div>" +
-                                                        "</div>" +
-                                                "<div class='modern-post-actions'>" +
-                                                    "<div class='modern-post-action'>" +
-                                                        "<h3 >" + date + "</h3>" +
-                                                    "</div>" +
-                                                    "<div class='modern-post-actions-like modern-post-action'>" +
-                                                        "<input type='image' src='/Images/LikeIcon.png' class='modern-post-action-like-picture js-like-comment' comment-id='" + comments[i].id + "'/>" +
-                                                        "<h3>" + comments[i].likeCount + "</h3>" +
-                                                    "</div>" + checkIfCommentUser(comments[i]) +
-                                                "</div>" +
-                                            "</div>"] ).draw();
-
-                }
+            @{
+                string userId = UserManager.GetUserId(User);
+                bool adminUser = AccessWarden.IsForumAdmin(User);
             }
 
-            function checkIfCommentUser(data) {
-                @{
-                    string userId = UserManager.GetUserId(User);
-                }
+            var userIdString = JSON.parse('@Html.Raw(Json.Serialize(userId))');
+            var adminUserBool = JSON.parse('@Html.Raw(Json.Serialize(adminUser))');
 
-                @{
-                    bool adminUser = User.IsInRole("admin") || User.IsInRole("forum admin");
-                }
-
-                var userIdString = JSON.parse('@Html.Raw(Json.Serialize(userId))');
-                var adminUserBool = JSON.parse('@Html.Raw(Json.Serialize(adminUser))');
-
-                if (userIdString === data.user.id || adminUserBool) {
-                    return "<div class='modern-post-action'>" +
-                        "<button class='btn-primary js-edit-comment' comment-id='" +
-                        data.id +
-                        "'>Edit Comment</button>" +
-                        "</div>" +
-                        "<div class='modern-post-action'>" +
-                        "<button class='btn-primary js-delete-comment' comment-id='" +
-                        data.id +
-                        "'>Delete Comment</button>" +
-                        "</div>";
-                } 
-                else {
-                    return "";
-                }
-
-            }
-
-            LoadCommentsTable();
+            LoadCommentsTable(comments, userIdString, adminUserBool);
 
             $("#CommentsTable").on("click", ".js-like-comment", function () {
 
@@ -236,7 +176,6 @@
                 window.location.href = "/ForumPosts/Delete/" + button.attr("post-id");
             });
         });
-
 
     </script>
 
