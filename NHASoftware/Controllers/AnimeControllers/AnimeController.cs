@@ -114,11 +114,7 @@ namespace NHASoftware.Controllers.AnimeControllers
                 return NotFound();
             }
 
-            animePage.AnimeSummary = _htmlCleaner.initialize(animePage.AnimeSummary)
-                .ConvertNewLinesToHtml()
-                .FixDoubleQuoteEscapeCharactersForHtml()
-                .ToString();
-
+            animePage.AnimeSummary = _htmlCleaner.Clean(animePage.AnimeSummary);
             return View("AnimePageDetails", animePage);
         }
     }

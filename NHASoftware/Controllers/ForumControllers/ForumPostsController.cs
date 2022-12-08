@@ -56,18 +56,12 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            forumPost.ForumText = _htmlbuilder
-                .initialize(forumPost.ForumText)
-                .ConvertNewLinesToHtml()
-                .FixDoubleQuoteEscapeCharactersForHtml()
-                .ToString();
-
+            forumPost.ForumText = _htmlbuilder.Clean(forumPost.ForumText);
             var comments = await _unitOfWork.ForumCommentRepository.GetForumPostCommentsAsync(id);
 
             foreach (var comment in comments)
             {
-                comment.CommentText = _htmlbuilder.initialize(comment.CommentText).ConvertNewLinesToHtml()
-                    .FixDoubleQuoteEscapeCharactersForHtml().ToString();
+                comment.CommentText = _htmlbuilder.Clean(comment.CommentText);
             }
 
             var detailVm = new ForumPostDetailModel()

@@ -11,6 +11,12 @@ namespace NHAHelpers.HtmlStringCleaner;
             return this;
         }
 
+        public string Clean(string input)
+        {
+            output = input;
+            return ConvertNewLinesToHtml().FixDoubleQuoteEscapeCharactersForHtml().ToString();
+        }
+
         public HtmlStringCleaner ConvertNewLinesToHtml()
         {
             output = Regex.Replace(output, @"\r\n?|\n", "<br>");

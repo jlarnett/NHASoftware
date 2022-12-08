@@ -48,11 +48,7 @@ namespace NHASoftware.Controllers
 
             foreach (var post in topicPosts)
             {
-                post.ForumText = _htmlCleaner
-                    .initialize(post.ForumText)
-                    .ConvertNewLinesToHtml()
-                    .FixDoubleQuoteEscapeCharactersForHtml()
-                    .ToString();
+                post.ForumText = _htmlCleaner.Clean(post.ForumText);
             }
 
             var vm = new ForumTopicDetailsView()
