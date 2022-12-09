@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using NHASoftware.DTOs;
+using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.Entities;
 
 namespace NHASoftware.Profiles

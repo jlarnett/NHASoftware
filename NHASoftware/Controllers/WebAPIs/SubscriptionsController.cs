@@ -3,8 +3,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.DBContext;
-using NHASoftware.DTOs;
 using NHASoftware.Entities;
 using NHASoftware.Entities.Identity;
 

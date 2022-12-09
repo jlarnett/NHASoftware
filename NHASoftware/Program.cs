@@ -20,6 +20,7 @@ using NHAHelpers.HtmlStringCleaner;
 using NHASoftware.Services.Anime;
 using NHASoftware.Services.CacheGoblin;
 using NHASoftware.Services.CookieMonster;
+using NHASoftware.Services.SendGrid.Configuration;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
@@ -91,7 +92,7 @@ builder.Services.AddHangfire(options =>
 });
 
 //Send Grid service setup
-builder.Services.Configure<NHASoftware.Configuration.SendGridEmailSenderOptions>(options =>
+builder.Services.Configure<SendGridEmailSenderOptions>(options =>
 {
     // Gets sendgrid secrets from azure key config / azure key vault. 
     options.ApiKey = builder.Configuration["SendGrid:ApiKey"];

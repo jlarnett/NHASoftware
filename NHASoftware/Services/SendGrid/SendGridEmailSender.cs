@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
-using NHASoftware.Configuration;
+using NHASoftware.Services.SendGrid.Configuration;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
