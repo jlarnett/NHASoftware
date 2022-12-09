@@ -3,10 +3,12 @@ using System.Diagnostics;
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using NHASoftware.Controllers.WebAPIs;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Identity;
 using NHASoftware.HelperClasses;
 using NHASoftware.Services;
+using NHASoftware.Services.CookieMonster;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
@@ -16,9 +18,14 @@ namespace NHASoftware.Controllers
         private ApplicationDbContext _context;
         private ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ICookieMonster _cookieMonster;
         private TaskHandler taskHandler;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IEmailSender emailService, UserManager<ApplicationUser> userManager)
+        public HomeController(ILogger<HomeController> logger,
+            ApplicationDbContext context,
+            IEmailSender emailService,
+            UserManager<ApplicationUser> userManager, 
+            ICookieMonster cookieMonster)
         {
             /*************************************************************************************
              *  Dependency injection services
@@ -27,7 +34,7 @@ namespace NHASoftware.Controllers
             _logger = logger;
             _context = context;
             _userManager = userManager;
-
+            _cookieMonster = cookieMonster;
             this.taskHandler = new TaskHandler(context, userManager, emailService);
         }
 
@@ -39,7 +46,21 @@ namespace NHASoftware.Controllers
             int subCount = _context.Subscriptions.Count();
             int taskCount = _context.Tasks.Count();
 
+            AssignSessionGuidCookie();
+
             return View(new IndexPageViewModel(subCount, taskCount));
+        }
+
+        private void AssignSessionGuidCookie()
+        {
+            _logger.LogInformation("Trying to assign cookies at {DT}", DateTime.UtcNow.ToLongTimeString());
+            var sessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
+
+            if (sessionId == null)
+            {
+                var sessionGuid = Guid.NewGuid();
+                _cookieMonster.CreateCookie(CookieKeys.Session, sessionGuid.ToString());
+            }
         }
 
         public IActionResult Privacy()

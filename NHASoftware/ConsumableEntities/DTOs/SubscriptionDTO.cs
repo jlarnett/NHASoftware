@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Build.Framework;
 
-namespace NHASoftware.DTOs
+namespace NHASoftware.ConsumableEntities.DTOs
 {
     public class SubscriptionDTO
     {

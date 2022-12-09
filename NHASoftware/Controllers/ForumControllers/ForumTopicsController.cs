@@ -15,13 +15,13 @@ namespace NHASoftware.Controllers
     public class ForumTopicsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IHtmlStringBuilder _htmlBuilder;
+        private readonly IHtmlStringCleaner _htmlCleaner;
         private readonly IUnitOfWork _unitOfWork;
 
-        public ForumTopicsController(ApplicationDbContext context, IHtmlStringBuilder htmlBuilder, IUnitOfWork unitOfWork)
+        public ForumTopicsController(ApplicationDbContext context, IHtmlStringCleaner htmlCleaner, IUnitOfWork unitOfWork)
         {
             _context = context;
-            _htmlBuilder = htmlBuilder;
+            _htmlCleaner = htmlCleaner;
             _unitOfWork = unitOfWork;
         }
 
@@ -48,11 +48,7 @@ namespace NHASoftware.Controllers
 
             foreach (var post in topicPosts)
             {
-                post.ForumText = _htmlBuilder
-                    .initialize(post.ForumText)
-                    .ConvertNewLinesToHtml()
-                    .FixDoubleQuoteEscapeCharactersForHtml()
-                    .ToString();
+                post.ForumText = _htmlCleaner.Clean(post.ForumText);
             }
 
             var vm = new ForumTopicDetailsView()

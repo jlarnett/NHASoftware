@@ -1,57 +1,58 @@
-﻿$(document).ready(function() {
-    var comments = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumComments))');
+﻿function LoadCommentsTable(comments, userId, adminUserBool) {
 
     var arrayLength = comments.length;
 
-    var table = $("#CommentsTable").DataTable({
+    var commentsTable = $("#CommentsTable").DataTable({
         "columns": [
-            null,
-            {"width": "10%"}
+            null
         ]
     });
 
     for (var i = 0; i < arrayLength; i++) {
         var str = spacetime(comments[i].creationDate);
         var date = str.format('{month} {date-pad} {year} {time}{am pm}');
-                    
 
-        table.row.add( ["<article class='group-thread group-thread--rootview' data-id='" + comments[i].id + "'>" +
-            "<a class='group-thread__link'>" +
-            "<div class='group-thread__details'>" +
-            "<h3 class='group-thread__heading'>" + comments[i].user.email + "</h3>" +
-            "<p class='group-thread__summary'>" + comments[i].commentText + "</p>" +
-            "</div>" +
-            "<span class='forum-stat forum-stat--thread'>" + 0 + "</span>" +
-            "<span class='forum-stat forum-stat--latest'>" + date + "</span>" +
-            "</a>" +
-            "</article>", "<article class='group-thread group-thread--rootview action-article'>" + "<a class='btn-primary btn-link cmt-action' href='/ForumComments/delete/" + comments[i].id  + "'>Delete</a>" + "<a class='btn-primary btn-link cmt-action' href='/ForumComments/edit/" + comments[i].id  + "'>Edit</a></article>"] ).draw();
+        var commentPicture = "/ProfilePictures/" + comments[i].user.profilePicturePath;
+
+        commentsTable.row.add( ["<div class='modern-forum-post-container'>" +
+                                    "<div class='modern-forum-post-row-container'>" +
+                                        "<div class='modern-post-profile'>" +
+                                            "<div class='modern-post-profile-picture-container'>" +
+                                                "<img src='" + commentPicture + "' class='modern-comment-profile-picture'/>" +
+                                            "</div>" +
+                                                "<div class='modern-post-profile-displayname'>" + comments[i].user.displayName + "</div>" +
+                                        "</div>" +
+                                            "<div class='modern-post-details'>" + "<p class='modern-post-text'>" + comments[i].commentText + "</p>" + "</div>" +
+                                            "</div>" +
+                                    "<div class='modern-post-actions'>" +
+                                        "<div class='modern-post-action'>" +
+                                            "<h3 >" + date + "</h3>" +
+                                        "</div>" +
+                                        "<div class='modern-post-actions-like modern-post-action'>" +
+                                            "<input type='image' src='/Images/LikeIcon.png' class='modern-post-action-like-picture js-like-comment' comment-id='" + comments[i].id + "'/>" +
+                                            "<h3>" + comments[i].likeCount + "</h3>" +
+                                        "</div>" + checkIfCommentUser(comments[i], userId, adminUserBool) +
+                                    "</div>" +
+                                "</div>"] ).draw();
+
     }
+}
 
-    var table2 = $("#PostTable").DataTable({
-        searching: false,
-        paging: false,
-        info: false,
+function checkIfCommentUser(data, userIdString, adminUserBool) {
 
-        "columns": [
-            null,
-            {"width": "10%"}
-        ]
-    });
-
-    var post = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumPost))');
-    console.log(post);
-
-    table2.row.add(["<article class='group-thread group-thread--rootview' data-id='" + 1000 + "'>" +
-        "<a class='group-thread__link'>" +
-
-        "<div class='group-thread__details'>" +
-        "<h3 class='group-thread__heading'>" + post.user.email + "</h3>" +
-        "<h3 class='group-thread__heading'>" + post.title + "</h3>" +
-        "<p class='group-thread__summary'>" + post.forumText + "</p>" +
-
-        "</div>" +
-        "<span class='forum-stat forum-stat--thread'>" + 0 + "</span>" +
-        "<span class='forum-stat forum-stat--latest'>" + date + "</span>" +
-        "</a>" +
-        "</article>", "<article class='group-thread group-thread--rootview action-article'>" + "<a class='btn-primary btn-link cmt-action' href='/ForumPosts/delete/" + @id  + "'>Delete</a>" + "<a class='btn-primary btn-link cmt-action' href='/ForumPosts/edit/" + @id  + "'>Edit</a></article>"] ).draw();
-});
+    if (userIdString === data.user.id || adminUserBool) {
+        return "<div class='modern-post-action'>" +
+            "<button class='btn-primary js-edit-comment' comment-id='" +
+            data.id +
+            "'>Edit Comment</button>" +
+            "</div>" +
+            "<div class='modern-post-action'>" +
+            "<button class='btn-primary js-delete-comment' comment-id='" +
+            data.id +
+            "'>Delete Comment</button>" +
+            "</div>";
+    } 
+    else {
+        return "";
+    }
+}

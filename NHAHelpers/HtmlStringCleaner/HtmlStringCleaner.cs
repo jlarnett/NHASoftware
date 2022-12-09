@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
 namespace NHAHelpers.HtmlStringCleaner;
-    public class HtmlStringCleaner : IHtmlStringBuilder
+    public class HtmlStringCleaner : IHtmlStringCleaner
     {
         public string output { get; set; }
 
@@ -9,6 +9,12 @@ namespace NHAHelpers.HtmlStringCleaner;
         {
             output = input;
             return this;
+        }
+
+        public string Clean(string input)
+        {
+            output = input;
+            return ConvertNewLinesToHtml().FixDoubleQuoteEscapeCharactersForHtml().ToString();
         }
 
         public HtmlStringCleaner ConvertNewLinesToHtml()

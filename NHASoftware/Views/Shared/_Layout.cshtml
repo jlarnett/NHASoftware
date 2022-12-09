@@ -8,9 +8,16 @@
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/Themes/Dark/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/NHASoftware.styles.css" asp-append-version="true" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.css"/>
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.js"></script>
+    <script type="text/javascript" src='https://unpkg.com/spacetime'></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
 
 </head>
 <body>
@@ -19,7 +26,7 @@
             <div class="container-fluid">
                 
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="@Url.Content("~/Images/BitcoinPhoto.jpg")" class="rounded" height="50px" width="100px"/>
+                    <img src="@Url.Content("~/Images/BitcoinPhoto.jpg")" class="rounded home-image-300" height="50px" width="100px" />
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -34,15 +41,15 @@
 
                         @if (User.IsInRole("admin"))
                         {
-                            <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="TaskFrequencies" asp-action="Index">Task Frequency</a></li>
+                            @*<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="TaskFrequencies" asp-action="Index">Task Frequency</a></li>*@
                             <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a></li>
 
                         }
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="TaskItems" asp-action="Index">Tasks Items</a></li>
+                        @*<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="TaskItems" asp-action="Index">Tasks Items</a></li>*@
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Subscriptions" asp-action="Index">Subscriptions</a></li>
+                        @*<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Subscriptions" asp-action="Index">Subscriptions</a></li>*@
 
 
                     </ul>
@@ -57,20 +64,11 @@
         </main>
     </div>
 
-<footer class="border-top footer text-muted footerMargin">
-    <div class="footerContainer">
+@*<footer class="border-top footer">
+    <div class="">
         &copy; 2021 - NHASoftware - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>
-</footer>
-
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.js"></script>
-    <script type="text/javascript" src='https://unpkg.com/spacetime'></script>
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
-
+</footer>*@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

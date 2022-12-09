@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\Scripts\AddBookAuthor.js" />
+    <None Include="wwwroot\Scripts\OutdatedScripts\AddBookAuthor.js" />
 	  
   </ItemGroup>
 	

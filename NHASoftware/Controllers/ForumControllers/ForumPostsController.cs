@@ -23,11 +23,11 @@ namespace NHASoftware.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWarden _accessWarden;
-        private readonly IHtmlStringBuilder _htmlbuilder;
+        private readonly IHtmlStringCleaner _htmlbuilder;
         private readonly IUnitOfWork _unitOfWork;
 
         public ForumPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, 
-            IWarden accessWarden, IHtmlStringBuilder htmlbuilder, IUnitOfWork unitOfWork)
+            IWarden accessWarden, IHtmlStringCleaner htmlbuilder, IUnitOfWork unitOfWork)
         {
             _context = context;
             _userManager = userManager;
@@ -56,18 +56,12 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            forumPost.ForumText = _htmlbuilder
-                .initialize(forumPost.ForumText)
-                .ConvertNewLinesToHtml()
-                .FixDoubleQuoteEscapeCharactersForHtml()
-                .ToString();
-
+            forumPost.ForumText = _htmlbuilder.Clean(forumPost.ForumText);
             var comments = await _unitOfWork.ForumCommentRepository.GetForumPostCommentsAsync(id);
 
             foreach (var comment in comments)
             {
-                comment.CommentText = _htmlbuilder.initialize(comment.CommentText).ConvertNewLinesToHtml()
-                    .FixDoubleQuoteEscapeCharactersForHtml().ToString();
+                comment.CommentText = _htmlbuilder.Clean(comment.CommentText);
             }
 
             var detailVm = new ForumPostDetailModel()

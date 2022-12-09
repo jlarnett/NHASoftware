@@ -1,7 +1,6 @@
 html 
 {
   font-size: 14px;
-    
 }
 
 @media (min-width: 768px) {
@@ -40,12 +39,13 @@ body {
 .selected {
     border: solid 1px yellow;
 }
-.footerMargin {
-    height: 05%;
-}
 
 .footerContainer {
     margin-left: 20px;
+}
+
+.footer {
+    height: .5%;
 }
 
 .post-create-input {
@@ -61,5 +61,10 @@ body {
 
 .form-group {
     margin-bottom: 20px;
+}
+
+.home-image-300 {
+    height: 75px;
+    width: 150px;
 }
 

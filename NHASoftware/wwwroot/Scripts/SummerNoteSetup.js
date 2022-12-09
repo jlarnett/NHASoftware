@@ -8,7 +8,9 @@
         ['style', ['bold', 'italic', 'underline', 'clear']],
         ['para', ['ul', 'ol']],
         ['color', ['color']],
-        ['view', ['codeview']]
+        ['view', ['codeview']],
+        ['insert', ['link', 'picture', 'video']],
+        ['table', ['table']]
         ],
 
     });

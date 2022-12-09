@@ -6,7 +6,14 @@
 
         public static char ConvertNumberToAlphabetLetter(int letterNumber)
         {
-            return alphabet[letterNumber];
+            if (letterNumber >= 0 && letterNumber < 26)
+            {
+                return alphabet[letterNumber];
+            }
+            else
+            {
+                return '?';
+            }
         }
     }
 }

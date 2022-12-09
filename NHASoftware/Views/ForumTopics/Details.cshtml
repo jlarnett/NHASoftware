@@ -7,6 +7,7 @@
 
 <head>
     <link rel="stylesheet" href="~/css/ForumStyles.css">
+    <script src="~/Scripts/ForumTopicDetails.js" type="text/javascript"></script>
 </head>
 
 <h1>@Model.topic.Title</h1>
@@ -26,48 +27,12 @@
 {
     <script type="text/javascript">
         $(document).ready(function() {
-            //Working Script. Fixed issue with display using REGEX on controller.
-
             var prePost = '@Html.Raw(Json.Serialize(@Model.Posts))';
             var post = JSON.parse(prePost);
 
-            var table = $("#ForumPostTable").DataTable({
-                data: post,
-                columns:
-                [
-                    {
-                        data: "id",
-                        render: function (data, type, post) 
-                        {
-                            var str = spacetime(post.creationDate);
-                            var date = str.format('{month}-{date-pad}-{year} {time}{am pm}');
+            InitializeAllTopicPosts(post);
 
-                            //return "<article class='group-thread group-thread--rootview' data-id='" + post.id + "'><a class='group-thread__link' href='/ForumPosts/Details/" + post.id + "'><div class='group-thread__details'><h3 class='group-thread__heading'>" + post.title +"</h3><p class='group-thread__summary' style='white-space: pre-line'>" + post.forumText + "</p></div><span class='forum-stat forum-stat--thread'>"+ post.commentCount + "</span><span class='forum-stat forum-stat--posts'>" + post.likeCount + "</span><span class='forum-stat forum-stat--latest'>" + date + "</span></a></article>";
-
-                            return "<div class='modern-forum-post-container'> <a class='modern-thread-link' post-id='" + post.id + "'>" +
-                                "<div class='modern-forum-post-row-container'>" +
-                                "<div class='modern-forum-topic-title'>" + "<h3 class='modern-post-text'>" + post.title + "</h3>" + "</div>" +
-                                "</div>" +
-                                "<div class='modern-post-actions'>" +
-                                "<div class='modern-post-actions-like modern-post-action'>" +
-                                "<input type='image' src='/Images/likeIcon.png' class='modern-threads-picture js-thread-comment' comment-id='" + "commentid" + "'/>" +
-                                "<h3>" + post.likeCount + "</h3>" +
-                                "</div>" +
-                                "<div class='modern-post-actions-like modern-post-action'>" +
-                                "<input type='image' src='/Images/PostIcon.png' class='modern-threads-picture js-thread-comment' comment-id='" + "commentid" + "'/>" +
-                                "<h3>" + post.commentCount + "</h3>" +
-                                "</div>" +
-                                "<div class='modern-post-action'>" +
-                                "<h5>" + "Thread Last Updated: " + date + "</h5>" +
-                                "</div>" +
-                                "</div>" +
-                                "</a></div>";
-                        }
-                    }
-                ]
-            });
-
-            $(".modern-thread-link").on("click", function () {
+            $("#ForumPostTable").on("click", ".modern-thread-link", function () {
                 var button = $(this);
                 window.location.href = "/ForumPosts/Details/" + button.attr("post-id");
             });
