@@ -4,6 +4,8 @@ using NHASoftware.Entities;
 using NHASoftware.Entities.Anime;
 using NHASoftware.Entities.Forums;
 using NHASoftware.Entities.Identity;
+using NHASoftware.ConsumableEntities.DTOs;
+using NHASoftware.Entities.Social_Entities;
 
 namespace NHASoftware.DBContext
 {
@@ -41,5 +43,6 @@ namespace NHASoftware.DBContext
         public DbSet<ForumComment> ForumComments { get; set; }
         public DbSet<AnimePage> AnimePages { get; set; }
         public DbSet<AnimeEpisode> AnimeEpisodes { get; set; }
+        public DbSet<Post> Posts { get; set; }
     }
 }

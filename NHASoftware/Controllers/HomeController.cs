@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using AutoMapper;
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -19,13 +20,15 @@ namespace NHASoftware.Controllers
         private ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ICookieMonster _cookieMonster;
+        private readonly IMapper _mapper;
         private TaskHandler taskHandler;
 
         public HomeController(ILogger<HomeController> logger,
             ApplicationDbContext context,
             IEmailSender emailService,
             UserManager<ApplicationUser> userManager, 
-            ICookieMonster cookieMonster)
+            ICookieMonster cookieMonster,
+            IMapper mapper)
         {
             /*************************************************************************************
              *  Dependency injection services
@@ -35,20 +38,18 @@ namespace NHASoftware.Controllers
             _context = context;
             _userManager = userManager;
             _cookieMonster = cookieMonster;
+            this._mapper = mapper;
             this.taskHandler = new TaskHandler(context, userManager, emailService);
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             CreatePrimaryHangfireJobs();
             CreateDailyInactiveCheckJob();
-
-            int subCount = _context.Subscriptions.Count();
-            int taskCount = _context.Tasks.Count();
-
             AssignSessionGuidCookie();
 
-            return View(new IndexPageViewModel(subCount, taskCount));
+            var posts = await new PostsController(_context, _mapper).GetPosts();
+            return View(new HomeVM(posts));
         }
 
         private void AssignSessionGuidCookie()

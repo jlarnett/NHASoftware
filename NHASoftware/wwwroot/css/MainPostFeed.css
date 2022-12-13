@@ -1,0 +1,99 @@
+﻿body {
+}
+
+#MainPostTextboxContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 90%;
+    left: auto;
+    position: fixed;
+    margin-top: auto;
+    margin: auto;
+}
+
+#HomeContentFeed {
+    margin: auto;
+    border-right: 2px solid black;
+    border-left: 2px solid black;
+    width: 61.7%;
+    height: 5%;
+    position: static;
+}
+
+.HomeContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#SubmitBtn {
+    height: 75px;
+    opacity: .5;
+}
+
+/*Controls the Main post summernote textbox text color*/
+.note-editor.note-frame .note-editing-area .note-editable {
+    color: #d7dbe1;
+}
+
+/*Controls the Main post summernote textbox text color*/
+.note-editable > p {
+    color: #d7dbe1;
+}
+
+.MainFeedPostContainer {
+    margin: 50px 10px 50px 10px;
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px double black;
+    padding: 0 20px 50px 20px;
+}
+
+.Main-Post-User-Profile {
+    float: left;
+    margin: 0 1em 0 0;
+}
+
+.Main-Post-User-Profile-Picture {
+    border-radius: 50%;
+    width: 5em;
+    height: 5em;
+}
+
+.Post-Header-Item {
+    text-decoration: none;
+    font-size: 1.5em;
+    margin: 0 10px 0 0;
+}
+
+.Main-Post {
+    display: flex;
+    flex-direction: column;
+}
+
+.Main-Post-Top-Header {
+    display: flex;
+    flex-direction: row;
+}
+
+.Main-Post-Bottom-Actionbar {
+    display: flex;
+    flex-direction: row;
+}
+
+.Post-Like-Group {
+    display: flex;
+    flex-direction: row;
+    margin-right: 4em;
+    justify-content: center;
+    align-items: center;
+}
+
+.Post-Like-Icon {
+    height: 1.5em
+}
+
+.Like-Group-Item {
+    margin-right: .5em;
+}
