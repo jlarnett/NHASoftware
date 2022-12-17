@@ -1,10 +1,13 @@
-﻿using NHASoftware.Entities.Identity;
+﻿using System.ComponentModel.DataAnnotations;
+using NHASoftware.Entities.Identity;
 
 namespace NHASoftware.Entities.Social_Entities
 {
     public class Post
     {
         public int? Id { get; set; }
+
+        [Required]
         public string Summary { get; set; }
         public DateTime? CreationDate { get; set; }
         public string? UserId { get; set; }

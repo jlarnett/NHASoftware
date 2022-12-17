@@ -1,40 +1,95 @@
 ﻿body {
 }
 
-#MainPostTextboxContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    top: 90%;
-    left: auto;
-    position: fixed;
-    margin-top: auto;
+/*Giant Header above Main Feed*/
+.feed-header {
+    text-shadow: 5px 2px 3px black;
     margin: auto;
+    font-size: 4em;
 }
 
+#MainPostTextboxContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.textbox-area {
+    position: fixed;
+    top: 90%;
+}
+
+#MainPostTextbox {
+    width: 40em;
+}
+
+/*.comments-header-row {
+    display: flex;
+    flex-direction: row;
+}*/
+
+/*Comment textbox area for send btn and textbox*/
+.comment-textbox-area {
+    display: flex;
+    flex-direction: row;
+}
+
+/*Home Page Content Feed. Main Feed where posts are directly appended*/
 #HomeContentFeed {
     margin: auto;
     border-right: 2px solid black;
     border-left: 2px solid black;
-    width: 61.7%;
-    height: 5%;
+    width: 50%;
+    height: 39em;
     position: static;
+    overflow-y: auto;
 }
 
+/*Home Page Outer Content Feed. This is where the #HomeContentFeed lives*/
 .HomeContainer {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+/***********************************************************************************
+****************SCROLLBAR STYLING***************************************************************/
+
+/* width */
+::-webkit-scrollbar {
+    width: .25em;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #303030;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10em;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #000000;
+    border-radius: 10em;
+}
+
+/***********************************************************************************
+****************SCROLLBAR STYLING***************************************************************/
+
+
+
 #SubmitBtn {
-    height: 75px;
+    height: 3.5em;
     opacity: .5;
 }
 
 /*Controls the Main post summernote textbox text color*/
 .note-editor.note-frame .note-editing-area .note-editable {
     color: #d7dbe1;
+    width: 50em;
 }
 
 /*Controls the Main post summernote textbox text color*/
@@ -96,4 +151,36 @@
 
 .Like-Group-Item {
     margin-right: .5em;
+}
+
+.Main-Post-Section {
+    margin: .5em 0em;
+}
+
+/*Home page post's comment styles*/
+
+/*Home Page post's comment profile picture styling*/
+.comment-container {
+    display: flex;
+    flex-direction: row;
+    margin: 1.5em 0em;
+}
+
+.comment-profile-picture {
+    margin-right: 1em;
+}
+
+.comment-profile-picture-item {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+}
+
+.comment-details {
+}
+
+
+
+li {
+    list-style: none;
 }

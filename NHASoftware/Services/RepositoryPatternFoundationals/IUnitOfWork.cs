@@ -1,5 +1,6 @@
 ﻿using NHASoftware.Services.Anime;
 using NHASoftware.Services.Forums;
+using NHASoftware.Services.Social;
 
 namespace NHASoftware.Services.RepositoryPatternFoundationals
 {
@@ -10,6 +11,7 @@ namespace NHASoftware.Services.RepositoryPatternFoundationals
         IForumPostRepository ForumPostRepository { get; }
         IForumCommentRepository ForumCommentRepository { get; }
         IAnimePageRepository AnimePageRepository { get; }
+        IPostRepository PostRepository { get; }
         Task<int> CompleteAsync();
     }
 }

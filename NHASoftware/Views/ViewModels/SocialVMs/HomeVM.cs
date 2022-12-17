@@ -1,6 +1,6 @@
 ﻿using NHASoftware.ConsumableEntities.DTOs;
 
-namespace NHASoftware.ViewModels
+namespace NHASoftware.Views.ViewModels.SocialVMs
 {
     public class HomeVM
     {

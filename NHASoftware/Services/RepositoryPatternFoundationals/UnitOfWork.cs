@@ -1,13 +1,13 @@
 ﻿using NHASoftware.DBContext;
 using NHASoftware.Services.Anime;
 using NHASoftware.Services.Forums;
+using NHASoftware.Services.Social;
 
 namespace NHASoftware.Services.RepositoryPatternFoundationals
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
-
 
         public IForumSectionRepository ForumSectionRepository { get; private set; }
 
@@ -19,6 +19,8 @@ namespace NHASoftware.Services.RepositoryPatternFoundationals
 
         public IAnimePageRepository AnimePageRepository { get; private set; }
 
+        public IPostRepository PostRepository { get; private set; }
+
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
@@ -27,6 +29,7 @@ namespace NHASoftware.Services.RepositoryPatternFoundationals
             ForumPostRepository = new ForumPostRepository(_context);
             ForumCommentRepository = new ForumCommentRepository(_context);
             AnimePageRepository = new AnimePageRepository(_context);
+            PostRepository = new PostRepository(_context);
         }
 
         public async Task<int> CompleteAsync()

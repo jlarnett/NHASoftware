@@ -8,19 +8,20 @@ using NHASoftware.Controllers.WebAPIs;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Identity;
 using NHASoftware.HelperClasses;
-using NHASoftware.Services;
 using NHASoftware.Services.CookieMonster;
+using NHASoftware.Services.RepositoryPatternFoundationals;
 using NHASoftware.ViewModels;
+using NHASoftware.Views.ViewModels.SocialVMs;
 
 namespace NHASoftware.Controllers
 {
     public class HomeController : Controller
     {
-        private ApplicationDbContext _context;
         private ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ICookieMonster _cookieMonster;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
         private TaskHandler taskHandler;
 
         public HomeController(ILogger<HomeController> logger,
@@ -28,17 +29,17 @@ namespace NHASoftware.Controllers
             IEmailSender emailService,
             UserManager<ApplicationUser> userManager, 
             ICookieMonster cookieMonster,
-            IMapper mapper)
+            IMapper mapper, IUnitOfWork unitOfWork)
         {
             /*************************************************************************************
              *  Dependency injection services
              *************************************************************************************/
 
             _logger = logger;
-            _context = context;
             _userManager = userManager;
             _cookieMonster = cookieMonster;
             this._mapper = mapper;
+            this._unitOfWork = unitOfWork;
             this.taskHandler = new TaskHandler(context, userManager, emailService);
         }
 
@@ -48,7 +49,7 @@ namespace NHASoftware.Controllers
             CreateDailyInactiveCheckJob();
             AssignSessionGuidCookie();
 
-            var posts = await new PostsController(_context, _mapper).GetPosts();
+            var posts = await new PostsController(_mapper, _unitOfWork).GetPosts();
             return View(new HomeVM(posts));
         }
 

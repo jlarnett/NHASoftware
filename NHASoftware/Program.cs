@@ -21,6 +21,7 @@ using NHASoftware.Services.Anime;
 using NHASoftware.Services.CacheGoblin;
 using NHASoftware.Services.CookieMonster;
 using NHASoftware.Services.SendGrid.Configuration;
+using NHASoftware.Services.Social;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
@@ -113,6 +114,7 @@ builder.Services.AddTransient<IForumCommentRepository, ForumCommentRepository>()
 builder.Services.AddTransient<IForumTopicRepository, ForumTopicRepository>();
 builder.Services.AddTransient<IForumSectionRepository, ForumSectionRepository>();
 builder.Services.AddTransient<IAnimePageRepository, AnimePageRepository>();
+builder.Services.AddTransient<IPostRepository, PostRepository>();
 
 
 //Cookie service

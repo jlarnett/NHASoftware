@@ -1,7 +1,8 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using NHASoftware.Entities.Identity
-@model NHASoftware.ViewModels.HomeVM;
+﻿@using NHASoftware.Entities.Identity
+@using Microsoft.AspNetCore.Identity
+@model NHASoftware.Views.ViewModels.SocialVMs.HomeVM;
 @inject UserManager<ApplicationUser> _UserManager;
+@inject SignInManager<ApplicationUser> _SignInManager;
 
 @{
     ViewData["Title"] = "Home Page";
@@ -11,140 +12,37 @@
     <link rel="stylesheet" href="~/css/MainPostFeed.css">
 </head>
 
-<h1 class="h1 text-center">Ethereal Feed</h1>
+<h1 class="h1 text-center feed-header">The Algorithm Page</h1>
 
 <div class="HomeContainer">
-    <div id="HomeContentFeed">
-        
-        @{
-            foreach (var post in @Model.SocialPosts)
-            {
-                <div class="MainFeedPostContainer">
-                    <div>
-                        <div class="Main-Post-User-Profile">
-                            <img src="~/ProfilePictures/@post.User.ProfilePicturePath" class="Main-Post-User-Profile-Picture">
-                        </div>
-                        <div class="Main-Post">
-                            <div class="Main-Post-Top-Header">
-                                <a class="link-primary Post-Header-Item">@post.User.DisplayName</a>
-                                <a class="link-primary Post-Header-Item">-</a>
-                                <a class="link-primary Post-Header-Item">2h</a>
-                            </div>
-                            <div class="Main-Post-Summary">
-                                <p>@post.Summary</p>
-                            </div>
-                            <div class="Main-Post-Bottom-Actionbar">
-                                <div class="Post-Like-Group">
-                                    <div class="Like-Group-Item">250</div>
-                                    <img class="Post-Like-Icon" src="~/Images/Facebook-Like-Filled.png" />
-                                </div>
-                                <div class="Post-Like-Group">
-                                    <div class="Like-Group-Item">250</div>
-                                    <img class="Post-Like-Icon" src="~/Images/dislike-Filled.png" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
+    <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()">
+        @if (_SignInManager.IsSignedIn(User))
+        {
+            <div class="textbox-area">
+                <div id="MainPostTextboxContainer">
+                    @Html.AntiForgeryToken()
+                    <div id="MainPostTextbox"></div>
+                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="btn-dark">Convey Message</button>
                 </div>
-            }
+                <span id="MainPostTextboxValidationMessage" style="display: none; color: red">Error Submitting Post.....</span>
+            </div>
         }
 
-@*        <div class="MainFeedPostContainer">
-            <div>
-                <div class="Main-Post-User-Profile">
-                    <img src="Images/dogecoin.jpg" class="Main-Post-User-Profile-Picture">
-                </div>
-                <div class="Main-Post">
-                    <div class="Main-Post-Top-Header">
-                        <a class="link-primary Post-Header-Item">Johnny Arnett</a>
-                        <a class="link-primary Post-Header-Item">-</a>
-                        <a class="link-primary Post-Header-Item">2h</a>
-                    </div>
-                    <div class="Main-Post-Summary">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Tincidunt nunc pulvinar sapien et ligula. Mollis nunc sed id semper. Fames ac turpis egestas integer eget aliquet. Diam quam nulla porttitor massa. A diam sollicitudin tempor id eu nisl nunc. Massa placerat duis ultricies lacus sed turpis tincidunt id aliquet. Libero id faucibus nisl tincidunt. Pellentesque elit eget gravida cum sociis natoque penatibus. Ultrices mi tempus imperdiet nulla malesuada pellentesque elit. Laoreet id donec ultrices tincidunt arcu non. Nulla facilisi etiam dignissim diam quis enim lobortis scelerisque. Eu consequat ac felis donec et odio. Pretium aenean pharetra magna ac placerat vestibulum lectus mauris. Neque vitae tempus quam pellentesque nec nam aliquam sem et. Nisi porta lorem mollis aliquam. Mattis molestie a iaculis at erat pellentesque adipiscing commodo.</p>
-                    </div>
-                    <div class="Main-Post-Bottom-Actionbar">
-                        <div class="Post-Like-Group">
-                            <div class="Like-Group-Item">250</div>
-                            <img class="Post-Like-Icon" src="~/Images/Facebook-Like-Filled.png" />
-                        </div>
-                        <div class="Post-Like-Group">
-                            <div class="Like-Group-Item">250</div>
-                            <img class="Post-Like-Icon" src="~/Images/dislike-Filled.png"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <br/>
-        </div>
-        
-        <div class="MainFeedPostContainer">
-            <div>
-                <div class="Main-Post-User-Profile">
-                    <img src="Images/dogecoin.jpg" class="Main-Post-User-Profile-Picture">
-                </div>
-                <div class="Main-Post">
-                    <div class="Main-Post-Top-Header">
-                        <a class="link-primary Post-Header-Item">Johnny Arnett</a>
-                        <a class="link-primary Post-Header-Item">-</a>
-                        <a class="link-primary Post-Header-Item">2h</a>
-                    </div>
-                    <div class="Main-Post-Summary">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Tincidunt nunc pulvinar sapien et ligula. Mollis nunc sed id semper. Fames ac turpis egestas integer eget aliquet. Diam quam nulla porttitor massa. A diam sollicitudin tempor id eu nisl nunc. Massa placerat duis ultricies lacus sed turpis tincidunt id aliquet. Libero id faucibus nisl tincidunt. Pellentesque elit eget gravida cum sociis natoque penatibus. Ultrices mi tempus imperdiet nulla malesuada pellentesque elit. Laoreet id donec ultrices tincidunt arcu non. Nulla facilisi etiam dignissim diam quis enim lobortis scelerisque. Eu consequat ac felis donec et odio. Pretium aenean pharetra magna ac placerat vestibulum lectus mauris. Neque vitae tempus quam pellentesque nec nam aliquam sem et. Nisi porta lorem mollis aliquam. Mattis molestie a iaculis at erat pellentesque adipiscing commodo.</p>
-                    </div>
-                    <div class="Main-Post-Bottom-Actionbar">
-                        <div class="Post-Like-Group">
-                            <div class="Like-Group-Item">250</div>
-                            <img class="Post-Like-Icon" src="~/Images/Facebook-Like-Filled.png" />
-                        </div>
-                        <div class="Post-Like-Group">
-                            <div class="Like-Group-Item">250</div>
-                            <img class="Post-Like-Icon" src="~/Images/dislike-Filled.png" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <br />
-        </div>
-        <div class="MainFeedPostContainer">
-            <div>
-                <div class="Main-Post-User-Profile">
-                    <img src="Images/dogecoin.jpg" class="Main-Post-User-Profile-Picture">
-                </div>
-                <div class="Main-Post">
-                    <div class="Main-Post-Top-Header">
-                        <a class="link-primary Post-Header-Item">Johnny Arnett</a>
-                        <a class="link-primary Post-Header-Item">-</a>
-                        <a class="link-primary Post-Header-Item">2h</a>
-                    </div>
-                    <div class="Main-Post-Summary">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Tincidunt nunc pulvinar sapien et ligula. Mollis nunc sed id semper. Fames ac turpis egestas integer eget aliquet. Diam quam nulla porttitor massa. A diam sollicitudin tempor id eu nisl nunc. Massa placerat duis ultricies lacus sed turpis tincidunt id aliquet. Libero id faucibus nisl tincidunt. Pellentesque elit eget gravida cum sociis natoque penatibus. Ultrices mi tempus imperdiet nulla malesuada pellentesque elit. Laoreet id donec ultrices tincidunt arcu non. Nulla facilisi etiam dignissim diam quis enim lobortis scelerisque. Eu consequat ac felis donec et odio. Pretium aenean pharetra magna ac placerat vestibulum lectus mauris. Neque vitae tempus quam pellentesque nec nam aliquam sem et. Nisi porta lorem mollis aliquam. Mattis molestie a iaculis at erat pellentesque adipiscing commodo.</p>
-                    </div>
-                    <div class="Main-Post-Bottom-Actionbar">
-                        <div class="Post-Like-Group">
-                            <div class="Like-Group-Item">250</div>
-                            <img class="Post-Like-Icon" src="~/Images/Facebook-Like-Filled.png" />
-                        </div>
-                        <div class="Post-Like-Group">
-                            <div class="Like-Group-Item">250</div>
-                            <img class="Post-Like-Icon" src="~/Images/dislike-Filled.png" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <br />
-        </div>*@
     </div>
-    
-        <div id="MainPostTextboxContainer">
-            @Html.AntiForgeryToken()
-            <div id="MainPostTextbox"></div>
-            <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="btn-dark">Convey Message</button>
-        </div>
 </div>
 
 @section Scripts {
-    <script src="~/Scripts/SummerNoteSetupMain.js"></script>
-    <script src="~/Scripts/ConveyMainPost.js"></script>
+    <script src="~/Scripts/Social_Feed/RebuildMainFeedTextboxes.js"></script>
+    <script src="~/Scripts/Social_Feed/ConveyMainPost.js"></script>
+    <script src="~/Scripts/Social_Feed/HideComments.js"></script>
+    <script src="~/Scripts/Social_Feed/RefreshFeed.js"></script>
+    <script src="~/Scripts/Social_Feed/ProfileRedirectLink.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            RetrieveMorePosts().then(function (data) {
+                LoadFeedWithNewPosts(data);
+            });
+        });
+    </script>
 }

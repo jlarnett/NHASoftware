@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.DBContext;
 using NHASoftware.Entities;
 using NHASoftware.Entities.Social_Entities;
+using NHASoftware.Services.RepositoryPatternFoundationals;
 
 namespace NHASoftware.Controllers.WebAPIs
 {
@@ -17,29 +19,29 @@ namespace NHASoftware.Controllers.WebAPIs
     [ApiController]
     public class PostsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PostsController(ApplicationDbContext context, IMapper mapper)
+        public PostsController(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _context = context;
             this._mapper = mapper;
+            this._unitOfWork = unitOfWork;
         }
 
         // GET: api/Posts
         [HttpGet]
         public async Task<IEnumerable<PostDTO>> GetPosts()
         {
-            var posts = await _context.Posts.Include(p => p.User).ToListAsync();
-            var postsDto = posts.Select((_mapper.Map<Post, PostDTO>));
-            return postsDto;
+            var posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
+            var postsDtos = posts.Select((_mapper.Map<Post, PostDTO>));
+            return postsDtos;
         }
 
         // GET: api/Posts/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Post>> GetPost(int? id)
         {
-            var post = await _context.Posts.FindAsync(id);
+            var post = await _unitOfWork.PostRepository.GetByIdAsync(id);
 
             if (post == null)
             {
@@ -52,18 +54,20 @@ namespace NHASoftware.Controllers.WebAPIs
         // PUT: api/Posts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPost(int? id, Post post)
+        public async Task<IActionResult> PutPost(int? id, PostDTO postDto)
         {
+            var post =_mapper.Map<PostDTO, Post>(postDto);
+
             if (id != post.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(post).State = EntityState.Modified;
+            _unitOfWork.PostRepository.Update(post);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -87,11 +91,14 @@ namespace NHASoftware.Controllers.WebAPIs
         /// <param name="post"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> PostPost([Bind("Summary,UserId,ParentPostId")] Post post)
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<JsonResult> PostPost([Bind("Summary,UserId,ParentPostId")] PostDTO postdto)
         {
-            //var result = _context.Posts.FromSqlRaw("posts_InsertPostData", post.Summary, DateTime.Today, post.ParentPostId);
-            _context.Posts.Add(post);
-            var result = await _context.SaveChangesAsync();
+            var post = _mapper.Map<PostDTO, Post>(postdto);
+            post.CreationDate = DateTime.Now;
+            _unitOfWork.PostRepository.Add(post);
+            var result = await _unitOfWork.CompleteAsync();
             return result > 0 ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
         }
 
@@ -99,21 +106,23 @@ namespace NHASoftware.Controllers.WebAPIs
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePost(int? id)
         {
-            var post = await _context.Posts.FindAsync(id);
+            var post = await _unitOfWork.PostRepository.GetByIdAsync(id);
+
             if (post == null)
             {
                 return NotFound();
             }
 
-            _context.Posts.Remove(post);
-            await _context.SaveChangesAsync();
+            _unitOfWork.PostRepository.Remove(post);
+            var result = await _unitOfWork.CompleteAsync();
 
-            return NoContent();
+            return result > 0 ? NoContent() : BadRequest();
         }
 
         private bool PostExists(int? id)
         {
-            return _context.Posts.Any(e => e.Id == id);
+            var post = _unitOfWork.PostRepository.Find(p => p.Id.Equals(id));
+            return post.Any();
         }
     }
 }

@@ -23,9 +23,14 @@
                 if (data.success) {
                     //Clear summernote textbox after successful submission.
                     $("#MainPostTextbox").summernote('reset');
-                    console.log("Successfully submitted post to DB.")
+                    console.log("Successfully submitted post to DB.");
+                    $("#MainPostTextboxValidationMessage").hide("slow");
                 }
+            },
+            error: function (data) {
+                $("#MainPostTextboxValidationMessage").show("slow");
             }
+            
         });
     });
 });
