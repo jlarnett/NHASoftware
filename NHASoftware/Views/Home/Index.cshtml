@@ -1,6 +1,5 @@
 ﻿@using NHASoftware.Entities.Identity
 @using Microsoft.AspNetCore.Identity
-@model NHASoftware.Views.ViewModels.SocialVMs.HomeVM;
 @inject UserManager<ApplicationUser> _UserManager;
 @inject SignInManager<ApplicationUser> _SignInManager;
 
@@ -15,7 +14,7 @@
 <h1 class="h1 text-center feed-header">The Algorithm Page</h1>
 
 <div class="HomeContainer">
-    <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()">
+    <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)" >
         @if (_SignInManager.IsSignedIn(User))
         {
             <div class="textbox-area">
@@ -37,12 +36,16 @@
     <script src="~/Scripts/Social_Feed/HideComments.js"></script>
     <script src="~/Scripts/Social_Feed/RefreshFeed.js"></script>
     <script src="~/Scripts/Social_Feed/ProfileRedirectLink.js"></script>
+    <script src="~/Scripts/Social_Feed/ConveyComment.js"></script>
+    <script src="~/Scripts/Social_Feed/Gratitude.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
-            RetrieveMorePosts().then(function (data) {
-                LoadFeedWithNewPosts(data);
-            });
+            //RetrieveMorePosts().then(function (data) {
+            //    LoadFeedWithNewPosts(data);
+            //});
+
+            OptimizedFeedLoad();
         });
     </script>
 }

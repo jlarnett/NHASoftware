@@ -20,6 +20,9 @@ namespace NHASoftware.Services.RepositoryPatternFoundationals
         public IAnimePageRepository AnimePageRepository { get; private set; }
 
         public IPostRepository PostRepository { get; private set; }
+        public IUserLikeRepository UserLikeRepository { get; private set; }
+
+
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -30,6 +33,7 @@ namespace NHASoftware.Services.RepositoryPatternFoundationals
             ForumCommentRepository = new ForumCommentRepository(_context);
             AnimePageRepository = new AnimePageRepository(_context);
             PostRepository = new PostRepository(_context);
+            UserLikeRepository = new UserLikeRepository(_context);
         }
 
         public async Task<int> CompleteAsync()

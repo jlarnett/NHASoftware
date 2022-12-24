@@ -12,6 +12,7 @@ namespace NHASoftware.Services.RepositoryPatternFoundationals
         IForumCommentRepository ForumCommentRepository { get; }
         IAnimePageRepository AnimePageRepository { get; }
         IPostRepository PostRepository { get; }
+        IUserLikeRepository UserLikeRepository { get; }
         Task<int> CompleteAsync();
     }
 }

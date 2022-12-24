@@ -49,8 +49,8 @@ namespace NHASoftware.Controllers
             CreateDailyInactiveCheckJob();
             AssignSessionGuidCookie();
 
-            var posts = await new PostsController(_mapper, _unitOfWork).GetPosts();
-            return View(new HomeVM(posts));
+            //var posts = await new PostsController(_mapper, _unitOfWork).GetPosts();
+            return View();
         }
 
         private void AssignSessionGuidCookie()

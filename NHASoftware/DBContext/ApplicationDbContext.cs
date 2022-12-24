@@ -44,5 +44,6 @@ namespace NHASoftware.DBContext
         public DbSet<AnimePage> AnimePages { get; set; }
         public DbSet<AnimeEpisode> AnimeEpisodes { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<UserLikes> UserLikes { get; set; }
     }
 }

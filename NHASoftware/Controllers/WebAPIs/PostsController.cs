@@ -5,11 +5,14 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.DBContext;
 using NHASoftware.Entities;
+using NHASoftware.Entities.Identity;
 using NHASoftware.Entities.Social_Entities;
 using NHASoftware.Services.RepositoryPatternFoundationals;
 
@@ -21,11 +24,13 @@ namespace NHASoftware.Controllers.WebAPIs
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public PostsController(IMapper mapper, IUnitOfWork unitOfWork)
+        public PostsController(IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
             this._mapper = mapper;
             this._unitOfWork = unitOfWork;
+            this._userManager = userManager;
         }
 
         // GET: api/Posts
@@ -33,8 +38,8 @@ namespace NHASoftware.Controllers.WebAPIs
         public async Task<IEnumerable<PostDTO>> GetPosts()
         {
             var posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
-            var postsDtos = posts.Select((_mapper.Map<Post, PostDTO>));
-            return postsDtos;
+            var postsDtos = posts.Select((_mapper.Map<Post, PostDTO>)).ToList();
+            return PopulatePostDTOLikeDetails(postsDtos);
         }
 
         // GET: api/Posts/5
@@ -50,6 +55,45 @@ namespace NHASoftware.Controllers.WebAPIs
 
             return post;
         }
+
+        [HttpGet("FindChildrenPosts/{id}")]
+        public async Task<IEnumerable<PostDTO>> FindChildrenPosts(int? id)
+        {
+            var posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
+            var childrenPosts = posts.Where(p => p.ParentPostId == id).ToList();
+
+            var postsDtos = childrenPosts.Select((_mapper.Map<Post, PostDTO>)).ToList();
+            return PopulatePostDTOLikeDetails(postsDtos);
+        }
+
+        private IEnumerable<PostDTO> PopulatePostDTOLikeDetails(List<PostDTO> postDtos)
+        {
+            foreach (var dto in postDtos)
+            {
+                dto.LikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id).Count();
+                dto.DislikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id && p.IsDislike).Count();
+
+                dto.UserLikedPost = UserLikedPost(dto.Id);
+                dto.UserDislikedPost = UserDislikedPost(dto.Id);
+            }
+
+            return postDtos.AsEnumerable();
+        }
+
+        private bool UserLikedPost(int? id)
+        {
+            var currentUserId = _userManager.GetUserId(User);
+            return _unitOfWork.UserLikeRepository.Find(ul =>
+                ul.PostId == id && ul.IsDislike == false && ul.UserId == currentUserId).Any();
+        }
+
+        private bool UserDislikedPost(int? id)
+        {
+            var currentUserId = _userManager.GetUserId(User);
+            return _unitOfWork.UserLikeRepository.Find(ul =>
+                ul.PostId == id && ul.IsDislike == true && ul.UserId == currentUserId).Any();
+        }
+
 
         // PUT: api/Posts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

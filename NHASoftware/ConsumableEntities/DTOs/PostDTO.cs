@@ -15,5 +15,10 @@ namespace NHASoftware.ConsumableEntities.DTOs
         public ApplicationUser? User { get; set; }
         public int? ParentPostId { get; set; }
         public Post? ParentPost { get; set; }
+
+        public int? LikeCount { get; set; }
+        public int? DislikeCount { get; set; }
+        public bool UserDislikedPost { get; set; }
+        public bool UserLikedPost { get; set; }
     }
 }
