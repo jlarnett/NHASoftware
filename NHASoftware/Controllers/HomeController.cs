@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using AutoMapper;
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -7,48 +8,49 @@ using NHASoftware.Controllers.WebAPIs;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Identity;
 using NHASoftware.HelperClasses;
-using NHASoftware.Services;
 using NHASoftware.Services.CookieMonster;
+using NHASoftware.Services.RepositoryPatternFoundationals;
 using NHASoftware.ViewModels;
+using NHASoftware.Views.ViewModels.SocialVMs;
 
 namespace NHASoftware.Controllers
 {
     public class HomeController : Controller
     {
-        private ApplicationDbContext _context;
         private ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ICookieMonster _cookieMonster;
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
         private TaskHandler taskHandler;
 
         public HomeController(ILogger<HomeController> logger,
             ApplicationDbContext context,
             IEmailSender emailService,
             UserManager<ApplicationUser> userManager, 
-            ICookieMonster cookieMonster)
+            ICookieMonster cookieMonster,
+            IMapper mapper, IUnitOfWork unitOfWork)
         {
             /*************************************************************************************
              *  Dependency injection services
              *************************************************************************************/
 
             _logger = logger;
-            _context = context;
             _userManager = userManager;
             _cookieMonster = cookieMonster;
+            this._mapper = mapper;
+            this._unitOfWork = unitOfWork;
             this.taskHandler = new TaskHandler(context, userManager, emailService);
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             CreatePrimaryHangfireJobs();
             CreateDailyInactiveCheckJob();
-
-            int subCount = _context.Subscriptions.Count();
-            int taskCount = _context.Tasks.Count();
-
             AssignSessionGuidCookie();
 
-            return View(new IndexPageViewModel(subCount, taskCount));
+            //var posts = await new PostsController(_mapper, _unitOfWork).GetPosts();
+            return View();
         }
 
         private void AssignSessionGuidCookie()

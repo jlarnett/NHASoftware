@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.ConsumableEntities;
 using NHASoftware.DBContext;
+using NHASoftware.Entities.Forums;
+using NHASoftware.Entities.Social_Entities;
 using NHASoftware.Services.CacheGoblin;
 using NHASoftware.Services.CookieMonster;
 using NHASoftware.Services.Forums;
@@ -113,7 +115,6 @@ namespace NHASoftware.Controllers.WebAPIs
                 return await TryIncrementPostLikes(id);
             }
         }
-
         private bool ForumCommentExists(int id)
         {
             return _context.ForumComments.Any(e => e.Id == id);

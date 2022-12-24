@@ -1,0 +1,13 @@
+﻿@model NHASoftware.Views.ViewModels.SocialVMs.ProfileVM
+
+@{
+    ViewData["Title"] = "User Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="Profile">
+    <h1>@Model.User.DisplayName</h1>
+    <img src="~/ProfilePictures/@Model.User.ProfilePicturePath" width="400px" height="400px"/>
+
+</div>
+

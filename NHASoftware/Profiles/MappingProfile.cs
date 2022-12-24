@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.Entities;
+using NHASoftware.Entities.Social_Entities;
 
 namespace NHASoftware.Profiles
 {
@@ -8,9 +9,11 @@ namespace NHASoftware.Profiles
     {
         public MappingProfile()
         {
-            //Example CreateMap<Message, MessageDto>();
             CreateMap<SubscriptionDTO, Subscription>();
             CreateMap<Subscription, SubscriptionDTO>();
+
+            CreateMap<Post, PostDTO>();
+            CreateMap<PostDTO, Post>();
         }
     }
 }

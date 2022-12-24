@@ -1,22 +1,51 @@
-﻿@model NHASoftware.ViewModels.IndexPageViewModel;
+﻿@using NHASoftware.Entities.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> _UserManager;
+@inject SignInManager<ApplicationUser> _SignInManager;
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="text-nowrap">Welcome To NHA Industries!</h1>
-</div>
+<head>
+    <link rel="stylesheet" href="~/css/MainPostFeed.css">
+</head>
 
-<div>
-    <iframe height="400" width="600" class="embed-responsive-item float-left" src="https://www.youtube.com/embed/GHenFGnixzU"allowfullscreen></iframe>
-    <div class="text-white float-left">This is the first video of a video feed. </div>
-</div>
+<h1 class="h1 text-center feed-header">The Algorithm Page</h1>
 
+<div class="HomeContainer">
+    <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)" >
+        @if (_SignInManager.IsSignedIn(User))
+        {
+            <div class="textbox-area">
+                <div id="MainPostTextboxContainer">
+                    @Html.AntiForgeryToken()
+                    <div id="MainPostTextbox"></div>
+                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="btn-dark">Convey Message</button>
+                </div>
+                <span id="MainPostTextboxValidationMessage" style="display: none; color: red">Error Submitting Post.....</span>
+            </div>
+        }
+
+    </div>
+</div>
 
 @section Scripts {
+    <script src="~/Scripts/Social_Feed/RebuildMainFeedTextboxes.js"></script>
+    <script src="~/Scripts/Social_Feed/ConveyMainPost.js"></script>
+    <script src="~/Scripts/Social_Feed/HideComments.js"></script>
+    <script src="~/Scripts/Social_Feed/RefreshFeed.js"></script>
+    <script src="~/Scripts/Social_Feed/ProfileRedirectLink.js"></script>
+    <script src="~/Scripts/Social_Feed/ConveyComment.js"></script>
+    <script src="~/Scripts/Social_Feed/Gratitude.js"></script>
+
     <script type="text/javascript">
-        $("#author").text("Subscription Count: " + @Model.SubscriptionCount);
-        $("#book").text("Task Item Count: " + @Model.TaskCount);
+        $(document).ready(function () {
+            //RetrieveMorePosts().then(function (data) {
+            //    LoadFeedWithNewPosts(data);
+            //});
+
+            OptimizedFeedLoad();
+        });
     </script>
 }

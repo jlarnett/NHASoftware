@@ -29,7 +29,6 @@ namespace NHASoftware.Controllers.WebAPIs
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SubscriptionDTO>>> GetSubscriptions()
         {
-
             var subscriptions = await _context.Subscriptions.Where(s=> s.UserId == _userManager.GetUserId(HttpContext.User)).ToListAsync();
             var subscriptionDtos = subscriptions.ToList().Select((_mapper.Map<Subscription, SubscriptionDTO>));
 
