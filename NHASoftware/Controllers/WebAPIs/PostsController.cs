@@ -25,12 +25,14 @@ namespace NHASoftware.Controllers.WebAPIs
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger _logger;
 
-        public PostsController(IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+        public PostsController(IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, ILogger<PostDTO> logger)
         {
             this._mapper = mapper;
             this._unitOfWork = unitOfWork;
             this._userManager = userManager;
+            this._logger = logger;
         }
 
         // GET: api/Posts
@@ -39,7 +41,7 @@ namespace NHASoftware.Controllers.WebAPIs
         {
             var posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
             var postsDtos = posts.Select((_mapper.Map<Post, PostDTO>)).ToList();
-            return PopulatePostDTOLikeDetails(postsDtos);
+            return await PopulatePostDTOLikeDetails(postsDtos);
         }
 
         // GET: api/Posts/5
@@ -63,35 +65,52 @@ namespace NHASoftware.Controllers.WebAPIs
             var childrenPosts = posts.Where(p => p.ParentPostId == id).ToList();
 
             var postsDtos = childrenPosts.Select((_mapper.Map<Post, PostDTO>)).ToList();
-            return PopulatePostDTOLikeDetails(postsDtos);
+            return await PopulatePostDTOLikeDetails(postsDtos);
         }
 
-        private IEnumerable<PostDTO> PopulatePostDTOLikeDetails(List<PostDTO> postDtos)
+        private async Task<IEnumerable<PostDTO>> PopulatePostDTOLikeDetails(List<PostDTO> postDtos)
         {
+            List<PostDTO> posts = new List<PostDTO>();
             foreach (var dto in postDtos)
             {
-                dto.LikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id).Count();
-                dto.DislikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id && p.IsDislike).Count();
-
-                dto.UserLikedPost = UserLikedPost(dto.Id);
-                dto.UserDislikedPost = UserDislikedPost(dto.Id);
+                posts.Add(new PostDTO()
+                {
+                    CreationDate = dto.CreationDate,
+                    DislikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id && p.IsDislike).Count(),
+                    UserLikedPost = UserLikedPost(dto.Id),
+                    UserDislikedPost = UserDislikedPost(dto.Id),
+                    UserId = dto.UserId,
+                    User = dto.User,
+                    Id = dto.Id,
+                    LikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id && !p.IsDislike).Count(),
+                    ParentPostId = dto.ParentPostId,
+                    ParentPost = dto.ParentPost,
+                    Summary = dto.Summary
+                });
             }
-
-            return postDtos.AsEnumerable();
+            return posts.AsEnumerable();
         }
 
+        /// <summary>
+        /// Checks whether the current user has liked the specified Post Id. 
+        /// </summary>
+        /// <param name="id">Post Id</param>
+        /// <returns>Returns boolean condition if user liked post id</returns>
         private bool UserLikedPost(int? id)
         {
-            var currentUserId = _userManager.GetUserId(User);
             return _unitOfWork.UserLikeRepository.Find(ul =>
-                ul.PostId == id && ul.IsDislike == false && ul.UserId == currentUserId).Any();
+                ul.PostId == id && ul.IsDislike == false && ul.UserId == _userManager.GetUserId(User)).Any();
         }
 
+        /// <summary>
+        /// Checks whether the current user has Disliked the specified Post Id. 
+        /// </summary>
+        /// <param name="id">Post Id</param>
+        /// <returns>Returns boolean condition if user Disliked post id</returns>
         private bool UserDislikedPost(int? id)
         {
-            var currentUserId = _userManager.GetUserId(User);
             return _unitOfWork.UserLikeRepository.Find(ul =>
-                ul.PostId == id && ul.IsDislike == true && ul.UserId == currentUserId).Any();
+                ul.PostId == id && ul.IsDislike == true && ul.UserId == _userManager.GetUserId(User)).Any();
         }
 
 

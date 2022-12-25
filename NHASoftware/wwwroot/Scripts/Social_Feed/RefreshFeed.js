@@ -62,7 +62,6 @@ function TryInsertPostCommentTextbox(postId, uuid) {
 //Tries to insert textbox below comment section. Checks if user is logged in & returns the textbox html if logged in.
     var Html = [];
     var isLoggedIn = CheckUserSessionActiveFeedAtribute();
-    console.log("COMMENT UUID IS = " + uuid);
 
     if (isLoggedIn === 'True') {
         Html.push('<div class="comment-textbox-area">',
@@ -99,7 +98,6 @@ function GeneratePostHtml(post) {
     let uuid = self.crypto.randomUUID();
     var postHtml = [];
 
-    console.log("Post like count = ", post.likeCount);
     postHtml.push('<div class="MainFeedPostContainer">',
                 '<div>',
                     '<div class="Main-Post-User-Profile">',
@@ -139,8 +137,13 @@ function GeneratePostLikeSection(post) {
     //Takes the user post & generates the like section html. Determines Initial Like Icon states using value returned in postDto object
     var likeSectionHtml = [];
 
-    var likeSrcImage = (post.userLikedPost ? "Images/Facebook-Like-Filled.png" : "Images/Facebook-Like.png");
-    var dislikeSrcImage = (post.userdisLikedPost ? "Images/dislike-Filled.png" : "Images/dislike.png");
+    console.log("User Liked Post DTO property" + likeSrcImage);
+    console.log("User disLiked Post DTO property" + dislikeSrcImage);
+
+    var likeSrcImage = (post.userLikedPost ? "images/facebook-like-filled.png" : "images/facebook-like.png");
+    var dislikeSrcImage = (post.userDislikedPost ? "images/dislike-filled.png" : "images/dislike.png");
+
+    console.log("Post Id - " + post.id + " dislikeSRC = " + dislikeSrcImage);
 
     likeSectionHtml.push('<div class="Main-Post-Bottom-Actionbar Main-Post-Section">',
         '<div class="Post-Like-Group">',

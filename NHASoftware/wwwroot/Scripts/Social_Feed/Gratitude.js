@@ -6,16 +6,17 @@
         var currentBtnImageSrc = EventBtn.attr("src");
         var postId = EventBtn.attr("post-id");
 
-        var userSessionActive =$("#HomeContentFeed").attr("user-session-active");
+        var userSessionActive = $("#HomeContentFeed").attr("user-session-active");
+        console.log(userSessionActive);
         var userId = $("#HomeContentFeed").attr("userId");
 
         if (userSessionActive) {
 
-            if (currentBtnImageSrc === "Images/Facebook-Like.png") {
+            if (currentBtnImageSrc.toLowerCase() === "images/facebook-like.png") {
 
                 LikePost(userId, postId).then(function (data) {
                     if (data.success === true) {
-                        EventBtn.attr("src", "Images/Facebook-Like-filled.png");
+                        EventBtn.attr("src", "images/facebook-like-filled.png");
                         IncrementLikeCounter(EventBtn);
                     }
                     else {
@@ -23,10 +24,10 @@
                     }
                 });
             }
-            else if (currentBtnImageSrc === "Images/Facebook-Like-filled.png") {
+            else if (currentBtnImageSrc.toLowerCase() === "images/facebook-like-filled.png") {
                 DeleteLike(userId, postId, false).then(function (data) {
                     if (data.success === true) {
-                        EventBtn.attr("src", "Images/Facebook-Like.png");
+                        EventBtn.attr("src", "images/facebook-like.png");
                         DecrementLikeCounter(EventBtn);
                     }
                     else {
@@ -48,11 +49,11 @@
 
         if (userSessionActive) {
 
-            if (currentBtnImageSrc === "Images/dislike.png") {
+            if (currentBtnImageSrc.toLowerCase() === "images/dislike.png") {
                 //SEND DISLIKE TO API
                 LikePost(userId, postId, true).then(function (data) {
                     if (data.success === true) {
-                        EventBtn.attr("src", "Images/dislike-filled.png");
+                        EventBtn.attr("src", "images/dislike-filled.png");
                         IncrementLikeCounter(EventBtn);
                     }
                     else {
@@ -60,11 +61,11 @@
                     }
                 });
             }
-            else if (currentBtnImageSrc === "Images/dislike-filled.png") {
+            else if (currentBtnImageSrc.toLowerCase() === "images/dislike-filled.png") {
                 //SEND DELETE DISLIKE REQUEST TO API
                 DeleteLike(userId, postId, true).then(function (data) {
                     if (data.success === true) {
-                        EventBtn.attr("src", "Images/dislike.png");
+                        EventBtn.attr("src", "images/dislike.png");
                         DecrementLikeCounter(EventBtn);
                     }
                     else {
