@@ -32,7 +32,6 @@ function LoadPostComments(id, uuid) {
 
     RetrievePostComments(id).then(function (data) {
         for (var i = 0; i < data.length; i++) {
-            console.log("Comment Like Count = " + data[i].likeCount)
             commentHtml.push('<li>',
                 '<div class="comment-container">',
                 '<div class="comment-profile-picture">',
@@ -139,13 +138,8 @@ function GeneratePostLikeSection(post) {
     //Takes the user post & generates the like section html. Determines Initial Like Icon states using value returned in postDto object
     var likeSectionHtml = [];
 
-    console.log("User Liked Post DTO property" + likeSrcImage);
-    console.log("User disLiked Post DTO property" + dislikeSrcImage);
-
     var likeSrcImage = (post.userLikedPost ? "images/facebook-like-filled.png" : "images/facebook-like.png");
     var dislikeSrcImage = (post.userDislikedPost ? "images/dislike-filled.png" : "images/dislike.png");
-
-    console.log("Post Id - " + post.id + " dislikeSRC = " + dislikeSrcImage);
 
     likeSectionHtml.push('<div class="Main-Post-Bottom-Actionbar Main-Post-Section">',
         '<div class="Post-Like-Group">',

@@ -40,6 +40,7 @@ body {
     border: solid 1px yellow;
 }
 
+/*Layout Footer Styling*/
 .footerContainer {
     margin-left: 20px;
 }
@@ -48,11 +49,13 @@ body {
     height: .5%;
 }
 
+
 .post-create-input {
     width: 1000px;
     height: 400px;
 }
 
+/*Upper Right Navbar Profile Picture. Shown when logged in. */
 .login-profile-picture {
     width: 60px;
     height: 60px;
@@ -64,7 +67,9 @@ body {
 }
 
 .home-image-300 {
-    height: 75px;
-    width: 150px;
+    height: 2.5rem;
+    width: 5rem;
 }
+
+
 

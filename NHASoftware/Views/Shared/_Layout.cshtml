@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using NHASoftware.Entities.Identity
+@using NHASoftware.Services.FriendSystem
+@inject UserManager<ApplicationUser> userManager
+@inject IFriendSystem FriendSystem
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,58 +14,101 @@
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/Themes/Dark/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.css"/>
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-    
+    <link rel="stylesheet" href="~/css/Actionbar.css" asp-append-version="true" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.css" asp-append-version="true"/>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet" asp-append-version="true">
+
+
+    @*Jquery & bootstrap JS scripts*@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    @*Customized JS Scripts (Ours)*@
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/Scripts/Shared/common.js"></script>
+    <script src="~/Scripts/Actionbar/Actionbar.js"></script>
+    
+    @*External JS Packages*@
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.js"></script>
     <script type="text/javascript" src='https://unpkg.com/spacetime'></script>
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    
+    <link rel="icon" type="image/x-icon" href="~/images/TabLogo-32x32.png">
 
 
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
+        <div class="container-fluid">
                 
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="@Url.Content("~/Images/BitcoinPhoto.jpg")" class="rounded home-image-300" height="50px" width="100px" />
-                </a>
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="@Url.Content("~/Images/BitcoinPhoto.jpg")" class="rounded home-image-300" height="50px" width="100px" />
+            </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
 
-                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
 
-                        @if (User.IsInRole("admin"))
-                        {
+                    @if (User.IsInRole("admin"))
+                    {
                             @*<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="TaskFrequencies" asp-action="Index">Task Frequency</a></li>*@
-                            <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a></li>
 
-                        }
-                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
-                        @*<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="TaskItems" asp-action="Index">Tasks Items</a></li>*@
-                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
-                        @*<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Subscriptions" asp-action="Index">Subscriptions</a></li>*@
+                    }
+                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
+                    @*<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="TaskItems" asp-action="Index">Tasks Items</a></li>*@
+                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
+                    @*<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Subscriptions" asp-action="Index">Subscriptions</a></li>*@
 
 
-                    </ul>
-                    <partial name="_LoginPartial"/>
-                </div>
+                </ul>
+                <partial name="_LoginPartial"/>
             </div>
-        </nav>
-    </header>
-    <div class="container">
+        </div>
+    </nav>
+</header>
+@{
+    var requests = FriendSystem.GetPendingFriendRequests(userManager.GetUserId(User));
+}
+
+<div class="Top-Action-Bar">
+    <div id="FriendRequestModalBtn" class="actionbar-action-item">
+        <div class="friend-request-popup-icon-holder">
+            <img src="~/Images/Bell_Icon.png" class="actionbar-icon-1 friend-request-popup-btn"/>
+        </div>
+        <div class="friend-request-popup">
+            <div id="friend-request-popup-modal" class="friend-request-popup-modal">
+                <h3 class="border-bottom">Friend Requests</h3>
+                @foreach (var item in @requests)
+                {
+                    <div class="border-bottom">
+                        <img src="~/ProfilePictures/@item.SenderUser.ProfilePicturePath" class="friend-request-icon"/>
+                            <p><a href="~/Users/GetProfiles?userId=@item.SenderUser.Id">@item.SenderUser.DisplayName</a> wants to be your friend!</p>
+                        <button class="accept-friend-request-btn btn-dark" request-id="@item.Id">Accept</button>
+                        <button class="decline-friend-request-btn btn-dark" request-id="@item.Id" >Decline</button>
+                    </div>
+                }
+                @if (!requests.Any())
+                {
+                    <div>
+                        No more friend requests! Go add more people! :)
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="container" id="MainPageContentContainer" userId="@userManager.GetUserId(User)">
         <main role="main" class="pb-3">
+
             @RenderBody()
         </main>
     </div>
@@ -69,6 +118,7 @@
         &copy; 2021 - NHASoftware - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>
 </footer>*@
-    @await RenderSectionAsync("Scripts", required: false)
+
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

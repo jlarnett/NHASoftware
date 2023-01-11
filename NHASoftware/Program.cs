@@ -20,6 +20,7 @@ using NHAHelpers.HtmlStringCleaner;
 using NHASoftware.Services.Anime;
 using NHASoftware.Services.CacheGoblin;
 using NHASoftware.Services.CookieMonster;
+using NHASoftware.Services.FriendSystem;
 using NHASoftware.Services.SendGrid.Configuration;
 using NHASoftware.Services.Social;
 
@@ -60,7 +61,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-
 
 builder.Services.AddControllersWithViews();
 #region CorsPolicy
@@ -116,12 +116,17 @@ builder.Services.AddTransient<IForumSectionRepository, ForumSectionRepository>()
 builder.Services.AddTransient<IAnimePageRepository, AnimePageRepository>();
 builder.Services.AddTransient<IPostRepository, PostRepository>();
 builder.Services.AddTransient<IUserLikeRepository, UserLikeRepository>();
+builder.Services.AddTransient<IFriendRepository, FriendRepository>();
+builder.Services.AddTransient<IFriendRequestRepository, FriendRequestRepository>();
 
 
 //Cookie service
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<ICookieMonster, CookieMonster>();
 builder.Services.AddSingleton(typeof(ICacheGoblin<>), typeof(CacheGoblin<>));
+builder.Services.AddTransient<IFriendSystem, FriendSystem>();
+
+builder.Services.AddHangfireServer();
 
 #endregion
 
@@ -164,7 +169,7 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions()
     Authorization = new []{new MyAuthorizationFilter()}
 });
 
-app.UseHangfireServer();
+//app.UseHangfireServer();
 
 app.MapControllerRoute(
     name: "default",

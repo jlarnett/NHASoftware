@@ -5,6 +5,7 @@ using NHASoftware.Entities.Anime;
 using NHASoftware.Entities.Forums;
 using NHASoftware.Entities.Identity;
 using NHASoftware.ConsumableEntities.DTOs;
+using NHASoftware.Entities.FriendSystem;
 using NHASoftware.Entities.Social_Entities;
 
 namespace NHASoftware.DBContext
@@ -45,5 +46,7 @@ namespace NHASoftware.DBContext
         public DbSet<AnimeEpisode> AnimeEpisodes { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<UserLikes> UserLikes { get; set; }
+        public DbSet<FriendRequest> FriendRequests { get; set; }
+        public DbSet<Friends> Friends { get; set; }
     }
 }

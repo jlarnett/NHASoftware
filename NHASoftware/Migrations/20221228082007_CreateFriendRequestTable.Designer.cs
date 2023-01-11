@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NHASoftware.DBContext;
 
@@ -11,13 +12,14 @@ using NHASoftware.DBContext;
 namespace NHASoftware.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221228082007_CreateFriendRequestTable")]
+    partial class CreateFriendRequestTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.12")
+                .HasAnnotation("ProductVersion", "6.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -364,11 +366,11 @@ namespace NHASoftware.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("RecipientUserId")
+                    b.Property<string>("FriendOneId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("SenderUserId")
+                    b.Property<string>("FriendTwoId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -378,36 +380,11 @@ namespace NHASoftware.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RecipientUserId");
-
-                    b.HasIndex("SenderUserId");
-
-                    b.ToTable("FriendRequests");
-                });
-
-            modelBuilder.Entity("NHASoftware.Entities.FriendSystem.Friends", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("FriendOneId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("FriendTwoId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
                     b.HasIndex("FriendOneId");
 
                     b.HasIndex("FriendTwoId");
 
-                    b.ToTable("Friends");
+                    b.ToTable("FriendRequests");
                 });
 
             modelBuilder.Entity("NHASoftware.Entities.Identity.ApplicationUser", b =>
@@ -754,25 +731,6 @@ namespace NHASoftware.Migrations
                 });
 
             modelBuilder.Entity("NHASoftware.Entities.FriendSystem.FriendRequest", b =>
-                {
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "RecipientUser")
-                        .WithMany()
-                        .HasForeignKey("RecipientUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "SenderUser")
-                        .WithMany()
-                        .HasForeignKey("SenderUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RecipientUser");
-
-                    b.Navigation("SenderUser");
-                });
-
-            modelBuilder.Entity("NHASoftware.Entities.FriendSystem.Friends", b =>
                 {
                     b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "FriendOne")
                         .WithMany()

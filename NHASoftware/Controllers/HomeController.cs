@@ -43,7 +43,7 @@ namespace NHASoftware.Controllers
             this.taskHandler = new TaskHandler(context, userManager, emailService);
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             CreatePrimaryHangfireJobs();
             CreateDailyInactiveCheckJob();
