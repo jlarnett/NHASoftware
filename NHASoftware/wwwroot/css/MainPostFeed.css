@@ -120,6 +120,8 @@
     text-decoration: none;
     font-size: 1.5em;
     margin: 0 10px 0 0;
+    cursor: pointer;
+    color: #555555;
 }
 
 .Main-Post {
@@ -146,7 +148,8 @@
 }
 
 .Post-Like-Icon {
-    height: 1.5em
+    height: 1.5em;
+    cursor: pointer;
 }
 
 .Like-Group-Item {
@@ -176,11 +179,11 @@
     border-radius: 100%;
 }
 
-.comment-details {
+.hide-comments {
+    cursor: pointer;
 }
-
-
 
 li {
     list-style: none;
 }
+

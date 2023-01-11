@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHASoftware", "NHASoftware\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHAHelpers", "NHAHelpers\NHAHelpers.csproj", "{46915FF9-540A-4ACF-8711-B56F6E7CC767}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHA.Testing", "NHA.Testing\NHA.Testing.csproj", "{6B2B27AC-D85B-48A4-984E-F02A71EC60A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHA.Testing", "NHA.Testing\NHA.Testing.csproj", "{6B2B27AC-D85B-48A4-984E-F02A71EC60A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

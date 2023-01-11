@@ -32,14 +32,15 @@ function LoadPostComments(id, uuid) {
 
     RetrievePostComments(id).then(function (data) {
         for (var i = 0; i < data.length; i++) {
-            console.log("Comment Like Count = " + data[i].likeCount)
             commentHtml.push('<li>',
                 '<div class="comment-container">',
                 '<div class="comment-profile-picture">',
                 '<img class="comment-profile-picture-item" src="ProfilePictures/', data[i].user.profilePicturePath, '" />',
                 '</div>',
                 '<div class="comment-details">',
-                '<h5>', data[i].user.displayName, '</h5>',
+                '<div>',
+                '<a class="feed-profile-link Post-Header-Item" userId="', data[i].user.id, '">', data[i].user.displayName, '</a>',
+                '</div>',
                 data[i].summary,
                 GeneratePostLikeSection(data[i]),
                 '</div>',
@@ -105,9 +106,9 @@ function GeneratePostHtml(post) {
                     '</div>',
                     '<div class="Main-Post">',
                         '<div class="Main-Post-Top-Header Main-Post-Section">',
-                            '<a class="link-primary feed-profile-link Post-Header-Item" userId="', post.user.id, '">', post.user.displayName, '</a>',
-                            '<a class="link-primary Post-Header-Item">-</a>',
-                            '<a class="link-primary Post-Header-Item">2h</a>',
+                            '<a class="feed-profile-link Post-Header-Item" userId="', post.user.id, '">', post.user.displayName, '</a>',
+                            '<a class="Post-Header-Item">-</a>',
+                            '<a class="Post-Header-Item">2h</a>',
                         '</div>',
                         '<div class="Main-Post-Summary Main-Post-Section">',
                             '<p>', post.summary, '</p>',
@@ -137,13 +138,8 @@ function GeneratePostLikeSection(post) {
     //Takes the user post & generates the like section html. Determines Initial Like Icon states using value returned in postDto object
     var likeSectionHtml = [];
 
-    console.log("User Liked Post DTO property" + likeSrcImage);
-    console.log("User disLiked Post DTO property" + dislikeSrcImage);
-
     var likeSrcImage = (post.userLikedPost ? "images/facebook-like-filled.png" : "images/facebook-like.png");
     var dislikeSrcImage = (post.userDislikedPost ? "images/dislike-filled.png" : "images/dislike.png");
-
-    console.log("Post Id - " + post.id + " dislikeSRC = " + dislikeSrcImage);
 
     likeSectionHtml.push('<div class="Main-Post-Bottom-Actionbar Main-Post-Section">',
         '<div class="Post-Like-Group">',

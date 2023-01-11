@@ -1,4 +1,10 @@
-﻿@model NHASoftware.Views.ViewModels.SocialVMs.ProfileVM
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.CodeAnalysis.VisualBasic.Syntax
+@using NHASoftware.Entities.Identity
+@using NHASoftware.Services.FriendSystem
+@model NHASoftware.Views.ViewModels.SocialVMs.ProfileVM
+@inject UserManager<ApplicationUser> userManager
+@inject IFriendSystem friendSystem
 
 @{
     ViewData["Title"] = "User Profile";
@@ -7,7 +13,25 @@
 
 <div class="Profile">
     <h1>@Model.User.DisplayName</h1>
-    <img src="~/ProfilePictures/@Model.User.ProfilePicturePath" width="400px" height="400px"/>
-
+    <img src="~/ProfilePictures/@Model.User.ProfilePicturePath"/>
+    @Html.AntiForgeryToken()
+    
+    @if (friendSystem.FriendRequestSent(@userManager.GetUserId(User), @Model.User.Id))
+    {
+        <button id="CancelRequestBtn" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">Request Sent</button>
+    }
+    else if (friendSystem.IsFriends(@Model.User.Id, @userManager.GetUserId(User)))
+    {
+        <button id="RemoveFriendBtn" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">Friends</button>
+    }
+    else
+    {
+        <button id="AddFriendBtn" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">Add Friend!</button>
+    }
 </div>
 
+
+
+@section Scripts {
+    <script src="~/Scripts/FriendSystem/AddFriend.js"></script>
+}

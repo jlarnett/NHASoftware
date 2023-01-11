@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NHASoftware.DBContext;
 
@@ -11,9 +12,10 @@ using NHASoftware.DBContext;
 namespace NHASoftware.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221229053502_modifiedFriendEntities")]
+    partial class modifiedFriendEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -364,13 +366,19 @@ namespace NHASoftware.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("RecipientId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("RecipientUserId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SenderUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -378,9 +386,9 @@ namespace NHASoftware.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RecipientUserId");
+                    b.HasIndex("RecipientId");
 
-                    b.HasIndex("SenderUserId");
+                    b.HasIndex("SenderId");
 
                     b.ToTable("FriendRequests");
                 });
@@ -755,21 +763,17 @@ namespace NHASoftware.Migrations
 
             modelBuilder.Entity("NHASoftware.Entities.FriendSystem.FriendRequest", b =>
                 {
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "RecipientUser")
+                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "Recipient")
                         .WithMany()
-                        .HasForeignKey("RecipientUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RecipientId");
 
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "SenderUser")
+                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "Sender")
                         .WithMany()
-                        .HasForeignKey("SenderUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SenderId");
 
-                    b.Navigation("RecipientUser");
+                    b.Navigation("Recipient");
 
-                    b.Navigation("SenderUser");
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("NHASoftware.Entities.FriendSystem.Friends", b =>

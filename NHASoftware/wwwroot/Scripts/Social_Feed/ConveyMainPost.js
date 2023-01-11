@@ -2,7 +2,7 @@
 
     $("#SubmitBtn").click(function(e) {
         var SendButton = $(e.target);
-        var userId = SendButton.attr("user")
+        var userId = RetrieveCurrentUserId();
 
         var postContent = $($("#MainPostTextbox").summernote("code")).text()
 
