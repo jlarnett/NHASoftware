@@ -99,6 +99,10 @@ function GeneratePostHtml(post) {
     let uuid = self.crypto.randomUUID();
     var postHtml = [];
 
+    var currentDate = spacetime.now();
+    var postCreationDate = spacetime(post.creationDate);
+    var postDateDifferenceInSeconds = postCreationDate.diff(currentDate, 'second');
+
     postHtml.push('<div class="MainFeedPostContainer">',
                 '<div>',
                     '<div class="Main-Post-User-Profile">',
@@ -108,7 +112,7 @@ function GeneratePostHtml(post) {
                         '<div class="Main-Post-Top-Header Main-Post-Section">',
                             '<a class="feed-profile-link Post-Header-Item" userId="', post.user.id, '">', post.user.displayName, '</a>',
                             '<a class="Post-Header-Item">-</a>',
-                            '<a class="Post-Header-Item">2h</a>',
+                            '<a class="Post-Header-Item">', ReturnAgeString(postDateDifferenceInSeconds) ,'</a>',
                         '</div>',
                         '<div class="Main-Post-Summary Main-Post-Section">',
                             '<p>', post.summary, '</p>',
@@ -153,5 +157,37 @@ function GeneratePostLikeSection(post) {
     '</div>');
 
     return likeSectionHtml.join('');
+}
+
+function ReturnAgeString(ageInSeconds) {
+    //Returns a rounded shorthand string for the age of post. E.G 2H A
+    var ageInMinutes = RoundNumber(ageInSeconds / 60);
+    var ageInHours = RoundNumber(ageInMinutes / 60);
+    var ageInDays = RoundNumber(ageInHours / 24);
+    var ageInYears = RoundNumber(ageInDays / 365);
+
+    if (ageInSeconds < 60 && ageInSeconds > 1) {
+        return ageInSeconds + " seconds ago";
+    }
+    if (ageInMinutes < 60 && ageInMinutes > 1) {
+        return ageInMinutes + " mins ago";
+    }
+
+    if (ageInHours < 24 && ageInHours > 1) {
+        return ageInHours + " hrs ago";
+    }
+
+    if (ageInDays < 365 && ageInDays > 1) {
+        return ageInDays + " days ago";
+    }
+
+    if (ageInYears > 1) {
+        return ageInYears + " yrs ago";
+    }
+}
+
+function RoundNumber(number) {
+    //Returns rounded number of parameter without excess 
+    return Math.round(number);
 }
 

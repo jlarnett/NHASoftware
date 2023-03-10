@@ -6,7 +6,8 @@
         toolbar: [
         // [groupName, [list of button]]
         ],
-        disableResizeEditor: true
+        disableResizeEditor: true,
+
     });
 
     $('#MainPostTextbox').summernote({
@@ -14,6 +15,7 @@
         toolbar: [
         // [groupName, [list of button]]
         ],
-        disableResizeEditor: true
+        disableResizeEditor: true,
+
     });
 }

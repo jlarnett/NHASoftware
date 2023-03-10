@@ -1,0 +1,42 @@
+﻿
+/*Container for Profile Picture & Name*/
+.user {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-profile {
+    border: 1px black solid;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+/*Text Under Profile Picture*/
+.profile-header-user-details {
+    border: 1px black solid;
+    overflow-wrap: break-word;
+    text-align: center;
+}
+
+.profile-displayname {
+    font-size: 1.2em;
+}
+
+
+.profile-picture-container {
+    border: 1px black solid;
+}
+.profile-picture {
+    width: 25em;
+    height: 20em;
+    margin: auto;
+}
+
+/*.Friend-Btn-Container {
+    align-self: end;
+    width: 80%;
+}*/
+
+/*.Friend-Btn {
+    float: right;
+}*/

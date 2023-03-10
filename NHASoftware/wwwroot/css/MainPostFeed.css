@@ -187,3 +187,8 @@ li {
     list-style: none;
 }
 
+
+/*Helps disable summernote drag & drop image problem*/
+.note-editor .note-dropzone {
+    opacity: 0 !important;
+}
