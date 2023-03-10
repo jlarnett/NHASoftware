@@ -7,7 +7,11 @@
         var postId = EventBtn.attr("post-id");
 
         var userSessionActive = $("#HomeContentFeed").attr("user-session-active");
-        console.log(userSessionActive);
+
+        if (userSessionActive === "False") {
+            console.log("User Login required to like social media posts & comments");
+        }
+
         var userId = $("#HomeContentFeed").attr("userId");
 
         if (userSessionActive) {

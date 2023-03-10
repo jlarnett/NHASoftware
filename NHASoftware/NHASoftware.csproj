@@ -7,6 +7,7 @@
     <UserSecretsId>aspnet-NHASoftware-18FFCD77-5B01-4FAB-AEBF-2F403F38CE80</UserSecretsId>
   </PropertyGroup>
 
+
   <ItemGroup>
     <Content Remove="wwwroot\js\AddBookAuthor.js" />
   </ItemGroup>
@@ -55,4 +56,9 @@
     <ProjectReference Include="..\NHAHelpers\NHAHelpers.csproj" />
   </ItemGroup>
 
+    <PropertyGroup>
+        <WarningLevel>1</WarningLevel>
+    </PropertyGroup>
+
 </Project>
+
