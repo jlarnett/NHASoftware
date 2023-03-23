@@ -20,6 +20,7 @@ namespace NHASoftware.Services.RepositoryPatternFoundationals
         {
             await _context.Set<T>().AddRangeAsync(entities);
         }
+
         public IEnumerable<T> Find(Expression<Func<T, bool>> expression)
         {
             return _context.Set<T>().Where(expression);
@@ -43,6 +44,11 @@ namespace NHASoftware.Services.RepositoryPatternFoundationals
         public EntityEntry<T> Update(T entity)
         {
             return _context.Update(entity);
+        }
+
+        public int Count(Expression<Func<T, bool>> expression)
+        {
+            return _context.Set<T>().Where(expression).Count();
         }
 
     }

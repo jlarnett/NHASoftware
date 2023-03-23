@@ -11,5 +11,6 @@ namespace NHASoftware.Services.FriendSystem
         IEnumerable<FriendRequestDTO> GetPendingFriendRequests(string userId);
         bool IsFriends(string senderId, string recipientId);
         Task<bool> SendFriendRequestAsync(FriendRequestDTO friendRequest);
+        int GetFriendCount(string userId);
     }
 }

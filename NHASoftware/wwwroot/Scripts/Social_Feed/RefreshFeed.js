@@ -166,23 +166,65 @@ function ReturnAgeString(ageInSeconds) {
     var ageInDays = RoundNumber(ageInHours / 24);
     var ageInYears = RoundNumber(ageInDays / 365);
 
-    if (ageInSeconds < 60 && ageInSeconds > 1) {
-        return ageInSeconds + " seconds ago";
+    var outputString;
+
+
+    if (ageInSeconds < 60 && ageInSeconds >= 1) {
+        if (ageInSeconds > 1) {
+            outputString = " seconds ago";
+        }
+        else {
+            outputString = " second ago";
+        }
+
+        return ageInSeconds + outputString;
     }
-    if (ageInMinutes < 60 && ageInMinutes > 1) {
-        return ageInMinutes + " mins ago";
+    if (ageInMinutes < 60 && ageInMinutes >= 1) {
+
+        if (ageInMinutes > 1) {
+            outputString = " minutes ago";
+        }
+        else {
+            outputString = " minute ago";
+        }
+
+        return ageInMinutes + outputString;
     }
 
-    if (ageInHours < 24 && ageInHours > 1) {
-        return ageInHours + " hrs ago";
+    if (ageInHours < 24 && ageInHours >= 1) {
+
+        if (ageInHours > 1) {
+            outputString = " hours ago";
+        }
+        else {
+            outputString = " hour ago";
+        }
+
+        return ageInHours + outputString;
     }
 
-    if (ageInDays < 365 && ageInDays > 1) {
-        return ageInDays + " days ago";
+    if (ageInDays < 365 && ageInDays >= 1) {
+
+        if (ageInDays > 1) {
+            outputString = " days ago";
+        }
+        else {
+            outputString = " day ago";
+        }
+
+        return ageInDays + outputString;
     }
 
-    if (ageInYears > 1) {
-        return ageInYears + " yrs ago";
+    if (ageInYears >= 1) {
+
+        if (ageInYears > 1) {
+            outputString = " years ago";
+        }
+        else {
+            outputString = " year ago";
+        }
+
+        return ageInYears + outputString;
     }
 }
 
