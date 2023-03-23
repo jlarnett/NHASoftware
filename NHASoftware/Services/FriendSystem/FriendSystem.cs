@@ -148,5 +148,15 @@ namespace NHASoftware.Services.FriendSystem
 
             return false;
         }
+
+        /// <summary>
+        /// Returns INT with the # of friends the supplied userId has.
+        /// </summary>
+        /// <param name="userId">Identity UserId you want to check friend count for</param>
+        /// <returns>int # of friends for specified userId</returns>
+        public int GetFriendCount(string userId)
+        {
+            return _unitOfWork.FriendRepository.Count(f => f.FriendOneId.Equals(userId) || f.FriendTwoId.Equals(userId));
+        }
     }
 }

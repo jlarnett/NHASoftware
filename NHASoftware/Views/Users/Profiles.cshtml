@@ -1,9 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using NHASoftware.Entities.Identity
 @using NHASoftware.Services.FriendSystem
+@using NHASoftware.Services.RepositoryPatternFoundationals
 @model NHASoftware.Views.ViewModels.SocialVMs.ProfileVM
 @inject UserManager<ApplicationUser> userManager
 @inject IFriendSystem friendSystem
+@inject IUnitOfWork IUnitOfWork
 
 @{
     ViewData["Title"] = "User Profile";
@@ -14,90 +16,155 @@
     <link rel="stylesheet" href="~/css/Profile.css">
 </head>
 
+@{
+    var friendCount = friendSystem.GetFriendCount(Model.User.Id);
+    var friendLabel = friendCount > 1 ? "Friends" : "Friend";
+}
 
 <div class="container-fluid border border-primary">
     <div class="row">
-        <div class="border-end border-primary col-md-4">
+        <div class="border-end border-primary col-4">
             <img class="img-fluid" src="~/ProfilePictures/@Model.User.ProfilePicturePath"/>
         </div>
+        <div class="col border-end border-primary text-center">
+            <h1 class="h-25">@friendCount @friendLabel</h1>
+        </div>
+        <div class="col"></div>
     </div>
     <div class="row">
-        <div class="profile-header-user-details border border-primary col-md-4">
-            <h1 class="profile-displayname">@Model.User.DisplayName</h1>
+        <div class="text-md-center border border-primary col-sm-4">
+            <h1 class="text-md-center h1">@Model.User.DisplayName</h1>
         </div>
 
-            @if (friendSystem.FriendRequestSent(@userManager.GetUserId(User), @Model.User.Id))
-            {
-                @Html.AntiForgeryToken()
+        @if (friendSystem.FriendRequestSent(@userManager.GetUserId(User), @Model.User.Id))
+        {
+            @Html.AntiForgeryToken()
 
-                <div class="dropdown col-md-4">
-                    <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="~/Images/CheckMarkIcon.png" class=""/>
-                        Friend Request Sent
-                    </a>
+            <div class="dropdown col-sm-4">
+                <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="~/Images/CheckMarkIcon.png" class=""/>
+                    Friend Request Sent
+                </a>
 
-                    <ul class="dropdown-menu" aria-labelledby="FriendDropdown">
-                        <li>
-                            <a id="RemoveFriendBtn" class="dropdown-item" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">Remove Friend</a>
-                        </li>
-                        <li>
-                            <a id="BlockFriendBtn" class="dropdown-item" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">Block Ex-Friend</a>
-                        </li>
-                    </ul>
+                <ul class="dropdown-menu" aria-labelledby="FriendDropdown">
+                    <li>
+                        <a id="RemoveFriendBtn" class="dropdown-item" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">Remove Friend</a>
+                    </li>
+                    <li>
+                        <a id="BlockFriendBtn" class="dropdown-item" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">Block Ex-Friend</a>
+                    </li>
+                </ul>
+            </div>
+        }
+        else if (friendSystem.IsFriends(@Model.User.Id, @userManager.GetUserId(User)))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="dropdown col-sm-4">
+                <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="~/Images/CheckMarkIcon.png" class=""/>
+                    Friends
+                </a>
+
+                <ul class="dropdown-menu" aria-labelledby="FriendDropdown">
+                    <li>
+                        <a id="RemoveFriendBtn" class="dropdown-item remove-friend" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">
+                            Remove Friend
+                        </a>
+                    </li>
+                    <li>
+                        <a id="BlockFriendBtn" class="dropdown-item block-friend" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">
+                            Block Ex-Friend
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        }
+        else if (!User.Identity.IsAuthenticated && Context.Request.HttpContext.User != null)
+        {
+
+        }
+        else
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="dropdown col-sm-4">
+                <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Send Friend Request
+                </a>
+
+                <ul class="dropdown-menu" aria-labelledby="FriendDropdown">
+                    <li>
+                        <a id="AddFriendBtn" class="dropdown-item" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">
+                            <img src="~/Images/plus_icon.png" class=""/>
+                            Add Friend!
+                        </a>
+                    </li>
+                    <li>
+                        <a id="BlockFriendBtn" class="dropdown-item" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">
+                            Block Ex-Friend
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        }
+    </div>
+</div>
+<div>
+    <div>
+        @{
+            var usersPosts = await IUnitOfWork.PostRepository.GetUsersSocialPostsAsync(Model.User.Id);
+        }
+        
+        <div class="container-fluid">
+            <p class="text-center h1">@Model.User.DisplayName's Wall</p>
+        </div>
+
+        @foreach (var item in usersPosts)
+        {
+            <div class="container-fluid border border-primary mt-4">
+                <div class="row align-items-center">
+                    <div class="col-sm-1 px-0">
+                        <img src="~/ProfilePictures/@item.User.ProfilePicturePath" class="img-fluid"/>
+                    </div>
+                    <div class="col border-primary border-start">
+                        <h3>@item.User.DisplayName</h3>
+                    </div>
+                    <div class="col-auto">
+                        <img src="~/Images/options.png" class="img-fluid"/>
+                    </div>
                 </div>
-            }
-            else if (friendSystem.IsFriends(@Model.User.Id, @userManager.GetUserId(User)))
-            {
-                @Html.AntiForgeryToken()
-
-                <div class="dropdown col-md-4">
-                    <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="~/Images/CheckMarkIcon.png" class=""/>
-                        Friends
-                    </a>
-
-                    <ul class="dropdown-menu" aria-labelledby="FriendDropdown">
-                        <li>
-                            <a id="RemoveFriendBtn" class="dropdown-item remove-friend" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">
-                                Remove Friend
-                            </a>
-                        </li>
-                        <li>
-                            <a id="BlockFriendBtn" class="dropdown-item block-friend" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">
-                                Block Ex-Friend
-                            </a>
-                        </li>
-                    </ul>
+                <div class="row">
+                    <div class="col-sm-1 px-0"></div>
+                    <div class="col border-bottom border-primary">
+                        <div class="h4 text-primary">Summary</div>
+                    </div>
                 </div>
-            }
-            else if (!User.Identity.IsAuthenticated && Context.Request.HttpContext.User != null)
-            {
-
-            }
-            else
-            {
-                @Html.AntiForgeryToken()
-
-                <div class="dropdown col-md-4">
-                    <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        Send Friend Request
-                    </a>
-
-                    <ul class="dropdown-menu" aria-labelledby="FriendDropdown">
-                        <li>
-                            <a id="AddFriendBtn" class="dropdown-item" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">
-                                <img src="~/Images/plus_icon.png" class=""/>
-                                Add Friend!
-                            </a>
-                        </li>
-                        <li>
-                            <a id="BlockFriendBtn" class="dropdown-item" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">
-                                Block Ex-Friend
-                            </a>
-                        </li>
-                    </ul>
+                <div class="row">
+                    <div class="col-sm-1 px-0"></div>
+                    <p class="text-black col text-white border-bottom border-start border-primary">@item.Summary</p>
                 </div>
-            }
+                <div class="row align-items-center m-2">
+                    <div class="col-10"></div>
+                    <div class="col-md-auto">
+                        <div>5</div>
+                    </div>
+                    <div class="col-md-auto">
+                        <img src="~/Images/dislike-Filled.png" class="img-fluid me-5"/>
+                    </div>
+                    <div class="col-md-auto">
+                        <div class="">5</div>
+                    </div>
+                    <div class="col">
+                        <img src="~/Images/Facebook-Like-Filled.png" class="img-fluid me-5"/>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+        }
     </div>
 </div>
 

@@ -8,9 +8,9 @@ namespace NHASoftware.Services.AccessWarden
         /// Checks if the current logged in user is admin or forum admin
         /// </summary>
         /// <returns>Returns Bool if logged in user IS admin or forum admin</returns>
-        public bool IsForumAdmin(ClaimsPrincipal User)
+        public bool IsForumAdmin(ClaimsPrincipal user)
         {
-            if (User.IsInRole("admin") || User.IsInRole("forum admin"))
+            if (user.IsInRole("admin") || user.IsInRole("forum admin"))
             {
                 return true;
             }
@@ -22,9 +22,9 @@ namespace NHASoftware.Services.AccessWarden
         /// Checks if the current logged in user is admin
         /// </summary>
         /// <returns>Returns Bool if logged in user IS admin or forum admin</returns>
-        public bool IsAdmin(ClaimsPrincipal User)
+        public bool IsAdmin(ClaimsPrincipal user)
         {
-            if (User.IsInRole("admin"))
+            if (user.IsInRole("admin"))
             {
                 return true;
             }

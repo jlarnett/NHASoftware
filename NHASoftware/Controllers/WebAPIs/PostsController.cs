@@ -64,6 +64,13 @@ namespace NHASoftware.Controllers.WebAPIs
             return await PopulatePostDTOLikeDetails(postsDtos);
         }
 
+        [HttpGet("GetUserSocialPosts/{id}")]
+        public async Task<List<PostDTO>> GetUsersSocialPosts(string id)
+        {
+            var posts = await _unitOfWork.PostRepository.GetUsersSocialPostsAsync(id);
+            return posts.Select((_mapper.Map<Post, PostDTO>)).ToList();
+        } 
+
         private async Task<IEnumerable<PostDTO>> PopulatePostDTOLikeDetails(List<PostDTO> postDtos)
         {
             List<PostDTO> posts = new List<PostDTO>();
@@ -161,7 +168,7 @@ namespace NHASoftware.Controllers.WebAPIs
             return result > 0 ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
         }
 
-        // DELETE: api/Posts/5
+        // DELETE: api/Posts/5ARM
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePost(int? id)
         {

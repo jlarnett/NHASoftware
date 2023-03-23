@@ -4,8 +4,8 @@ namespace NHASoftware.Services.AccessWarden
 {
     public interface IWarden
     {
-        bool IsForumAdmin(ClaimsPrincipal User);
-        bool IsAdmin(ClaimsPrincipal User);
+        bool IsForumAdmin(ClaimsPrincipal user);
+        bool IsAdmin(ClaimsPrincipal user);
 
     }
 }

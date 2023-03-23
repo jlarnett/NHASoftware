@@ -24,5 +24,14 @@ namespace NHASoftware.Services.Social
                 .Include(p => p.ParentPost)
                 .ToListAsync();
         }
+
+        public async Task<List<Post>> GetUsersSocialPostsAsync(string userId)
+        {
+            return await _context.Posts
+                .Include(p => p.User)
+                .Include(p => p.ParentPost)
+                .Where(u => u.UserId.Equals(userId))
+                .ToListAsync();
+        }
     }
 }
