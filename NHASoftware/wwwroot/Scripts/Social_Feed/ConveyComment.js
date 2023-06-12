@@ -7,7 +7,7 @@
         var uniquePostIdentifier = SendButton.attr("unique-identifier");
         var commentTextbox = $("div[unique-comment-identifier$="+ uniquePostIdentifier +"]");
 
-        var userId = $("#HomeContentFeed").attr("userId");
+        var userId = RetrieveCurrentUserId();
         var fatherPostId = commentTextbox.attr("post-id");
         var postContent = $($("div[unique-comment-identifier$="+ uniquePostIdentifier +"]").summernote("code")).text()
 

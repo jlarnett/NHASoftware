@@ -7423,6 +7423,11 @@ fieldset:disabled .btn {
   bottom: 0 !important;
 }
 
+/*Johnny Arnett added this class to bootstrap seperately did not come factory. */
+.bottom-25 {
+    bottom: 25% !important;
+}
+
 .bottom-50 {
   bottom: 50% !important;
 }
@@ -7435,8 +7440,18 @@ fieldset:disabled .btn {
   left: 0 !important;
 }
 
+/*Johnny Arnett added this class to bootstrap seperately did not come factory. */
+.start-25 {
+    left: 25% !important;
+}
+
 .start-50 {
   left: 50% !important;
+}
+
+/*Johnny Arnett added this class to bootstrap seperately did not come factory. */
+.start-75 {
+    left: 75% !important;
 }
 
 .start-100 {

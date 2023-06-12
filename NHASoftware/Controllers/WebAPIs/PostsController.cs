@@ -40,8 +40,21 @@ namespace NHASoftware.Controllers.WebAPIs
             return await PopulatePostDTOLikeDetails(postsDtos);
         }
 
+        /// <summary>
+        /// Gets all social posts for supplied userId. Populates the PostDTO like details. 
+        /// </summary>
+        /// <param name="userId">Users Identity Id you want posts for</param>
+        /// <returns>postsDto IEnumerable </returns>
+        [HttpGet("GetSocialPostForUserId/{userId}")]
+        public async Task<IEnumerable<PostDTO>> GetAllPostForUserId(string userId)
+        {
+            var posts = await _unitOfWork.PostRepository.GetUsersSocialPostsAsync(userId);
+            var postsDtos = posts.Select((_mapper.Map<Post, PostDTO>)).ToList();
+            return await PopulatePostDTOLikeDetails(postsDtos);
+        }
+
         // GET: api/Posts/5
-        [HttpGet("{id}")]
+        [HttpGet("GetSocialPosts/{id}")]
         public async Task<ActionResult<Post>> GetPost(int? id)
         {
             var post = await _unitOfWork.PostRepository.GetByIdAsync(id);

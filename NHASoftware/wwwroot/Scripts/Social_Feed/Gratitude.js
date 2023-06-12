@@ -6,21 +6,21 @@
         var currentBtnImageSrc = EventBtn.attr("src");
         var postId = EventBtn.attr("post-id");
 
-        var userSessionActive = $("#HomeContentFeed").attr("user-session-active");
+        var userSessionActive = CheckUserSessionIsActive();
 
         if (userSessionActive === "False") {
             console.log("User Login required to like social media posts & comments");
         }
 
-        var userId = $("#HomeContentFeed").attr("userId");
+        var userId = RetrieveCurrentUserId();
 
         if (userSessionActive) {
 
-            if (currentBtnImageSrc.toLowerCase() === "images/facebook-like.png") {
+            if (currentBtnImageSrc.toLowerCase() === "/images/facebook-like.png") {
 
                 LikePost(userId, postId).then(function (data) {
                     if (data.success === true) {
-                        EventBtn.attr("src", "images/facebook-like-filled.png");
+                        EventBtn.attr("src", "/images/facebook-like-filled.png");
                         IncrementLikeCounter(EventBtn);
                     }
                     else {
@@ -28,10 +28,10 @@
                     }
                 });
             }
-            else if (currentBtnImageSrc.toLowerCase() === "images/facebook-like-filled.png") {
+            else if (currentBtnImageSrc.toLowerCase() === "/images/facebook-like-filled.png") {
                 DeleteLike(userId, postId, false).then(function (data) {
                     if (data.success === true) {
-                        EventBtn.attr("src", "images/facebook-like.png");
+                        EventBtn.attr("src", "/images/facebook-like.png");
                         DecrementLikeCounter(EventBtn);
                     }
                     else {
@@ -48,16 +48,16 @@
         var currentBtnImageSrc = EventBtn.attr("src");
 
         var postId = EventBtn.attr("post-id");
-        var userSessionActive =$("#HomeContentFeed").attr("user-session-active");
-        var userId = $("#HomeContentFeed").attr("userId");
+        var userSessionActive = CheckUserSessionIsActive();
+        var userId = RetrieveCurrentUserId();
 
         if (userSessionActive) {
 
-            if (currentBtnImageSrc.toLowerCase() === "images/dislike.png") {
+            if (currentBtnImageSrc.toLowerCase() === "/images/dislike.png") {
                 //SEND DISLIKE TO API
                 LikePost(userId, postId, true).then(function (data) {
                     if (data.success === true) {
-                        EventBtn.attr("src", "images/dislike-filled.png");
+                        EventBtn.attr("src", "/images/dislike-filled.png");
                         IncrementLikeCounter(EventBtn);
                     }
                     else {
@@ -65,11 +65,11 @@
                     }
                 });
             }
-            else if (currentBtnImageSrc.toLowerCase() === "images/dislike-filled.png") {
+            else if (currentBtnImageSrc.toLowerCase() === "/images/dislike-filled.png") {
                 //SEND DELETE DISLIKE REQUEST TO API
                 DeleteLike(userId, postId, true).then(function (data) {
                     if (data.success === true) {
-                        EventBtn.attr("src", "images/dislike.png");
+                        EventBtn.attr("src", "/images/dislike.png");
                         DecrementLikeCounter(EventBtn);
                     }
                     else {
@@ -81,8 +81,89 @@
         }
     });
 
-    function LikePost(userId, postId, isDislike = false) {
+        //Fired whenever the like icon is clicked for post
+    $('#ContentFeed').on('click', '.post-like' ,function (e) {
+        var EventBtn = $(e.target);
+        var currentBtnImageSrc = EventBtn.attr("src");
+        var postId = EventBtn.attr("post-id");
 
+        var userSessionActive = CheckUserSessionIsActive();
+
+        if (userSessionActive === "False") {
+            console.log("User Login required to like social media posts & comments");
+        }
+
+        var userId = RetrieveCurrentUserId();
+
+        if (userSessionActive) {
+
+            if (currentBtnImageSrc.toLowerCase() === "/images/facebook-like.png") {
+
+                LikePost(userId, postId).then(function (data) {
+                    if (data.success === true) {
+                        EventBtn.attr("src", "/images/facebook-like-filled.png");
+                        IncrementLikeCounterRedesign(EventBtn);
+                    }
+                    else {
+                        console.log("Failed sending like to API.");
+                    }
+                });
+            }
+            else if (currentBtnImageSrc.toLowerCase() === "/images/facebook-like-filled.png") {
+                DeleteLike(userId, postId, false).then(function (data) {
+                    if (data.success === true) {
+                        EventBtn.attr("src", "/images/facebook-like.png");
+                        DecrementLikeCounterRedesign(EventBtn);
+                    }
+                    else {
+                        console.log("Failed to send DELETE like request to API");
+                    }
+                });
+            }
+        }
+    });
+
+    $('#ContentFeed').on('click', '.post-dislike' ,function (e) {
+
+        var EventBtn = $(e.target);
+        var currentBtnImageSrc = EventBtn.attr("src");
+
+        var postId = EventBtn.attr("post-id");
+        var userSessionActive = CheckUserSessionIsActive();
+        var userId = RetrieveCurrentUserId();
+
+        if (userSessionActive) {
+
+            if (currentBtnImageSrc.toLowerCase() === "/images/dislike.png") {
+                //SEND DISLIKE TO API
+                LikePost(userId, postId, true).then(function (data) {
+                    if (data.success === true) {
+                        EventBtn.attr("src", "/images/dislike-filled.png");
+                        IncrementDisLikeCounterRedesign(EventBtn);
+                    }
+                    else {
+                        console.log("Failed sending dislike to API.");
+                    }
+                });
+            }
+            else if (currentBtnImageSrc.toLowerCase() === "/images/dislike-filled.png") {
+                //SEND DELETE DISLIKE REQUEST TO API
+                DeleteLike(userId, postId, true).then(function (data) {
+                    if (data.success === true) {
+                        EventBtn.attr("src", "/images/dislike.png");
+                        DecrementDisLikeCounterRedesign(EventBtn);
+                    }
+                    else {
+                        console.log("Failed to send DELETE dislike request to API");
+                    }
+                });
+
+            }
+        }
+    });
+
+    function LikePost(userId, postId, isDislike = false) {
+        //Send POST request to Gratitude API. Returns async promise of request response. 
         var userLikeObject = {};
         userLikeObject.UserId = userId;
         userLikeObject.PostId = postId;
@@ -99,6 +180,7 @@
     }
 
     function DeleteLike(userId, postId, isDislike = false) {
+        //Send DELETE request to Gratitude API. Returns async promise of request response. 
         var userLikeObject = {};
         userLikeObject.UserId = userId;
         userLikeObject.PostId = postId;
@@ -131,5 +213,41 @@
         counterElement.text(likeCount);
     }
 
+
+    function IncrementLikeCounterRedesign(EventBtn) {
+        //Increments the like counter for specified like button & all other with matching postIds for Redesign gratitude system
+        var postId = EventBtn.attr("post-id");
+        var counterElement = $('[like-counter-post-id=' + postId + ']');
+        var likeCount = Number(counterElement.first().text());
+        likeCount++;
+        counterElement.text(likeCount);
+    }
+
+    function DecrementLikeCounterRedesign(EventBtn) {
+        //Decrements the like counter for specified like button & all other with matching postIds for Redesign gratitude system
+        var postId = EventBtn.attr("post-id");
+        var counterElement = $('[like-counter-post-id=' + postId + ']');
+        var likeCount = Number(counterElement.first().text());
+        likeCount--;
+        counterElement.text(likeCount);
+    }
+
+    function IncrementDisLikeCounterRedesign(EventBtn) {
+        //Incrments the dislike counter for the specified dislike button & all other with matching postIds for Redesign gratitude system
+        var postId = EventBtn.attr("post-id");
+        var counterElement = $('[dislike-counter-post-id=' + postId + ']');
+        var likeCount = Number(counterElement.first().text());
+        likeCount++;
+        counterElement.text(likeCount);
+    }
+
+    function DecrementDisLikeCounterRedesign(EventBtn) {
+        //Decrements the dislike counter for the specified button & all other with matching postIds for Redesign gratitude system
+        var postId = EventBtn.attr("post-id");
+        var counterElement = $('[dislike-counter-post-id=' + postId + ']');
+        var likeCount = Number(counterElement.first().text());
+        likeCount--;
+        counterElement.text(likeCount);
+    }
 
 });

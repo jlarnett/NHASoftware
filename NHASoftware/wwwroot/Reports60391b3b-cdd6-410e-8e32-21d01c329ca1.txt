@@ -1,4 +1,0 @@
-|Resharper                     |20   |30.00     
-|HULU                          |29   |12.00     
-|Netflix                       |28   |14.00     
-|Total Monthly Cost                  |$56.00     

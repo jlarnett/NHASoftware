@@ -13,6 +13,12 @@ public class CookieMonster : ICookieMonster
         return _contextAccessor.HttpContext.Request.Cookies[key];
     }
 
+    /// <summary>
+    /// Creates a new cookie for the accessing user
+    /// </summary>
+    /// <param name="key">Cookie string Key</param>
+    /// <param name="value">Cookie string value</param>
+    /// <param name="options"></param>
     public void CreateCookie(string key, string value, CookieOptions options = null)
     {
         var cookie = _contextAccessor.HttpContext.Request.Cookies[key];
@@ -20,7 +26,7 @@ public class CookieMonster : ICookieMonster
         if (options == null)
         {
             options = new CookieOptions();
-            options.Expires = DateTime.Now.AddDays(1);
+            options.Expires = DateTime.Now.AddDays(365);
         }
 
         if (cookie == null)
@@ -28,4 +34,5 @@ public class CookieMonster : ICookieMonster
             _contextAccessor.HttpContext.Response.Cookies.Append(key, value, options);
         }
     }
+
 }

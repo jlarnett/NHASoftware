@@ -23,13 +23,25 @@
 
 <div class="container-fluid border border-primary">
     <div class="row">
-        <div class="border-end border-primary col-4">
-            <img class="img-fluid" src="~/ProfilePictures/@Model.User.ProfilePicturePath"/>
+        <div class="border-end border-primary col-4 align">
+            <img class="img-fluid" src="~/ProfilePictures/@Model.User.ProfilePicturePath" alt="@Model.User.DisplayName's Profile Picture'"/>
         </div>
-        <div class="col border-end border-primary text-center">
-            <h1 class="h-25">@friendCount @friendLabel</h1>
+        <div class="col border-end border-bottom border-primary text-center">
+            <a class="link-secondary h1">@friendCount @friendLabel</a>
         </div>
-        <div class="col"></div>
+        <div class="col border-bottom border-primary">
+            <h1 class="text-center h1">User Biography</h1>
+            <div>This is a test biography that needs to be modified.This is a test biography that needs to be modified.
+                This is a test biography that needs to be modified.This is a test biography that needs to be modified.</div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col"></div>
+                    <button class="btn-dark m-md-auto col-2">
+                        edit
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="text-md-center border border-primary col-sm-4">
@@ -111,63 +123,29 @@
     </div>
 </div>
 <div>
-    <div>
+    <div id="SocialWall">
         @{
             var usersPosts = await IUnitOfWork.PostRepository.GetUsersSocialPostsAsync(Model.User.Id);
         }
         
         <div class="container-fluid">
-            <p class="text-center h1 m3">@Model.User.DisplayName's Wall</p>
+            <p class="text-center h1 mt-3">User's Wall</p>
         </div>
-
-        @foreach (var item in usersPosts)
-        {
-            <div class="container-fluid border border-primary mt-4">
-                <div class="row align-items-center">
-                    <div class="col-sm-1 px-0">
-                        <img src="~/ProfilePictures/@item.User.ProfilePicturePath" class="img-fluid"/>
-                    </div>
-                    <div class="col border-primary border-start">
-                        <h3>@item.User.DisplayName</h3>
-                    </div>
-                    <div class="col-auto">
-                        <img src="~/Images/options.png" class="img-fluid"/>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-1 px-0"></div>
-                    <div class="col border-bottom border-primary">
-                        <div class="h4 text-primary">Summary</div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-1 px-0"></div>
-                    <p class="text-black col text-white border-bottom border-start border-primary">@item.Summary</p>
-                </div>
-                <div class="row align-items-center m-2">
-                    <div class="col-10"></div>
-                    <div class="col-md-auto">
-                        <div>5</div>
-                    </div>
-                    <div class="col-md-auto">
-                        <img src="~/Images/dislike-Filled.png" class="img-fluid me-5"/>
-                    </div>
-                    <div class="col-md-auto">
-                        <div class="">5</div>
-                    </div>
-                    <div class="col">
-                        <img src="~/Images/Facebook-Like-Filled.png" class="img-fluid me-5"/>
-                    </div>
-
-
-
-                </div>
-
-            </div>
-        }
+        
+        <div id="ContentFeed" profile-user-id="@Model.User.Id">
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="~/Scripts/FriendSystem/AddFriend.js"></script>
+    <script src="~/Scripts/Social_Feed/HideComments.js"></script>
+    <script src="~/Scripts/Social_Feed/RefreshFeed.js"></script>
+    <script src="~/Scripts/Social_Feed/RebuildMainFeedTextboxes.js"></script>
+    <script src="~/Scripts/Social_Feed/ProfileRedirectLink.js"></script>
+    <script src="~/Scripts/Social_Feed/Gratitude.js"></script>
+
+    <script type="text/javascript">
+        RebuildFeedTextboxes();
+    </script>
 }
