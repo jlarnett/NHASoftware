@@ -4,7 +4,6 @@ using NHASoftware.Entities;
 using NHASoftware.Entities.Anime;
 using NHASoftware.Entities.Forums;
 using NHASoftware.Entities.Identity;
-using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.Entities.FriendSystem;
 using NHASoftware.Entities.Social_Entities;
 
@@ -23,20 +22,6 @@ namespace NHASoftware.DBContext
 
             builder.Entity<Subscription>().HasOne(e => e.TaskItem).WithMany(e => e.Subscriptions)
                 .OnDelete(DeleteBehavior.SetNull);
-
-            //builder.Entity<Post>().HasOne(p => p.ParentPost).WithMany()
-            //    .OnDelete(DeleteBehavior.SetNull);
-
-
-            #region OldManyToManyMapping
-
-            //builder.Entity<BookAuthor>().HasKey(sc => new { sc.AuthorId, sc.BookId });
-            //builder.Entity<BookAuthor>().HasOne<Author>(ab => ab.Author).WithMany(a => a.BookAuthors)
-            //    .HasForeignKey(ab => ab.AuthorId);
-            //builder.Entity<BookAuthor>().HasOne<Book>(ab => ab.Book).WithMany(b => b.BookAuthors).HasForeignKey(ab => ab.BookId);
-
-            #endregion
-
         }
 
         public DbSet<Subscription> Subscriptions { get; set; }
