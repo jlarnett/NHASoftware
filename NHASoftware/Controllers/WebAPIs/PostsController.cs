@@ -75,7 +75,7 @@ namespace NHASoftware.Controllers.WebAPIs
         public async Task<IEnumerable<PostDTO>> FindChildrenPosts(int? id)
         {
             var posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
-            var childrenPosts = posts.Where(p => p.ParentPostId == id).ToList();
+            var childrenPosts = posts.Where(p => p.ParentPostId == id && p.IsHiddenFromUserProfile == false).ToList();
 
             var postsDtos = childrenPosts.Select((_mapper.Map<Post, PostDTO>)).ToList();
             return await PopulatePostDTOLikeDetails(postsDtos);
@@ -211,6 +211,30 @@ namespace NHASoftware.Controllers.WebAPIs
 
             return result > 0 ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
         }
+
+        /// <summary>
+        /// Used to set the isDeletedFlag on post object. Flag is being used to avoid hassles with EF self referencing table. 
+        /// </summary>
+        /// <param name="id">Id of the post to delete</param>
+        /// <returns>Returns jsonresult with success value. </returns>
+        [HttpDelete("Hide/{id}")]
+        public async Task<IActionResult> HidePost(int? id)
+        {
+            var post = await _unitOfWork.PostRepository.GetByIdAsync(id);
+
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            post.IsHiddenFromUserProfile = true;
+            _unitOfWork.PostRepository.Update(post);
+            var result = await _unitOfWork.CompleteAsync();
+
+            return result > 0 ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
+        }
+
+
 
         /// <summary>
         /// Reactivates social media post. Changes the isDeletedFlag of object in db. 

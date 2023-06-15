@@ -22,12 +22,12 @@
         var postId = EventBtn.attr("post-id");
         var isComment = EventBtn.attr("is-comment");
 
-        DeletePost(postId).then(function (data) {
+        HidePostFromProfile(postId).then(function (data) {
             if (data.success === true) {
                 isComment === 'true' ? RemoveCommentFromContentFeed(postId) : RemovePostFromContentFeed(postId);
             }
             else {
-                console.log("Failed to send DELETE Post request to api. ");
+                console.log("Failed to send Hide Post request to api. ");
             }
         });
     });
@@ -51,8 +51,21 @@ function RemoveCommentFromContentFeed(postId) {
 }
 
 function DeletePost(postId) {
-    //sends DELETE request to post API. Sets up isDeletedFlag in DB. 
+    //sends DELETE request to post API. Sets the isDeletedFlag to true in DB. 
     var apiURL = '/api/posts/' + postId;
+
+    return $.ajax({
+        url: apiURL,
+        method: 'DELETE',
+        contentType: "application/json; charset=utf-8",
+        datatype: 'json',
+        headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() }
+    });
+}
+
+function HidePostFromProfile(postId) {
+    //sends DELETE request to post API. Sets the isHiddenFromUserProfile flag in DB to true. 
+    var apiURL = '/api/posts/hide/' + postId;
 
     return $.ajax({
         url: apiURL,

@@ -37,7 +37,7 @@ namespace NHASoftware.Services.Social
             return await _context.Posts
                 .Include(p => p.User)
                 .Include(p => p.ParentPost)
-                .Where(u => u.UserId.Equals(userId) && u.IsDeletedFlag.Equals(false))
+                .Where(u => u.UserId.Equals(userId) && u.IsDeletedFlag.Equals(false) && u.IsHiddenFromUserProfile.Equals(false))
                 .ToListAsync();
         }
     }
