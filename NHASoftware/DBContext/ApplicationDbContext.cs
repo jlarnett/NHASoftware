@@ -24,6 +24,10 @@ namespace NHASoftware.DBContext
             builder.Entity<Subscription>().HasOne(e => e.TaskItem).WithMany(e => e.Subscriptions)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            //builder.Entity<Post>().HasOne(p => p.ParentPost).WithMany()
+            //    .OnDelete(DeleteBehavior.SetNull);
+
+
             #region OldManyToManyMapping
 
             //builder.Entity<BookAuthor>().HasKey(sc => new { sc.AuthorId, sc.BookId });

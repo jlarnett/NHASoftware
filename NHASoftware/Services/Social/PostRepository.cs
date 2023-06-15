@@ -17,20 +17,27 @@ namespace NHASoftware.Services.Social
                 $"posts_InsertPostData {post.Summary.ToString()}, {post.CreationDate}, {post.UserId}, {null}");
         }
 
-        public async Task<List<Post>> GetAllPostsWithIncludesAsync()
-        {
-            return await _context.Posts
+        /// <summary>
+        /// Accesses the EF context & gets all social media post. DOES NOT INCLUDE POST WITH ISDELETEDFLAG set to true
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Post>> GetAllPostsWithIncludesAsync() => await _context.Posts
                 .Include(p => p.User)
                 .Include(p => p.ParentPost)
+                .Where(p => p.IsDeletedFlag.Equals(false))
                 .ToListAsync();
-        }
 
+        /// <summary>
+        /// Accesses the EF context & gets all social posts for specified users. 
+        /// </summary>
+        /// <param name="userId">userId of the post you want to pull from DB</param>
+        /// <returns>List of social media posts. </returns>
         public async Task<List<Post>> GetUsersSocialPostsAsync(string userId)
         {
             return await _context.Posts
                 .Include(p => p.User)
                 .Include(p => p.ParentPost)
-                .Where(u => u.UserId.Equals(userId))
+                .Where(u => u.UserId.Equals(userId) && u.IsDeletedFlag.Equals(false))
                 .ToListAsync();
         }
     }

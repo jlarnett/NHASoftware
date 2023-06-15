@@ -7,12 +7,14 @@ namespace NHASoftware.Entities.Social_Entities
     {
         public int? Id { get; set; }
 
-        [Required]
-        public string Summary { get; set; }
+        [Required] public string Summary { get; set; }
         public DateTime? CreationDate { get; set; }
         public string? UserId { get; set; }
         public ApplicationUser? User { get; set; }
         public int? ParentPostId { get; set; }
         public Post? ParentPost { get; set; }
+        public bool IsHiddenFromUserProfile { get; set; } = false;
+        public bool IsHiddenFromMainContentFeed { get; set; } = false;
+        [Required] public bool IsDeletedFlag { get; set; } = false;
     }
 }

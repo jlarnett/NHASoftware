@@ -188,7 +188,7 @@ function GeneratePostRedesign(post) {
     var postCreationDate = spacetime(post.creationDate);
     var postDateDifferenceInSeconds = postCreationDate.diff(currentDate, 'second');
 
-    postHtml.push('<div class="container-fluid border border-primary mt-4">',
+    postHtml.push('<div class="container-fluid border border-primary mt-4" post-delete-id="', post.id, '">',
             '<div class="row align-items-center">',
                 '<!--User Profile image & display name-->',
                 '<div class="col-1 px-0">',
@@ -261,23 +261,35 @@ function GeneratePostActionButton(post) {
 
 function GenerateDeleteActionButtonLink(post) {
     //Returns a string of the Delete Post Action Button HTML as long as user is admin or the owner of the post. 
+    var isCommentBool = IsComment(post);
+
     if (post.user.id === RetrieveCurrentUserId() || IsCurrentUserAdmin() === "True") {
-        return '<li><a class="dropdown-item" href="#">Delete Post</a></li>';
+        return '<li><a class="dropdown-item delete-post-link" post-id="' + post.id +'" is-comment="' + isCommentBool +'">Delete Post</a></li>';
     }
 }
 
 function GenerateHideActionButtonLink(post) {
     //Returns a string of the Hide Post Action Button HTML as long as user is admin or the owner of the post. 
+    var isCommentBool = IsComment(post);
     if (post.user.id === RetrieveCurrentUserId() || IsCurrentUserAdmin() === "True") {
-        return '<li><a class="dropdown-item" href="#">Hide Post</a></li>';
+        return '<li><a class="dropdown-item hide-post-link" post-id="' + post.id + '" is-comment="' + isCommentBool + '">Hide Post</a></li>';
     }
 }
 
 function GenerateReportActionButtonLink(post) {
     //Returns a string of the Report Post Action Button HTML as long as user is logged in to site. 
+    var isCommentBool = IsComment(post);
     if (CheckUserSessionIsActive() === "True") {
-        return '<li><a class="dropdown-item" href="#">Report Post</a></li>';
+            return '<li><a class="dropdown-item report-post-link" post-id="' + post.id + '" is-comment="' + isCommentBool + '">Report Post</a></li>';
     }
+}
+
+function IsComment(post) {
+    //Returns bool whether the supplied post is a comment or a primary post. 
+    if (post.parentPostId === null) { 
+        return false;
+    }
+    return true;
 }
 
 function LoadCommentsRedesign(id, uuid) {
@@ -292,7 +304,7 @@ function LoadCommentsRedesign(id, uuid) {
             var postCreationDate = spacetime(data[i].creationDate);
             var postDateDifferenceInSeconds = postCreationDate.diff(currentDate, 'second');
 
-            commentHtml.push('<li>',
+            commentHtml.push('<li comment-delete-id="', data[i].id ,'">',
                 '<div>',
                     '<div class="row align-items-center">',
                         '<div class="col-1"></div>',
