@@ -14,14 +14,14 @@
 <h1 class="h1 text-center feed-header">The Algorithm Page</h1>
 
 <div class="HomeContainer">
-    <div id="HomeContentFeed" userId="@_UserManager.GetUserId(User)" >
+    <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)" >
         @if (_SignInManager.IsSignedIn(User))
         {
             <div class="textbox-area">
                 <div id="MainPostTextboxContainer">
                     @Html.AntiForgeryToken()
                     <div id="MainPostTextbox"></div>
-                    <button id="SubmitBtn" class="btn-dark">Convey Message</button>
+                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="btn-dark">Convey Message</button>
                 </div>
                 <span id="MainPostTextboxValidationMessage" style="display: none; color: red">Error Submitting Post.....</span>
             </div>

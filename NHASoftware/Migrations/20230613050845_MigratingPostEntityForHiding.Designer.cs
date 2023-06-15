@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NHASoftware.DBContext;
 
@@ -11,9 +12,10 @@ using NHASoftware.DBContext;
 namespace NHASoftware.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230613050845_MigratingPostEntityForHiding")]
+    partial class MigratingPostEntityForHiding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -498,9 +500,6 @@ namespace NHASoftware.Migrations
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDeletedFlag")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsHiddenFromMainContentFeed")
                         .HasColumnType("bit");
 
@@ -804,8 +803,7 @@ namespace NHASoftware.Migrations
                 {
                     b.HasOne("NHASoftware.Entities.Social_Entities.Post", "ParentPost")
                         .WithMany()
-                        .HasForeignKey("ParentPostId")
-                        .OnDelete(DeleteBehavior.ClientCascade);
+                        .HasForeignKey("ParentPostId");
 
                     b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "User")
                         .WithMany()

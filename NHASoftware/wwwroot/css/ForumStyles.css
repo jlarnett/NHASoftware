@@ -441,7 +441,8 @@ article {
     font-size: 1.2em;
 }
 
-img {
+
+.modern-forum-post-row-container img {
     /*This is used to override the uploaded size of forum post.*/
     width: 300px;
 }

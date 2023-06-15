@@ -8,11 +8,13 @@
             OptimizedFeedLoad();
         }
     });
+
+    console.log("Loading Profile Posts.....................");
+    LoadFeedWithProfilePost($('#ContentFeed').attr("profile-user-id"));
 });
 
 function RetrieveMorePosts() {
     ///AJAX CALL TO api/posts webapi. Returns async result of posts
-
     return $.get("api/posts", function (data) {
     });
 }
@@ -20,8 +22,13 @@ function RetrieveMorePosts() {
 function RetrievePostComments(postId) {
     ///AJAX CALL TO api/posts/findchildrenposts webapi endpoint. 
     //Returns async result all 'Comments' => Comments are just post with fatherPostId populated.
+        return $.get("/api/posts/findchildrenposts/" + postId, function(data) {
+    });
+}
 
-    return $.get("api/posts/findchildrenposts/" + postId, function(data) {
+function RetrieveAllPostForUser(userId) {
+    //Calls the Post WebAPI & gets all post created under supplied userId
+        return $.get("/api/posts/GetSocialPostForUserId/" + userId, function(data) {
     });
 }
 
@@ -35,7 +42,7 @@ function LoadPostComments(id, uuid) {
             commentHtml.push('<li>',
                 '<div class="comment-container">',
                 '<div class="comment-profile-picture">',
-                '<img class="comment-profile-picture-item" src="ProfilePictures/', data[i].user.profilePicturePath, '" />',
+                '<img class="comment-profile-picture-item" src="/ProfilePictures/', data[i].user.profilePicturePath, '" />',
                 '</div>',
                 '<div class="comment-details">',
                 '<div>',
@@ -47,22 +54,18 @@ function LoadPostComments(id, uuid) {
                 '</div',
                 '</li>');
 
-            $("ul[unique-comment-list$=" + uuid + "]").empty();
-            $("ul[unique-comment-list$=" + uuid + "]").html(commentHtml.join(''));
+            var commentListElement = $("ul[unique-comment-list$=" + uuid + "]");
+
+            commentListElement.empty();
+            commentListElement.html(commentHtml.join(''));
         }
     });
 }
 
-function CheckUserSessionActiveFeedAtribute() {
-//Checks the homeContentFeed div's user-session-active attribute. Used by posts & comments to check what to render
-    return $("#HomeContentFeed").attr("user-session-active");
-}
-
-
 function TryInsertPostCommentTextbox(postId, uuid) {
 //Tries to insert textbox below comment section. Checks if user is logged in & returns the textbox html if logged in.
     var Html = [];
-    var isLoggedIn = CheckUserSessionActiveFeedAtribute();
+    var isLoggedIn = CheckUserSessionIsActive();
 
     if (isLoggedIn === 'True') {
         Html.push('<div class="comment-textbox-area">',
@@ -77,7 +80,6 @@ function TryInsertPostCommentTextbox(postId, uuid) {
 
     return Html.join('');
 }
-
 
 function OptimizedFeedLoad() {
     //Cleaner more optimized feed load. Receives post from Post API & Adds Them to the Home Content Feed.
@@ -112,7 +114,7 @@ function GeneratePostHtml(post) {
                         '<div class="Main-Post-Top-Header Main-Post-Section">',
                             '<a class="feed-profile-link Post-Header-Item" userId="', post.user.id, '">', post.user.displayName, '</a>',
                             '<a class="Post-Header-Item">-</a>',
-                            '<a class="Post-Header-Item">', ReturnAgeString(postDateDifferenceInSeconds) ,'</a>',
+                            '<a class="Post-Header-Item">', GetTimeShortHandString(postDateDifferenceInSeconds) ,'</a>',
                         '</div>',
                         '<div class="Main-Post-Summary Main-Post-Section">',
                             '<p>', post.summary, '</p>',
@@ -142,8 +144,8 @@ function GeneratePostLikeSection(post) {
     //Takes the user post & generates the like section html. Determines Initial Like Icon states using value returned in postDto object
     var likeSectionHtml = [];
 
-    var likeSrcImage = (post.userLikedPost ? "images/facebook-like-filled.png" : "images/facebook-like.png");
-    var dislikeSrcImage = (post.userDislikedPost ? "images/dislike-filled.png" : "images/dislike.png");
+    var likeSrcImage = (post.userLikedPost ? "/images/facebook-like-filled.png" : "/images/facebook-like.png");
+    var dislikeSrcImage = (post.userDislikedPost ? "/images/dislike-filled.png" : "/images/dislike.png");
 
     likeSectionHtml.push('<div class="Main-Post-Bottom-Actionbar Main-Post-Section">',
         '<div class="Post-Like-Group">',
@@ -159,77 +161,238 @@ function GeneratePostLikeSection(post) {
     return likeSectionHtml.join('');
 }
 
-function ReturnAgeString(ageInSeconds) {
-    //Returns a rounded shorthand string for the age of post. E.G 2H A
-    var ageInMinutes = RoundNumber(ageInSeconds / 60);
-    var ageInHours = RoundNumber(ageInMinutes / 60);
-    var ageInDays = RoundNumber(ageInHours / 24);
-    var ageInYears = RoundNumber(ageInDays / 365);
 
-    var outputString;
+//Feed bootstrap redesign section
+function LoadFeedWithProfilePost(userId) {
+    //Loads the id #ContentFeed with all posts created by user. Calls Post WebAPI
+    RetrieveAllPostForUser(userId).then(function (posts) {
+        var feedHtml = [];
 
-
-    if (ageInSeconds < 60 && ageInSeconds >= 1) {
-        if (ageInSeconds > 1) {
-            outputString = " seconds ago";
-        }
-        else {
-            outputString = " second ago";
+        for (var i = 0; i < posts.length; i++) {
+            feedHtml.push(GeneratePostRedesign(posts[i]));
         }
 
-        return ageInSeconds + outputString;
-    }
-    if (ageInMinutes < 60 && ageInMinutes >= 1) {
+        var builtFeedHtml = feedHtml.join("");
+        $("#ContentFeed").empty();
+        $("#ContentFeed").append(builtFeedHtml);
+        RebuildFeedTextboxes();
+    });
+}
 
-        if (ageInMinutes > 1) {
-            outputString = " minutes ago";
-        }
-        else {
-            outputString = " minute ago";
-        }
+function GeneratePostRedesign(post) {
+    //This method receives post objects & generates the standardized post's html strings
+    let uuid = self.crypto.randomUUID();
+    var postHtml = [];
 
-        return ageInMinutes + outputString;
-    }
+    var currentDate = spacetime.now();
+    var postCreationDate = spacetime(post.creationDate);
+    var postDateDifferenceInSeconds = postCreationDate.diff(currentDate, 'second');
 
-    if (ageInHours < 24 && ageInHours >= 1) {
+    postHtml.push('<div class="container-fluid border border-primary mt-4" post-delete-id="', post.id, '">',
+            '<div class="row align-items-center">',
+                '<!--User Profile image & display name-->',
+                '<div class="col-1 px-0">',
+                    '<img src="/ProfilePictures/', post.user.profilePicturePath, '" class="img-fluid"/>',
+                '</div>',
+                '<div class="col-auto border-primary border-start">',
+                    '<a class="h3 text-decoration-none profile-link" role="button" userId="', post.user.id, '">', post.user.displayName, '</a>',
+                '</div>',
+                '<div class="col-auto">',
+                    '<a class="h3 text-decoration-none" role="button">-</a>',
+                '</div>',
+                '<div class="col-2">',
+                    '<a class="h3 text-decoration-none" role="button">', GetTimeShortHandString(postDateDifferenceInSeconds), '</a>',
+                '</div>',
+                '<div class="col-6">',
+                '</div>',
+                '<!--Post Action dropdown-->',
+                '<div class="col-auto">',
+                    GeneratePostActionButton(post),
+                '</div>',
+            '</div>',
+            '<div class="row">',
+                '<div class="col-sm-1 px-0"></div>',
+                '<div class="col border-bottom border-primary">',
+                    '<div class="h4 text-primary">Summary</div>',
+                '</div>',
+            '</div>',
+            '<!--Posts summary section. Text content is posted here-->',
+            '<div class="row">',
+                '<div class="col-sm-1 px-0"></div>',
+                '<p class="text-black col text-white border-bottom border-start border-primary">', post.summary, '</p>',
+            '</div>',
+            '<!--Posts Likes & Comment Show section-->',
+            '<div class="row align-items-center m-2">',
+                '<div class="col-auto">',
+                    '<a class="link-light hide-comments" unique-post-id="', uuid, '" post-id="', post.id, '" role="button">Show Comments</a>',
+                '</div>',
+                '<div class="col-5"></div>',
+                GenerateSocialLikeSectionRedesign(post),
+            '</div>',
+            '<div unique-comment-section="', uuid, '" style="display: none">',
+                    '<ul unique-comment-list="', uuid, '" class="list-unstyled">',
+                    '</ul>',
+                    InsertCommentTextboxRedesignHtml(post.id, uuid),
+            '</div>',
+        '</div>');
 
-        if (ageInHours > 1) {
-            outputString = " hours ago";
-        }
-        else {
-            outputString = " hour ago";
-        }
+    return postHtml.join('');
+}
 
-        return ageInHours + outputString;
-    }
+function GeneratePostActionButton(post) {
+    //Generates the post action dropdown button. Available actions are determined & added to the dropdown before returning
+    actionButtonHtml = [];
 
-    if (ageInDays < 365 && ageInDays >= 1) {
+    actionButtonHtml.push('<div class="dropstart">',
+                            '<button class="btn btn-dark dropdown-toggle" type="button" id="dropstartMenuButton" data-bs-toggle="dropdown" aria-expanded="false">',
+                                '<img src="/Images/options.png" class="img-fluid"/>',
+                            '</button>',
+                            '<ul class="dropdown-menu" aria-labelledby="dropstartMenuButton" style="">',
+                                '<li><h6 class="dropdown-header">Actions</h6></li>',
+                                '<li><hr class="dropdown-divider"></li>',
+                                GenerateHideActionButtonLink(post),
+                                GenerateDeleteActionButtonLink(post),
+                                GenerateReportActionButtonLink(post),
+                            '</ul>',
+                        '</div>');
 
-        if (ageInDays > 1) {
-            outputString = " days ago";
-        }
-        else {
-            outputString = " day ago";
-        }
+    return actionButtonHtml.join('');
+}
 
-        return ageInDays + outputString;
-    }
+function GenerateDeleteActionButtonLink(post) {
+    //Returns a string of the Delete Post Action Button HTML as long as user is admin or the owner of the post. 
+    var isCommentBool = IsComment(post);
 
-    if (ageInYears >= 1) {
-
-        if (ageInYears > 1) {
-            outputString = " years ago";
-        }
-        else {
-            outputString = " year ago";
-        }
-
-        return ageInYears + outputString;
+    if (post.user.id === RetrieveCurrentUserId() || IsCurrentUserAdmin() === "True") {
+        return '<li><a class="dropdown-item delete-post-link" post-id="' + post.id +'" is-comment="' + isCommentBool +'">Delete Post</a></li>';
     }
 }
 
-function RoundNumber(number) {
-    //Returns rounded number of parameter without excess 
-    return Math.round(number);
+function GenerateHideActionButtonLink(post) {
+    //Returns a string of the Hide Post Action Button HTML as long as user is admin or the owner of the post. 
+    var isCommentBool = IsComment(post);
+    if (post.user.id === RetrieveCurrentUserId() || IsCurrentUserAdmin() === "True") {
+        return '<li><a class="dropdown-item hide-post-link" post-id="' + post.id + '" is-comment="' + isCommentBool + '">Hide Post</a></li>';
+    }
 }
+
+function GenerateReportActionButtonLink(post) {
+    //Returns a string of the Report Post Action Button HTML as long as user is logged in to site. 
+    var isCommentBool = IsComment(post);
+    if (CheckUserSessionIsActive() === "True") {
+            return '<li><a class="dropdown-item report-post-link" post-id="' + post.id + '" is-comment="' + isCommentBool + '">Report Post</a></li>';
+    }
+}
+
+function IsComment(post) {
+    //Returns bool whether the supplied post is a comment or a primary post. 
+    if (post.parentPostId === null) { 
+        return false;
+    }
+    return true;
+}
+
+function LoadCommentsRedesign(id, uuid) {
+    //Loads comments for post using bootstrap redesign. Takes the post-id & uuid to determine which comment section to load
+    //Called by Hide Comments js script. 
+    var commentHtml = [];
+    var currentDate = spacetime.now();
+
+    RetrievePostComments(id).then(function (data) {
+        for (var i = 0; i < data.length; i++) {
+
+            var postCreationDate = spacetime(data[i].creationDate);
+            var postDateDifferenceInSeconds = postCreationDate.diff(currentDate, 'second');
+
+            commentHtml.push('<li comment-delete-id="', data[i].id ,'">',
+                '<div>',
+                    '<div class="row align-items-center">',
+                        '<div class="col-1"></div>',
+                        '<div class="col-1 px-0">',
+                            '<div class="row align">',
+                                '<img class="img-fluid col-6 m-auto" src="/ProfilePictures/', data[i].user.profilePicturePath, '" />', 
+                            '</div>',
+                        '</div>',
+                        '<div class="col-auto border-primary border-start">',
+                            '<a class="profile-link ms-4 h6 text-decoration-none" role="button" userId="', data[i].user.id, '">', data[i].user.displayName, '</a>',
+                        '</div>',
+                        '<div class="col-auto">',
+                            '<a class="text-decoration-none ms-2 h6">', "-", '</a>',
+                        '</div>',
+                        '<div class="col-1">',
+                            '<a class="text-decoration-none ms-2 h6">', GetTimeShortHandString(postDateDifferenceInSeconds), '</a>',
+                        '</div>',
+                        '<div class="col-4"></div>',
+                        '<div class="col-auto">',
+                            GeneratePostActionButton(data[i]),
+                        '</div>',
+                    '</div>',
+                    '<div class="row align-items-center">',
+                        '<div class="col-2"></div>',
+                        '<div class="col-6 align-middle ms-4 p-2 border-primary border-bottom">', data[i].summary, '</div>',
+                    '</div>',
+                    GenerateSocialLikeSectionRedesign(data[i]),
+                    '<hr/>',
+                '</div>',
+                '</li>');
+
+            var commentListElement = $("ul[unique-comment-list$=" + uuid + "]");
+
+            commentListElement.empty();
+            commentListElement.html(commentHtml.join(''));
+        }
+    });
+}
+function GenerateSocialLikeSectionRedesign(post) {
+    //Takes the user post & generates the like section html. Determines Initial Like Icon states using value returned in postDto object
+    var likeSectionHtml = [];
+
+    var likeSrcImage = (post.userLikedPost ? "/images/facebook-like-filled.png" : "/images/facebook-like.png");
+    var dislikeSrcImage = (post.userDislikedPost ? "/images/dislike-filled.png" : "/images/dislike.png");
+
+    likeSectionHtml.push('<div class="row mt-2">',
+        '<div class="col-5"></div>',
+        '<div class="col-1">',
+            '<div class="row">',
+                '<div class="col-auto me-2" like-counter-post-id="', post.id, '">', post.likeCount ,'</div>',
+                '<div class="col-4">',
+                    '<img class="post-like img-fluid" role="button" post-id="', post.id,'" src="', likeSrcImage , '" />',
+                '</div>',
+            '</div>',
+        '</div>',
+        '<div class="col-1">',
+            '<div class="row">',
+                '<div class="col-auto me-2" dislike-counter-post-id="', post.id,'">', post.dislikeCount ,'</div>',
+                '<div class="col-4">',
+                    '<img class="post-dislike img-fluid" role="button" post-id="', post.id,'" src="', dislikeSrcImage , '" />',
+                '</div>',
+            '</div>',
+        '</div>',
+    '</div>');
+
+    return likeSectionHtml.join('');
+}
+
+function InsertCommentTextboxRedesignHtml(postId, uuid) {
+//Tries to insert textbox below comment section. Checks if user is logged in & returns the textbox html if logged in.
+    var Html = [];
+    var isLoggedIn = CheckUserSessionIsActive();
+
+    if (isLoggedIn === 'True') {
+        Html.push('<div class="row mb-2">',
+            '<div class="col-2"></div>',
+            '<div class="col-5">',
+                '<div class="summernote-comments" post-id="', postId, '" unique-comment-identifier="', uuid  ,'">',
+                '</div>',
+            '</div>',
+            '<button class="btn-dark comment-send-btn col-1" unique-identifier="', uuid ,'">Reply</button>',
+            '</div>', '<span unique-error-identifier="', uuid, '" style="display: none; color: red">Error Submitting Post.....</span>');
+    }
+    else {
+        Html.push('');
+    }
+
+    return Html.join('');
+}
+
 

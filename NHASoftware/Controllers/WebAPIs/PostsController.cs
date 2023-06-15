@@ -31,7 +31,11 @@ namespace NHASoftware.Controllers.WebAPIs
             this._logger = logger;
         }
 
-        // GET: api/Posts
+        /// <summary>
+        /// GET: api/Post
+        /// calls the PostRepository and gets all social media posts in DB. DOES NOT INCLUDE DELETE POST. Seperate endpoint for deleted post. 
+        /// </summary>
+        /// <returns>IEnumerable of all posts.</returns>
         [HttpGet]
         public async Task<IEnumerable<PostDTO>> GetPosts()
         {
@@ -40,8 +44,21 @@ namespace NHASoftware.Controllers.WebAPIs
             return await PopulatePostDTOLikeDetails(postsDtos);
         }
 
+        /// <summary>
+        /// Gets all social posts for supplied userId. Populates the PostDTO like details. 
+        /// </summary>
+        /// <param name="userId">Users Identity Id you want posts for</param>
+        /// <returns>postsDto IEnumerable </returns>
+        [HttpGet("GetSocialPostForUserId/{userId}")]
+        public async Task<IEnumerable<PostDTO>> GetAllPostForUserId(string userId)
+        {
+            var posts = await _unitOfWork.PostRepository.GetUsersSocialPostsAsync(userId);
+            var postsDtos = posts.Select((_mapper.Map<Post, PostDTO>)).ToList();
+            return await PopulatePostDTOLikeDetails(postsDtos);
+        }
+
         // GET: api/Posts/5
-        [HttpGet("{id}")]
+        [HttpGet("GetSocialPosts/{id}")]
         public async Task<ActionResult<Post>> GetPost(int? id)
         {
             var post = await _unitOfWork.PostRepository.GetByIdAsync(id);
@@ -58,7 +75,7 @@ namespace NHASoftware.Controllers.WebAPIs
         public async Task<IEnumerable<PostDTO>> FindChildrenPosts(int? id)
         {
             var posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
-            var childrenPosts = posts.Where(p => p.ParentPostId == id).ToList();
+            var childrenPosts = posts.Where(p => p.ParentPostId == id && p.IsHiddenFromUserProfile == false).ToList();
 
             var postsDtos = childrenPosts.Select((_mapper.Map<Post, PostDTO>)).ToList();
             return await PopulatePostDTOLikeDetails(postsDtos);
@@ -71,6 +88,11 @@ namespace NHASoftware.Controllers.WebAPIs
             return posts.Select((_mapper.Map<Post, PostDTO>)).ToList();
         } 
 
+        /// <summary>
+        /// Goes through the entire list of post & repopulates the postDtos with like counters. 
+        /// </summary>
+        /// <param name="postDtos">List of postsDto objects.</param>
+        /// <returns>IEnumerable list of postDtos with the like counters populated. </returns>
         private async Task<IEnumerable<PostDTO>> PopulatePostDTOLikeDetails(List<PostDTO> postDtos)
         {
             List<PostDTO> posts = new List<PostDTO>();
@@ -88,7 +110,7 @@ namespace NHASoftware.Controllers.WebAPIs
                     LikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id && !p.IsDislike).Count(),
                     ParentPostId = dto.ParentPostId,
                     ParentPost = dto.ParentPost,
-                    Summary = dto.Summary
+                    Summary = dto.Summary,
                 });
             }
             return posts.AsEnumerable();
@@ -168,7 +190,11 @@ namespace NHASoftware.Controllers.WebAPIs
             return result > 0 ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
         }
 
-        // DELETE: api/Posts/5ARM
+        /// <summary>
+        /// Used to set the isDeletedFlag on post object. Flag is being used to avoid hassles with EF self referencing table. 
+        /// </summary>
+        /// <param name="id">Id of the post to delete</param>
+        /// <returns>Returns jsonresult with success value. </returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePost(int? id)
         {
@@ -179,10 +205,57 @@ namespace NHASoftware.Controllers.WebAPIs
                 return NotFound();
             }
 
-            _unitOfWork.PostRepository.Remove(post);
+            post.IsDeletedFlag = true;
+            _unitOfWork.PostRepository.Update(post);
             var result = await _unitOfWork.CompleteAsync();
 
-            return result > 0 ? NoContent() : BadRequest();
+            return result > 0 ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
+        }
+
+        /// <summary>
+        /// Used to set the isDeletedFlag on post object. Flag is being used to avoid hassles with EF self referencing table. 
+        /// </summary>
+        /// <param name="id">Id of the post to delete</param>
+        /// <returns>Returns jsonresult with success value. </returns>
+        [HttpDelete("Hide/{id}")]
+        public async Task<IActionResult> HidePost(int? id)
+        {
+            var post = await _unitOfWork.PostRepository.GetByIdAsync(id);
+
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            post.IsHiddenFromUserProfile = true;
+            _unitOfWork.PostRepository.Update(post);
+            var result = await _unitOfWork.CompleteAsync();
+
+            return result > 0 ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
+        }
+
+
+
+        /// <summary>
+        /// Reactivates social media post. Changes the isDeletedFlag of object in db. 
+        /// </summary>
+        /// <param name="id">id of the post the developer wants reactivated. </param>
+        /// <returns></returns>
+        [HttpDelete("Reactivate/{id}")]
+        public async Task<IActionResult> ReactivatePost(int? id)
+        {
+            var post = await _unitOfWork.PostRepository.GetByIdAsync(id);
+
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            post.IsDeletedFlag = false;
+            _unitOfWork.PostRepository.Update(post);
+            var result = await _unitOfWork.CompleteAsync();
+
+            return result > 0 ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
         }
 
         private bool PostExists(int? id)

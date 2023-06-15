@@ -1,8 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using NHASoftware.Entities.Identity
+@using NHASoftware.Services.AccessWarden
 @using NHASoftware.Services.FriendSystem
-@inject UserManager<ApplicationUser> userManager
+@inject UserManager<ApplicationUser> UserManager
 @inject IFriendSystem FriendSystem
+@inject IWarden Warden
+@inject SignInManager<ApplicationUser> SignInManager;
 
 <!DOCTYPE html>
 <html lang="en">
@@ -19,16 +22,16 @@
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet" asp-append-version="true">
 
 
-    @*Jquery & bootstrap JS scripts*@
+    <!--Jquery & bootstrap JS scripts!-->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     
-    @*Customized JS Scripts (Ours)*@
+    <!--Customized JS Scripts (Ours)!-->
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/Scripts/Shared/common.js"></script>
     <script src="~/Scripts/Actionbar/Actionbar.js"></script>
     
-    @*External JS Packages*@
+    <!--External JS Packages!-->
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.js"></script>
     <script type="text/javascript" src='https://unpkg.com/spacetime'></script>
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
@@ -39,12 +42,16 @@
 </head>
 <body>
 <header>
+    <!--Navigation Bar-->
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
         <div class="container-fluid">
-                
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                <img src="@Url.Content("~/Images/BitcoinPhoto.jpg")" class="rounded home-image-300" height="50px" width="100px" />
-            </a>
+            
+            <div class="row">
+                <a class="col-6" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="@Url.Content("~/Images/BitcoinPhoto.jpg")" class="rounded img-fluid"/>
+                </a>
+            </div>
+
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
@@ -56,17 +63,13 @@
 
                     <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
 
-                    @if (User.IsInRole("admin"))
+                    @if (Warden.IsAdmin(User))
                     {
-                            @*<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="TaskFrequencies" asp-action="Index">Task Frequency</a></li>*@
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a></li>
-
                     }
                     <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
                     <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
-                    @*<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="TaskItems" asp-action="Index">Tasks Items</a></li>*@
                     <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
-                    @*<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Subscriptions" asp-action="Index">Subscriptions</a></li>*@
 
 
                 </ul>
@@ -75,50 +78,80 @@
         </div>
     </nav>
 </header>
+
 @{
-    var requests = FriendSystem.GetPendingFriendRequests(userManager.GetUserId(User));
+    //Returns IEnumerable list of all pending FriendRequestDTOs
+    var requests = FriendSystem.GetPendingFriendRequests(UserManager.GetUserId(User));
 }
 
-<div class="Top-Action-Bar">
-    <div id="FriendRequestModalBtn" class="actionbar-action-item">
-        <div class="friend-request-popup-icon-holder">
-            <img src="~/Images/Bell_Icon.png" class="actionbar-icon-1 friend-request-popup-btn"/>
-        </div>
-        <div class="friend-request-popup">
-            <div id="friend-request-popup-modal" class="friend-request-popup-modal">
-                <h3 class="border-bottom">Friend Requests</h3>
-                @foreach (var item in @requests)
-                {
-                    <div class="border-bottom">
-                        <img src="~/ProfilePictures/@item.SenderUser.ProfilePicturePath" class="friend-request-icon"/>
-                            <p><a href="~/Users/GetProfiles?userId=@item.SenderUser.Id">@item.SenderUser.DisplayName</a> wants to be your friend!</p>
-                        <button class="accept-friend-request-btn btn-dark" request-id="@item.Id">Accept</button>
-                        <button class="decline-friend-request-btn btn-dark" request-id="@item.Id" >Decline</button>
+<!--Secondary Action Bar -->
+<div class="container-fluid">
+    <div class="row align-items-center bg-primary">
+        <div class="col">
+            <button type="button" class="rounded-circle btn btn-secondary m-1" data-bs-toggle="modal" data-bs-target="#friendRequestModal">
+                <div class="col-auto p-0 position-relative">
+                    <span id="FriendRequestCounter" class="text-danger bg-danger position-absolute bottom-25 start-75 rounded-circle h4 text-white ps-2 pe-2">@requests.Count()</span>
+                    <span><img src="~/Images/Bell_Icon.png" class="img-fluid"/></span>
+                </div>
+            </button>
+            <!--Friend Requests Modal-->
+            <div class="modal fade" id="friendRequestModal" tabindex="-1" role="dialog" aria-labelledby="friendModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header border-bottom">
+                            <h5 class="modal-title" id="friendModalLabel">Friend Requests</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            @foreach (var item in @requests)
+                            {
+                                <div class="row border-bottom p-2" friend-request-id="@item.Id">
+                                    <div class="col-2">
+                                        <img src="~/ProfilePictures/@item.SenderUser.ProfilePicturePath" class="img-fluid"/>
+                                    </div>
+                                    <p class="col-auto"><a href="~/Users/GetProfiles?userId=@item.SenderUser.Id">@item.SenderUser.DisplayName</a> wants to be your friend!</p>
+                                    <div class="col-2">
+                                        <button class="accept-friend-request-btn btn-dark col-auto" request-id="@item.Id">Accept</button>
+                                        <button class="decline-friend-request-btn btn-dark col-auto" request-id="@item.Id">Decline</button>
+                                    </div>
+                                </div>
+
+                            }
+                            @if (!requests.Any())
+                            {
+                                <div>
+                                    No more friend requests! Go add more people! :)
+                                </div>
+                            }
+                        </div>
                     </div>
-                }
-                @if (!requests.Any())
-                {
-                    <div>
-                        No more friend requests! Go add more people! :)
-                    </div>
-                }
+                </div>
             </div>
         </div>
+        <div class="col"></div>
     </div>
-    </div>
-    <div class="container" id="MainPageContentContainer" userId="@userManager.GetUserId(User)">
-        <main role="main" class="pb-3">
+</div>
 
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var userIsAdmin = false;
+
+    if (currentUser != null)
+    {
+        userIsAdmin = await UserManager.IsInRoleAsync(currentUser, "Admin");
+    }
+}
+
+<!-- Main body Content / Contains current user's id for common.js use -->
+    <div class="container-fluid" id="MainPageContentContainer" userId="@UserManager.GetUserId(User)" user-session-active="@SignInManager.IsSignedIn(User).ToString()" admin-user="@userIsAdmin.ToString()">
+        <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-@*<footer class="border-top footer">
-    <div class="">
-        &copy; 2021 - NHASoftware - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
-</footer>*@
-
+<!--JS scripts-->
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

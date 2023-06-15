@@ -8,14 +8,15 @@
     });
 
     //Called whenever user clicks accept friend request btn.
-    $('.friend-request-popup-modal').on('click', '.accept-friend-request-btn', function (e) {
+    $('#friendRequestModal').on('click', '.accept-friend-request-btn', function (e) {
         var SendButton = $(e.target);
         var requestId = SendButton.attr("request-id");
 
         $.get("/api/friend/acceptfriendrequest/" + requestId, function (data) {
             if (data.success) {
                 console.log("Friend Request Accepted successfully");
-                RemoveFriendRequestFromModal(SendButton);
+                RemoveFriendRequestFromModal(requestId);
+                DecrementFriendRequestCounter();
             }
             else {
                 console.log("Friend Request Failed WAS NOT ACCEPTED !!!");
@@ -24,14 +25,15 @@
     });
 
     //Called whenever user clicks decline friend request btn.
-    $('.friend-request-popup-modal').on('click', '.decline-friend-request-btn', function (e) {
+    $('#friendRequestModal').on('click', '.decline-friend-request-btn', function (e) {
         var SendButton = $(e.target);
         var requestId = SendButton.attr("request-id");
 
         $.get("/api/friend/declinefriendrequest/" + requestId, function (data) {
             if (data.success) {
                 console.log("Friend Request Declined successfully");
-                RemoveFriendRequestFromModal(SendButton);
+                RemoveFriendRequestFromModal(requestId);
+                DecrementFriendRequestCounter();
             }
             else {
                 console.log("Friend Request Decline Failed !!!");
@@ -49,18 +51,20 @@
     GetPendingFriendRequests();
 });
 
-function RemoveFriendRequestFromModal(requestBtn) {
-    var requestDiv = requestBtn.parent();
-    requestDiv.remove();
-    
-    var requestModal = $('.friend-request-popup-modal');
-    console.log(requestModal.children().length);
+function RemoveFriendRequestFromModal(requestId) {
 
-    if (requestModal.children().length > 1) {
+    var friendRequestDivSection = $("div[friend-request-id$=" + requestId + "]");
+    friendRequestDivSection.remove();
+    
+    console.log(friendRequestDivSection.children().length);
+
+    var friendRequestModalBody = $('.modal-body');
+
+    if (friendRequestModalBody.children().length > 1) {
 
     }
     else {
-        requestModal.append('<div>No more friend requests! Go add more people! :)</div>');
+        friendRequestModalBody.append('<div>No more friend requests! Go add more people! :)</div>');
     }
 
 }
@@ -73,3 +77,7 @@ const GetPendingFriendRequests = async () => {
     const myJson = await response.json(); //extract JSON from the http response
 }
 
+function DecrementFriendRequestCounter() {
+    var requestCounter = $("#FriendRequestCounter");
+    requestCounter.text(requestCounter.text() - 1);
+}
