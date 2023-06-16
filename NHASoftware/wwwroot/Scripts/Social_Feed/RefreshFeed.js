@@ -62,6 +62,49 @@ function LoadPostComments(id, uuid) {
     });
 }
 
+function AddCommentDynamically(uuid, data) {
+    var commentHtml = [];
+
+    var currentDate = spacetime.now();
+    var postCreationDate = spacetime(data.creationDate);
+    var postDateDifferenceInSeconds = postCreationDate.diff(currentDate, 'second');
+
+    commentHtml.push('<li comment-delete-id="', data.id ,'">',
+        '<div>',
+            '<div class="row align-items-center">',
+                '<div class="col-1"></div>',
+                '<div class="col-1 px-0">',
+                    '<div class="row align">',
+                        '<img class="img-fluid col-6 m-auto" src="/ProfilePictures/', data.user.profilePicturePath, '" />', 
+                    '</div>',
+                '</div>',
+                '<div class="col-auto border-primary border-start">',
+                    '<a class="profile-link ms-4 h6 text-decoration-none" role="button" userId="', data.user.id, '">', data.user.displayName, '</a>',
+                '</div>',
+                '<div class="col-auto">',
+                    '<a class="text-decoration-none ms-2 h6">', "-", '</a>',
+                '</div>',
+                '<div class="col-1">',
+                    '<a class="text-decoration-none ms-2 h6">', GetTimeShortHandString(postDateDifferenceInSeconds), '</a>',
+                '</div>',
+                '<div class="col-4"></div>',
+                '<div class="col-auto">',
+                    GeneratePostActionButton(data),
+                '</div>',
+            '</div>',
+            '<div class="row align-items-center">',
+                '<div class="col-2"></div>',
+                '<div class="col-6 align-middle ms-4 p-2 border-primary border-bottom">', data.summary, '</div>',
+            '</div>',
+            GenerateSocialLikeSectionRedesign(data),
+            '<hr/>',
+        '</div>',
+        '</li>');
+        
+        var commentListElement = $("ul[unique-comment-list$=" + uuid + "]");
+        commentListElement.append(commentHtml.join(''));
+}
+
 function TryInsertPostCommentTextbox(postId, uuid) {
 //Tries to insert textbox below comment section. Checks if user is logged in & returns the textbox html if logged in.
     var Html = [];

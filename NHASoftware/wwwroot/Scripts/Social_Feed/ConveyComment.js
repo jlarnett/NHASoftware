@@ -68,6 +68,7 @@
                     ////Clear summernote textbox after successful submission.
                     $(commentTextbox).summernote('reset');
                     $("span[unique-error-identifier$="+ uniquePostIdentifier +"]").hide("slow");
+                    AddCommentDynamically(uniquePostIdentifier, data.data);
                     console.log("Successfully submitted comment to DB.");
                 }
             },

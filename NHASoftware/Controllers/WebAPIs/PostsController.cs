@@ -98,22 +98,27 @@ namespace NHASoftware.Controllers.WebAPIs
             List<PostDTO> posts = new List<PostDTO>();
             foreach (var dto in postDtos)
             {
-                posts.Add(new PostDTO()
-                {
-                    CreationDate = dto.CreationDate,
-                    DislikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id && p.IsDislike).Count(),
-                    UserLikedPost = UserLikedPost(dto.Id),
-                    UserDislikedPost = UserDislikedPost(dto.Id),
-                    UserId = dto.UserId,
-                    User = dto.User,
-                    Id = dto.Id,
-                    LikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id && !p.IsDislike).Count(),
-                    ParentPostId = dto.ParentPostId,
-                    ParentPost = dto.ParentPost,
-                    Summary = dto.Summary,
-                });
+                posts.Add(PopulatePostDTO(dto));
             }
             return posts.AsEnumerable();
+        }
+
+        private PostDTO PopulatePostDTO(PostDTO dto)
+        {
+            return new PostDTO()
+            {
+                CreationDate = dto.CreationDate,
+                DislikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id && p.IsDislike).Count(),
+                UserLikedPost = UserLikedPost(dto.Id),
+                UserDislikedPost = UserDislikedPost(dto.Id),
+                UserId = dto.UserId,
+                User = dto.User,
+                Id = dto.Id,
+                LikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id && !p.IsDislike).Count(),
+                ParentPostId = dto.ParentPostId,
+                ParentPost = dto.ParentPost,
+                Summary = dto.Summary,
+            };
         }
 
         /// <summary>
@@ -176,18 +181,35 @@ namespace NHASoftware.Controllers.WebAPIs
         /// POST: api/Posts
         /// API Endpoint for creating new social media post.
         /// </summary>
-        /// <param name="post"></param>
-        /// <returns></returns>
+        /// <param name="postdto"></param>
+        /// <returns>Returns IActionResult with new post. </returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<JsonResult> PostPost([Bind("Summary,UserId,ParentPostId")] PostDTO postdto)
+        public async Task<IActionResult> PostPost([Bind("Summary,UserId,ParentPostId")] PostDTO postdto)
         {
             var post = _mapper.Map<PostDTO, Post>(postdto);
             post.CreationDate = DateTime.Now;
+
             _unitOfWork.PostRepository.Add(post);
             var result = await _unitOfWork.CompleteAsync();
-            return result > 0 ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
+
+            if (result > 0)
+            {
+                var newPost = _unitOfWork.PostRepository.Find(p =>
+                    p.Summary.Equals(postdto.Summary) && p.UserId.Equals(postdto.UserId)).FirstOrDefault();
+
+                //Populating the postDto
+                var newPostWithIncludes = await _unitOfWork.PostRepository.GetPostByIDWithIncludesAsync(newPost.Id.GetValueOrDefault());
+                var postDto = PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes));
+                _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", postDto);
+                return Ok(new { success = true, data = postDto });
+            }
+            else
+            {
+                _logger.Log(LogLevel.Debug, "system was unable to add postDto to DB.");
+                return BadRequest(new { success = false });
+            }
         }
 
         /// <summary>
@@ -199,9 +221,11 @@ namespace NHASoftware.Controllers.WebAPIs
         public async Task<IActionResult> DeletePost(int? id)
         {
             var post = await _unitOfWork.PostRepository.GetByIdAsync(id);
+            _logger.Log(LogLevel.Information,"attempted to execute - {0}, parameters - {1}", nameof(DeletePost), id);
 
             if (post == null)
             {
+                _logger.Log(LogLevel.Debug, "Failed to execute {0} post id not found", nameof(DeletePost));
                 return NotFound();
             }
 
@@ -209,7 +233,16 @@ namespace NHASoftware.Controllers.WebAPIs
             _unitOfWork.PostRepository.Update(post);
             var result = await _unitOfWork.CompleteAsync();
 
-            return result > 0 ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
+            if (result > 0)
+            {
+                _logger.Log(LogLevel.Information, "Post was deleted from DB successfully.");
+                return Ok(new { success = true });
+            }
+            else
+            {
+                _logger.Log(LogLevel.Debug, "error happened trying to delete post from DB. Bad Request");
+                return BadRequest(new { success = false });
+            }
         }
 
         /// <summary>

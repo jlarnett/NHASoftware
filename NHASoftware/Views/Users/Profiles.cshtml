@@ -5,7 +5,6 @@
 @model NHASoftware.Views.ViewModels.SocialVMs.ProfileVM
 @inject UserManager<ApplicationUser> userManager
 @inject IFriendSystem friendSystem
-@inject IUnitOfWork IUnitOfWork
 
 @{
     ViewData["Title"] = "User Profile";
@@ -124,9 +123,6 @@
 </div>
 <div>
     <div id="SocialWall">
-        @{
-            var usersPosts = await IUnitOfWork.PostRepository.GetUsersSocialPostsAsync(Model.User.Id);
-        }
         
         <div class="container-fluid">
             <p class="text-center h1 mt-3">User's Wall</p>

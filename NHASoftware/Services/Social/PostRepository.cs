@@ -27,6 +27,12 @@ namespace NHASoftware.Services.Social
                 .Where(p => p.IsDeletedFlag.Equals(false))
                 .ToListAsync();
 
+        public async Task<Post> GetPostByIDWithIncludesAsync(int postId)
+        {
+            return await _context.Posts.Include(p => p.User).Include(p => p.ParentPost)
+                .FirstOrDefaultAsync(p => p.Id.Equals(postId));
+        }
+
         /// <summary>
         /// Accesses the EF context & gets all social posts for specified users. 
         /// </summary>
