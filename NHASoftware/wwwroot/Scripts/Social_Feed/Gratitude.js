@@ -1,87 +1,6 @@
 ﻿$(document).ready(function () {
 
     //Fired whenever the like icon is clicked for post
-    $('#HomeContentFeed').on('click', '.post-like' ,function (e) {
-        var EventBtn = $(e.target);
-        var currentBtnImageSrc = EventBtn.attr("src");
-        var postId = EventBtn.attr("post-id");
-
-        var userSessionActive = CheckUserSessionIsActive();
-
-        if (userSessionActive === "False") {
-            console.log("User Login required to like social media posts & comments");
-        }
-
-        var userId = RetrieveCurrentUserId();
-
-        if (userSessionActive) {
-
-            if (currentBtnImageSrc.toLowerCase() === "/images/facebook-like.png") {
-
-                LikePost(userId, postId).then(function (data) {
-                    if (data.success === true) {
-                        EventBtn.attr("src", "/images/facebook-like-filled.png");
-                        IncrementLikeCounter(EventBtn);
-                    }
-                    else {
-                        console.log("Failed sending like to API.");
-                    }
-                });
-            }
-            else if (currentBtnImageSrc.toLowerCase() === "/images/facebook-like-filled.png") {
-                DeleteLike(userId, postId, false).then(function (data) {
-                    if (data.success === true) {
-                        EventBtn.attr("src", "/images/facebook-like.png");
-                        DecrementLikeCounter(EventBtn);
-                    }
-                    else {
-                        console.log("Failed to send DELETE like request to API");
-                    }
-                });
-            }
-        }
-    });
-
-    $('#HomeContentFeed').on('click', '.post-dislike' ,function (e) {
-
-        var EventBtn = $(e.target);
-        var currentBtnImageSrc = EventBtn.attr("src");
-
-        var postId = EventBtn.attr("post-id");
-        var userSessionActive = CheckUserSessionIsActive();
-        var userId = RetrieveCurrentUserId();
-
-        if (userSessionActive) {
-
-            if (currentBtnImageSrc.toLowerCase() === "/images/dislike.png") {
-                //SEND DISLIKE TO API
-                LikePost(userId, postId, true).then(function (data) {
-                    if (data.success === true) {
-                        EventBtn.attr("src", "/images/dislike-filled.png");
-                        IncrementLikeCounter(EventBtn);
-                    }
-                    else {
-                        console.log("Failed sending dislike to API.");
-                    }
-                });
-            }
-            else if (currentBtnImageSrc.toLowerCase() === "/images/dislike-filled.png") {
-                //SEND DELETE DISLIKE REQUEST TO API
-                DeleteLike(userId, postId, true).then(function (data) {
-                    if (data.success === true) {
-                        EventBtn.attr("src", "/images/dislike.png");
-                        DecrementLikeCounter(EventBtn);
-                    }
-                    else {
-                        console.log("Failed to send DELETE dislike request to API");
-                    }
-                });
-
-            }
-        }
-    });
-
-        //Fired whenever the like icon is clicked for post
     $('#ContentFeed').on('click', '.post-like' ,function (e) {
         var EventBtn = $(e.target);
         var currentBtnImageSrc = EventBtn.attr("src");
@@ -123,6 +42,7 @@
         }
     });
 
+    //Fired whenever the dislike icon is pressed on pages content feed. 
     $('#ContentFeed').on('click', '.post-dislike' ,function (e) {
 
         var EventBtn = $(e.target);
@@ -212,7 +132,6 @@
 
         counterElement.text(likeCount);
     }
-
 
     function IncrementLikeCounterRedesign(EventBtn) {
         //Increments the like counter for specified like button & all other with matching postIds for Redesign gratitude system

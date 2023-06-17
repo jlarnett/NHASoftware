@@ -221,7 +221,7 @@ namespace NHASoftware.Controllers.WebAPIs
         public async Task<IActionResult> DeletePost(int? id)
         {
             var post = await _unitOfWork.PostRepository.GetByIdAsync(id);
-            _logger.Log(LogLevel.Information,"attempted to execute - {0}, parameters - {1}", nameof(DeletePost), id);
+            _logger.Log(LogLevel.Information,"attempted to execute - {0}, parameters - {1}", nameof(DeletePost), HttpContext.Request.Body);
 
             if (post == null)
             {
@@ -240,16 +240,16 @@ namespace NHASoftware.Controllers.WebAPIs
             }
             else
             {
-                _logger.Log(LogLevel.Debug, "error happened trying to delete post from DB. Bad Request");
+                _logger.Log(LogLevel.Debug, "error happened trying to delete post from DB");
                 return BadRequest(new { success = false });
             }
         }
 
         /// <summary>
-        /// Used to set the isDeletedFlag on post object. Flag is being used to avoid hassles with EF self referencing table. 
+        /// Used to set the isHiddenFromUserProfile on post object. Flag is being used to avoid hassles with EF self referencing table. 
         /// </summary>
-        /// <param name="id">Id of the post to delete</param>
-        /// <returns>Returns jsonresult with success value. </returns>
+        /// <param name="id">Id of the post to hide</param>
+        /// <returns>IActionResult with success indicator whether post was successfully hidden or not. </returns>
         [HttpDelete("Hide/{id}")]
         public async Task<IActionResult> HidePost(int? id)
         {
@@ -264,7 +264,7 @@ namespace NHASoftware.Controllers.WebAPIs
             _unitOfWork.PostRepository.Update(post);
             var result = await _unitOfWork.CompleteAsync();
 
-            return result > 0 ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
+            return result > 0 ? Ok(new {success = true}) : BadRequest(new {success = false});
         }
 
 
@@ -273,7 +273,7 @@ namespace NHASoftware.Controllers.WebAPIs
         /// Reactivates social media post. Changes the isDeletedFlag of object in db. 
         /// </summary>
         /// <param name="id">id of the post the developer wants reactivated. </param>
-        /// <returns></returns>
+        /// <returns>IActionResult with success indicator whether post was successfully reactivated or not. </returns>
         [HttpDelete("Reactivate/{id}")]
         public async Task<IActionResult> ReactivatePost(int? id)
         {
@@ -288,7 +288,7 @@ namespace NHASoftware.Controllers.WebAPIs
             _unitOfWork.PostRepository.Update(post);
             var result = await _unitOfWork.CompleteAsync();
 
-            return result > 0 ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
+            return result > 0 ? Ok(new {success=true}) : BadRequest(new {success=false});
         }
 
         private bool PostExists(int? id)

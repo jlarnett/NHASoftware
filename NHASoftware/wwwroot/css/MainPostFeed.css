@@ -4,7 +4,6 @@
 /*Giant Header above Main Feed*/
 .feed-header {
     text-shadow: 5px 2px 3px black;
-    margin: auto;
     font-size: 4em;
 }
 
@@ -15,22 +14,11 @@
 
 .textbox-area {
     position: fixed;
-    top: 90%;
+    top: 92%;
 }
 
 #MainPostTextbox {
-    width: 40em;
-}
-
-/*.comments-header-row {
-    display: flex;
-    flex-direction: row;
-}*/
-
-/*Comment textbox area for send btn and textbox*/
-.comment-textbox-area {
-    display: flex;
-    flex-direction: row;
+    width: 45em;
 }
 
 /*Home Page Content Feed. Main Feed where posts are directly appended*/
@@ -38,9 +26,10 @@
     margin: auto;
     border-right: 2px solid black;
     border-left: 2px solid black;
-    width: 50%;
-    height: 39em;
+    width: 75%;
+    height: 50em;
     position: static;
+    padding: .5em;
     overflow-y: auto;
 }
 
@@ -79,114 +68,21 @@
 /***********************************************************************************
 ****************SCROLLBAR STYLING***************************************************************/
 
-
-
 #SubmitBtn {
-    height: 3.5em;
-    opacity: .5;
+    height: 5em;
+    opacity: 1;
 }
 
 /*Controls the Main post summernote textbox text color*/
 .note-editor.note-frame .note-editing-area .note-editable {
     color: #d7dbe1;
-    width: 50em;
+    width: 79.5em;
 }
 
 /*Controls the Main post summernote textbox text color*/
 .note-editable > p {
     color: #d7dbe1;
 }
-
-.MainFeedPostContainer {
-    margin: 50px 10px 50px 10px;
-    display: flex;
-    flex-direction: row;
-    border-bottom: 1px double black;
-    padding: 0 20px 50px 20px;
-}
-
-.Main-Post-User-Profile {
-    float: left;
-    margin: 0 1em 0 0;
-}
-
-.Main-Post-User-Profile-Picture {
-    border-radius: 50%;
-    width: 5em;
-    height: 5em;
-}
-
-.Post-Header-Item {
-    text-decoration: none;
-    font-size: 1.5em;
-    margin: 0 10px 0 0;
-    cursor: pointer;
-    color: #555555;
-}
-
-.Main-Post {
-    display: flex;
-    flex-direction: column;
-}
-
-.Main-Post-Top-Header {
-    display: flex;
-    flex-direction: row;
-}
-
-.Main-Post-Bottom-Actionbar {
-    display: flex;
-    flex-direction: row;
-}
-
-.Post-Like-Group {
-    display: flex;
-    flex-direction: row;
-    margin-right: 4em;
-    justify-content: center;
-    align-items: center;
-}
-
-.Post-Like-Icon {
-    height: 1.5em;
-    cursor: pointer;
-}
-
-.Like-Group-Item {
-    margin-right: .5em;
-}
-
-.Main-Post-Section {
-    margin: .5em 0em;
-}
-
-/*Home page post's comment styles*/
-
-/*Home Page post's comment profile picture styling*/
-.comment-container {
-    display: flex;
-    flex-direction: row;
-    margin: 1.5em 0em;
-}
-
-.comment-profile-picture {
-    margin-right: 1em;
-}
-
-.comment-profile-picture-item {
-    width: 40px;
-    height: 40px;
-    border-radius: 100%;
-}
-
-.hide-comments {
-    cursor: pointer;
-}
-
-li {
-    list-style: none;
-}
-
 
 /*Helps disable summernote drag & drop image problem*/
 .note-editor .note-dropzone {

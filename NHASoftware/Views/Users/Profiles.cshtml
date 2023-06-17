@@ -1,7 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using NHASoftware.Entities.Identity
 @using NHASoftware.Services.FriendSystem
-@using NHASoftware.Services.RepositoryPatternFoundationals
 @model NHASoftware.Views.ViewModels.SocialVMs.ProfileVM
 @inject UserManager<ApplicationUser> userManager
 @inject IFriendSystem friendSystem
@@ -135,12 +134,7 @@
 
 @section Scripts {
     <script src="~/Scripts/FriendSystem/AddFriend.js"></script>
-    <script src="~/Scripts/Social_Feed/HideComments.js"></script>
-    <script src="~/Scripts/Social_Feed/RefreshFeed.js"></script>
-    <script src="~/Scripts/Social_Feed/RebuildMainFeedTextboxes.js"></script>
-    <script src="~/Scripts/Social_Feed/ProfileRedirectLink.js"></script>
     <script src="~/Scripts/Social_Feed/Gratitude.js"></script>
-    <script src="~/Scripts/Social_Feed/ConveyComment.js"></script>
     <script src="~/Scripts/Social_Feed/ContentFeed.js"></script>
 
 
