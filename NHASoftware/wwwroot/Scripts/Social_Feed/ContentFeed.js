@@ -154,15 +154,12 @@
     });
 
     var profileUserId = $('#ContentFeed').attr("profile-user-id");
-
-    console.log("The profile user id - " + profileUserId);
-
     if (profileUserId !== undefined) {
         console.log("Attempting to load user profile post.");
         LoadFeedWithProfilePost(profileUserId);
     }
 
-});2
+});
 
 function RemovePostFromContentFeed(postId) {
     //Removes the post from the content feed'Ss HTML. This doesn't affect the BD just HTML. 
@@ -334,7 +331,7 @@ function GeneratePostRedesign(post) {
                 '</div>',
             '</div>',
             '<!--Posts summary section. Text content is posted here-->',
-            '<div class="row">',
+            '<div class="row text-break">',
                 '<div class="col-sm-1 px-0"></div>',
                 '<p class="text-black col text-white border-bottom border-start border-primary">', post.summary, '</p>',
             '</div>',

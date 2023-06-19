@@ -14,12 +14,10 @@
 
 .textbox-area {
     position: fixed;
-    top: 92%;
+    top: 91.5%;
+    left: 13%
 }
 
-#MainPostTextbox {
-    width: 45em;
-}
 
 /*Home Page Content Feed. Main Feed where posts are directly appended*/
 #HomeContentFeed {
@@ -27,7 +25,7 @@
     border-right: 2px solid black;
     border-left: 2px solid black;
     width: 75%;
-    height: 50em;
+    height: 45em;
     position: static;
     padding: .5em;
     overflow-y: auto;
@@ -76,7 +74,7 @@
 /*Controls the Main post summernote textbox text color*/
 .note-editor.note-frame .note-editing-area .note-editable {
     color: #d7dbe1;
-    width: 79.5em;
+    width: 80.3em;
 }
 
 /*Controls the Main post summernote textbox text color*/
