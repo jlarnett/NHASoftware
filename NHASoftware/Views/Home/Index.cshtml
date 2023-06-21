@@ -11,17 +11,19 @@
     <link rel="stylesheet" href="~/css/MainPostFeed.css">
 </head>
 
-<h1 class="h1 text-center feed-header">The Algorithm Page</h1>
+<h1 class="text-center feed-header m-auto fs-2">HRP Feed</h1>
 
 <div class="HomeContainer">
-    <div id="HomeContentFeed" userId="@_UserManager.GetUserId(User)" >
+    <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
+        <div id="ContentFeed">
+        </div>
         @if (_SignInManager.IsSignedIn(User))
         {
             <div class="textbox-area">
                 <div id="MainPostTextboxContainer">
                     @Html.AntiForgeryToken()
                     <div id="MainPostTextbox"></div>
-                    <button id="SubmitBtn" class="btn-dark">Convey Message</button>
+                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="btn-dark">Convey Message</button>
                 </div>
                 <span id="MainPostTextboxValidationMessage" style="display: none; color: red">Error Submitting Post.....</span>
             </div>
@@ -31,17 +33,12 @@
 </div>
 
 @section Scripts {
-    <script src="~/Scripts/Social_Feed/RebuildMainFeedTextboxes.js"></script>
-    <script src="~/Scripts/Social_Feed/ConveyMainPost.js"></script>
-    <script src="~/Scripts/Social_Feed/HideComments.js"></script>
-    <script src="~/Scripts/Social_Feed/RefreshFeed.js"></script>
-    <script src="~/Scripts/Social_Feed/ProfileRedirectLink.js"></script>
-    <script src="~/Scripts/Social_Feed/ConveyComment.js"></script>
     <script src="~/Scripts/Social_Feed/Gratitude.js"></script>
+    <script src="~/Scripts/Social_Feed/ContentFeed.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
-            OptimizedFeedLoad();
+            OptimizedMainContentFeedLoad();
         });
     </script>
 }

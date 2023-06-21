@@ -30,7 +30,6 @@ namespace NHASoftware.Controllers
             var profileVM = new ProfileVM()
             {
                 User = user,
-                //UserPosts = await new PostsController(_mapper, _unitOfWork).GetPosts()
             };
 
             return user != null ? View("Profiles", profileVM) : NotFound();

@@ -5,13 +5,13 @@
     padding: 5px;
 }
 .actionbar-icon-1 {
-    height: 2.0em;
-    width: 2.0em;
+    height: 1.0em;
+    width: 1.0em;
 }
 
 .Top-Action-Bar {
     background-color: black;
-    height: 2.5rem;
+    height: 1rem;
     display: flex;
     flex-direction: row;
     align-content: end;
