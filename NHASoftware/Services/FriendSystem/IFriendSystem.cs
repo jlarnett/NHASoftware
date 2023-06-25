@@ -12,5 +12,7 @@ namespace NHASoftware.Services.FriendSystem
         bool IsFriends(string senderId, string recipientId);
         Task<bool> SendFriendRequestAsync(FriendRequestDTO friendRequest);
         int GetFriendCount(string userId);
+        Task<bool> RemoveFriendsAsync(FriendRequestDTO friendRequestDto);
+        Task<bool> CancelFriendRequestAsync(FriendRequestDTO friendRequestDto);
     }
 }

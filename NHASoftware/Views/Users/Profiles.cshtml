@@ -42,82 +42,24 @@
         </div>
     </div>
     <div class="row">
-        <div class="text-md-center border border-primary col-sm-4">
-            <h1 class="text-md-center h1">@Model.User.DisplayName</h1>
+        <div class="border border-3 border-danger col-md-4 align-self-center">
+            <h2 class="text-center display-2">@Model.User.DisplayName</h2>
         </div>
+        
+        @{
+            string isFriends = friendSystem.IsFriends(@Model.User.Id, @userManager.GetUserId(User)).ToString();
+            string friendRequestSent = friendSystem.FriendRequestSent(@userManager.GetUserId(User), @Model.User.Id).ToString();
+        }
 
-        @if (friendSystem.FriendRequestSent(@userManager.GetUserId(User), @Model.User.Id))
-        {
+        <div class="dropdown col-md-4 p-1 align-self-center" id="FriendRequestButton" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)" isFriends="@isFriends" friendRequestSent="@friendRequestSent">
             @Html.AntiForgeryToken()
-
-            <div class="dropdown col-sm-4">
-                <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="~/Images/CheckMarkIcon.png" class=""/>
-                    Friend Request Sent
-                </a>
-
-                <ul class="dropdown-menu" aria-labelledby="FriendDropdown">
-                    <li>
-                        <a id="RemoveFriendBtn" class="dropdown-item" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">Remove Friend</a>
-                    </li>
-                    <li>
-                        <a id="BlockFriendBtn" class="dropdown-item" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">Block Ex-Friend</a>
-                    </li>
-                </ul>
-            </div>
-        }
-        else if (friendSystem.IsFriends(@Model.User.Id, @userManager.GetUserId(User)))
-        {
-            @Html.AntiForgeryToken()
-
-            <div class="dropdown col-sm-4">
-                <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="~/Images/CheckMarkIcon.png" class=""/>
-                    Friends
-                </a>
-
-                <ul class="dropdown-menu" aria-labelledby="FriendDropdown">
-                    <li>
-                        <a id="RemoveFriendBtn" class="dropdown-item remove-friend" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">
-                            Remove Friend
-                        </a>
-                    </li>
-                    <li>
-                        <a id="BlockFriendBtn" class="dropdown-item block-friend" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">
-                            Block Ex-Friend
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        }
-        else if (!User.Identity.IsAuthenticated && Context.Request.HttpContext.User != null)
-        {
-
-        }
-        else
-        {
-            @Html.AntiForgeryToken()
-
-            <div class="dropdown col-sm-4">
-                <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    Send Friend Request
-                </a>
-
-                <ul class="dropdown-menu" aria-labelledby="FriendDropdown">
-                    <li>
-                        <a id="AddFriendBtn" class="dropdown-item" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">
-                            <img src="~/Images/plus_icon.png" class=""/>
-                            Add Friend!
-                        </a>
-                    </li>
-                    <li>
-                        <a id="BlockFriendBtn" class="dropdown-item" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)">
-                            Block Ex-Friend
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        }
+            <a class="btn btn-primary dropdown-toggle col-6 my-auto" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <img id="FriendRequestIcon" src="~/Images/CheckMarkIcon.png" alt="FriendCheckMarkIcon" class=" col img-fluid"/>
+                <div id="FriendDropdownText" class="d-inline-block">TEST VALUE</div>
+            </a>
+            <ul id="FriendRequestDropdownLinkContainer" class="dropdown-menu" aria-labelledby="FriendDropdown">
+            </ul>
+        </div>
     </div>
 </div>
 <div>
@@ -133,12 +75,8 @@
 </div>
 
 @section Scripts {
-    <script src="~/Scripts/FriendSystem/AddFriend.js"></script>
     <script src="~/Scripts/Social_Feed/Gratitude.js"></script>
     <script src="~/Scripts/Social_Feed/ContentFeed.js"></script>
+    <script src="~/Scripts/FriendSystem/FriendRequestButton.js"></script>
 
-
-    <script type="text/javascript">
-        RebuildFeedTextboxes();
-    </script>
 }

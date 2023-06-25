@@ -158,5 +158,52 @@ namespace NHASoftware.Services.FriendSystem
         {
             return _unitOfWork.FriendRepository.Count(f => f.FriendOneId.Equals(userId) || f.FriendTwoId.Equals(userId));
         }
+
+        /// <summary>
+        /// Removes pair of friends from DB. 
+        /// </summary>
+        /// <param name="friendRequestDto">Friend Request Dto that contains sender & recipient ids. </param>
+        /// <returns>Bool whether the friendship was able to be removed or not. </returns>
+        public async Task<bool> RemoveFriendsAsync(FriendRequestDTO friendRequestDto)
+        {
+            var friendRecords = _unitOfWork.FriendRepository.Find(f =>
+                (f.FriendOneId.Equals(friendRequestDto.RecipientUserId) &&
+                 f.FriendTwoId.Equals(friendRequestDto.SenderUserId) ||
+                 (f.FriendOneId.Equals(friendRequestDto.SenderUserId) &&
+                  f.FriendTwoId.Equals(friendRequestDto.RecipientUserId))));
+
+            var friendEntity = friendRecords.First();
+
+            if (friendEntity != null)
+            {
+                _unitOfWork.FriendRepository.Remove(friendRecords.FirstOrDefault());
+                var changes = await _unitOfWork.CompleteAsync();
+                return changes > 0;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Changes friend request status to canceled in DB. 
+        /// </summary>
+        /// <param name="friendRequestDto">Friend Request Dto that contains sender & recipient ids. </param>
+        /// <returns>Bool whether the friend request was canceled or not.  </returns>
+        public async Task<bool> CancelFriendRequestAsync(FriendRequestDTO friendRequestDto)
+        {
+            var friendRequest = _unitOfWork.FriendRequestRepository.Find(fq =>
+                fq.RecipientUserId.Equals(friendRequestDto.RecipientUserId) &&
+                fq.SenderUserId.Equals(friendRequestDto.SenderUserId) &&
+                fq.Status.Equals(FriendRequestStatuses.Inprogress)).FirstOrDefault();
+
+            if (friendRequest != null)
+            {
+                friendRequest.Status = FriendRequestStatuses.Canceled;
+                var changes = await _unitOfWork.CompleteAsync();
+                return changes > 0;
+            }
+
+            return false;
+        }
     }
 }

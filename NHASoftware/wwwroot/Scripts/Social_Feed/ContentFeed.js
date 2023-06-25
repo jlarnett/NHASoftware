@@ -159,6 +159,7 @@
         LoadFeedWithProfilePost(profileUserId);
     }
 
+    RebuildFeedTextboxes();
 });
 
 function RemovePostFromContentFeed(postId) {

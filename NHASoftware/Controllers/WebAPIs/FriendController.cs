@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.FriendSystem;
 using NHASoftware.Services.FriendSystem;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 
 namespace NHASoftware.Controllers.WebAPIs
 {
@@ -143,6 +137,36 @@ namespace NHASoftware.Controllers.WebAPIs
 
             return BadRequest();
         }
+
+        // DELETE: api/friend/RemoveFriendship
+        [HttpDelete("DeleteFriendship")]
+        public async Task<IActionResult> DeleteFriendship(FriendRequestDTO friendRequestDto)
+        {
+            var result = await _friendSystem.RemoveFriendsAsync(friendRequestDto);
+
+            if (result)
+            {
+                return Ok(new {success = true});
+            }
+
+            return BadRequest(new {success = false});
+        }
+
+        // DELETE: api/friend/CancelFriendRequest
+        [HttpPut("CancelFriendRequest")]
+        public async Task<IActionResult> CancelFriendRequest(FriendRequestDTO friendRequestDto)
+        {
+            var result = await _friendSystem.CancelFriendRequestAsync(friendRequestDto);
+
+            if (result)
+            {
+                return Ok(new {success = true});
+            }
+
+            return BadRequest(new {success = false});
+        }
+
+
 
         private bool FriendRequestExists(int id)
         {
