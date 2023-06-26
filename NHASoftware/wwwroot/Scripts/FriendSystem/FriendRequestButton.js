@@ -1,11 +1,14 @@
 ﻿$(document).ready(function () {
 
+    //Accesses the friend request variables needed for friend request button. 
     var isFriends = document.getElementById("FriendRequestButton").getAttribute("isFriends");
     var userSessionActive = CheckUserSessionIsActive();
     var friendRequestSent = document.getElementById("FriendRequestButton").getAttribute("friendRequestSent");
 
+    //Initialize the friend request button.
     InitializeButton(isFriends, friendRequestSent, userSessionActive);
 
+    //Friend Request Button click events. 
     $("#FriendRequestButton").on("click", ".add-friend", function (e) { 
         console.log("Trying to add friend........");
         AddFriend();
@@ -23,28 +26,24 @@
 });
 
 function InitializeButton(isFriends, friendRequestSent, userSessionActive) {
-    
+    //Initializes the friend request button. Called upon loading to determine starting.
     if (isFriends === "True") {
-        //Users are friends
-        console.log("Trying to initialize friend button - Friendly State");
         ChangeFriendRequestButtonToFriendlyState();
     }
     else if (isFriends !== "True" && friendRequestSent === "True") {
-        //Friend request is sent, but not accepted yet
-        console.log("Trying to initialize friend button - Friend Request Sent State");
         ChangeFriendRequestButtonToRequestedStatus();
     }
     else if (friendRequestSent !== "True" && userSessionActive === "True") {
-        //User is logged in, but friend request was NOT sent to user yet. 
-        console.log("Trying to initialize friend button - User Logged In & request not sent. ");
         ChangeFriendRequestButtonStartingState();
     }
     else {
-        //Hide Friend Request Button
+        var friendRequestButton = $('#FriendRequestButton');
+        friendRequestButton.hide('fast');
     }
 }
 
 function AddFriend() {
+    //Sends the Friend Request to Friend API
     var friendRequestDto = GetFriendRequestDtoFromButton();
 
     $.ajax({
@@ -57,17 +56,18 @@ function AddFriend() {
         success: function(data) {
             if (data.success) {
                 ChangeFriendRequestButtonToRequestedStatus();
-                console.log("Successsfully sent friendrequest");
+                console.log("Successsfully sent friend request to API");
             }
         },
         error: function (data) {
-            console.log("Failed send friend request");
+            console.log("Failed sending friend request to API");
         }
             
     });
 }
 
 function DeleteFriendship() {
+    //Calls the friend API & removes the associated pair of friends from DB. 
     var friendRequestDto = GetFriendRequestDtoFromButton();
 
     $.ajax({
@@ -80,17 +80,18 @@ function DeleteFriendship() {
         success: function(data) {
             if (data.success) {
                 ChangeFriendRequestButtonStartingState();
-                console.log("Successsfully deleted friendship :(");
+                console.log("Successsfully deleted friendship from DB :(");
             }
         },
         error: function (data) {
-            console.log("ERROR ERROR unable to remove friendship from DB");
+            console.log("Failed sending DELETE friendship request to API.");
         }
             
     });
 }
 
 function CancelFriendRequest() {
+    //Calls the friend API & cancels pending friend request. 
     var friendRequestDto = GetFriendRequestDtoFromButton();
 
     $.ajax({
@@ -103,72 +104,60 @@ function CancelFriendRequest() {
         success: function(data) {
             if (data.success) {
                 ChangeFriendRequestButtonStartingState();
-                console.log("Successsfully canceled friend request :(");
+                console.log("Successsfully canceled friend request :( from DB");
             }
         },
         error: function (data) {
-            console.log("ERROR ERROR unable to cancel friend request");
+            console.log("Failed sending cancel friend request to friend API");
         }
             
     });
 }
 
-//Sets the status of the Friend Request Button to 'Friends'. Handles all state specific changes
 function ChangeFriendRequestButtonToFriendlyState() {
-
+    //Sets the status of the Friend Request Button to 'Friends'. Handles all state specific changes
     ChangeFriendRequestIconToCheckmark();
     ShowFriendRequestButtonIcon();
-
-    
     ChangeFriendButtonText("Friends");
-
     ClearFriendRequestLinkContainer();
     AppendFriendRequestBlockLinkToLinkContainer();
     AppendFriendRequestRemoveLinkToLinkContainer();
 }
 
-//Sets the status of the Friend Request Button. Handles all state specific changes
 function ChangeFriendRequestButtonToRequestedStatus() {
-
+    //Sets the status of the Friend Request Button. Handles all state specific changes
     ChangeFriendRequestIconToClock();
-    //Hide Checkmark
     ShowFriendRequestButtonIcon();
-
-    //Change the dropdown main button text. 
     ChangeFriendButtonText("Friend Request Sent");
-
-    //Clear Action Links
     ClearFriendRequestLinkContainer();
     AppendFriendRequestCancelLinkToLinkContainer();
-
-    
 }
 
-//Initial Button State if the users are not friends, and the current user is logged into account. 
 function ChangeFriendRequestButtonStartingState() {
-    //Hide Checkmark
+    //Changes Button State to starting state. happens if the users are not friends, and the current user is logged into account. 
     HideFriendRequestButtonIcon();
-    //Change Button Text
     ChangeFriendButtonText("Send Friend Request");
-    //Clear Request Link Container
     ClearFriendRequestLinkContainer();
-    //Append action links
     AppendFriendRequestAddLinkToLinkContainer();
     AppendFriendRequestBlockLinkToLinkContainer();
 }
 
+
 function ChangeFriendButtonText(text) {
+   
     var friendButtonTextElement = $('#FriendDropdownText');
     friendButtonTextElement.text(text);
 }
 
 function ShowFriendRequestButtonIcon() {
+    //Shows the friend request button main icon.
     var iconElement = $('#FriendRequestIcon');
     iconElement.slideDown();
     iconElement.show();
 }
 
 function HideFriendRequestButtonIcon() {
+    //Hides the friend request button main icon.
     var iconElement = $('#FriendRequestIcon');
     iconElement.slideUp();
     iconElement.hide('slow');
@@ -184,8 +173,8 @@ function ChangeFriendRequestIconToCheckmark() {
     iconElement.attr("src", "/Images/CheckMarkIcon.png");
 }
 
-//Checks the FriendRequestButton's recipientId & SenderId attribute, then returns a friendRequestDto object ready for sending to FriendAPI
 function GetFriendRequestDtoFromButton() {
+    //Checks the FriendRequestButton's recipientId & SenderId attribute, then returns a friendRequestDto object ready for sending to FriendAPI
     var friendRequestButton = document.getElementById("FriendRequestButton");
     var recipientId = friendRequestButton.getAttribute("recipientId");
     var senderId = friendRequestButton.getAttribute("senderId");
@@ -197,8 +186,8 @@ function GetFriendRequestDtoFromButton() {
     return friendRequestDto;
 }
 
-//Clears the Friend Request Link Container of all actionable links
 function ClearFriendRequestLinkContainer() {
+    //Clears the Friend Request Link Container of all actionable links
     var linkContainer = $('#FriendRequestDropdownLinkContainer');
     linkContainer.empty();
 }
@@ -224,6 +213,7 @@ function AppendFriendRequestCancelLinkToLinkContainer() {
 }
 
 function ReturnFriendRequestDropdownLinkContainer() {
+    //Returns the LinkContainer element.
     var linkContainer = document.getElementById("FriendRequestDropdownLinkContainer");
     return linkContainer;
 }
