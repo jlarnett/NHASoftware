@@ -118,6 +118,12 @@ namespace NHASoftware.Controllers.WebAPIs
             return result ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
         }
 
+        /// <summary>
+        /// Declines friend request. Accepts the supplied friend request id.
+        /// Changes the friend request status to declined for the supplied friend request id. 
+        /// </summary>
+        /// <param name="requestId">friend request id</param>
+        /// <returns></returns>
         [HttpGet("DeclineFriendRequest/{requestId}")]
         public async Task<JsonResult> DeclineFriendRequest(int requestId)
         {
@@ -125,7 +131,12 @@ namespace NHASoftware.Controllers.WebAPIs
             return result ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
         }
 
-        // DELETE: api/FriendRequests/5
+        /// <summary>
+        /// DELETE: api/Friend/FriendRequests/5
+        /// Deletes friend request from DB. 
+        /// </summary>
+        /// <param name="id">FriendRequestId</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFriendRequest(int id)
         {
@@ -138,7 +149,12 @@ namespace NHASoftware.Controllers.WebAPIs
             return BadRequest();
         }
 
-        // DELETE: api/friend/RemoveFriendship
+        /// <summary>
+        /// DELETE: api/friend/RemoveFriendship
+        /// Tries to remove pair of friends from DB. 
+        /// </summary>
+        /// <param name="friendRequestDto">Friend Request DTO containing recipientId & senderId</param>
+        /// <returns>Returns IActionResult with JSON success result.</returns>
         [HttpDelete("DeleteFriendship")]
         public async Task<IActionResult> DeleteFriendship(FriendRequestDTO friendRequestDto)
         {
@@ -152,7 +168,12 @@ namespace NHASoftware.Controllers.WebAPIs
             return BadRequest(new {success = false});
         }
 
-        // DELETE: api/friend/CancelFriendRequest
+        /// <summary>
+        /// DELETE: api/friend/CancelFriendRequest
+        /// Tries to cancels pending friend request.
+        /// </summary>
+        /// <param name="friendRequestDto">Friend Request DTO containing recipientId & senderId</param>
+        /// <returns>Returns IActionResult with JSON success result. </returns>
         [HttpPut("CancelFriendRequest")]
         public async Task<IActionResult> CancelFriendRequest(FriendRequestDTO friendRequestDto)
         {
