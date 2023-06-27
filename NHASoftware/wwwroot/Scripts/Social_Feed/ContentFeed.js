@@ -159,6 +159,7 @@
         LoadFeedWithProfilePost(profileUserId);
     }
 
+    RebuildFeedTextboxes();
 });
 
 function RemovePostFromContentFeed(postId) {
@@ -462,14 +463,14 @@ function GenerateSocialLikeSectionRedesign(post) {
     var likeSectionHtml = [];
 
     var likeSrcImage = (post.userLikedPost ? "/images/facebook-like-filled.png" : "/images/facebook-like.png");
-    var dislikeSrcImage = (post.userDislikedPost ? "/images/dislike-filled.png" : "/images/dislike.png");
+    var dislikeSrcImage = (post.userDislikedPost ? "/images/dislike-Filled.png" : "/images/dislike_remake.png");
 
     likeSectionHtml.push('<div class="row mt-2">',
         '<div class="col-5"></div>',
         '<div class="col-1">',
             '<div class="row">',
                 '<div class="col-auto me-2" like-counter-post-id="', post.id, '">', post.likeCount ,'</div>',
-                '<div class="col-5">',
+                '<div class="col-sm-5">',
                     '<img class="post-like img-fluid" role="button" post-id="', post.id,'" src="', likeSrcImage , '" />',
                 '</div>',
             '</div>',
@@ -477,7 +478,7 @@ function GenerateSocialLikeSectionRedesign(post) {
         '<div class="col-1">',
             '<div class="row">',
                 '<div class="col-auto me-2" dislike-counter-post-id="', post.id,'">', post.dislikeCount ,'</div>',
-                '<div class="col-5">',
+                '<div class="col-sm-5">',
                     '<img class="post-dislike img-fluid" role="button" post-id="', post.id,'" src="', dislikeSrcImage , '" />',
                 '</div>',
             '</div>',

@@ -57,6 +57,15 @@
     <ProjectReference Include="..\NHAHelpers\NHAHelpers.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\Images\dislike-Filled.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\Images\dislike_remake.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
     <PropertyGroup>
         <WarningLevel>1</WarningLevel>
     </PropertyGroup>

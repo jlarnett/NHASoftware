@@ -54,7 +54,7 @@
 
         if (userSessionActive) {
 
-            if (currentBtnImageSrc.toLowerCase() === "/images/dislike.png") {
+            if (currentBtnImageSrc.toLowerCase() === "/images/dislike_remake.png") {
                 //SEND DISLIKE TO API
                 LikePost(userId, postId, true).then(function (data) {
                     if (data.success === true) {
@@ -70,7 +70,7 @@
                 //SEND DELETE DISLIKE REQUEST TO API
                 DeleteLike(userId, postId, true).then(function (data) {
                     if (data.success === true) {
-                        EventBtn.attr("src", "/images/dislike.png");
+                        EventBtn.attr("src", "/images/dislike_remake.png");
                         DecrementDisLikeCounterRedesign(EventBtn);
                     }
                     else {
