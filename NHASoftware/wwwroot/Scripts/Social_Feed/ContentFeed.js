@@ -299,7 +299,7 @@ function GeneratePostRedesign(post) {
     let uuid = self.crypto.randomUUID();
     var postHtml = [];
 
-    var currentDate = spacetime.now();
+    var currentDate = spacetime.now('Africa/Abidjan');
     var postCreationDate = spacetime(post.creationDate);
     var postDateDifferenceInSeconds = postCreationDate.diff(currentDate, 'second');
 
@@ -411,7 +411,7 @@ function LoadCommentsRedesign(id, uuid) {
     //Loads comments for post using bootstrap redesign. Takes the post-id & uuid to determine which comment section to load
     //Called by Hide Comments js script. 
     var commentHtml = [];
-    var currentDate = spacetime.now();
+    var currentDate = spacetime.now('Africa/Abidjan');
 
     RetrievePostComments(id).then(function (data) {
         for (var i = 0; i < data.length; i++) {
