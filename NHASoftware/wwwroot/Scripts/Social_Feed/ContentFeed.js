@@ -222,7 +222,7 @@ function RetrieveAllPostForUser(userId) {
 function AddCommentDynamically(uuid, data) {
     var commentHtml = [];
 
-    var currentDate = spacetime.now();
+    var currentDate = spacetime.now('Africa/Abidjan');
     var postCreationDate = spacetime(data.creationDate);
     var postDateDifferenceInSeconds = postCreationDate.diff(currentDate, 'second');
 
@@ -300,8 +300,13 @@ function GeneratePostRedesign(post) {
     var postHtml = [];
 
     var currentDate = spacetime.now('Africa/Abidjan');
+    console.log("Post Id - " + post.id + " Current Date & Time - " + currentDate.month() + "/" + currentDate.date() + "/" + currentDate.year() + " - Time - " + currentDate.hour() + ":" + currentDate.minute() + ":" + currentDate.second() + ":" + currentDate.millisecond());
     var postCreationDate = spacetime(post.creationDate);
+    console.log("Post Id - " + post.id + " Post Creation Date & Time - " + postCreationDate.month() + "/" + postCreationDate.date() + "/" + postCreationDate.year() + " - Time - " + postCreationDate.hour() + ":" + postCreationDate.minute() + ":" + postCreationDate.second() + ":" + postCreationDate.millisecond());
+
     var postDateDifferenceInSeconds = postCreationDate.diff(currentDate, 'second');
+    console.log("Post Date Difference in seconds = " + postDateDifferenceInSeconds);
+
 
     postHtml.push('<div class="container-fluid border border-primary mt-2" post-delete-id="', post.id, '">',
             '<div class="row align-items-center">',
@@ -415,9 +420,11 @@ function LoadCommentsRedesign(id, uuid) {
 
     RetrievePostComments(id).then(function (data) {
         for (var i = 0; i < data.length; i++) {
-
+            console.log("Post Id - " + data[i].id + " Current Date & Time - " + currentDate.month() + "/" + currentDate.date() + "/" + currentDate.year() + " - Time - " + currentDate.hour() + ":" + currentDate.minute() + ":" + currentDate.second() + ":" + currentDate.millisecond());
             var postCreationDate = spacetime(data[i].creationDate);
+            console.log("Post Id - " + data[i].id + " Post Creation Date & Time - " + postCreationDate.month() + "/" + postCreationDate.date() + "/" + postCreationDate.year() + " - Time - " + postCreationDate.hour() + ":" + postCreationDate.minute() + ":" + postCreationDate.second() + ":" + postCreationDate.millisecond());
             var postDateDifferenceInSeconds = postCreationDate.diff(currentDate, 'second');
+            console.log("Post Date Difference in seconds = " + postDateDifferenceInSeconds);
 
             commentHtml.push('<li comment-delete-id="', data[i].id ,'">',
                 '<div>',
