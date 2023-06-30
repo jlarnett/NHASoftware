@@ -222,7 +222,7 @@ function RetrieveAllPostForUser(userId) {
 function AddCommentDynamically(uuid, data) {
     var commentHtml = [];
 
-    var currentDate = spacetime.now();
+    var currentDate = spacetime.now('Africa/Abidjan');
     var postCreationDate = spacetime(data.creationDate);
     var postDateDifferenceInSeconds = postCreationDate.diff(currentDate, 'second');
 
