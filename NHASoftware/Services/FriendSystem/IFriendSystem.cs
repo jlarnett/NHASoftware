@@ -1,4 +1,5 @@
 ﻿using NHASoftware.ConsumableEntities.DTOs;
+using NHASoftware.Entities.Identity;
 
 namespace NHASoftware.Services.FriendSystem
 {
@@ -14,5 +15,6 @@ namespace NHASoftware.Services.FriendSystem
         int GetFriendCount(string userId);
         Task<bool> RemoveFriendsAsync(FriendRequestDTO friendRequestDto);
         Task<bool> CancelFriendRequestAsync(FriendRequestDTO friendRequestDto);
+        Task<IEnumerable<ApplicationUser>> GetMutualFriendsAsync(string userIdOne, string userIdTwo);
     }
 }

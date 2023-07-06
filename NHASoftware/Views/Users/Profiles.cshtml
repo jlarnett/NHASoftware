@@ -26,6 +26,14 @@
         </div>
         <div class="col border-end border-bottom border-primary text-center">
             <a class="link-secondary h1">@friendCount @friendLabel</a>
+            @{
+               var mutualFriends = await friendSystem.GetMutualFriends(Model.User.Id, userManager.GetUserId(User));
+
+                foreach (var user in mutualFriends)
+                {
+                    <div>@user.DisplayName</div>
+                }
+            }
         </div>
         <div class="col border-bottom border-primary">
             <h1 class="text-center h1">User Biography</h1>

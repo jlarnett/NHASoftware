@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.Entities.FriendSystem;
+using NHASoftware.Entities.Identity;
 using NHASoftware.Services.RepositoryPatternFoundationals;
 
 namespace NHASoftware.Services.FriendSystem
@@ -204,6 +205,80 @@ namespace NHASoftware.Services.FriendSystem
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Gets list of mutual friends for two application users. 
+        /// </summary>
+        /// <param name="userIdOne">AppUser 1 id</param>
+        /// <param name="userIdTwo">AppUser 2 id</param>
+        /// <returns>List of all mutual friends between the two specified users. </returns>
+        public async Task<IEnumerable<ApplicationUser>> GetMutualFriendsAsync(string userIdOne, string userIdTwo)
+        {
+            var userFriendships = await _unitOfWork.FriendRepository.GetUsersFriendListAsync(userIdOne);
+            var userTwoFriendships = await _unitOfWork.FriendRepository.GetUsersFriendListAsync(userIdTwo);
+
+            var userFriends = ReturnListOfUsersFriends(userIdOne, userFriendships);
+            var userTwoFriends = ReturnListOfUsersFriends(userIdTwo, userTwoFriendships);
+
+            return CompareMutualFriends(userFriends, userTwoFriends);
+        }
+
+        /// <summary>
+        /// Takes in list of friend records and strips the owning appUser to return list of only the user's friends. 
+        /// </summary>
+        /// <param name="userId">UserId to strip</param>
+        /// <param name="friendList">list of friend records pulled from DB. </param>
+        /// <returns>List of applicationUsers that only contains the user's friends but not the user. </returns>
+        private List<ApplicationUser> ReturnListOfUsersFriends(string userId, IEnumerable<Friends> friendList)
+        {
+            List<ApplicationUser> friends = new List<ApplicationUser>();
+
+            if (friendList.Any())
+            {
+                foreach (var friendship in friendList)
+                {
+                    if (friendship.FriendOneId.Equals(userId))
+                    {
+                        friends.Append(friendship.FriendTwo);
+                    }
+                    else
+                    {
+                        friends.Append(friendship.FriendOne);
+                    }
+                }
+            }
+
+            return friends;
+        }
+
+        /// <summary>
+        /// Compares two friend lists & returns a List of all matching mutual friends (Application Users)
+        /// </summary>
+        /// <param name="userOneFriendsList"></param>
+        /// <param name="userTwoFriendsList"></param>
+        /// <returns>Returns list of mutual friends. </returns>
+        private List<ApplicationUser> CompareMutualFriends(List<ApplicationUser> userOneFriendsList,
+            List<ApplicationUser> userTwoFriendsList)
+        {
+            HashSet<ApplicationUser> friends = new HashSet<ApplicationUser>();
+            List<ApplicationUser> mutualFriends = new List<ApplicationUser>();
+
+            foreach (var user in userOneFriendsList)
+            {
+                if (!friends.Contains(user))
+                {
+                    //If user is not part of the hashset add it.
+                    friends.Add(user);
+                }
+                if (friends.Contains(user))
+                {
+                    //If user is already a part of the hashset that means there is a duplicate entry and thus mutual friends.
+                    mutualFriends.Add(user);
+                }
+            }
+
+            return mutualFriends;
         }
     }
 }
