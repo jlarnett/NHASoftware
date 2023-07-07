@@ -203,7 +203,7 @@ namespace NHASoftware.Controllers.WebAPIs
         [HttpGet("RetrieveMutualFriends")]
         public async Task<IActionResult> RetrieveMutualFriends(FriendRequestDTO friendRequestDto)
         {
-            var mutualFriends= await _friendSystem.GetMutualFriends(friendRequestDto.RecipientUserId, friendRequestDto.SenderUserId);
+            var mutualFriends= await _friendSystem.GetMutualFriendsAsync(friendRequestDto.RecipientUserId, friendRequestDto.SenderUserId);
             return mutualFriends.Any() ? Ok(new {success = true, data = mutualFriends}) : NoContent();
         }
 
