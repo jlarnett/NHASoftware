@@ -22,7 +22,7 @@
 
 <div class="container-fluid border border-primary">
     <div class="row">
-        <div class="border-end border-primary col-4 align">
+        <div class="border-end border-primary col-4">
             <img class="img-fluid" src="~/ProfilePictures/@Model.User.ProfilePicturePath" alt="@Model.User.DisplayName's Profile Picture'"/>
         </div>
         <div class="col border-end border-bottom border-primary text-center">
@@ -39,7 +39,10 @@
                     {
                         if (mutualFriendCounter < mutualFriendMax)
                         {
-                            <div class="d-flex">@user.DisplayName</div>
+                            <div class="d-flex">
+                                <img class="img-fluid" src="~/ProfilePictures/@user.ProfilePicturePath" href="" alt="@user.DisplayName's Profile Picture'"/>
+                                <div class="link-secondary h2" href="">@user.DisplayName</div>
+                            </div>
                             mutualFriendCounter++;
                         }
                         else
