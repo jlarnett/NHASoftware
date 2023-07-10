@@ -16,16 +16,42 @@
 
 @{
     var friendCount = friendSystem.GetFriendCount(Model.User.Id);
-    var friendLabel = friendCount > 1 ? "Friends" : "Friend";
+    var mutualFriends = await friendSystem.GetMutualFriendsAsync(Model.User.Id, userManager.GetUserId(User));
+    var mutualFriendCount = mutualFriends.Count();
 }
 
 <div class="container-fluid border border-primary">
     <div class="row">
-        <div class="border-end border-primary col-4 align">
+        <div class="border-end border-primary col-4">
             <img class="img-fluid" src="~/ProfilePictures/@Model.User.ProfilePicturePath" alt="@Model.User.DisplayName's Profile Picture'"/>
         </div>
         <div class="col border-end border-bottom border-primary text-center">
-            <a class="link-secondary h1">@friendCount @friendLabel</a>
+
+            <div class="link-secondary h1">@friendCount Friends</div>
+            <div class="link-secondary h1">@mutualFriendCount Mutual Friends</div>
+
+            <div class=" d-flex flex-wrap">
+                @{
+                    var mutualFriendCounter = 0;
+                    const int mutualFriendMax = 6;
+
+                    foreach (var user in mutualFriends)
+                    {
+                        if (mutualFriendCounter < mutualFriendMax)
+                        {
+                            <div class="d-flex">
+                                <img class="img-fluid" src="~/ProfilePictures/@user.ProfilePicturePath" href="" alt="@user.DisplayName's Profile Picture'"/>
+                                <div class="link-secondary h2" href="">@user.DisplayName</div>
+                            </div>
+                            mutualFriendCounter++;
+                        }
+                        else
+                        {
+                            //We hit the max amount of mutual friends within Profile Friend Container
+                        }
+                    }
+                }
+            </div>
         </div>
         <div class="col border-bottom border-primary">
             <h1 class="text-center h1">User Biography</h1>
@@ -78,5 +104,4 @@
     <script src="~/Scripts/Social_Feed/Gratitude.js"></script>
     <script src="~/Scripts/Social_Feed/ContentFeed.js"></script>
     <script src="~/Scripts/FriendSystem/FriendRequestButton.js"></script>
-
 }

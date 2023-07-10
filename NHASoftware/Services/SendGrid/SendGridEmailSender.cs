@@ -8,16 +8,19 @@ namespace NHASoftware.Services.SendGrid
 {
     public class SendGridEmailSender : IEmailSender
     {
-        public SendGridEmailSender(IOptions<SendGridEmailSenderOptions> options)
+        private readonly ILogger<ILogger> _logger;
+        public SendGridEmailSender(IOptions<SendGridEmailSenderOptions> options, ILogger<ILogger> logger)
         {
             Options = options.Value;
+            _logger = logger;
         }
 
         public SendGridEmailSenderOptions Options { get; set; }
 
         public async Task SendEmailAsync(string email, string subject, string message)
         {
-            await Execute(Options.ApiKey, subject, message, email);
+            var response = await Execute(Options.ApiKey, subject, message, email);
+            _logger.Log(LogLevel.Information, "Sent request to SendGrid API, returned status code - {0}", response.StatusCode);
         }
 
         private async Task<Response> Execute(string apiKey, string subject, string message, string email)
@@ -42,6 +45,7 @@ namespace NHASoftware.Services.SendGrid
             msg.SetSubscriptionTracking(false);
 
             return await client.SendEmailAsync(msg);
+
         }
     }
 }

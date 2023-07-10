@@ -82,6 +82,13 @@ namespace NHASoftware.Controllers.WebAPIs
         [HttpPost("FriendRequest")]
         public async Task<ActionResult<FriendRequest>> PostFriendRequest(FriendRequestDTO friendRequestDto)
         {
+            //Checks if friend request is trying to send to the same user
+            if (friendRequestDto.RecipientUserId.Equals(friendRequestDto.SenderUserId))
+            {
+                return BadRequest(new {success = false});
+            }
+
+
             friendRequestDto.Status = FriendRequestStatuses.Inprogress;
             var requestSent = await _friendSystem.SendFriendRequestAsync(friendRequestDto);
             return requestSent ? new JsonResult(new {success = true}) : new JsonResult(new {success = false});
@@ -185,6 +192,19 @@ namespace NHASoftware.Controllers.WebAPIs
             }
 
             return BadRequest(new {success = false});
+        }
+
+        /// <summary>
+        /// DELETE: api/friend/RetrieveMutualFriends
+        /// Retrieves full list of mutual friends users from DB. Requires UserId of both ApplicationUsers
+        /// </summary>
+        /// <param name="friendRequestDto">Friend Request DTO containing recipientId & senderId</param>
+        /// <returns>Returns IActionResult with JSON success result. </returns>
+        [HttpGet("RetrieveMutualFriends")]
+        public async Task<IActionResult> RetrieveMutualFriends(FriendRequestDTO friendRequestDto)
+        {
+            var mutualFriends= await _friendSystem.GetMutualFriendsAsync(friendRequestDto.RecipientUserId, friendRequestDto.SenderUserId);
+            return mutualFriends.Any() ? Ok(new {success = true, data = mutualFriends}) : NoContent();
         }
 
 
