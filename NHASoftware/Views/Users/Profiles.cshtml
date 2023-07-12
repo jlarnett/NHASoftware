@@ -27,31 +27,42 @@
         </div>
         <div class="col border-end border-bottom border-primary text-center">
 
-            <div class="link-secondary h1">@friendCount Friends</div>
-            <div class="link-secondary h1">@mutualFriendCount Mutual Friends</div>
+            <div class="link-secondary h1" role="button">@friendCount Friends</div>
+            
+            @if (User.Identity.IsAuthenticated && !userManager.GetUserId(User).Equals(Model.User.Id))
+            {
 
-            <div class=" d-flex flex-wrap">
-                @{
-                    var mutualFriendCounter = 0;
-                    const int mutualFriendMax = 6;
+                <div class="border border-primary mb-2">
+                    <div class="link-secondary h1 border-bottom border-primary" role="button">@mutualFriendCount Mutual Friends</div>
+                    <div class="flex-wrap">
+                        @{
+                            var mutualFriendCounter = 0;
+                            const int mutualFriendMax = 3;
 
-                    foreach (var user in mutualFriends)
-                    {
-                        if (mutualFriendCounter < mutualFriendMax)
-                        {
-                            <div class="d-flex">
-                                <img class="img-fluid" src="~/ProfilePictures/@user.ProfilePicturePath" href="" alt="@user.DisplayName's Profile Picture'"/>
-                                <div class="link-secondary h2" href="">@user.DisplayName</div>
-                            </div>
-                            mutualFriendCounter++;
+                            foreach (var user in mutualFriends)
+                            {
+                                if (mutualFriendCounter < mutualFriendMax)
+                                {
+                                    <div class="d-flex border-bottom border-primary">
+                                        <div class="text-center">
+                                            <div class="col-2 m-auto">
+                                                <img class="img-fluid" src="~/ProfilePictures/@user.ProfilePicturePath" href="" alt="@user.DisplayName's Profile Picture'"/>
+                                            </div>
+                                            <a class="link-secondary h3" href="/Users/GetProfiles?userId=@user.Id" role="button">@user.DisplayName</a>
+                                        </div>
+                                    </div>
+                                    mutualFriendCounter++;
+                                }
+                                else
+                                {
+                                    //We hit the max amount of mutual friends within Profile Friend Container
+                                }
+                            }
                         }
-                        else
-                        {
-                            //We hit the max amount of mutual friends within Profile Friend Container
-                        }
-                    }
-                }
-            </div>
+                    </div>
+                </div>
+            }
+
         </div>
         <div class="col border-bottom border-primary">
             <h1 class="text-center h1">User Biography</h1>

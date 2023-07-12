@@ -240,11 +240,17 @@ namespace NHASoftware.Services.FriendSystem
                 {
                     if (friendship.FriendOneId.Equals(userId))
                     {
-                        friends.Append(friendship.FriendTwo);
+                        if (friendship.FriendTwo != null)
+                        {
+                            friends.Add(friendship.FriendTwo);
+                        }
                     }
                     else
                     {
-                        friends.Append(friendship.FriendOne);
+                        if (friendship.FriendOne != null)
+                        {
+                            friends.Add(friendship.FriendOne);
+                        }
                     }
                 }
             }
