@@ -3,30 +3,34 @@
     ViewData["title"] = "Crypto Index";
 }
 
+<head>
+    <link rel="stylesheet" href="~/css/Crypto.css">
+
+</head>
 
 <h1>Crypto Index!</h1>
 
-<div class="container">
+<div class="container-fluid">
     <div class="row">
 
-        <div class="col-md-2">
+        <div class="col">
             <h3 class="text-white">Bitcoin</h3>
-            <img id="BitcoinPicture" src="Images/BitcoinPhoto.jpg" height="100%" width="100%" class="rounded selected"/>
+            <img id="BitcoinPicture" src="Images/BitcoinPhoto.jpg" alt="bitcoin image" class="img-fluid image-full rounded selected" />
         </div>
 
-        <div class="col-md-2">
+        <div class="col">
             <h3 class="text-white">Ethereum</h3>
-            <img id="EthereumPicture" src="Images/EthereumPhoto.jpeg" height="100%" width="100%" class="rounded"/>
+            <img id="EthereumPicture" src="Images/EthereumPhoto.jpeg" alt="ethereum image" class="img-fluid image-full rounded" />
         </div>
 
-        <div class="col-md-2">
+        <div class="col">
             <h3 class="text-white">Doge Coin</h3>
-            <img id="dogePicture" src="Images/dogecoin.jpg" height="100%" width="100%" class="rounded"/>
+            <img id="dogePicture" src="Images/dogecoin.jpg" alt="dogecoin image" class="img-fluid image-full rounded" />
         </div>
 
-        <div class="col-md-2">
+        <div class="col">
             <h3 class="text-white">lite Coin</h3>
-            <img id="litecoinPicture" src="Images/litecoin.png" height="100%" width="100%" class="rounded"/>
+            <img id="litecoinPicture" src="Images/litecoin.png" alt="litecoin image" class="img-fluid image-full rounded" />
         </div>
     </div>
 
@@ -40,7 +44,6 @@
 <div class="container">
     <input type="button" class="btn btn-dark" id="Submit" value="Get Crypto"/>
 </div>
-
 
 
 @section Scripts

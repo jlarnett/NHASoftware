@@ -4,7 +4,7 @@
     {
         public bool CheckValidImageExtensions(string uploadedFileName)
         {
-            string[] permittedExtensions = { ".jpg", ".png", "jpeg", "bmp" };
+            string[] permittedExtensions = { ".jpg", ".png", ".jpeg", ".bmp" };
             var ext = Path.GetExtension(uploadedFileName).ToLowerInvariant();
             return IsExtensionPathEmptyOrIncorrect(ext, permittedExtensions);
         }

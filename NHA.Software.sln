@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHASoftware", "NHASoftware\NHASoftware.csproj", "{164F3137-1610-49F6-A5B3-A0F0BFC4D3FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHA.Website.Software", "NHASoftware\NHA.Website.Software.csproj", "{164F3137-1610-49F6-A5B3-A0F0BFC4D3FC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHAHelpers", "NHAHelpers\NHAHelpers.csproj", "{46915FF9-540A-4ACF-8711-B56F6E7CC767}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHA.Helpers", "NHAHelpers\NHA.Helpers.csproj", "{46915FF9-540A-4ACF-8711-B56F6E7CC767}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHA.Testing", "NHA.Testing\NHA.Testing.csproj", "{6B2B27AC-D85B-48A4-984E-F02A71EC60A3}"
 EndProject
