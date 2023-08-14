@@ -1,12 +1,13 @@
 ﻿$(document).ready(function () {
 
     //Accesses the friend request variables needed for friend request button. 
+    var sameUser = document.getElementById("FriendRequestButton").getAttribute("sameUser");
     var isFriends = document.getElementById("FriendRequestButton").getAttribute("isFriends");
     var userSessionActive = CheckUserSessionIsActive();
     var friendRequestSent = document.getElementById("FriendRequestButton").getAttribute("friendRequestSent");
 
     //Initialize the friend request button.
-    InitializeButton(isFriends, friendRequestSent, userSessionActive);
+    InitializeButton(isFriends, friendRequestSent, userSessionActive, sameUser);
 
     //Friend Request Button click events. 
     $("#FriendRequestButton").on("click", ".add-friend", function (e) { 
@@ -25,20 +26,23 @@
     });
 });
 
-function InitializeButton(isFriends, friendRequestSent, userSessionActive) {
+function InitializeButton(isFriends, friendRequestSent, userSessionActive, sameUser) {
     //Initializes the friend request button. Called upon loading to determine starting.
+
     if (isFriends === "True") {
         ChangeFriendRequestButtonToFriendlyState();
     }
-    else if (isFriends !== "True" && friendRequestSent === "True") {
+    else if (isFriends !== "True" && friendRequestSent === "True" && sameUser !== "True") {
         ChangeFriendRequestButtonToRequestedStatus();
     }
-    else if (friendRequestSent !== "True" && userSessionActive === "True") {
+    else if (sameUser === "True" && userSessionActive === "True") {
+        HideFriendRequestButton();
+    }
+    else if (friendRequestSent !== "True" && userSessionActive === "True" && sameUser !== "True") {
         ChangeFriendRequestButtonStartingState();
     }
     else {
-        var friendRequestButton = $('#FriendRequestButton');
-        friendRequestButton.hide('fast');
+        HideFriendRequestButton();
     }
 }
 
@@ -144,7 +148,6 @@ function ChangeFriendRequestButtonStartingState() {
 
 
 function ChangeFriendButtonText(text) {
-   
     var friendButtonTextElement = $('#FriendDropdownText');
     friendButtonTextElement.text(text);
 }
@@ -216,4 +219,9 @@ function ReturnFriendRequestDropdownLinkContainer() {
     //Returns the LinkContainer element.
     var linkContainer = document.getElementById("FriendRequestDropdownLinkContainer");
     return linkContainer;
+}
+
+function HideFriendRequestButton() {
+    var friendRequestButton = $('#FriendRequestButton');
+    friendRequestButton.hide('fast');
 }

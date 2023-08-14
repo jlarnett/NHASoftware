@@ -444,7 +444,7 @@ function LoadCommentsRedesign(id, uuid) {
                         '<div class="col-auto">',
                             '<a class="text-decoration-none ms-2 h6">', "-", '</a>',
                         '</div>',
-                        '<div class="col-1">',
+                        '<div class="col-2">',
                             '<a class="text-decoration-none ms-2 h6">', GetTimeShortHandString(postDateDifferenceInSeconds), '</a>',
                         '</div>',
                         '<div class="col-4"></div>',

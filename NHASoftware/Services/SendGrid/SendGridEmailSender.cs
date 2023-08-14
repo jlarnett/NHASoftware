@@ -23,6 +23,15 @@ namespace NHASoftware.Services.SendGrid
             _logger.Log(LogLevel.Information, "Sent request to SendGrid API, returned status code - {0}", response.StatusCode);
         }
 
+
+        /// <summary>
+        /// Execute Sendgrid email process and returns response. 
+        /// </summary>
+        /// <param name="apiKey">Sendgrid API Key</param>
+        /// <param name="subject">Email Subject</param>
+        /// <param name="message">Main email section. Contains text, links, whatever in the body of email.</param>
+        /// <param name="email">Email address to send email to. </param>
+        /// <returns></returns>
         private async Task<Response> Execute(string apiKey, string subject, string message, string email)
         {
             var client = new SendGridClient(apiKey);
