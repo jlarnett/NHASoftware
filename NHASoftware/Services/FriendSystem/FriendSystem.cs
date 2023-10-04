@@ -273,15 +273,16 @@ namespace NHASoftware.Services.FriendSystem
 
             foreach (var user in userOneFriendsList)
             {
-                if (!friends.Contains(user))
-                {
-                    //If user is not part of the hashset add it.
-                    friends.Add(user);
-                }
-                if (friends.Contains(user))
+                //Adds all of users 1s friends to hash set for mutual friend comparison.
+                friends.Add(user);
+            }
+
+            foreach (var potentialMutualFriend in userTwoFriendsList)
+            {
+                if (friends.Contains(potentialMutualFriend))
                 {
                     //If user is already a part of the hashset that means there is a duplicate entry and thus mutual friends.
-                    mutualFriends.Add(user);
+                    mutualFriends.Add(potentialMutualFriend);
                 }
             }
 
