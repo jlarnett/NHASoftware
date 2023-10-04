@@ -7,7 +7,7 @@ namespace NHASoftware.Entities.Social_Entities
     {
         public int? Id { get; set; }
 
-        [Required] public string Summary { get; set; }
+        [Required] public string Summary { get; set; } = string.Empty;
         public DateTime? CreationDate { get; set; }
         public string? UserId { get; set; }
         public ApplicationUser? User { get; set; }

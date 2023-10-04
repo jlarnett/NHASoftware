@@ -75,7 +75,7 @@ namespace NHASoftware.Controllers
             var vm = new SubscriptionFormViewModel()
             {
                 UserId =  _userManager.GetUserId(HttpContext.User),
-                User = (ApplicationUser)_context.Users.Find(_userManager.GetUserId(HttpContext.User)),
+                User = _context.Users.Find(_userManager.GetUserId(HttpContext.User)) as ApplicationUser,
                 SubscriptionDate = DateTime.Today
             };
 
@@ -270,7 +270,12 @@ namespace NHASoftware.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var subscription = await _context.Subscriptions.FindAsync(id);
+            if (subscription == null)
+            {
+                return BadRequest();
+            }
             _context.Subscriptions.Remove(subscription);
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

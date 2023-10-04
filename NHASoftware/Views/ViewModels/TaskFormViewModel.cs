@@ -8,7 +8,7 @@ namespace NHASoftware.ViewModels
     public class TaskFormViewModel
     {
         public int TaskId { get; set; }
-        public string TaskDescription { get; set; }
+        public string TaskDescription { get; set; } = string.Empty;
         public bool TaskIsFinished { get; set; }
 
         [DataType(DataType.Date)]
@@ -24,7 +24,7 @@ namespace NHASoftware.ViewModels
 
         public ApplicationUser? User { get; set; }
         [Required]
-        public string UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
 
     }
 }

@@ -1,4 +1,4 @@
-﻿using NHASoftware.Entities.FriendSystem;
+﻿using NHA.Website.Software.Entities.FriendSystem;
 using NHASoftware.Entities.Social_Entities;
 using NHASoftware.Services.RepositoryPatternFoundationals;
 

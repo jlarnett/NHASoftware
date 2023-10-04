@@ -32,6 +32,11 @@
         {
             foreach (var cItem in cacheitems)
             {
+                if (cItem == null)
+                {
+                    return false;
+                }
+
                 if (cItem.Equals(item))
                 {
                     return true;

@@ -5,6 +5,6 @@ namespace NHASoftware.ViewModels
     public class CreateRoleViewModel
     {
         [Required]
-        public string RoleName { get; set; }
+        public string RoleName { get; set; } = string.Empty;
     }
 }

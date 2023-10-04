@@ -200,10 +200,17 @@ namespace NHASoftware.Controllers.WebAPIs
                     p.Summary.Equals(postdto.Summary) && p.UserId.Equals(postdto.UserId)).FirstOrDefault();
 
                 //Populating the postDto
-                var newPostWithIncludes = await _unitOfWork.PostRepository.GetPostByIDWithIncludesAsync(newPost.Id.GetValueOrDefault());
-                var postDto = PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes));
-                _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", postDto);
-                return Ok(new { success = true, data = postDto });
+                if (newPost != null)
+                {
+                    var newPostWithIncludes = await _unitOfWork.PostRepository.GetPostByIDWithIncludesAsync(newPost.Id.GetValueOrDefault());
+                    var postDto = PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes));
+                    _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", postDto);
+                    return Ok(new { success = true, data = postDto });
+                }
+                else
+                {
+                    return BadRequest(new {success = false});
+                }
             }
             else
             {

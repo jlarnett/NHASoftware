@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using NHA.Website.Software.Entities.FriendSystem;
 using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.Entities.FriendSystem;
 using NHASoftware.Entities.Identity;
@@ -173,11 +174,11 @@ namespace NHASoftware.Services.FriendSystem
                  (f.FriendOneId.Equals(friendRequestDto.SenderUserId) &&
                   f.FriendTwoId.Equals(friendRequestDto.RecipientUserId))));
 
-            var friendEntity = friendRecords.First();
+            var friendEntity = friendRecords.FirstOrDefault();
 
             if (friendEntity != null)
             {
-                _unitOfWork.FriendRepository.Remove(friendRecords.FirstOrDefault());
+                _unitOfWork.FriendRepository.Remove(friendEntity);
                 var changes = await _unitOfWork.CompleteAsync();
                 return changes > 0;
             }

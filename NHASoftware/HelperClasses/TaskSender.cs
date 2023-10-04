@@ -6,8 +6,8 @@ namespace NHASoftware
 {
     public class TaskSender
     {
-        private IEmailSender _emailService = null;
-        private ApplicationDbContext _context;
+        private readonly IEmailSender _emailService;
+        private readonly ApplicationDbContext _context;
 
         public TaskSender(IEmailSender emailService, ApplicationDbContext context)
         {
@@ -36,8 +36,10 @@ namespace NHASoftware
                 }
             }
 
-            var user = _context.Users.Find(item.UserId);
-            await _emailService.SendEmailAsync(user.Email, "Task Reminder For " + item.TaskDescription, reminderMessage);
+            var user = await _context.Users.FindAsync(item.UserId);
+
+            if (user != null)
+                await _emailService.SendEmailAsync(user.Email, "Task Reminder For " + item.TaskDescription, reminderMessage);
         }
     }
 }

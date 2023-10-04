@@ -1,18 +1,18 @@
 ﻿//Retrieves the currently logged in users id. Can return undefined. 
 function RetrieveCurrentUserId() {
-    var element = document.getElementById('MainPageContentContainer');
+    let element = document.getElementById('MainPageContentContainer');
     return element.getAttribute('userId');
 }
 
 //Returns whether
 function CheckUserSessionIsActive() {
-    var element = document.getElementById('MainPageContentContainer');
+    let element = document.getElementById('MainPageContentContainer');
     return element.getAttribute('user-session-active');
 }
 
 //Returns a bool whether the current user is an admin or not. 
 function IsCurrentUserAdmin() {
-    element = document.getElementById('MainPageContentContainer');
+    let element = document.getElementById('MainPageContentContainer');
     return element.getAttribute('admin-user');
 }
 
@@ -24,10 +24,10 @@ function UserNavigatedToLink(url) {
 //Returns a rounded shorthand string for the age of post. E.G 2H A
 function GetTimeShortHandString(timeInSeconds) {
 
-    var timeInMinutes = RoundToWholeNumber(timeInSeconds / 60);
-    var timeInHours = RoundToWholeNumber(timeInMinutes / 60);
-    var timeInDays = RoundToWholeNumber(timeInHours / 24);
-    var timeInYears = RoundToWholeNumber(timeInDays / 365);
+    let timeInMinutes = RoundToWholeNumber(timeInSeconds / 60);
+    let timeInHours = RoundToWholeNumber(timeInMinutes / 60);
+    let timeInDays = RoundToWholeNumber(timeInHours / 24);
+    let timeInYears = RoundToWholeNumber(timeInDays / 365);
 
     var outputShorthandUnit;
 

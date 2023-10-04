@@ -8,7 +8,7 @@ namespace NHASoftware.ViewModels
     {
         public int SubscriptionId { get; set; }
         [Display(Name = "Description")]
-        public string SubscriptionName { get; set; }
+        public string SubscriptionName { get; set; } = string.Empty;
 
         [Display(Name = "Execution Date")]
         public DateTime SubscriptionDate { get; set; }
@@ -22,7 +22,7 @@ namespace NHASoftware.ViewModels
         public ApplicationUser? User { get; set; }
 
         [System.ComponentModel.DataAnnotations.Required]
-        public string UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
 
         public TaskItem? TaskItem { get; set; }
 

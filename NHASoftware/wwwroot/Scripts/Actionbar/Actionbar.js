@@ -55,12 +55,11 @@ function RemoveFriendRequestFromModal(requestId) {
 
     var friendRequestDivSection = $("div[friend-request-id$=" + requestId + "]");
     friendRequestDivSection.remove();
-    
-    console.log(friendRequestDivSection.children().length);
 
     var friendRequestModalBody = $('.modal-body');
+    console.log(friendRequestModalBody.children().length);
 
-    if (friendRequestModalBody.children().length > 1) {
+    if (friendRequestModalBody.children().length > 0) {
 
     }
     else {
@@ -72,12 +71,12 @@ function RemoveFriendRequestFromModal(requestId) {
 
 //Gets all pending friend request for the logged in user.
 const GetPendingFriendRequests = async () => {
-    var userId = RetrieveCurrentUserId();
+    let = RetrieveCurrentUserId();
     const response = await fetch('/api/friend/pendingfriendrequest/' + userId);
     const myJson = await response.json(); //extract JSON from the http response
 }
 
 function DecrementFriendRequestCounter() {
-    var requestCounter = $("#FriendRequestCounter");
+    let requestCounter = $("#FriendRequestCounter");
     requestCounter.text(requestCounter.text() - 1);
 }

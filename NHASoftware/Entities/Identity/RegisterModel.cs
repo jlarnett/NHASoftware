@@ -22,10 +22,9 @@ namespace NHASoftware.Entities.Identity
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        [BindProperty]
-        public InputModel Input { get; set; }
-        public IList<AuthenticationScheme> ExternalLogins { get; set; }
-        public string ReturnUrl { get; set; }
+        [BindProperty] public InputModel Input { get; set; } = new InputModel();
+        public IList<AuthenticationScheme> ExternalLogins { get; set; } = new List<AuthenticationScheme>();
+        public string ReturnUrl { get; set; } = string.Empty;
         public RegisterModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<RegisterModel> logger, IEmailSender emailSender, IWebHostEnvironment webHostEnvironment, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
@@ -36,7 +35,7 @@ namespace NHASoftware.Entities.Identity
             _roleManager = roleManager;
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task OnGetAsync(string? returnUrl = null)
         {
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -72,9 +71,14 @@ namespace NHASoftware.Entities.Identity
                         values: new { area = "Identity", userId = user.Id, code },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "NHA Software Registration Confirmation",
-                        $"Welcome to NHA Industries social media site! " +
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    if (callbackUrl != null)
+                    {
+                        await _emailSender.SendEmailAsync(Input.Email, "NHA Software Registration Confirmation",
+                            $"Welcome to NHA Industries social media site! " +
+                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    }
+
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -102,19 +106,19 @@ namespace NHASoftware.Entities.Identity
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
-            public string Email { get; set; }
+            public string Email { get; set; } = string.Empty;
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
                 MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
-            public string Password { get; set; }
+            public string Password { get; set; } = string.Empty;
 
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; }
+            public string ConfirmPassword { get; set; } = string.Empty;
 
         }
     }

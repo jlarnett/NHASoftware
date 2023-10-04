@@ -4,7 +4,7 @@ namespace NHASoftware.ViewModels
 {
     public class ForumTopicDetailsView
     {
-        public ForumTopic topic { get; set; }
-        public List<ForumPost> Posts { get; set; }
+        public ForumTopic topic { get; set; }  = new ForumTopic();
+        public List<ForumPost> Posts { get; set; } = new List<ForumPost>();
     }
 }
