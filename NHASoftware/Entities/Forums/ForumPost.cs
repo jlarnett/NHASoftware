@@ -8,10 +8,10 @@ namespace NHASoftware.Entities.Forums
         public int Id { get; set; }
 
         [DisplayName("Post Title")]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
-        [DisplayName("Post")]
-        public string ForumText { get; set; }
+        [DisplayName("Post")] public string ForumText { get; set; } = string.Empty;
+
         public DateTime CreationDate { get; set; }
         public int CommentCount { get; set; }
         public ApplicationUser? User { get; set; }

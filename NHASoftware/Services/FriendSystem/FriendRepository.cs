@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NHA.Website.Software.Entities.FriendSystem;
 using NHASoftware.DBContext;
-using NHASoftware.Entities.FriendSystem;
 using NHASoftware.Services.RepositoryPatternFoundationals;
 
 namespace NHASoftware.Services.FriendSystem

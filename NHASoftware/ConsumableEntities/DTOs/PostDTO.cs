@@ -9,9 +9,9 @@ namespace NHASoftware.ConsumableEntities.DTOs
         public int? Id { get; set; }
 
         [Required]
-        public string Summary { get; set; }
+        public string Summary { get; set; } = string.Empty;
         public DateTime? CreationDate { get; set; }
-        public string? UserId { get; set; }
+        public string? UserId { get; set; } = string.Empty;
         public ApplicationUser? User { get; set; }
         public int? ParentPostId { get; set; }
         public Post? ParentPost { get; set; }

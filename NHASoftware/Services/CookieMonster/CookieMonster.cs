@@ -10,7 +10,12 @@ public class CookieMonster : ICookieMonster
     }
     public string TryRetrieveCookie(string key)
     {
-        return _contextAccessor.HttpContext.Request.Cookies[key];
+        if (_contextAccessor.HttpContext == null)
+        {
+            return string.Empty;
+        }
+        var cookie = _contextAccessor.HttpContext.Request.Cookies[key];
+        return cookie ?? string.Empty;
     }
 
     /// <summary>
@@ -19,20 +24,24 @@ public class CookieMonster : ICookieMonster
     /// <param name="key">Cookie string Key</param>
     /// <param name="value">Cookie string value</param>
     /// <param name="options"></param>
-    public void CreateCookie(string key, string value, CookieOptions options = null)
+    public void CreateCookie(string key, string value, CookieOptions? options = null)
     {
-        var cookie = _contextAccessor.HttpContext.Request.Cookies[key];
-
-        if (options == null)
+        if (_contextAccessor.HttpContext != null)
         {
-            options = new CookieOptions();
-            options.Expires = DateTime.Now.AddDays(365);
-        }
+            var cookie = _contextAccessor.HttpContext.Request.Cookies[key];
 
-        if (cookie == null)
-        {
-            _contextAccessor.HttpContext.Response.Cookies.Append(key, value, options);
+            if (options == null)
+            {
+                options = new CookieOptions
+                {
+                    Expires = DateTime.Now.AddDays(365)
+                };
+            }
+
+            if (cookie == null)
+            {
+                _contextAccessor.HttpContext.Response.Cookies.Append(key, value, options);
+            }
         }
     }
-
 }

@@ -6,14 +6,13 @@ namespace NHASoftware.Entities
     public class Subscription
     {
         public int SubscriptionId { get; set; }
-        public string SubscriptionName { get; set; }
+        public string SubscriptionName { get; set; } = string.Empty;
         public DateTime SubscriptionDate { get; set; }
         public int SubscriptionDay { get; set; }
         public decimal SubscriptionCost { get; set; }
         public ApplicationUser? User { get; set; }
 
-        [Required]
-        public string UserId { get; set; }
+        [Required] public string UserId { get; set; } = string.Empty;
 
         public TaskItem? TaskItem { get; set; }
         public int? TaskItemId { get; set; }

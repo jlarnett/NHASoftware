@@ -4,8 +4,8 @@
     {
         public int Id { get; set; }
         public int EpisodeNumber { get; set; }
-        public string EpisodeName { get; set; }
-        public string EpisodeSummary { get; set; }
+        public string EpisodeName { get; set; } = string.Empty;
+        public string EpisodeSummary { get; set; } = string.Empty;
         public bool EpisodeContainsFiller { get; set; }
         public int UpVotes { get; set; }
         public int DownVotes { get; set; }

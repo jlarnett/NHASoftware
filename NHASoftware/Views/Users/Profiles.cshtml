@@ -86,10 +86,9 @@
         @{
             string isFriends = friendSystem.IsFriends(@Model.User.Id, @userManager.GetUserId(User)).ToString();
             string friendRequestSent = friendSystem.FriendRequestSent(@userManager.GetUserId(User), @Model.User.Id).ToString();
-            bool profileSameAsLoggedInUser = @Model.User.Id.Equals(@userManager.GetUserId(User));
         }
 
-        <div class="dropdown col-md-4 p-1 align-self-center" id="FriendRequestButton" sameUser="@profileSameAsLoggedInUser.ToString()" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)" isFriends="@isFriends" friendRequestSent="@friendRequestSent">
+        <div class="dropdown col-md-4 p-1 align-self-center" id="FriendRequestButton" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)" isFriends="@isFriends" friendRequestSent="@friendRequestSent">
             @Html.AntiForgeryToken()
 
             <a class="btn btn-primary dropdown-toggle col-6 my-auto" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">

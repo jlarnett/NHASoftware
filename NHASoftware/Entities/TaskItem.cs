@@ -8,7 +8,7 @@ namespace NHASoftware.Entities
     {
         [Key]
         public int TaskId { get; set; }
-        public string TaskDescription { get; set; }
+        public string TaskDescription { get; set; } = string.Empty;
         public bool TaskIsFinished { get; set; }
 
         [DataType(DataType.Date)]
@@ -19,7 +19,7 @@ namespace NHASoftware.Entities
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
         public TimeSpan TaskExecutionTime { get; set; }
 
-        public TaskFrequency Frequency { get; set; }
+        public TaskFrequency Frequency { get; set; } = new TaskFrequency();
         public int FrequencyId { get; set; }
 
         public ApplicationUser? User { get; set; }

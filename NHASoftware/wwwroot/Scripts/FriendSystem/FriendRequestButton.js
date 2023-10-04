@@ -1,10 +1,10 @@
 ﻿$(document).ready(function () {
 
     //Accesses the friend request variables needed for friend request button. 
-    var sameUser = document.getElementById("FriendRequestButton").getAttribute("sameUser");
-    var isFriends = document.getElementById("FriendRequestButton").getAttribute("isFriends");
-    var userSessionActive = CheckUserSessionIsActive();
-    var friendRequestSent = document.getElementById("FriendRequestButton").getAttribute("friendRequestSent");
+    let sameUser = ProfileIsSameUser();
+    let isFriends = document.getElementById("FriendRequestButton").getAttribute("isFriends");
+    let userSessionActive = CheckUserSessionIsActive();
+    let friendRequestSent = document.getElementById("FriendRequestButton").getAttribute("friendRequestSent");
 
     //Initialize the friend request button.
     InitializeButton(isFriends, friendRequestSent, userSessionActive, sameUser);
@@ -32,13 +32,13 @@ function InitializeButton(isFriends, friendRequestSent, userSessionActive, sameU
     if (isFriends === "True") {
         ChangeFriendRequestButtonToFriendlyState();
     }
-    else if (isFriends !== "True" && friendRequestSent === "True" && sameUser !== "True") {
+    else if (isFriends !== "True" && friendRequestSent === "True" && sameUser !== true) {
         ChangeFriendRequestButtonToRequestedStatus();
     }
-    else if (sameUser === "True" && userSessionActive === "True") {
+    else if (sameUser === true && userSessionActive === "True") {
         HideFriendRequestButton();
     }
-    else if (friendRequestSent !== "True" && userSessionActive === "True" && sameUser !== "True") {
+    else if (friendRequestSent !== "True" && userSessionActive === "True" && sameUser !== true) {
         ChangeFriendRequestButtonStartingState();
     }
     else {
@@ -48,7 +48,7 @@ function InitializeButton(isFriends, friendRequestSent, userSessionActive, sameU
 
 function AddFriend() {
     //Sends the Friend Request to Friend API
-    var friendRequestDto = GetFriendRequestDtoFromButton();
+    let friendRequestDto = GetFriendRequestDtoFromButton();
 
     $.ajax({
         url: '/api/friend/friendrequest',
@@ -72,7 +72,7 @@ function AddFriend() {
 
 function DeleteFriendship() {
     //Calls the friend API & removes the associated pair of friends from DB. 
-    var friendRequestDto = GetFriendRequestDtoFromButton();
+    let friendRequestDto = GetFriendRequestDtoFromButton();
 
     $.ajax({
         url: '/api/friend/DeleteFriendship',
@@ -96,7 +96,7 @@ function DeleteFriendship() {
 
 function CancelFriendRequest() {
     //Calls the friend API & cancels pending friend request. 
-    var friendRequestDto = GetFriendRequestDtoFromButton();
+    let friendRequestDto = GetFriendRequestDtoFromButton();
 
     $.ajax({
         url: '/api/friend/CancelFriendRequest',
@@ -148,39 +148,39 @@ function ChangeFriendRequestButtonStartingState() {
 
 
 function ChangeFriendButtonText(text) {
-    var friendButtonTextElement = $('#FriendDropdownText');
+    let friendButtonTextElement = $('#FriendDropdownText');
     friendButtonTextElement.text(text);
 }
 
 function ShowFriendRequestButtonIcon() {
     //Shows the friend request button main icon.
-    var iconElement = $('#FriendRequestIcon');
+    let iconElement = $('#FriendRequestIcon');
     iconElement.slideDown();
     iconElement.show();
 }
 
 function HideFriendRequestButtonIcon() {
     //Hides the friend request button main icon.
-    var iconElement = $('#FriendRequestIcon');
+    let iconElement = $('#FriendRequestIcon');
     iconElement.slideUp();
     iconElement.hide('slow');
 }
 
 function ChangeFriendRequestIconToClock() {
-    var iconElement = $('#FriendRequestIcon');
+    let iconElement = $('#FriendRequestIcon');
     iconElement.attr("src", "/Images/Clock_Icon.png");
 }
 
 function ChangeFriendRequestIconToCheckmark() {
-    var iconElement = $('#FriendRequestIcon');
+    let iconElement = $('#FriendRequestIcon');
     iconElement.attr("src", "/Images/CheckMarkIcon.png");
 }
 
 function GetFriendRequestDtoFromButton() {
     //Checks the FriendRequestButton's recipientId & SenderId attribute, then returns a friendRequestDto object ready for sending to FriendAPI
-    var friendRequestButton = document.getElementById("FriendRequestButton");
-    var recipientId = friendRequestButton.getAttribute("recipientId");
-    var senderId = friendRequestButton.getAttribute("senderId");
+    let friendRequestButton = document.getElementById("FriendRequestButton");
+    let recipientId = friendRequestButton.getAttribute("recipientId");
+    let senderId = friendRequestButton.getAttribute("senderId");
 
     var friendRequestDto = {};
     friendRequestDto.SenderUserId = senderId;
@@ -191,37 +191,48 @@ function GetFriendRequestDtoFromButton() {
 
 function ClearFriendRequestLinkContainer() {
     //Clears the Friend Request Link Container of all actionable links
-    var linkContainer = $('#FriendRequestDropdownLinkContainer');
+    let linkContainer = $('#FriendRequestDropdownLinkContainer');
     linkContainer.empty();
 }
 
 function AppendFriendRequestRemoveLinkToLinkContainer() {
-    var linkContainer = ReturnFriendRequestDropdownLinkContainer();
+    let linkContainer = ReturnFriendRequestDropdownLinkContainer();
     linkContainer.innerHTML += '<li><a class="dropdown-item remove-friend">Remove Friend</a></li>';
 }
 
 function AppendFriendRequestAddLinkToLinkContainer() {
-    var linkContainer = ReturnFriendRequestDropdownLinkContainer();
+    let linkContainer = ReturnFriendRequestDropdownLinkContainer();
     linkContainer.innerHTML += '<li><a class="dropdown-item add-friend"><img src="/Images/plus_icon.png"/>Add Friend!</a></li>';
 }
 
 function AppendFriendRequestBlockLinkToLinkContainer() {
-    var linkContainer = ReturnFriendRequestDropdownLinkContainer();
+    let linkContainer = ReturnFriendRequestDropdownLinkContainer();
     linkContainer.innerHTML += '<li><a class="dropdown-item block-friend">Block Ex-Friend</a></li>';
 }
 
 function AppendFriendRequestCancelLinkToLinkContainer() {
-    var linkContainer = ReturnFriendRequestDropdownLinkContainer();
+    let linkContainer = ReturnFriendRequestDropdownLinkContainer();
     linkContainer.innerHTML += '<li><a class="dropdown-item cancel-friend">Cancel Friend Request</a></li>';
 }
 
 function ReturnFriendRequestDropdownLinkContainer() {
     //Returns the LinkContainer element.
-    var linkContainer = document.getElementById("FriendRequestDropdownLinkContainer");
+    let linkContainer = document.getElementById("FriendRequestDropdownLinkContainer");
     return linkContainer;
 }
 
 function HideFriendRequestButton() {
-    var friendRequestButton = $('#FriendRequestButton');
+    let friendRequestButton = $('#FriendRequestButton');
     friendRequestButton.hide('fast');
+}
+
+function ProfileIsSameUser() {
+    let dto = GetFriendRequestDtoFromButton();
+
+    if (dto.SenderUserId === dto.RecipientUserId) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
