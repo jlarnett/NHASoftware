@@ -176,7 +176,7 @@ namespace NHASoftware.Controllers.WebAPIs
         }
 
         /// <summary>
-        /// DELETE: api/friend/CancelFriendRequest
+        /// PUT: api/friend/CancelFriendRequest
         /// Tries to cancels pending friend request.
         /// </summary>
         /// <param name="friendRequestDto">Friend Request DTO containing recipientId & senderId</param>
@@ -195,7 +195,7 @@ namespace NHASoftware.Controllers.WebAPIs
         }
 
         /// <summary>
-        /// DELETE: api/friend/RetrieveMutualFriends
+        /// GET: api/friend/RetrieveMutualFriends
         /// Retrieves full list of mutual friends users from DB. Requires UserId of both ApplicationUsers
         /// </summary>
         /// <param name="friendRequestDto">Friend Request DTO containing recipientId & senderId</param>
@@ -207,7 +207,18 @@ namespace NHASoftware.Controllers.WebAPIs
             return mutualFriends.Any() ? Ok(new {success = true, data = mutualFriends}) : NoContent();
         }
 
-
+        /// <summary>
+        /// GET: api/friend/RetrieveFriends
+        /// Retrieves full list of friends associated with user. 
+        /// </summary>
+        /// <param name="userId">UserId you want to retrieve friend list for</param>
+        /// <returns>Returns IActionResult with JSON success result. </returns>
+        [HttpGet("RetrieveMutualFriends")]
+        public async Task<IActionResult> RetrieveMutualFriends(string userId)
+        {
+            var friendList = await _friendSystem.GetUsersFriendListAsync(userId);
+            return friendList.Any() ? Ok(new {success = true, data = friendList}) : NoContent();
+        }
 
         private bool FriendRequestExists(int id)
         {

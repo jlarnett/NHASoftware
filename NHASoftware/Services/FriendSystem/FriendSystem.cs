@@ -208,6 +208,12 @@ namespace NHASoftware.Services.FriendSystem
             return false;
         }
 
+        public async Task<IEnumerable<ApplicationUser>> GetUsersFriendListAsync(string userId)
+        {
+            var friendList = await _unitOfWork.FriendRepository.GetUsersFriendListAsync(userId);
+            return ReturnListOfUsersFriends(userId, friendList);
+        }
+
         /// <summary>
         /// Gets list of mutual friends for two application users. 
         /// </summary>
