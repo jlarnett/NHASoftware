@@ -22,7 +22,7 @@
         </div>
     </div>
     
-    <table id="FriendListTable" class="table" style="width:100%">
+    <table id="FriendListTable" class="table" style="width:100%" profile-user-id="@Model.User.Id">
         <thead>
         <tr>
             <th>Friend Name</th>
@@ -31,13 +31,31 @@
         </thead>
     </table>
 </div>
-<div>
 
+<!-- Modal -->
+<div class="modal fade" id="DeleteFriendModal" tabindex="-1" aria-labelledby="DeleteFriendModalLabel" aria-hidden="true">
+    @Html.AntiForgeryToken()
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DeleteFriendModalLabel">Remove Friend</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="DeleteFriendModalBodyDescription" class="modal-body">
+                Are you sure you want to remove GOD from you friends list?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="RemoveFriendBtn" type="button" class="btn btn-danger" sender-user-id="@Model.User.Id">Remove Friend</button>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 @section Scripts {
     <script type="text/javascript">
         var friends = JSON.parse('@Html.Raw(Json.Serialize(Model.FriendsList))');
-        LoadFriendListTable(friends)
+        LoadFriendListTable(friends);
     </script>
 }

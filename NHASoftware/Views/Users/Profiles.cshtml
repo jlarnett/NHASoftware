@@ -4,7 +4,6 @@
 @model NHASoftware.Views.ViewModels.SocialVMs.ProfileVM
 @inject UserManager<ApplicationUser> userManager
 @inject IFriendSystem friendSystem
-@inject IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "User Profile";
@@ -22,9 +21,10 @@
 
     string activeUserId = null;
 
-    if (HttpContextAccessor.HttpContext != null)
+    var activeUser = await userManager.GetUserAsync(User);
+
+    if (activeUser != null)
     {
-        var activeUser = await userManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
         activeUserId = await userManager.GetUserIdAsync(activeUser);
     }
 }
