@@ -1,0 +1,61 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using NHASoftware.Entities.Identity
+@using NHASoftware.Services.FriendSystem
+@model NHA.Website.Software.Views.ViewModels.FriendVMs.FriendListVM
+@inject UserManager<ApplicationUser> userManager
+@inject IFriendSystem friendSystem
+
+@{
+    ViewData["Title"] = "User Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <script src="~/Scripts/FriendSystem/FriendList.js"></script>
+</head>
+
+
+<div class="container-fluid border border-primary mt-2">
+    <div class="row">
+        <div class="col text-center mb-2">
+            <h1 class="h1">@Model.User.DisplayName's Friend List</h1>
+        </div>
+    </div>
+    
+    <table id="FriendListTable" class="table" style="width:100%" profile-user-id="@Model.User.Id">
+        <thead>
+        <tr>
+            <th>Friend Name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="DeleteFriendModal" tabindex="-1" aria-labelledby="DeleteFriendModalLabel" aria-hidden="true">
+    @Html.AntiForgeryToken()
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DeleteFriendModalLabel">Remove Friend</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="DeleteFriendModalBodyDescription" class="modal-body">
+                Are you sure you want to remove GOD from you friends list?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="RemoveFriendBtn" type="button" class="btn btn-danger" sender-user-id="@Model.User.Id">Remove Friend</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        var friends = JSON.parse('@Html.Raw(Json.Serialize(Model.FriendsList))');
+        LoadFriendListTable(friends);
+    </script>
+}

@@ -18,6 +18,15 @@
     var friendCount = friendSystem.GetFriendCount(Model.User.Id);
     var mutualFriends = await friendSystem.GetMutualFriendsAsync(Model.User.Id, userManager.GetUserId(User));
     var mutualFriendCount = mutualFriends.Count();
+
+    string activeUserId = null;
+
+    var activeUser = await userManager.GetUserAsync(User);
+
+    if (activeUser != null)
+    {
+        activeUserId = await userManager.GetUserIdAsync(activeUser);
+    }
 }
 
 <div class="container-fluid border border-primary">
@@ -27,13 +36,13 @@
         </div>
         <div class="col border-end border-bottom border-primary text-center">
 
-            <div class="link-secondary h1" role="button">@friendCount Friends</div>
+            <a class="link-secondary h1" role="button" href="/Users/FriendsView?userId=@Model.User.Id">@friendCount Friends</a>
             
             @if (User.Identity.IsAuthenticated && !userManager.GetUserId(User).Equals(Model.User.Id))
             {
 
                 <div class="border border-primary mb-2">
-                    <div class="link-secondary h1 border-bottom border-primary" role="button">@mutualFriendCount Mutual Friends</div>
+                    <a class="link-secondary h1 border-bottom border-primary" role="button" href="/Users/MutualFriendsView?userIdOne=@Model.User.Id&userIdTwo=@activeUserId">@mutualFriendCount Mutual Friends</a>
                     <div class="flex-wrap">
                         @{
                             var mutualFriendCounter = 0;

@@ -209,6 +209,17 @@ namespace NHASoftware.Services.FriendSystem
         }
 
         /// <summary>
+        /// Gets IEnumerable of friends for supplied user
+        /// </summary>
+        /// <param name="userId">userId you want to retrieve friend list for</param>
+        /// <returns>IEnumerable friend list for the supplied user</returns>
+        public async Task<IEnumerable<ApplicationUser>> GetUsersFriendListAsync(string userId)
+        {
+            var friendList = await _unitOfWork.FriendRepository.GetUsersFriendListAsync(userId);
+            return ReturnListOfUsersFriends(userId, friendList);
+        }
+
+        /// <summary>
         /// Gets list of mutual friends for two application users. 
         /// </summary>
         /// <param name="userIdOne">AppUser 1 id</param>
@@ -262,8 +273,8 @@ namespace NHASoftware.Services.FriendSystem
         /// <summary>
         /// Compares two friend lists & returns a List of all matching mutual friends (Application Users)
         /// </summary>
-        /// <param name="userOneFriendsList"></param>
-        /// <param name="userTwoFriendsList"></param>
+        /// <param name="userOneFriendsList">List of Friend Ones friends</param>
+        /// <param name="userTwoFriendsList">List of Friend Twos friends</param>
         /// <returns>Returns list of mutual friends. </returns>
         private List<ApplicationUser> CompareMutualFriends(List<ApplicationUser> userOneFriendsList,
             List<ApplicationUser> userTwoFriendsList)
@@ -273,15 +284,16 @@ namespace NHASoftware.Services.FriendSystem
 
             foreach (var user in userOneFriendsList)
             {
-                if (!friends.Contains(user))
-                {
-                    //If user is not part of the hashset add it.
-                    friends.Add(user);
-                }
-                if (friends.Contains(user))
+                //Adds all of users 1s friends to hash set for mutual friend comparison.
+                friends.Add(user);
+            }
+
+            foreach (var potentialMutualFriend in userTwoFriendsList)
+            {
+                if (friends.Contains(potentialMutualFriend))
                 {
                     //If user is already a part of the hashset that means there is a duplicate entry and thus mutual friends.
-                    mutualFriends.Add(user);
+                    mutualFriends.Add(potentialMutualFriend);
                 }
             }
 

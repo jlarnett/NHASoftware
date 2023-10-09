@@ -1,0 +1,41 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using NHASoftware.Entities.Identity
+@using NHASoftware.Services.FriendSystem
+@model NHA.Website.Software.Views.ViewModels.FriendVMs.MutualFriendListVM
+@inject UserManager<ApplicationUser> userManager
+@inject IFriendSystem friendSystem
+
+@{
+    ViewData["Title"] = "User Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <script src="~/Scripts/FriendSystem/MutualFriendList.js"></script>
+</head>
+
+
+<div class="container-fluid border border-primary mt-2">
+    <div class="row">
+        <div class="col text-center mb-2">
+            <h1 class="h1">Mutual Friends</h1>
+        </div>
+    </div>
+
+    <table id="FriendListTable" class="table" style="width:100%">
+        <thead>
+            <tr>
+                <th>Mutual Friend</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+<div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var friends = JSON.parse('@Html.Raw(Json.Serialize(Model.MutualFriendsList))');
+        LoadMutualFriendListTable(friends)
+    </script>
+}

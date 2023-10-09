@@ -48,7 +48,9 @@
         UserNavigatedToLink(profileUrl);
     });
 
-    GetPendingFriendRequests();
+    if (CheckUserSessionIsActive() === "True") {
+        GetPendingFriendRequests();
+    }
 });
 
 function RemoveFriendRequestFromModal(requestId) {

@@ -16,5 +16,6 @@ namespace NHASoftware.Services.FriendSystem
         Task<bool> RemoveFriendsAsync(FriendRequestDTO friendRequestDto);
         Task<bool> CancelFriendRequestAsync(FriendRequestDTO friendRequestDto);
         Task<IEnumerable<ApplicationUser>> GetMutualFriendsAsync(string userIdOne, string userIdTwo);
+        public Task<IEnumerable<ApplicationUser>> GetUsersFriendListAsync(string userId);
     }
 }
