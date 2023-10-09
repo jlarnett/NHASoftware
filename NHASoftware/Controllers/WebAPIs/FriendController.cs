@@ -213,8 +213,8 @@ namespace NHASoftware.Controllers.WebAPIs
         /// </summary>
         /// <param name="userId">UserId you want to retrieve friend list for</param>
         /// <returns>Returns IActionResult with JSON success result. </returns>
-        [HttpGet("RetrieveMutualFriends")]
-        public async Task<IActionResult> RetrieveMutualFriends(string userId)
+        [HttpGet("RetrieveFriends")]
+        public async Task<IActionResult> RetrieveFriends(string userId)
         {
             var friendList = await _friendSystem.GetUsersFriendListAsync(userId);
             return friendList.Any() ? Ok(new {success = true, data = friendList}) : NoContent();

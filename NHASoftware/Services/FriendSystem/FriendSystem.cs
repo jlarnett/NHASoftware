@@ -208,6 +208,11 @@ namespace NHASoftware.Services.FriendSystem
             return false;
         }
 
+        /// <summary>
+        /// Gets IEnumerable of friends for supplied user
+        /// </summary>
+        /// <param name="userId">userId you want to retrieve friend list for</param>
+        /// <returns>IEnumerable friend list for the supplied user</returns>
         public async Task<IEnumerable<ApplicationUser>> GetUsersFriendListAsync(string userId)
         {
             var friendList = await _unitOfWork.FriendRepository.GetUsersFriendListAsync(userId);
@@ -268,8 +273,8 @@ namespace NHASoftware.Services.FriendSystem
         /// <summary>
         /// Compares two friend lists & returns a List of all matching mutual friends (Application Users)
         /// </summary>
-        /// <param name="userOneFriendsList"></param>
-        /// <param name="userTwoFriendsList"></param>
+        /// <param name="userOneFriendsList">List of Friend Ones friends</param>
+        /// <param name="userTwoFriendsList">List of Friend Twos friends</param>
         /// <returns>Returns list of mutual friends. </returns>
         private List<ApplicationUser> CompareMutualFriends(List<ApplicationUser> userOneFriendsList,
             List<ApplicationUser> userTwoFriendsList)

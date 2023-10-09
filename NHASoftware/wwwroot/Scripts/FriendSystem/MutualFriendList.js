@@ -1,5 +1,5 @@
 ﻿function LoadMutualFriendListTable(friends) {
-
+    //Loads the mutual friend list
     var friendListTable = $("#FriendListTable").DataTable({
         "columns": [
             {
