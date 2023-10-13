@@ -71,9 +71,9 @@ function RemoveFriendRequestFromModal(requestId) {
 }
 
 
-//Gets all pending friend request for the logged in user.
+//Gets all pending friend request for the logged in user. NOT IMPLEMENTED YET.
 const GetPendingFriendRequests = async () => {
-    let = RetrieveCurrentUserId();
+    let userId = RetrieveCurrentUserId();
     const response = await fetch('/api/friend/pendingfriendrequest/' + userId);
     const myJson = await response.json(); //extract JSON from the http response
 }
