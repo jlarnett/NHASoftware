@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement.Mvc;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Forums;
 using NHASoftware.Entities.Identity;
@@ -13,6 +14,7 @@ using NHASoftware.Services.RepositoryPatternFoundationals;
 
 namespace NHASoftware.Controllers
 {
+    [FeatureGate("ForumsEnabled")]
     public class ForumCommentsController : Controller
     {
         private readonly ApplicationDbContext _context;

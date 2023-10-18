@@ -1,6 +1,7 @@
 ﻿#nullable disable
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement.Mvc;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Forums;
 using NHASoftware.Services.Forums;
@@ -8,6 +9,7 @@ using NHASoftware.Services.RepositoryPatternFoundationals;
 
 namespace NHASoftware.Controllers
 {
+    [FeatureGate("ForumsEnabled")]
     public class ForumSectionsController : Controller
     {
         private readonly ApplicationDbContext _context;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement.Mvc;
 using NHASoftware.Entities;
 using NHASoftware.Entities.Forums;
 using NHASoftware.Services.RepositoryPatternFoundationals;
@@ -8,6 +9,7 @@ namespace NHASoftware.Controllers.WebAPIs
 {
     [Route("api/[controller]")]
     [ApiController]
+    [FeatureGate("ForumsEnabled")]
     public class ForumsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

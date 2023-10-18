@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement.Mvc;
 using NHAHelpers.AlphabetSimplify;
 using NHAHelpers.HtmlStringCleaner;
 using NHASoftware.DBContext;
@@ -11,6 +12,7 @@ using NHASoftware.ViewModels.AnimeVMs;
 
 namespace NHASoftware.Controllers.AnimeControllers
 {
+    [FeatureGate("AnimeEnabled")]
     public class AnimeController : Controller
     {
         private readonly ApplicationDbContext _context;

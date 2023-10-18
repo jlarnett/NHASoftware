@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement.Mvc;
 using NHAHelpers.HtmlStringCleaner;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Forums;
@@ -12,6 +13,7 @@ using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
 {
+    [FeatureGate("ForumsEnabled")]
     public class ForumTopicsController : Controller
     {
         private readonly ApplicationDbContext _context;

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using NHASoftware.Profiles;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Microsoft.FeatureManagement;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Identity;
 using NHASoftware.HangfireFilters;
@@ -27,6 +28,9 @@ using NHASoftware.Services.Social;
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
 
+
+
+
 // gets the connectionString from Configuration.
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
 
@@ -45,6 +49,12 @@ builder.Host.ConfigureAppConfiguration((context, config) =>
         config.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
     }
 });
+
+builder.Configuration.AddAzureAppConfiguration(options =>
+{
+    options.Connect(builder.Configuration["ConnectionStrings:AppConfigurationConnection"]).UseFeatureFlags();
+});
+
 
 var mapperConfig = new MapperConfiguration(mc =>
 {
@@ -101,6 +111,10 @@ builder.Services.Configure<SendGridEmailSenderOptions>(options =>
     options.SenderName = "NHA Industry";
 });
 
+//Setup for azure dynamic configurations / feature management
+builder.Services.AddAzureAppConfiguration();
+builder.Services.AddFeatureManagement();
+
 builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
 builder.Services.AddSingleton<IFileExtensionValidator, FileExtensionValidator>();
 builder.Services.AddTransient<IWarden, AccessWarden>();
@@ -144,6 +158,9 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+//Setup fp for azure dynamic app configurations / Feature flags
+app.UseAzureAppConfiguration();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
