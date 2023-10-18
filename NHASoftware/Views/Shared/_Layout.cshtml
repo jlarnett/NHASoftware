@@ -70,15 +70,15 @@
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a></li>
                     }
                     
-                    <feature name="@Features.AnimeEnabled">
+                    <feature name="@FeatureFlags.AnimeEnabled">
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
                     </feature>
                     
-                    <feature name="@Features.ForumsEnabled">
+                    <feature name="@FeatureFlags.ForumsEnabled">
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
                     </feature>
                     
-                    <feature name="@Features.CryptoEnabled">
+                    <feature name="@FeatureFlags.CryptoEnabled">
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
                     </feature>
 

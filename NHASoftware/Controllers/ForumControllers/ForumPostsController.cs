@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement.Mvc;
 using NHAHelpers.HtmlStringCleaner;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Forums;
@@ -17,6 +18,7 @@ using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
 {
+    [FeatureGate("ForumsEnabled")]
     public class ForumPostsController : Controller
     {
         //DI Services

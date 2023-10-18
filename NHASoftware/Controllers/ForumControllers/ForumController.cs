@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement.Mvc;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Forums;
 using NHASoftware.Services.Forums;
@@ -7,6 +8,7 @@ using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
 {
+    [FeatureGate("ForumsEnabled")]
     public class ForumController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

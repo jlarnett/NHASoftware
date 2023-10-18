@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement.Mvc;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Forums;
 
@@ -8,6 +9,7 @@ namespace NHASoftware.Controllers.WebAPIs
 {
     [Route("api/[controller]")]
     [ApiController]
+    [FeatureGate("ForumsEnabled")]
     public class ForumCommentsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
