@@ -1,4 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Razor.TagHelpers
+@using NHA.Website.Software.FeatureManagement
 @using NHASoftware.Entities.Identity
 @using NHASoftware.Services.AccessWarden
 @using NHASoftware.Services.FriendSystem
@@ -67,10 +69,18 @@
                     {
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a></li>
                     }
-                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
-                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
-                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
-
+                    
+                    <feature name="@Features.AnimeEnabled">
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
+                    </feature>
+                    
+                    <feature name="@Features.ForumsEnabled">
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
+                    </feature>
+                    
+                    <feature name="@Features.CryptoEnabled">
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
+                    </feature>
 
                 </ul>
                 <partial name="_LoginPartial"/>
