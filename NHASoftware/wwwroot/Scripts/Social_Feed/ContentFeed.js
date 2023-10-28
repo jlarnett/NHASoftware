@@ -144,13 +144,19 @@
         });
     });
 
-    $('#HomeContentFeed').on('scroll', function() {
-        //Checks the home pages content feed scrollbar. Whenever scrollbar is bottom position retrieve more posts & load
-        //into the home page feed.
-        if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
-            console.log("Loading more post.......................");
-            OptimizedMainContentFeedLoad();
+    $(window).scroll(function() {
+        //Checks the home page scroll bar. When the scrollbar is lower than the specified percentage it fires home feed content loading.
+        var scrollbarValue = $(window).scrollTop() + $(window).height();
+        var windowHeightPercentToLoadFeed = 55;
+        var windowHeight = Math.trunc($(document).height());
+        var percentScrolled = Math.trunc((scrollbarValue / windowHeight) * 100);
+
+        console.log("Percent Scrolled - " + percentScrolled);
+
+        if(percentScrolled >= windowHeightPercentToLoadFeed || percentScrolled == 100) {
+            LoadMorePostToMainContentFeed();
         }
+
     });
 
     var profileUserId = $('#ContentFeed').attr("profile-user-id");
@@ -161,6 +167,23 @@
 
     RebuildFeedTextboxes();
 });
+
+var canGo = true;
+function LoadMorePostToMainContentFeed() {
+    //Calls the Optimized feed load. Called whenever the scroll bar event conditionals fire off.
+    //Contains a delay timer to stop the content from loading multiple times instantly.
+
+    delay = 5000; // 5 seconds
+
+    if (canGo) {
+        if (canGo) {
+            canGo = false;
+            console.log("Loading More Post!!!!!");
+            OptimizedMainContentFeedLoad();
+            setTimeout(function () {canGo = true;}, delay)
+        } 
+    }
+}
 
 function RemovePostFromContentFeed(postId) {
     //Removes the post from the content feed'Ss HTML. This doesn't affect the BD just HTML. 
@@ -447,7 +470,7 @@ function LoadCommentsRedesign(id, uuid) {
                         '<div class="col-2">',
                             '<a class="text-decoration-none ms-2 h6">', GetTimeShortHandString(postDateDifferenceInSeconds), '</a>',
                         '</div>',
-                        '<div class="col-4"></div>',
+                        '<div class="col"></div>',
                         '<div class="col-auto">',
                             GeneratePostActionButton(data[i]),
                         '</div>',
@@ -531,7 +554,6 @@ function RebuildFeedTextboxes() {
     });
 
     $('#MainPostTextbox').summernote({
-        height: 60,
         toolbar: [
         // [groupName, [list of button]]
         ],

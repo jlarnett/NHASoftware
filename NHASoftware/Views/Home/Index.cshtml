@@ -11,25 +11,48 @@
     <link rel="stylesheet" href="~/css/MainPostFeed.css">
 </head>
 
-<h1 class="text-center feed-header m-auto fs-2">HRP Feed</h1>
 
-<div class="HomeContainer">
-    <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
-        <div id="ContentFeed">
-        </div>
-        @if (_SignInManager.IsSignedIn(User))
-        {
-            <div class="textbox-area">
-                <div id="MainPostTextboxContainer">
-                    @Html.AntiForgeryToken()
-                    <div id="MainPostTextbox"></div>
-                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="btn-dark">Convey Message</button>
+@if (_SignInManager.IsSignedIn(User))
+{
+    <div class="container-fluid">
+        <div class="row">
+                @Html.AntiForgeryToken()
+                <div class="col-1"></div>
+                <div class="col border border-2 border-white p-3">
+                    <div class="row text-center">
+                        <h1 class="h1">Create New Post</h1>
+                    </div>
+                    <div class="row">
+                        <div id="MainPostTextboxContainer" class="p-0">
+                            <div id="MainPostTextbox"></div>
+                        </div>
+                    </div>
+                    <div class="row p-0">
+                        <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="col btn-dark p-0">Convey Message</button>
+                        <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col btn-dark p-0">AddPhotos</button>
+                    </div>
+                    <div class="row p-0">
+                        <span id="MainPostTextboxValidationMessage" style="display: none; color: red">Error Submitting Post.....</span>
+                    </div>
                 </div>
-                <span id="MainPostTextboxValidationMessage" style="display: none; color: red">Error Submitting Post.....</span>
+                <div class="col-1"></div>
+        </div>
+    </div>
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="HomeContainer col p-0">
+            <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
+                <div id="ContentFeed">
+                </div>
             </div>
-        }
+        </div>
+        <div class="col-1"></div>
 
     </div>
+
 </div>
 
 @section Scripts {
