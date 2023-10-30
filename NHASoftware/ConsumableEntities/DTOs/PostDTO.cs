@@ -20,5 +20,7 @@ namespace NHASoftware.ConsumableEntities.DTOs
         public int? DislikeCount { get; set; }
         public bool UserDislikedPost { get; set; }
         public bool UserLikedPost { get; set; }
+
+        public List<IFormFile> ImagesFiles { get; set; } = new List<IFormFile>();
     }
 }

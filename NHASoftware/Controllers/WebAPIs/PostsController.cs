@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement.Mvc;
 using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.Entities.Identity;
 using NHASoftware.Entities.Social_Entities;
@@ -187,6 +188,49 @@ namespace NHASoftware.Controllers.WebAPIs
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> PostPost([Bind("Summary,UserId,ParentPostId")] PostDTO postdto)
+        {
+            var post = _mapper.Map<PostDTO, Post>(postdto);
+            post.CreationDate = DateTime.Now;
+
+            _unitOfWork.PostRepository.Add(post);
+            var result = await _unitOfWork.CompleteAsync();
+
+            if (result > 0)
+            {
+                var newPost = _unitOfWork.PostRepository.Find(p =>
+                    p.Summary.Equals(postdto.Summary) && p.UserId.Equals(postdto.UserId)).FirstOrDefault();
+
+                //Populating the postDto
+                if (newPost != null)
+                {
+                    var newPostWithIncludes = await _unitOfWork.PostRepository.GetPostByIDWithIncludesAsync(newPost.Id.GetValueOrDefault());
+                    var postDto = PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes));
+                    _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", postDto);
+                    return Ok(new { success = true, data = postDto });
+                }
+                else
+                {
+                    return BadRequest(new {success = false});
+                }
+            }
+            else
+            {
+                _logger.Log(LogLevel.Debug, "system was unable to add postDto to DB.");
+                return BadRequest(new { success = false });
+            }
+        }
+
+        /// <summary>
+        /// POST: api/CustomizedPosts
+        /// API Endpoint for creating new custom social media post. This is the endpoint used for creating post with images attached.
+        /// </summary>
+        /// <param name="postdto"></param>
+        /// <returns>Returns IActionResult with new post. </returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        [FeatureGate("CustomizedPostsEnabled")]
+        public async Task<IActionResult> PostCustomizedPost([Bind("Summary,UserId,ParentPostId,ImagesFiles")] PostDTO postdto)
         {
             var post = _mapper.Map<PostDTO, Post>(postdto);
             post.CreationDate = DateTime.Now;

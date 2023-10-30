@@ -104,6 +104,43 @@
         });
     });
 
+   $("#SubmitCustomPostBtn").click(function(e) {
+        var userId = RetrieveCurrentUserId();
+        var postContent = $($("#CustomPostTextbox").summernote("code")).text()
+        var fileProps = $("#CustomPostImageFileInput").prop('files');
+        var formData = new FormData();
+
+        formData.append("Summary", postContent);
+        formData.append("UserId", userId);
+        formData.append("CreationDate", null);
+        formData.append("ParentPostId", null);
+
+       for (var i = 0; i != fileProps.length; i++) {
+            formData.append("ImagesFiles", fileProps[i]);
+       }
+
+        $.ajax({
+            url: '/api/CustomizedPosts',
+            method: 'POST',
+            contentType: "application/json; charset=utf-8",
+            datatype: 'json',
+            data: JSON.stringify(formData),
+            headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+            success: function(data) {
+                if (data.success) {
+                    //Clear summernote textbox after successful submission.
+                    $("#CustomPostTextbox").summernote('reset');
+                    console.log("Successfully submitted post to DB.");
+                    $("#MainPostTextboxValidationMessage").hide("slow");
+                }
+            },
+            error: function (data) {
+                $("#MainPostTextboxValidationMessage").show("slow");
+            }
+            
+        });
+    });
+
     $("#ContentFeed").on("click", ".comment-send-btn", function (e) { 
 
         var SendButton = $(e.target);
@@ -558,6 +595,14 @@ function RebuildFeedTextboxes() {
         // [groupName, [list of button]]
         ],
         disableResizeEditor: true,
+        placeholder: 'Type Post Summary Here.......'
+    });
 
+    $('#CustomPostTextbox').summernote({
+        toolbar: [
+        // [groupName, [list of button]]
+        ],
+        disableResizeEditor: true,
+        placeholder: 'Type Custom Post Summary Here.....'
     });
 }
