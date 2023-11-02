@@ -53,17 +53,21 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form method="post" enctype="multipart/form-data" asp-controller="Posts" asp-action="PostCustomizedPost">
+                            @model NHASoftware.ConsumableEntities.DTOs.PostDTO
+                            <form id="CustomPostForm" method="post" enctype="multipart/form-data">
                                 <div class="row mb-2">
                                     <div id="CustomPostTextboxContainer" class="p-0">
-                                        <div id="CustomPostTextbox"></div>
+                                        <textarea id="CustomPostTextbox" name="Summary"></textarea>
                                     </div>
                                 </div>
                                 <div class="row mb-2">
-                                    <input type="file" id="CustomPostImageFileInput" class="p-0" multiple="multiple" role="button"/>
+                                    <input type="file" id="CustomPostImageFileInput" class="p-0" multiple="multiple" role="button" name="ImageFiles" />
                                 </div>
                                 <div class="row mb-2">
-                                    <button id="SubmitCustomPostBtn" class="btn btn-primary">Upload Custom Post</button>
+                                    <button id="SubmitCustomPostBtn" class="btn btn-primary" value="Create" type="Submit">Upload Custom Post</button>
+                                </div>
+                                <div class="row p-0">
+                                    <span id="CustomPostValidationMessage" style="display: none; color: red">Error Submitting Post.....</span>
                                 </div>
                             </form>
                         </div>

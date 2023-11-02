@@ -1,8 +1,8 @@
-﻿using NHASoftware.DBContext;
+﻿using NHA.Website.Software.Services.Social;
+using NHASoftware.DBContext;
 using NHASoftware.Services.Anime;
 using NHASoftware.Services.Forums;
 using NHASoftware.Services.FriendSystem;
-using NHASoftware.Services.Social;
 
 namespace NHASoftware.Services.RepositoryPatternFoundationals
 {
@@ -11,19 +11,15 @@ namespace NHASoftware.Services.RepositoryPatternFoundationals
         private readonly ApplicationDbContext _context;
 
         public IForumSectionRepository ForumSectionRepository { get; private set; }
-
         public IForumTopicRepository ForumTopicRepository { get; private set; }
-
         public IForumPostRepository ForumPostRepository { get; private set; }
-
         public IForumCommentRepository ForumCommentRepository { get; private set; }
-
         public IAnimePageRepository AnimePageRepository { get; private set; }
-
         public IPostRepository PostRepository { get; private set; }
         public IUserLikeRepository UserLikeRepository { get; private set; }
         public IFriendRequestRepository FriendRequestRepository { get; set; }
         public IFriendRepository FriendRepository { get; set; }
+        public IPostImageRepository PostImageRepository { get; set; }
 
 
 
@@ -39,6 +35,7 @@ namespace NHASoftware.Services.RepositoryPatternFoundationals
             UserLikeRepository = new UserLikeRepository(_context);
             FriendRequestRepository = new FriendRequestRepository(_context);
             FriendRepository = new FriendRepository(_context);
+            PostImageRepository = new PostImageRepository(_context);
         }
 
         public async Task<int> CompleteAsync()

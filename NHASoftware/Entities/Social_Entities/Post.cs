@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using NHA.Website.Software.Entities.Social_Entities;
 using NHASoftware.Entities.Identity;
 
 namespace NHASoftware.Entities.Social_Entities
@@ -16,5 +17,7 @@ namespace NHASoftware.Entities.Social_Entities
         public bool IsHiddenFromUserProfile { get; set; } = false;
         public bool IsHiddenFromMainContentFeed { get; set; } = false;
         [Required] public bool IsDeletedFlag { get; set; } = false;
+
+        public ICollection<PostImage> PostImages { get; } = new List<PostImage>();
     }
 }

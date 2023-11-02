@@ -105,37 +105,34 @@
     });
 
    $("#SubmitCustomPostBtn").click(function(e) {
-        var userId = RetrieveCurrentUserId();
-        var postContent = $($("#CustomPostTextbox").summernote("code")).text()
-        var fileProps = $("#CustomPostImageFileInput").prop('files');
-        var formData = new FormData();
+        e.preventDefault();
+        var form = document.getElementById("CustomPostForm");
+        var formData = new FormData(form);
 
-        formData.append("Summary", postContent);
-        formData.append("UserId", userId);
-        formData.append("CreationDate", null);
-        formData.append("ParentPostId", null);
+        formData.set("Summary", $($("#CustomPostTextbox").summernote("code")).text())
 
-       for (var i = 0; i != fileProps.length; i++) {
-            formData.append("ImagesFiles", fileProps[i]);
-       }
+        for (var pair of formData.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]); 
+        }
 
         $.ajax({
-            url: '/api/CustomizedPosts',
+            url: '/api/Posts/CustomizedPost',
             method: 'POST',
-            contentType: "application/json; charset=utf-8",
-            datatype: 'json',
-            data: JSON.stringify(formData),
+            contentType: false,
+            processData: false,
+            data: formData,
             headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
             success: function(data) {
                 if (data.success) {
                     //Clear summernote textbox after successful submission.
                     $("#CustomPostTextbox").summernote('reset');
+                    $("#CustomPostImageFileInput").val(null);
                     console.log("Successfully submitted post to DB.");
-                    $("#MainPostTextboxValidationMessage").hide("slow");
+                    $("#CustomPostValidationMessage").hide("slow");
                 }
             },
             error: function (data) {
-                $("#MainPostTextboxValidationMessage").show("slow");
+                $("#CustomPostValidationMessage").show("slow");
             }
             
         });
@@ -170,7 +167,7 @@
                     ////Clear summernote textbox after successful submission.
                     $(commentTextbox).summernote('reset');
                     $("span[unique-error-identifier$="+ uniquePostIdentifier +"]").hide("slow");
-                    AddCommentDynamically(uniquePostIdentifier, data.data);
+                    AddCommentDynamically(uniquePostIdentifier, data.data.result);
                     console.log("Successfully submitted comment to DB.");
                 }
             },
@@ -402,6 +399,12 @@ function GeneratePostRedesign(post) {
                 '<div class="col-sm-1 px-0"></div>',
                 '<p class="text-black col text-white border-bottom border-start border-primary">', post.summary, '</p>',
             '</div>',
+            '<div class="row text-break">',
+                '<div class="col-sm-1 px-0"></div>',
+                '<div class="row col px-0">',
+                    GeneratePostImagesHtml(post),
+                '</div>',
+            '</div>',
             '<!--Posts Likes & Comment Show section-->',
             '<div class="row align-items-center m-2">',
                 '<div class="col-auto">',
@@ -418,6 +421,12 @@ function GeneratePostRedesign(post) {
         '</div>');
 
     return postHtml.join('');
+}
+
+function GeneratePostImagesHtml(post) {
+    postImageHtml = [];
+    post.imageDataSources.forEach((image) => postImageHtml.push('<div class="col-5"><img class="col img-thumbnail MainFeedPostImages" src="', image , '"/></div>'));
+    return postImageHtml.join('');
 }
 
 function GeneratePostActionButton(post) {

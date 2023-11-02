@@ -1,6 +1,12 @@
 ﻿body {
 }
 
+.MainFeedPostImages {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 /*Giant Header above Main Feed*/
 .feed-header {
     text-shadow: 5px 2px 3px black;

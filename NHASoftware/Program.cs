@@ -8,7 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using NHASoftware.Profiles;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.FeatureManagement;
+using NHA.Helpers.ImageDataSourceTranslator;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Identity;
 using NHASoftware.HangfireFilters;
@@ -23,7 +25,7 @@ using NHASoftware.Services.CacheGoblin;
 using NHASoftware.Services.CookieMonster;
 using NHASoftware.Services.FriendSystem;
 using NHASoftware.Services.SendGrid.Configuration;
-using NHASoftware.Services.Social;
+using NHA.Website.Software.Services.Social;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
@@ -139,6 +141,8 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<ICookieMonster, CookieMonster>();
 builder.Services.AddSingleton(typeof(ICacheGoblin<>), typeof(CacheGoblin<>));
 builder.Services.AddTransient<IFriendSystem, FriendSystem>();
+builder.Services.AddTransient<IImageDataSourceTranslator, ImageDataSourceTranslator>();
+
 
 builder.Services.AddHangfireServer();
 

@@ -8,6 +8,7 @@ using NHASoftware.Entities.Identity;
 using NHASoftware.Entities.FriendSystem;
 using NHASoftware.Entities.Social_Entities;
 using NHA.Website.Software.Entities.FriendSystem;
+using NHA.Website.Software.Entities.Social_Entities;
 
 namespace NHASoftware.DBContext
 {
@@ -39,5 +40,7 @@ namespace NHASoftware.DBContext
         public DbSet<UserLikes>? UserLikes { get; set; }
         public DbSet<FriendRequest>? FriendRequests { get; set; }
         public DbSet<Friends>? Friends { get; set; }
+        public DbSet<PostImage>? PostImages { get; set; }
+
     }
 }
