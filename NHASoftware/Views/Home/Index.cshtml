@@ -29,9 +29,9 @@
                     </div>
                 </div>
                 <div class="row p-0">
-                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="col btn-dark p-0">Upload Post</button>
+                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="col btn-dark p-0 fs-2">Upload Post</button>
                     <feature name="@FeatureFlags.CustomizedPostsEnabled">
-                        <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col btn-dark p-0" data-bs-toggle="modal" data-bs-target="#AddPostPhotosModal">Add Photos</button>
+                        <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col btn-dark p-0 fs-2" data-bs-toggle="modal" data-bs-target="#AddPostPhotosModal">Add Photos</button>
                     </feature>
                 </div>
                 <div class="row p-0">

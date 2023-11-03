@@ -92,15 +92,13 @@
             success: function(data) {
                 if (data.success) {
                     //Clear summernote textbox after successful submission.
-                    $("#MainPostTextbox").summernote('reset');
-                    console.log("Successfully submitted post to DB.");
-                    $("#MainPostTextboxValidationMessage").hide("slow");
+                    ClearBasicPostAfterSuccessfulAPIResponse();
+                    DynamicallyAddPostToContentFeed(data.data.result);
                 }
             },
             error: function (data) {
                 $("#MainPostTextboxValidationMessage").show("slow");
             }
-            
         });
     });
 
@@ -111,10 +109,6 @@
 
         formData.set("Summary", $($("#CustomPostTextbox").summernote("code")).text())
 
-        for (var pair of formData.entries()) {
-            console.log(pair[0]+ ', ' + pair[1]); 
-        }
-
         $.ajax({
             url: '/api/Posts/CustomizedPost',
             method: 'POST',
@@ -124,17 +118,15 @@
             headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
             success: function(data) {
                 if (data.success) {
-                    //Clear summernote textbox after successful submission.
-                    $("#CustomPostTextbox").summernote('reset');
-                    $("#CustomPostImageFileInput").val(null);
-                    console.log("Successfully submitted post to DB.");
-                    $("#CustomPostValidationMessage").hide("slow");
+                    //Clear custom post & dynamically add post to content feed
+                    ClearCustomPostAfterSuccessfulAPIResponse();
+                    DynamicallyAddPostToContentFeed(data.data.result);
+                    HideCustomPostModal();
                 }
             },
             error: function (data) {
                 $("#CustomPostValidationMessage").show("slow");
             }
-            
         });
     });
 
@@ -168,7 +160,6 @@
                     $(commentTextbox).summernote('reset');
                     $("span[unique-error-identifier$="+ uniquePostIdentifier +"]").hide("slow");
                     AddCommentDynamically(uniquePostIdentifier, data.data.result);
-                    console.log("Successfully submitted comment to DB.");
                 }
             },
             error: function (data) {
@@ -185,7 +176,8 @@
         var windowHeight = Math.trunc($(document).height());
         var percentScrolled = Math.trunc((scrollbarValue / windowHeight) * 100);
 
-        console.log("Percent Scrolled - " + percentScrolled);
+        //Debugging Log
+        //console.log("Percent Scrolled - " + percentScrolled);
 
         if(percentScrolled >= windowHeightPercentToLoadFeed || percentScrolled == 100) {
             LoadMorePostToMainContentFeed();
@@ -587,6 +579,27 @@ function InsertCommentTextboxRedesignHtml(postId, uuid) {
     }
 
     return Html.join('');
+}
+
+function DynamicallyAddPostToContentFeed(post) {
+    var postHtml = GeneratePostRedesign(post);
+    $("#ContentFeed").prepend(postHtml);
+    RebuildFeedTextboxes();
+}
+
+function ClearCustomPostAfterSuccessfulAPIResponse() {
+    $("#CustomPostTextbox").summernote('reset');
+    $("#CustomPostImageFileInput").val(null);
+    $("#CustomPostValidationMessage").hide("slow");
+}
+
+function ClearBasicPostAfterSuccessfulAPIResponse() {
+    $("#MainPostTextbox").summernote('reset');
+    $("#MainPostTextboxValidationMessage").hide("slow");
+}
+
+function HideCustomPostModal() {
+    $('#AddPostPhotosModal').modal('hide');
 }
 
 function RebuildFeedTextboxes() {

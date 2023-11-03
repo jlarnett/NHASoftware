@@ -7,24 +7,6 @@
     object-fit: cover;
 }
 
-/*Giant Header above Main Feed*/
-.feed-header {
-    text-shadow: 5px 2px 3px black;
-    font-size: 40em;
-}
-
-#MainPostTextboxContainer {
-/*    display: flex;
-    flex-direction: row;*/
-}
-
-.textbox-area {
-    position: fixed;
-    top: 91.5%;
-    left: 13%
-}
-
-
 /*Home Page Content Feed. Main Feed where posts are directly appended*/
 #HomeContentFeed {
     margin: auto;
@@ -42,39 +24,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-/***********************************************************************************
-****************SCROLLBAR STYLING***************************************************************/
-
-/* width */
-::-webkit-scrollbar {
-    width: .25em;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-    background: #303030;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-    background: #555;
-    border-radius: 10em;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: #000000;
-    border-radius: 10em;
-}
-
-/***********************************************************************************
-****************SCROLLBAR STYLING***************************************************************/
-
-#SubmitBtn {
-    /*height: 5em;*/
-    opacity: 1;
 }
 
 /*Controls the Main post summernote textbox text color*/
