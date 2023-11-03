@@ -92,15 +92,41 @@
             success: function(data) {
                 if (data.success) {
                     //Clear summernote textbox after successful submission.
-                    $("#MainPostTextbox").summernote('reset');
-                    console.log("Successfully submitted post to DB.");
-                    $("#MainPostTextboxValidationMessage").hide("slow");
+                    ClearBasicPostAfterSuccessfulAPIResponse();
+                    DynamicallyAddPostToContentFeed(data.data.result);
                 }
             },
             error: function (data) {
                 $("#MainPostTextboxValidationMessage").show("slow");
             }
-            
+        });
+    });
+
+   $("#SubmitCustomPostBtn").click(function(e) {
+        e.preventDefault();
+        var form = document.getElementById("CustomPostForm");
+        var formData = new FormData(form);
+
+        formData.set("Summary", $($("#CustomPostTextbox").summernote("code")).text())
+
+        $.ajax({
+            url: '/api/Posts/CustomizedPost',
+            method: 'POST',
+            contentType: false,
+            processData: false,
+            data: formData,
+            headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+            success: function(data) {
+                if (data.success) {
+                    //Clear custom post & dynamically add post to content feed
+                    ClearCustomPostAfterSuccessfulAPIResponse();
+                    DynamicallyAddPostToContentFeed(data.data.result);
+                    HideCustomPostModal();
+                }
+            },
+            error: function (data) {
+                $("#CustomPostValidationMessage").show("slow");
+            }
         });
     });
 
@@ -133,8 +159,7 @@
                     ////Clear summernote textbox after successful submission.
                     $(commentTextbox).summernote('reset');
                     $("span[unique-error-identifier$="+ uniquePostIdentifier +"]").hide("slow");
-                    AddCommentDynamically(uniquePostIdentifier, data.data);
-                    console.log("Successfully submitted comment to DB.");
+                    AddCommentDynamically(uniquePostIdentifier, data.data.result);
                 }
             },
             error: function (data) {
@@ -144,13 +169,20 @@
         });
     });
 
-    $('#HomeContentFeed').on('scroll', function() {
-        //Checks the home pages content feed scrollbar. Whenever scrollbar is bottom position retrieve more posts & load
-        //into the home page feed.
-        if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
-            console.log("Loading more post.......................");
-            OptimizedMainContentFeedLoad();
+    $(window).scroll(function() {
+        //Checks the home page scroll bar. When the scrollbar is lower than the specified percentage it fires home feed content loading.
+        var scrollbarValue = $(window).scrollTop() + $(window).height();
+        var windowHeightPercentToLoadFeed = 55;
+        var windowHeight = Math.trunc($(document).height());
+        var percentScrolled = Math.trunc((scrollbarValue / windowHeight) * 100);
+
+        //Debugging Log
+        //console.log("Percent Scrolled - " + percentScrolled);
+
+        if(percentScrolled >= windowHeightPercentToLoadFeed || percentScrolled == 100) {
+            LoadMorePostToMainContentFeed();
         }
+
     });
 
     var profileUserId = $('#ContentFeed').attr("profile-user-id");
@@ -161,6 +193,23 @@
 
     RebuildFeedTextboxes();
 });
+
+var canGo = true;
+function LoadMorePostToMainContentFeed() {
+    //Calls the Optimized feed load. Called whenever the scroll bar event conditionals fire off.
+    //Contains a delay timer to stop the content from loading multiple times instantly.
+
+    delay = 5000; // 5 seconds
+
+    if (canGo) {
+        if (canGo) {
+            canGo = false;
+            console.log("Loading More Post!!!!!");
+            OptimizedMainContentFeedLoad();
+            setTimeout(function () {canGo = true;}, delay)
+        } 
+    }
+}
 
 function RemovePostFromContentFeed(postId) {
     //Removes the post from the content feed'Ss HTML. This doesn't affect the BD just HTML. 
@@ -315,7 +364,7 @@ function GeneratePostRedesign(post) {
                 '<div class="col-1 px-0">',
                     '<img src="/ProfilePictures/', post.user.profilePicturePath, '" class="img-fluid"/>',
                 '</div>',
-                '<div class="col-auto border-primary border-start">',
+                '<div class="col-sm-auto border-primary border-start">',
                     '<a class="h3 text-decoration-none profile-link" role="button" userId="', post.user.id, '">', post.user.displayName, '</a>',
                 '</div>',
                 '<div class="col-auto">',
@@ -324,7 +373,7 @@ function GeneratePostRedesign(post) {
                 '<div class="col-2">',
                     '<a class="h3 text-decoration-none" role="button">', GetTimeShortHandString(postDateDifferenceInSeconds), '</a>',
                 '</div>',
-                '<div class="col-6">',
+                '<div class="col">',
                 '</div>',
                 '<!--Post Action dropdown-->',
                 '<div class="col-auto">',
@@ -342,6 +391,12 @@ function GeneratePostRedesign(post) {
                 '<div class="col-sm-1 px-0"></div>',
                 '<p class="text-black col text-white border-bottom border-start border-primary">', post.summary, '</p>',
             '</div>',
+            '<div class="row text-break">',
+                '<div class="col-sm-1 px-0"></div>',
+                '<div class="row col px-0">',
+                    GeneratePostImagesHtml(post),
+                '</div>',
+            '</div>',
             '<!--Posts Likes & Comment Show section-->',
             '<div class="row align-items-center m-2">',
                 '<div class="col-auto">',
@@ -358,6 +413,12 @@ function GeneratePostRedesign(post) {
         '</div>');
 
     return postHtml.join('');
+}
+
+function GeneratePostImagesHtml(post) {
+    postImageHtml = [];
+    post.imageDataSources.forEach((image) => postImageHtml.push('<div class="col-5"><img class="col img-thumbnail MainFeedPostImages" src="', image , '"/></div>'));
+    return postImageHtml.join('');
 }
 
 function GeneratePostActionButton(post) {
@@ -447,7 +508,7 @@ function LoadCommentsRedesign(id, uuid) {
                         '<div class="col-2">',
                             '<a class="text-decoration-none ms-2 h6">', GetTimeShortHandString(postDateDifferenceInSeconds), '</a>',
                         '</div>',
-                        '<div class="col-4"></div>',
+                        '<div class="col"></div>',
                         '<div class="col-auto">',
                             GeneratePostActionButton(data[i]),
                         '</div>',
@@ -520,6 +581,27 @@ function InsertCommentTextboxRedesignHtml(postId, uuid) {
     return Html.join('');
 }
 
+function DynamicallyAddPostToContentFeed(post) {
+    var postHtml = GeneratePostRedesign(post);
+    $("#ContentFeed").prepend(postHtml);
+    RebuildFeedTextboxes();
+}
+
+function ClearCustomPostAfterSuccessfulAPIResponse() {
+    $("#CustomPostTextbox").summernote('reset');
+    $("#CustomPostImageFileInput").val(null);
+    $("#CustomPostValidationMessage").hide("slow");
+}
+
+function ClearBasicPostAfterSuccessfulAPIResponse() {
+    $("#MainPostTextbox").summernote('reset');
+    $("#MainPostTextboxValidationMessage").hide("slow");
+}
+
+function HideCustomPostModal() {
+    $('#AddPostPhotosModal').modal('hide');
+}
+
 function RebuildFeedTextboxes() {
 //Used to rebuild summernote text boxes. This is needed whenever the textboxes are added dynamically to feed.
     $('.summernote-comments').summernote({
@@ -531,11 +613,18 @@ function RebuildFeedTextboxes() {
     });
 
     $('#MainPostTextbox').summernote({
-        height: 60,
         toolbar: [
         // [groupName, [list of button]]
         ],
         disableResizeEditor: true,
+        placeholder: 'Type Post Summary Here.......'
+    });
 
+    $('#CustomPostTextbox').summernote({
+        toolbar: [
+        // [groupName, [list of button]]
+        ],
+        disableResizeEditor: true,
+        placeholder: 'Type Custom Post Summary Here.....'
     });
 }

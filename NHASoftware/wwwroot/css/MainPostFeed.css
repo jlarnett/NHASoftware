@@ -1,32 +1,20 @@
 ﻿body {
 }
 
-/*Giant Header above Main Feed*/
-.feed-header {
-    text-shadow: 5px 2px 3px black;
-    font-size: 4em;
+.MainFeedPostImages {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
-
-#MainPostTextboxContainer {
-    display: flex;
-    flex-direction: row;
-}
-
-.textbox-area {
-    position: fixed;
-    top: 91.5%;
-    left: 13%
-}
-
 
 /*Home Page Content Feed. Main Feed where posts are directly appended*/
 #HomeContentFeed {
     margin: auto;
     border-right: 2px solid black;
     border-left: 2px solid black;
-    width: 75%;
-    height: 45em;
-    position: static;
+    /*width: 75%;*/
+/*    height: 45em;
+    position: static;*/
     padding: .5em;
     overflow-y: auto;
 }
@@ -38,43 +26,10 @@
     align-items: center;
 }
 
-/***********************************************************************************
-****************SCROLLBAR STYLING***************************************************************/
-
-/* width */
-::-webkit-scrollbar {
-    width: .25em;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-    background: #303030;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-    background: #555;
-    border-radius: 10em;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: #000000;
-    border-radius: 10em;
-}
-
-/***********************************************************************************
-****************SCROLLBAR STYLING***************************************************************/
-
-#SubmitBtn {
-    height: 5em;
-    opacity: 1;
-}
-
 /*Controls the Main post summernote textbox text color*/
 .note-editor.note-frame .note-editing-area .note-editable {
     color: #d7dbe1;
-    width: 80.3em;
+    /*width: 80.3em;*/
 }
 
 /*Controls the Main post summernote textbox text color*/

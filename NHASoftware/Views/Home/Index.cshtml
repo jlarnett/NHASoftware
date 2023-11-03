@@ -1,5 +1,6 @@
 ﻿@using NHASoftware.Entities.Identity
 @using Microsoft.AspNetCore.Identity
+@using NHA.Website.Software.FeatureManagement
 @inject UserManager<ApplicationUser> _UserManager;
 @inject SignInManager<ApplicationUser> _SignInManager;
 
@@ -11,25 +12,85 @@
     <link rel="stylesheet" href="~/css/MainPostFeed.css">
 </head>
 
-<h1 class="text-center feed-header m-auto fs-2">HRP Feed</h1>
 
-<div class="HomeContainer">
-    <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
-        <div id="ContentFeed">
-        </div>
-        @if (_SignInManager.IsSignedIn(User))
-        {
-            <div class="textbox-area">
-                <div id="MainPostTextboxContainer">
-                    @Html.AntiForgeryToken()
-                    <div id="MainPostTextbox"></div>
-                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="btn-dark">Convey Message</button>
+@if (_SignInManager.IsSignedIn(User))
+{
+    <div class="container-fluid">
+        <div class="row">
+            @Html.AntiForgeryToken()
+            <div class="col-1"></div>
+            <div class="col border border-2 border-white p-3">
+                <div class="row text-center">
+                    <h1 class="h1">Create New Post</h1>
                 </div>
-                <span id="MainPostTextboxValidationMessage" style="display: none; color: red">Error Submitting Post.....</span>
+                <div class="row">
+                    <div id="MainPostTextboxContainer" class="p-0">
+                        <div id="MainPostTextbox"></div>
+                    </div>
+                </div>
+                <div class="row p-0">
+                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="col btn-dark p-0 fs-2">Upload Post</button>
+                    <feature name="@FeatureFlags.CustomizedPostsEnabled">
+                        <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col btn-dark p-0 fs-2" data-bs-toggle="modal" data-bs-target="#AddPostPhotosModal">Add Photos</button>
+                    </feature>
+                </div>
+                <div class="row p-0">
+                    <span id="MainPostTextboxValidationMessage" style="display: none; color: red">Error Submitting Post.....</span>
+                </div>
             </div>
-        }
+            <div class="col-1"></div>
+        </div>
+
+        <!--Add Post Photos Modal-->
+        <feature name="@FeatureFlags.CustomizedPostsEnabled">
+            <div class="modal fade" id="AddPostPhotosModal" tabindex="-1" role="dialog" aria-labelledby="AddPostPhotosModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header border-bottom">
+                            <h5 class="modal-title" id="AddPostPhotosModalLabel">Customized Post</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            @model NHASoftware.ConsumableEntities.DTOs.PostDTO
+                            <form id="CustomPostForm" method="post" enctype="multipart/form-data">
+                                <div class="row mb-2">
+                                    <div id="CustomPostTextboxContainer" class="p-0">
+                                        <textarea id="CustomPostTextbox" name="Summary"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <input type="file" id="CustomPostImageFileInput" class="p-0" multiple="multiple" role="button" name="ImageFiles" />
+                                </div>
+                                <div class="row mb-2">
+                                    <button id="SubmitCustomPostBtn" class="btn btn-primary" value="Create" type="Submit">Upload Custom Post</button>
+                                </div>
+                                <div class="row p-0">
+                                    <span id="CustomPostValidationMessage" style="display: none; color: red">Error Submitting Post.....</span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </feature>
+    </div>
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="HomeContainer col p-0">
+            <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
+                <div id="ContentFeed">
+                </div>
+            </div>
+        </div>
+        <div class="col-1"></div>
 
     </div>
+
 </div>
 
 @section Scripts {

@@ -1,7 +1,7 @@
-﻿using NHASoftware.Services.Anime;
+﻿using NHA.Website.Software.Services.Social;
+using NHASoftware.Services.Anime;
 using NHASoftware.Services.Forums;
 using NHASoftware.Services.FriendSystem;
-using NHASoftware.Services.Social;
 
 namespace NHASoftware.Services.RepositoryPatternFoundationals
 {
@@ -16,6 +16,7 @@ namespace NHASoftware.Services.RepositoryPatternFoundationals
         IUserLikeRepository UserLikeRepository { get; }
         IFriendRequestRepository FriendRequestRepository { get; }
         IFriendRepository FriendRepository { get; }
+        IPostImageRepository PostImageRepository { get; }
         Task<int> CompleteAsync();
     }
 }

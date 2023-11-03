@@ -7,9 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement.Mvc;
+using NHA.Helpers.ImageDataSourceTranslator;
+using NHA.Website.Software.Entities.Social_Entities;
 using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.Entities.Identity;
 using NHASoftware.Entities.Social_Entities;
+using NHASoftware.Services.FileExtensionValidator;
 using NHASoftware.Services.RepositoryPatternFoundationals;
 
 namespace NHASoftware.Controllers.WebAPIs
@@ -22,13 +26,19 @@ namespace NHASoftware.Controllers.WebAPIs
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger _logger;
+        private readonly IFileExtensionValidator _fileExtensionValidator;
+        private readonly IImageDataSourceTranslator _imageDataSourceTranslator;
+        
 
-        public PostsController(IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, ILogger<PostDTO> logger)
+        public PostsController(IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager,
+            ILogger<PostDTO> logger, IFileExtensionValidator validator, IImageDataSourceTranslator imageTranslator)
         {
             this._mapper = mapper;
             this._unitOfWork = unitOfWork;
             this._userManager = userManager;
             this._logger = logger;
+            this._fileExtensionValidator = validator;
+            this._imageDataSourceTranslator = imageTranslator;
         }
 
         /// <summary>
@@ -98,14 +108,14 @@ namespace NHASoftware.Controllers.WebAPIs
             List<PostDTO> posts = new List<PostDTO>();
             foreach (var dto in postDtos)
             {
-                posts.Add(PopulatePostDTO(dto));
+                posts.Add(await PopulatePostDTO(dto));
             }
             return posts.AsEnumerable();
         }
 
-        private PostDTO PopulatePostDTO(PostDTO dto)
+        private async Task<PostDTO> PopulatePostDTO(PostDTO dto)
         {
-            return new PostDTO()
+            var postDto = new PostDTO()
             {
                 CreationDate = dto.CreationDate,
                 DislikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id && p.IsDislike).Count(),
@@ -119,6 +129,17 @@ namespace NHASoftware.Controllers.WebAPIs
                 ParentPost = dto.ParentPost,
                 Summary = dto.Summary,
             };
+
+            var images = await _unitOfWork.PostImageRepository.GetPostImagesAsync(postDto.Id);
+
+            foreach (var image in images)
+            {
+                var imageDataSource =
+                    _imageDataSourceTranslator.GetDataSourceTranslation(image.FileExtensionType, image.ImageBytes);
+                postDto.ImageDataSources.Add(imageDataSource);
+            }
+
+            return postDto;
         }
 
         /// <summary>
@@ -220,6 +241,68 @@ namespace NHASoftware.Controllers.WebAPIs
         }
 
         /// <summary>
+        /// POST: api/CustomizedPosts
+        /// API Endpoint for creating new custom social media post. This is the endpoint used for creating post with images attached.
+        /// </summary>
+        /// <param name="postdto"></param>
+        /// <returns>Returns IActionResult with new post. </returns>
+        [HttpPost("CustomizedPost")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        [FeatureGate("CustomizedPostsEnabled")]
+        public async Task<IActionResult> PostCustomizedPost([FromForm] PostDTO postdto)
+        {
+            if (postdto.ImageFiles != null)
+            {
+                foreach (var imageFile in postdto.ImageFiles)
+                {
+                    if (!_fileExtensionValidator.CheckValidImageExtensions(imageFile.FileName))
+                        return BadRequest(new
+                            { success = false, message = "Unable To Submit Custom Post - File is Not Image Extension" });
+                }
+            }
+
+            postdto.UserId = _userManager.GetUserId(User);
+            var post = _mapper.Map<PostDTO, Post>(postdto);
+            post.CreationDate = DateTime.Now;
+            _unitOfWork.PostRepository.Add(post);
+            var result = await _unitOfWork.CompleteAsync();
+
+            if (result > 0)
+            {
+                var newPost = _unitOfWork.PostRepository.Find(p =>
+                    p.Summary.Equals(postdto.Summary) && p.UserId.Equals(postdto.UserId)).FirstOrDefault();
+
+                //Populating the postDto
+                if (newPost != null)
+                {
+                    if (postdto.ImageFiles != null)
+                    {
+                        var imageSaveResult = await SavePostImagesToDatabase(newPost.Id, postdto.ImageFiles);
+
+                        if (!imageSaveResult)
+                        {
+                            return BadRequest(new {success = false, message = "Error Saving Images To DB"});
+                        }
+                    }
+                    var newPostWithIncludes = await _unitOfWork.PostRepository.GetPostByIDWithIncludesAsync(newPost.Id.GetValueOrDefault());
+                    var postDto = PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes));
+                    _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", postDto);
+                    return Ok(new { success = true, data = postDto });
+                }
+                else
+                {
+                    return BadRequest(new {success = false});
+                }
+            }
+            else
+            {
+                _logger.Log(LogLevel.Debug, "system was unable to add postDto to DB.");
+                return BadRequest(new { success = false });
+            }
+        }
+
+        /// <summary>
         /// Used to set the isDeletedFlag on post object. Flag is being used to avoid hassles with EF self referencing table. 
         /// </summary>
         /// <param name="id">Id of the post to delete</param>
@@ -302,6 +385,43 @@ namespace NHASoftware.Controllers.WebAPIs
         {
             var post = _unitOfWork.PostRepository.Find(p => p.Id.Equals(id));
             return post.Any();
+        }
+
+        private async Task<bool> SavePostImagesToDatabase(int? postId, List<IFormFile> ImageFiles)
+        {
+            List<PostImage> images = new List<PostImage>();
+
+            foreach (var imageFile in ImageFiles)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await imageFile.CopyToAsync(memoryStream);
+
+                    // Upload the file if less than 5 MB
+                    if (memoryStream.Length < 5242880)
+                    {
+                        PostImage postImage = new PostImage()
+                        {
+                            ImageBytes = memoryStream.ToArray(),
+                            PostId = postId,
+                            FileExtensionType = Path.GetExtension(imageFile.FileName)
+                        };
+
+                        images.Add(postImage);
+                    }
+                }
+
+            }
+
+            _unitOfWork.PostImageRepository.AddRange(images);
+            var savePostImageResult = await _unitOfWork.CompleteAsync();
+
+            if (savePostImageResult > 0)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

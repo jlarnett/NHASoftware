@@ -32,7 +32,7 @@ function GetTimeShortHandString(timeInSeconds) {
     var outputShorthandUnit;
 
 
-    if (timeInSeconds < 60 && timeInSeconds >= 1) {
+    if (timeInSeconds < 60 && timeInSeconds >= 0) {
         outputShorthandUnit = (timeInSeconds > 1 ? " seconds ago" : " second ago");
         return timeInSeconds + outputShorthandUnit;
     }

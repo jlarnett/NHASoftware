@@ -55,5 +55,30 @@ body {
 }
 
 
+/***********************************************************************************
+****************SCROLLBAR STYLING***************************************************************/
+
+/* width */
+::-webkit-scrollbar {
+    width: .5em;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #303030;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10em;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #000000;
+    border-radius: 10em;
+}
+
 
 

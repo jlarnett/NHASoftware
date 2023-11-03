@@ -3,7 +3,7 @@ using NHASoftware.DBContext;
 using NHASoftware.Entities.Social_Entities;
 using NHASoftware.Services.RepositoryPatternFoundationals;
 
-namespace NHASoftware.Services.Social
+namespace NHA.Website.Software.Services.Social
 {
     public class PostRepository : GenericRepository<Post>, IPostRepository
     {
@@ -25,6 +25,7 @@ namespace NHASoftware.Services.Social
                 .Include(p => p.User)
                 .Include(p => p.ParentPost)
                 .Where(p => p.IsDeletedFlag.Equals(false))
+                .OrderByDescending(P => P.CreationDate)
                 .ToListAsync();
 
         public async Task<Post> GetPostByIDWithIncludesAsync(int postId)
@@ -44,6 +45,7 @@ namespace NHASoftware.Services.Social
                 .Include(p => p.User)
                 .Include(p => p.ParentPost)
                 .Where(u => u.UserId.Equals(userId) && u.IsDeletedFlag.Equals(false) && u.IsHiddenFromUserProfile.Equals(false))
+                .OrderByDescending(p => p.CreationDate)
                 .ToListAsync();
         }
     }
