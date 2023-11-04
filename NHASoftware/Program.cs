@@ -11,6 +11,7 @@ using Azure.Security.KeyVault.Secrets;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.FeatureManagement;
 using NHA.Helpers.ImageDataSourceTranslator;
+using NHA.Website.Software.RequestDurationMiddleware;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Identity;
 using NHASoftware.HangfireFilters;
@@ -165,6 +166,9 @@ else
 
 //Setup fp for azure dynamic app configurations / Feature flags
 app.UseAzureAppConfiguration();
+
+//Custom Middleware to log request duration
+app.UseRequestDurationMiddleware();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
