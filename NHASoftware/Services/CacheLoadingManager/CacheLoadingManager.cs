@@ -82,14 +82,28 @@
                 return false;
             }
 
-            _logger.LogError("CacheLoadingManager was unable to locate cacheKey when checking for reload.");
-            return false;
+            _logger.LogError("CacheLoadingManager was unable to locate cacheKey when checking for reload. Adding key to dictionaries.");
+            TryAddCacheReloadEntryToDictionary(cacheKey);
+            return _cacheReloadEntries[cacheKey].ReloadCache;
+        }
+
+        private void TryAddCacheReloadEntryToDictionary(string cacheKey)
+        {
+            if (!_cacheLoadingOptions.ContainsKey(cacheKey))
+            {
+                _cacheLoadingOptions.Add(cacheKey, new CacheLoadingManagerOptions());
+            }
+
+            if (!_cacheReloadEntries.ContainsKey(cacheKey))
+            {
+                _cacheReloadEntries.Add(cacheKey, new CacheReloadingEntry());
+            }
         }
 
         private class CacheReloadingEntry
         {
             public int CacheChangeCounter { get; set; } = 0;
-            public bool ReloadCache { get; set; } = true;
+            public bool ReloadCache { get; set; } = false;
         }
 
     }
