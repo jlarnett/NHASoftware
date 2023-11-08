@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.FeatureManagement;
 using NHA.Helpers.ImageDataSourceTranslator;
 using NHA.Website.Software.RequestDurationMiddleware;
+using NHA.Website.Software.Services.CacheLoadingManager;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Identity;
 using NHASoftware.HangfireFilters;
@@ -143,9 +144,11 @@ builder.Services.AddTransient<ICookieMonster, CookieMonster>();
 builder.Services.AddSingleton(typeof(ICacheGoblin<>), typeof(CacheGoblin<>));
 builder.Services.AddTransient<IFriendSystem, FriendSystem>();
 builder.Services.AddTransient<IImageDataSourceTranslator, ImageDataSourceTranslator>();
+builder.Services.AddSingleton<ICacheLoadingManager, CacheLoadingManager>();
 
 
 builder.Services.AddHangfireServer();
+builder.Services.AddMemoryCache();
 
 #endregion
 

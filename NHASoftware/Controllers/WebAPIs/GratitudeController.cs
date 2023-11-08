@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NHA.Website.Software.Caching;
+using NHA.Website.Software.Services.CacheLoadingManager;
 using NHASoftware.Entities.Social_Entities;
 using NHASoftware.Services.RepositoryPatternFoundationals;
 
@@ -10,10 +12,12 @@ namespace NHASoftware.Controllers.WebAPIs
     public class GratitudeController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheLoadingManager _cacheLoadingManager;
 
-        public GratitudeController(IUnitOfWork unitOfWork)
+        public GratitudeController(IUnitOfWork unitOfWork, ICacheLoadingManager cacheLoadingManager)
         {
             _unitOfWork = unitOfWork;
+            _cacheLoadingManager = cacheLoadingManager;
         }
 
         [HttpPost("Userlike")]
@@ -27,6 +31,7 @@ namespace NHASoftware.Controllers.WebAPIs
 
                 if (rowsAltered > 0)
                 {
+                    _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
                     return new JsonResult(new { success = true});
                 }
             }
@@ -58,9 +63,15 @@ namespace NHASoftware.Controllers.WebAPIs
                 {
                     _unitOfWork.UserLikeRepository.Remove(like);
                     var result = await _unitOfWork.CompleteAsync();
-                    return result > 0
-                        ? new JsonResult(new { success = true })
-                        : new JsonResult(new { success = false });
+
+
+                    if (result > 0)
+                    {
+                        _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
+                        return new JsonResult(new { success = true });
+                    }
+
+                    return new JsonResult(new { success = false });
                 }
             }
 

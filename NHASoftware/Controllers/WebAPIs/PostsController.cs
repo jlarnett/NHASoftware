@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.FeatureManagement.Mvc;
 using NHA.Helpers.ImageDataSourceTranslator;
+using NHA.Website.Software.Caching;
 using NHA.Website.Software.Entities.Social_Entities;
+using NHA.Website.Software.Services.CacheLoadingManager;
 using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.Entities.Identity;
 using NHASoftware.Entities.Social_Entities;
@@ -28,10 +31,12 @@ namespace NHASoftware.Controllers.WebAPIs
         private readonly ILogger _logger;
         private readonly IFileExtensionValidator _fileExtensionValidator;
         private readonly IImageDataSourceTranslator _imageDataSourceTranslator;
-        
+        private readonly IMemoryCache _memoryCache;
+        private readonly ICacheLoadingManager _cacheLoadingManager;
+
 
         public PostsController(IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager,
-            ILogger<PostDTO> logger, IFileExtensionValidator validator, IImageDataSourceTranslator imageTranslator)
+            ILogger<PostDTO> logger, IFileExtensionValidator validator, IImageDataSourceTranslator imageTranslator, IMemoryCache memoryCache, ICacheLoadingManager cacheLoadingManager)
         {
             this._mapper = mapper;
             this._unitOfWork = unitOfWork;
@@ -39,6 +44,8 @@ namespace NHASoftware.Controllers.WebAPIs
             this._logger = logger;
             this._fileExtensionValidator = validator;
             this._imageDataSourceTranslator = imageTranslator;
+            this._memoryCache = memoryCache;
+            this._cacheLoadingManager = cacheLoadingManager;
         }
 
         /// <summary>
@@ -49,9 +56,33 @@ namespace NHASoftware.Controllers.WebAPIs
         [HttpGet]
         public async Task<IEnumerable<PostDTO>> GetPosts()
         {
-            var posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
-            var postsDtos = posts.Select((_mapper.Map<Post, PostDTO>)).ToList();
-            return await PopulatePostDTOLikeDetails(postsDtos);
+            var shouldReloadCache = _cacheLoadingManager.ShouldCacheReload(CachingKeys.Posts);
+            var postDTOs = new List<PostDTO>();
+
+            if (!_memoryCache.TryGetValue(CachingKeys.Posts, out List<Post>? posts) || shouldReloadCache)
+            {
+                posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
+
+                _memoryCache.Set(CachingKeys.Posts, posts, cacheEntryOptions);
+            }
+
+            if (posts != null)
+            {
+                postDTOs = posts.Select((_mapper.Map<Post, PostDTO>)).ToList();
+            }
+
+            if (!_memoryCache.TryGetValue(CachingKeys.PopulatedPostDTOs, out IEnumerable<PostDTO>? populatedPostDTOs) || shouldReloadCache)
+            {
+                populatedPostDTOs = await PopulatePostDTOLikeDetails(postDTOs);
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
+
+                _memoryCache.Set(CachingKeys.PopulatedPostDTOs, populatedPostDTOs, cacheEntryOptions);
+            }
+
+            return populatedPostDTOs;
         }
 
         /// <summary>
@@ -226,6 +257,8 @@ namespace NHASoftware.Controllers.WebAPIs
                     var newPostWithIncludes = await _unitOfWork.PostRepository.GetPostByIDWithIncludesAsync(newPost.Id.GetValueOrDefault());
                     var postDto = PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes));
                     _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", postDto);
+
+                    _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
                     return Ok(new { success = true, data = postDto });
                 }
                 else
@@ -241,7 +274,7 @@ namespace NHASoftware.Controllers.WebAPIs
         }
 
         /// <summary>
-        /// POST: api/CustomizedPosts
+        /// POST: api/Posts/CustomizedPosts
         /// API Endpoint for creating new custom social media post. This is the endpoint used for creating post with images attached.
         /// </summary>
         /// <param name="postdto"></param>
@@ -252,7 +285,9 @@ namespace NHASoftware.Controllers.WebAPIs
         [FeatureGate("CustomizedPostsEnabled")]
         public async Task<IActionResult> PostCustomizedPost([FromForm] PostDTO postdto)
         {
-            if (postdto.ImageFiles != null)
+            bool imageFilesIncluded = postdto.ImageFiles != null && postdto.ImageFiles.Count > 0;
+
+            if (imageFilesIncluded)
             {
                 foreach (var imageFile in postdto.ImageFiles)
                 {
@@ -276,7 +311,7 @@ namespace NHASoftware.Controllers.WebAPIs
                 //Populating the postDto
                 if (newPost != null)
                 {
-                    if (postdto.ImageFiles != null)
+                    if (imageFilesIncluded)
                     {
                         var imageSaveResult = await SavePostImagesToDatabase(newPost.Id, postdto.ImageFiles);
 
@@ -288,6 +323,7 @@ namespace NHASoftware.Controllers.WebAPIs
                     var newPostWithIncludes = await _unitOfWork.PostRepository.GetPostByIDWithIncludesAsync(newPost.Id.GetValueOrDefault());
                     var postDto = PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes));
                     _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", postDto);
+                    _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
                     return Ok(new { success = true, data = postDto });
                 }
                 else
@@ -326,6 +362,7 @@ namespace NHASoftware.Controllers.WebAPIs
             if (result > 0)
             {
                 _logger.Log(LogLevel.Information, "Post was deleted from DB successfully.");
+                _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
                 return Ok(new { success = true });
             }
             else
@@ -423,5 +460,6 @@ namespace NHASoftware.Controllers.WebAPIs
 
             return false;
         }
+
     }
 }
