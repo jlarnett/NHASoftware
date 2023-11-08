@@ -73,6 +73,7 @@
     });
 
     $("#SubmitBtn").click(function(e) {
+        AddSpinnerSubmitPostBtn();
         var userId = RetrieveCurrentUserId();
         var postContent = $($("#MainPostTextbox").summernote("code")).text()
 
@@ -92,11 +93,13 @@
             success: function(data) {
                 if (data.success) {
                     //Clear summernote textbox after successful submission.
+                    RemoveSpinnerSubmitPostBtn();
                     ClearBasicPostAfterSuccessfulAPIResponse();
                     DynamicallyAddPostToContentFeed(data.data.result);
                 }
             },
             error: function (data) {
+                RemoveSpinnerSubmitPostBtn();
                 $("#MainPostTextboxValidationMessage").show("slow");
             }
         });
@@ -104,6 +107,7 @@
 
    $("#SubmitCustomPostBtn").click(function(e) {
         e.preventDefault();
+        AddSpinnerSubmitCustomPostBtn();
         var form = document.getElementById("CustomPostForm");
         var formData = new FormData(form);
 
@@ -119,12 +123,14 @@
             success: function(data) {
                 if (data.success) {
                     //Clear custom post & dynamically add post to content feed
+                    RemoveSpinnerSubmitCustomPostBtn();
                     ClearCustomPostAfterSuccessfulAPIResponse();
                     DynamicallyAddPostToContentFeed(data.data.result);
                     HideCustomPostModal();
                 }
             },
             error: function (data) {
+                RemoveSpinnerSubmitCustomPostBtn();
                 $("#CustomPostValidationMessage").show("slow");
             }
         });
@@ -313,16 +319,14 @@ function AddCommentDynamically(uuid, data) {
 
 function OptimizedMainContentFeedLoad() {
     //Loads the id #ContentFeed with all posts created by user. Calls Post WebAPI
+    AddSpinnerToContentFeed();
     RetrieveMorePosts().then(function (posts) {
-        var feedHtml = [];
-
         for (var i = 0; i < posts.length; i++) {
-            feedHtml.push(GeneratePostRedesign(posts[i]));
+            $("#ContentFeed").append(GeneratePostRedesign(posts[i]))
         }
 
-        var builtFeedHtml = feedHtml.join("");
-        $("#ContentFeed").append(builtFeedHtml);
         RebuildFeedTextboxes();
+        RemoveSpinnerFromContentFeed();
     });
 }
 
@@ -600,6 +604,38 @@ function ClearBasicPostAfterSuccessfulAPIResponse() {
 
 function HideCustomPostModal() {
     $('#AddPostPhotosModal').modal('hide');
+}
+
+var postUploadButtonText = "";
+
+function AddSpinnerSubmitCustomPostBtn() {
+    postUploadButtonText = $('#SubmitCustomPostBtn').text();
+    $('#SubmitCustomPostBtn').text("");
+    $('#SubmitCustomPostBtn').prepend("<span id='LoadingSpinner' class='spinner-border spinner-border' role='status' aria-hidden='true'></span>");
+}
+
+function AddSpinnerSubmitPostBtn() {
+    postUploadButtonText = $('#SubmitBtn').text();
+    $('#SubmitBtn').text("");
+    $('#SubmitBtn').prepend("<span id='LoadingSpinner' class='spinner-border spinner-border' role='status' aria-hidden='true'></span>");
+}
+
+function RemoveSpinnerSubmitCustomPostBtn() {
+    $('#LoadingSpinner').remove();
+    $('#SubmitCustomPostBtn').text(postUploadButtonText);
+}
+
+function RemoveSpinnerSubmitPostBtn() {
+    $('#LoadingSpinner').remove();
+    $('#SubmitBtn').text(postUploadButtonText);
+}
+
+function AddSpinnerToContentFeed() {
+    $("#ContentFeed").append('<div id="LoadingSpinner" class="text-center mt-2" ><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+}
+
+function RemoveSpinnerFromContentFeed() {
+    $('#LoadingSpinner').remove();
 }
 
 function RebuildFeedTextboxes() {
