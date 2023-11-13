@@ -1,5 +1,5 @@
-﻿using NHASoftware.Entities.Social_Entities;
-using NHASoftware.Services.RepositoryPatternFoundationals;
+﻿using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+using NHASoftware.Entities.Social_Entities;
 
 namespace NHA.Website.Software.Services.Social
 {

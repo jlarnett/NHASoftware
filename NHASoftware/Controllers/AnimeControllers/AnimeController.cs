@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHAHelpers.AlphabetSimplify;
 using NHAHelpers.HtmlStringCleaner;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Anime;
 using NHASoftware.Entities.Forums;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 using NHASoftware.ViewModels.AnimeVMs;
 
 namespace NHASoftware.Controllers.AnimeControllers
@@ -66,7 +66,7 @@ namespace NHASoftware.Controllers.AnimeControllers
                 return NotFound();
             }
 
-            var ap = _context.AnimePages.Find(id);
+            var ap = _context.AnimePages!.Find(id);
 
             if (ap != null)
             {

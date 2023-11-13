@@ -1,9 +1,4 @@
-﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+﻿
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,18 +6,18 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NHASoftware;
 using NHASoftware.DBContext;
 using NHASoftware.Entities;
 using NHASoftware.Entities.Identity;
-using NHASoftware.Services;
 using NHASoftware.ViewModels;
 
-namespace NHASoftware.Controllers
+namespace NHA.Website.Software.Controllers
 {
     public class TaskItemsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly  UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private FrequencyHandler frequencyHandler;
 
         public TaskItemsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEmailSender emailService)
@@ -44,7 +39,7 @@ namespace NHASoftware.Controllers
              *  Returns a list of Task for the specified user. 
              *******************************************************************************************************/
 
-            var applicationDbContext = _context.Tasks.Include(t => t.Frequency).Include(t => t.User).Where(u => u.UserId == _userManager.GetUserId(HttpContext.User));
+            var applicationDbContext = _context.Tasks!.Include(t => t.Frequency).Include(t => t.User).Where(u => u.UserId == _userManager.GetUserId(HttpContext.User));
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -57,7 +52,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var taskItem = await _context.Tasks
+            var taskItem = await _context.Tasks!
                 .Include(t => t.Frequency)
                 .Include(t => t.User)
                 .FirstOrDefaultAsync(m => m.TaskId == id);
@@ -101,7 +96,7 @@ namespace NHASoftware.Controllers
 
             var taskItem = new TaskItem()
             {
-                TaskExecutionTime = taskVM.TaskExecutionTime.Value,
+                TaskExecutionTime = taskVM.TaskExecutionTime!.Value,
                 TaskDescription = taskVM.TaskDescription,
                 TaskStartDate = taskVM.TaskStartDate,
                 FrequencyId = taskVM.FrequencyId,
@@ -136,7 +131,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var taskItem = await _context.Tasks.FindAsync(id);
+            var taskItem = await _context.Tasks!.FindAsync(id);
 
             if (taskItem == null)
             {
@@ -146,7 +141,7 @@ namespace NHASoftware.Controllers
             var vm = new TaskFormViewModel()
             {
                 TaskStartDate = taskItem.TaskStartDate,
-                UserId = taskItem.UserId,
+                UserId = taskItem.UserId!,
                 FrequencyId = taskItem.FrequencyId,
                 TaskId = taskItem.TaskId,
                 TaskExecutionTime = taskItem.TaskExecutionTime,
@@ -185,10 +180,10 @@ namespace NHASoftware.Controllers
                 UserId = vm.UserId,
                 FrequencyId = vm.FrequencyId,
                 TaskId = vm.TaskId,
-                TaskExecutionTime = vm.TaskExecutionTime.Value,
+                TaskExecutionTime = vm.TaskExecutionTime!.Value,
                 TaskDescription = vm.TaskDescription,
                 TaskIsFinished = vm.TaskIsFinished,
-                NextTaskDate = frequencyHandler.GenerateNextDate(vm.TaskStartDate, _context.Frequencies.Find(vm.FrequencyId)),
+                NextTaskDate = frequencyHandler.GenerateNextDate(vm.TaskStartDate, _context.Frequencies!.Find(vm.FrequencyId)),
                 JobCrated = false
             };
 
@@ -231,7 +226,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var taskItem = await _context.Tasks
+            var taskItem = await _context.Tasks!
                 .Include(t => t.Frequency)
                 .Include(t => t.User)
                 .FirstOrDefaultAsync(m => m.TaskId == id);
@@ -253,14 +248,14 @@ namespace NHASoftware.Controllers
              *      Deletes the task & removes the recurring job from Hangfire. 
              ****************************************************************************************/
 
-            var taskItem = await _context.Tasks.FindAsync(id);
-            
+            var taskItem = await _context.Tasks!.FindAsync(id);
+
             //Critical To deleting. Otherwise a BS exception is thrown for cascading delete.
-            var subscription = _context.Subscriptions.Single(e => e.TaskItem == taskItem);
+            var subscription = _context.Subscriptions!.Single(e => e.TaskItem == taskItem);
 
 
-            _context.Tasks.Remove(taskItem);
-            RecurringJob.RemoveIfExists("TaskId: " + taskItem.TaskId);
+            _context.Tasks.Remove(taskItem!);
+            RecurringJob.RemoveIfExists("TaskId: " + taskItem!.TaskId);
 
             await _context.SaveChangesAsync();
 
@@ -269,7 +264,7 @@ namespace NHASoftware.Controllers
 
         private bool TaskItemExists(int id)
         {
-            return _context.Tasks.Any(e => e.TaskId == id);
+            return _context.Tasks!.Any(e => e.TaskId == id);
         }
     }
 }

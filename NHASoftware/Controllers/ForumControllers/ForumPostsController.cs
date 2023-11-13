@@ -1,19 +1,17 @@
 ﻿#nullable disable
 using System.Security.Claims;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement.Mvc;
+using NHA.Website.Software.Services.AccessWarden;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHAHelpers.HtmlStringCleaner;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Forums;
 using NHASoftware.Entities.Identity;
-using NHASoftware.Services.AccessWarden;
-using NHASoftware.Services.Forums;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers

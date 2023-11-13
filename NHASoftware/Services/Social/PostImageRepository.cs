@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NHA.Website.Software.Entities.Social_Entities;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHASoftware.DBContext;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 
 namespace NHA.Website.Software.Services.Social
 {
@@ -13,7 +13,12 @@ namespace NHA.Website.Software.Services.Social
 
         public async Task<List<PostImage>> GetPostImagesAsync(int? postId)
         {
-            return await _context.PostImages.Where(pi => pi.PostId.Equals(postId)).ToListAsync();
+            return await _context.PostImages!.Where(pi => pi.PostId.Equals(postId)).ToListAsync();
+        }
+
+        public async Task<bool> HasImagesAttachedAsync(int? postId)
+        {
+            return await _context.PostImages!.AnyAsync(pi => pi.PostId.Equals(postId));
         }
     }
 }

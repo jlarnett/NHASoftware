@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
-using NHASoftware.Entities;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHASoftware.Entities.Forums;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 
-namespace NHASoftware.Controllers.WebAPIs
+namespace NHA.Website.Software.Controllers.WebAPIs
 {
     [Route("api/[controller]")]
     [ApiController]

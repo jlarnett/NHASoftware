@@ -1,7 +1,7 @@
-﻿using NHASoftware.Entities.FriendSystem;
-using NHASoftware.Services.RepositoryPatternFoundationals;
+﻿using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+using NHASoftware.Entities.FriendSystem;
 
-namespace NHASoftware.Services.FriendSystem
+namespace NHA.Website.Software.Services.FriendSystem
 {
     public interface IFriendRequestRepository : IGenericRepository<FriendRequest>
     {

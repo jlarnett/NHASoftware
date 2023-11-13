@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
-using NHASoftware.DBContext;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHASoftware.Entities.Forums;
-using NHASoftware.Services.Forums;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers

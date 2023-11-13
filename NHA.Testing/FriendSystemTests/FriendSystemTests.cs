@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NHASoftware.Services.FriendSystem;
-using NHASoftware.Services.RepositoryPatternFoundationals;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace NHA.Testing.FriendSystemTests
 {

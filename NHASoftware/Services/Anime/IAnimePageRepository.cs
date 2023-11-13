@@ -1,7 +1,7 @@
-﻿using NHASoftware.Entities.Anime;
-using NHASoftware.Services.RepositoryPatternFoundationals;
+﻿using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+using NHASoftware.Entities.Anime;
 
-namespace NHASoftware.Services.Anime
+namespace NHA.Website.Software.Services.Anime
 {
     public interface IAnimePageRepository : IGenericRepository<AnimePage>
     {

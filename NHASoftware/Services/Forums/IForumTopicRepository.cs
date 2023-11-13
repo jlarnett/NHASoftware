@@ -1,7 +1,7 @@
-﻿using NHASoftware.Entities.Forums;
-using NHASoftware.Services.RepositoryPatternFoundationals;
+﻿using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+using NHASoftware.Entities.Forums;
 
-namespace NHASoftware.Services.Forums
+namespace NHA.Website.Software.Services.Forums
 {
     public interface IForumTopicRepository : IGenericRepository<ForumTopic>
     {

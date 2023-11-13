@@ -8,26 +8,25 @@ using Microsoft.EntityFrameworkCore;
 using NHASoftware.Profiles;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.FeatureManagement;
 using NHA.Helpers.ImageDataSourceTranslator;
+using NHA.Website.Software.HangfireFilters;
 using NHA.Website.Software.RequestDurationMiddleware;
 using NHA.Website.Software.Services.CacheLoadingManager;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Identity;
-using NHASoftware.HangfireFilters;
-using NHASoftware.Services.Forums;
-using NHASoftware.Services.AccessWarden;
-using NHASoftware.Services.FileExtensionValidator;
-using NHASoftware.Services.SendGrid;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 using NHAHelpers.HtmlStringCleaner;
-using NHASoftware.Services.Anime;
-using NHASoftware.Services.CacheGoblin;
-using NHASoftware.Services.CookieMonster;
-using NHASoftware.Services.FriendSystem;
-using NHASoftware.Services.SendGrid.Configuration;
 using NHA.Website.Software.Services.Social;
+using NHA.Website.Software.Services.CacheGoblin;
+using NHA.Website.Software.Services.Forums;
+using NHA.Website.Software.Services.FileExtensionValidator;
+using NHA.Website.Software.Services.CookieMonster;
+using NHA.Website.Software.Services.AccessWarden;
+using NHA.Website.Software.Services.Anime;
+using NHA.Website.Software.Services.FriendSystem;
+using NHA.Website.Software.Services.SendGrid;
+using NHA.Website.Software.Services.SendGrid.Configuration;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
@@ -152,7 +151,7 @@ builder.Services.AddMemoryCache();
 
 #endregion
 
-//Creates the Webapplication object by calling the WebBuilder.Build() method. All services should be added before here. 
+//Creates the Web application object by calling the WebBuilder.Build() method. All services should be added before here. 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -184,12 +183,12 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
-using (var scope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
+using (var scope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
 {
     scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
 }
 
-//App Hangfire Configuration.
+//App Hang fire Configuration.
 
 app.UseHangfireDashboard("/hangfire", new DashboardOptions()
 {

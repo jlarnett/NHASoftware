@@ -1,7 +1,7 @@
 ﻿using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.Entities.Identity;
 
-namespace NHASoftware.Services.FriendSystem
+namespace NHA.Website.Software.Services.FriendSystem
 {
     public interface IFriendSystem
     {

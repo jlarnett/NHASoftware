@@ -4,16 +4,14 @@ using AutoMapper;
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using NHASoftware.Controllers.WebAPIs;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Identity;
-using NHASoftware.HelperClasses;
-using NHASoftware.Services.CookieMonster;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 using NHASoftware.ViewModels;
-using NHASoftware.Views.ViewModels.SocialVMs;
+using NHA.Website.Software.HelperClasses;
+using NHA.Website.Software.Services.CookieMonster;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 
-namespace NHASoftware.Controllers
+namespace NHA.Website.Software.Controllers
 {
     public class HomeController : Controller
     {
@@ -27,7 +25,7 @@ namespace NHASoftware.Controllers
         public HomeController(ILogger<HomeController> logger,
             ApplicationDbContext context,
             IEmailSender emailService,
-            UserManager<ApplicationUser> userManager, 
+            UserManager<ApplicationUser> userManager,
             ICookieMonster cookieMonster,
             IMapper mapper, IUnitOfWork unitOfWork)
         {
@@ -38,9 +36,9 @@ namespace NHASoftware.Controllers
             _logger = logger;
             _userManager = userManager;
             _cookieMonster = cookieMonster;
-            this._mapper = mapper;
-            this._unitOfWork = unitOfWork;
-            this.taskHandler = new TaskHandler(context, userManager, emailService);
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
+            taskHandler = new TaskHandler(context, userManager, emailService);
         }
 
         public IActionResult Index()

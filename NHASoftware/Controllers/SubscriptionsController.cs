@@ -32,7 +32,7 @@ namespace NHASoftware.Controllers
         // GET: Subscriptions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Subscriptions.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)).ToListAsync());
+            return View(await _context.Subscriptions!.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)).ToListAsync());
         }
 
         // GET: Subscriptions/Details/5
@@ -43,7 +43,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var subscription = await _context.Subscriptions
+            var subscription = await _context.Subscriptions!
                 .FirstOrDefaultAsync(m => m.SubscriptionId == id);
             if (subscription == null)
             {
@@ -62,7 +62,7 @@ namespace NHASoftware.Controllers
             *  Returns a Create View. SelectList is populated with all task related to userId.
             ***************************************************************************************************/
 
-            var  list = new SelectList(_context.Tasks.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription");
+            var  list = new SelectList(_context.Tasks!.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription");
             var list2 = list.Prepend(new SelectListItem()
             {
                 Value = "-1",
@@ -118,7 +118,7 @@ namespace NHASoftware.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var  list = new SelectList(_context.Tasks.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription");
+            var  list = new SelectList(_context.Tasks!.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription");
             var list2 = list.Prepend(new SelectListItem()
             {
                 Value = "-1",
@@ -144,7 +144,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var subscription = await _context.Subscriptions.FindAsync(id);
+            var subscription = await _context.Subscriptions!.FindAsync(id);
 
             if (subscription == null)
             {
@@ -167,7 +167,7 @@ namespace NHASoftware.Controllers
                 SubscriptionDay = subscription.SubscriptionDay
             };
 
-            var  list = new SelectList(_context.Tasks.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription");
+            var  list = new SelectList(_context.Tasks!.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription");
             var list2 = list.Prepend(new SelectListItem()
             {
                 Value = "-1",
@@ -231,7 +231,7 @@ namespace NHASoftware.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var  list = new SelectList(_context.Tasks.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription");
+            var  list = new SelectList(_context.Tasks!.Where(c => c.UserId == _userManager.GetUserId(HttpContext.User)), "TaskId", "TaskDescription");
             var list2 = list.Prepend(new SelectListItem()
             {
                 Value = "-1",
@@ -253,7 +253,7 @@ namespace NHASoftware.Controllers
                 return NotFound();
             }
 
-            var subscription = await _context.Subscriptions
+            var subscription = await _context.Subscriptions!
                 .FirstOrDefaultAsync(m => m.SubscriptionId == id);
             if (subscription == null)
             {
@@ -269,7 +269,7 @@ namespace NHASoftware.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var subscription = await _context.Subscriptions.FindAsync(id);
+            var subscription = await _context.Subscriptions!.FindAsync(id);
             if (subscription == null)
             {
                 return BadRequest();
@@ -286,7 +286,7 @@ namespace NHASoftware.Controllers
             *  Checks if subscription with id exist in database.
             ***************************************************************************************************/
 
-            return _context.Subscriptions.Any(e => e.SubscriptionId == id);
+            return _context.Subscriptions!.Any(e => e.SubscriptionId == id);
         }
 
         [Authorize]
@@ -301,7 +301,7 @@ namespace NHASoftware.Controllers
             decimal totalPrice = 0;
 
             string UserId = _userManager.GetUserId(HttpContext.User);
-            List<Subscription> subscriptions = _context.Subscriptions.Where(c => c.UserId == UserId).ToList();
+            List<Subscription> subscriptions = _context.Subscriptions!.Where(c => c.UserId == UserId).ToList();
 
             string webRootPath = _webHostEnvironment.WebRootPath;
             string path = "";

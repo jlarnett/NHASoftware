@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NHASoftware.Services.AccessWarden;
 
 namespace NHA.Testing.AccessWardenTests
 {

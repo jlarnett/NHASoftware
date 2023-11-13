@@ -1,11 +1,12 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using NHASoftware;
 using NHASoftware.DBContext;
 using NHASoftware.Entities;
 using NHASoftware.Entities.Identity;
 
-namespace NHASoftware.HelperClasses
+namespace NHA.Website.Software.HelperClasses
 {
     public class TaskHandler
     {
@@ -36,7 +37,7 @@ namespace NHASoftware.HelperClasses
 
             foreach (var user in AllUsers)
             {
-                if((DateTime.Today - user.LastLoginDate).TotalDays > toleranceDays)
+                if ((DateTime.Today - user.LastLoginDate).TotalDays > toleranceDays)
                     datedUsers.Add(user);
             }
 
@@ -44,13 +45,13 @@ namespace NHASoftware.HelperClasses
 
             foreach (var user in datedUsers)
             {
-              itemToDelete.AddRange(_context.Tasks.Where(t => t.UserId == user.Id).ToList());
+                itemToDelete.AddRange(_context.Tasks!.Where(t => t.UserId == user.Id).ToList());
             }
 
             foreach (var item in itemToDelete)
             {
                 RecurringJob.RemoveIfExists("TaskId: " + item.TaskId);
-                _context.Tasks.RemoveRange(itemToDelete);
+                _context.Tasks!.RemoveRange(itemToDelete);
             }
         }
 
@@ -61,11 +62,11 @@ namespace NHASoftware.HelperClasses
              *  Creates the recurring job in hangfire.
              **********************************************************************************************/
 
-            List<TaskItem> taskItems = _context.Tasks.Where(t => t.NextTaskDate.Month <= DateTime.Today.Month && t.NextTaskDate.Year <= DateTime.Today.Year && t.JobCrated != true).ToList();
+            List<TaskItem> taskItems = _context.Tasks!.Where(t => t.NextTaskDate.Month <= DateTime.Today.Month && t.NextTaskDate.Year <= DateTime.Today.Year && t.JobCrated != true).ToList();
 
             foreach (var item in taskItems)
             {
-                item.Frequency = _context.Frequencies.Find(item.FrequencyId);
+                item.Frequency = _context.Frequencies!.Find(item.FrequencyId);
                 string cronString = frequencyHandler.ReturnFrequencyCronDate(item);
 
                 RecurringJob.AddOrUpdate("TaskId: " + item.TaskId, () => taskSender.SendTaskReminder(item), cronString, TimeZoneInfo.Local);

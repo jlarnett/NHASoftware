@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using NHA.Website.Software.Entities.FriendSystem;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.Entities.FriendSystem;
 using NHASoftware.Entities.Identity;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 
-namespace NHASoftware.Services.FriendSystem
+namespace NHA.Website.Software.Services.FriendSystem
 {
     public class FriendSystem : IFriendSystem
     {
@@ -93,7 +93,7 @@ namespace NHASoftware.Services.FriendSystem
                     var rowsChanged = await _unitOfWork.CompleteAsync();
                     return rowsChanged > 0;
                 }
-                
+
                 return false;
 
             }
@@ -169,10 +169,10 @@ namespace NHASoftware.Services.FriendSystem
         public async Task<bool> RemoveFriendsAsync(FriendRequestDTO friendRequestDto)
         {
             var friendRecords = _unitOfWork.FriendRepository.Find(f =>
-                (f.FriendOneId.Equals(friendRequestDto.RecipientUserId) &&
+                f.FriendOneId.Equals(friendRequestDto.RecipientUserId) &&
                  f.FriendTwoId.Equals(friendRequestDto.SenderUserId) ||
-                 (f.FriendOneId.Equals(friendRequestDto.SenderUserId) &&
-                  f.FriendTwoId.Equals(friendRequestDto.RecipientUserId))));
+                 f.FriendOneId.Equals(friendRequestDto.SenderUserId) &&
+                  f.FriendTwoId.Equals(friendRequestDto.RecipientUserId));
 
             var friendEntity = friendRecords.FirstOrDefault();
 

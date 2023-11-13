@@ -1,4 +1,4 @@
-﻿namespace NHASoftware.Services.CookieMonster
+﻿namespace NHA.Website.Software.Services.CookieMonster
 {
     public interface ICookieMonster
     {

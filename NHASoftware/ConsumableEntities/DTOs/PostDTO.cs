@@ -9,7 +9,7 @@ namespace NHASoftware.ConsumableEntities.DTOs
         public int? Id { get; set; }
 
         [Required]
-        public string Summary { get; set; }
+        public string Summary { get; set; } = string.Empty;
         public DateTime? CreationDate { get; set; }
         public string? UserId { get; set; } = string.Empty;
         public ApplicationUser? User { get; set; }
@@ -22,6 +22,6 @@ namespace NHASoftware.ConsumableEntities.DTOs
         public bool UserLikedPost { get; set; }
 
         public List<IFormFile>? ImageFiles { get; set; } = new List<IFormFile>();
-        public List<string> ImageDataSources { get; set; } = new List<string>();
+        public bool HasImagesAttached { get; set; }
     }
 }

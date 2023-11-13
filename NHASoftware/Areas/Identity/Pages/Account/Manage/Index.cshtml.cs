@@ -6,9 +6,9 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using NHA.Website.Software.Services.FileExtensionValidator;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Identity;
-using NHASoftware.Services.FileExtensionValidator;
 
 namespace NHASoftware.Areas.Identity.Pages.Account.Manage
 {

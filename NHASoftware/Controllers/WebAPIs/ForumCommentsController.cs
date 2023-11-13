@@ -5,7 +5,7 @@ using Microsoft.FeatureManagement.Mvc;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Forums;
 
-namespace NHASoftware.Controllers.WebAPIs
+namespace NHA.Website.Software.Controllers.WebAPIs
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -26,9 +26,9 @@ namespace NHASoftware.Controllers.WebAPIs
         /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ForumComment>>> GetForumComments()
-        { 
+        {
             if (_context.ForumComments == null)
-            { 
+            {
                 return NotFound();
             }
 
@@ -44,7 +44,7 @@ namespace NHASoftware.Controllers.WebAPIs
         [HttpGet("{id}")]
         public async Task<ActionResult<ForumComment>> GetForumComment(int id)
         {
-          
+
             if (_context.ForumComments == null)
             {
                 return NotFound();
@@ -128,11 +128,11 @@ namespace NHASoftware.Controllers.WebAPIs
 
             if (User.FindFirstValue(ClaimTypes.NameIdentifier) == forumComment.UserId || IsUserForumAdmin())
             {
-                var post = _context.ForumPosts.FindAsync(forumComment.ForumPostId);
+                var post = _context.ForumPosts!.FindAsync(forumComment.ForumPostId);
 
                 if (post.Result != null)
                 {
-                    var topic = _context.ForumTopics.FindAsync(post.Result.ForumTopicId);
+                    var topic = _context.ForumTopics!.FindAsync(post.Result.ForumTopicId);
                     post.Result.CommentCount--;
 
                     if (topic.Result != null)
@@ -160,7 +160,7 @@ namespace NHASoftware.Controllers.WebAPIs
         {
             return (_context.ForumComments?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-        
+
         /// <summary>
         /// Checks whether the current user is a admin or forum admin. 
         /// </summary>

@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NHA.Website.Software.Services.FriendSystem;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHA.Website.Software.Views.ViewModels.FriendVMs;
 using NHASoftware.Entities.Identity;
-using NHASoftware.Services.FriendSystem;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 using NHASoftware.Views.ViewModels.SocialVMs;
 
-namespace NHASoftware.Controllers
+namespace NHA.Website.Software.Controllers
 {
     public class UsersController : Controller
     {
@@ -19,16 +19,16 @@ namespace NHASoftware.Controllers
         public UsersController(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IMapper mapper, IFriendSystem friendSystem)
         {
             _userManager = userManager;
-            this._unitOfWork = unitOfWork;
-            this._mapper = mapper;
-            this._friendSystem = friendSystem;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _friendSystem = friendSystem;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetProfiles(string? userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
-            var posts = _unitOfWork.PostRepository.Find(p => p.UserId.Equals(user.Id));
+            var posts = _unitOfWork.PostRepository.Find(p => p.UserId!.Equals(user.Id));
 
             var profileVM = new ProfileVM()
             {
@@ -41,7 +41,7 @@ namespace NHASoftware.Controllers
         [HttpGet]
         public async Task<IActionResult> FriendsView(string? userId)
         {
-            if(userId == null) return NotFound();
+            if (userId == null) return NotFound();
 
             var user = await _userManager.FindByIdAsync(userId);
             var friendList = await _friendSystem.GetUsersFriendListAsync(userId);

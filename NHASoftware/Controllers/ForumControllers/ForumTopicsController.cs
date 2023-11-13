@@ -1,14 +1,12 @@
-﻿#nullable disable
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement.Mvc;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHAHelpers.HtmlStringCleaner;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Forums;
-using NHASoftware.Services.Forums;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
@@ -201,7 +199,7 @@ namespace NHASoftware.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var forumTopic = await _unitOfWork.ForumTopicRepository.GetByIdAsync(id);
-            _unitOfWork.ForumTopicRepository.Remove(forumTopic);
+            _unitOfWork.ForumTopicRepository.Remove(forumTopic!);
             await _unitOfWork.CompleteAsync();
 
             return RedirectToAction("Index", "Forum");
@@ -214,7 +212,7 @@ namespace NHASoftware.Controllers
         /// <returns>returns true if the forum topic exists</returns>
         private bool ForumTopicExists(int id)
         {
-            return _context.ForumTopics.Any(e => e.Id == id);
+            return _context.ForumTopics!.Any(e => e.Id == id);
         }
     }
 }

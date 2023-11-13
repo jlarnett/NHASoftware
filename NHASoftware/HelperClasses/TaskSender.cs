@@ -26,7 +26,7 @@ namespace NHASoftware
              *************************************************************************************/
 
             string reminderMessage = "Task Reminder For: " + item.TaskDescription + "\n";
-            var taskSubscriptions = _context.Subscriptions.Where(c => c.TaskItemId == item.TaskId);
+            var taskSubscriptions = _context.Subscriptions!.Where(c => c.TaskItemId == item.TaskId);
 
             if (taskSubscriptions.Any())
             {
