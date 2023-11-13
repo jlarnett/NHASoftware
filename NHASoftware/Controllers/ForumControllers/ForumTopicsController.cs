@@ -1,13 +1,12 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement.Mvc;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+using NHA.Website.Software.Views.ViewModels.ForumVMs;
 using NHAHelpers.HtmlStringCleaner;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Forums;
-using NHASoftware.ViewModels;
 
 namespace NHASoftware.Controllers
 {

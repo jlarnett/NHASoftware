@@ -1,6 +1,6 @@
 ﻿using NHASoftware.Entities.Forums;
 
-namespace NHASoftware.ViewModels
+namespace NHA.Website.Software.Views.ViewModels.ForumVMs
 {
     public class ForumPostDetailModel
     {
