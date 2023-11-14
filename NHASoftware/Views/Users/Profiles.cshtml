@@ -1,6 +1,6 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using NHASoftware.Entities.Identity
-@using NHASoftware.Services.FriendSystem
+﻿@using NHASoftware.Entities.Identity
+@using Microsoft.AspNetCore.Identity
+@using NHA.Website.Software.Services.FriendSystem
 @model NHASoftware.Views.ViewModels.SocialVMs.ProfileVM
 @inject UserManager<ApplicationUser> userManager
 @inject IFriendSystem friendSystem
@@ -15,12 +15,11 @@
 </head>
 
 @{
-    var friendCount = friendSystem.GetFriendCount(Model.User.Id);
+    var friendCount = friendSystem.GetFriendCount(Model.User!.Id);
     var mutualFriends = await friendSystem.GetMutualFriendsAsync(Model.User.Id, userManager.GetUserId(User));
     var mutualFriendCount = mutualFriends.Count();
 
-    string activeUserId = null;
-
+    string activeUserId = String.Empty;
     var activeUser = await userManager.GetUserAsync(User);
 
     if (activeUser != null)
@@ -38,7 +37,7 @@
 
             <a class="link-secondary h1" role="button" href="/Users/FriendsView?userId=@Model.User.Id">@friendCount Friends</a>
             
-            @if (User.Identity.IsAuthenticated && !userManager.GetUserId(User).Equals(Model.User.Id))
+            @if (User.Identity!.IsAuthenticated && !userManager.GetUserId(User).Equals(Model.User.Id))
             {
 
                 <div class="border border-primary mb-2">

@@ -1,4 +1,4 @@
-﻿namespace NHASoftware.Services.FileExtensionValidator
+﻿namespace NHA.Website.Software.Services.FileExtensionValidator
 {
     public interface IFileExtensionValidator
     {

@@ -1,12 +1,12 @@
-﻿using NHASoftware.Entities.Forums;
-using NHASoftware.Services.RepositoryPatternFoundationals;
+﻿using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+using NHASoftware.Entities.Forums;
 
-namespace NHASoftware.Services.Forums
+namespace NHA.Website.Software.Services.Forums
 {
     public interface IForumCommentRepository : IGenericRepository<ForumComment>
     {
         public Task<List<ForumComment>> GetForumPostCommentsAsync(int? forumPostId);
         public Task<int> GetNumberOfCommentsForPost(int? forumPostId);
-        public Task<ForumComment> GetForumCommentWithLazyLoadingAsync(int? forumCommentId);
+        public Task<ForumComment?> GetForumCommentWithLazyLoadingAsync(int? forumCommentId);
     }
 }

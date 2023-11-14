@@ -1,16 +1,13 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NHA.Website.Software.Services.CacheGoblin;
+using NHA.Website.Software.Services.CookieMonster;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHASoftware.ConsumableEntities;
 using NHASoftware.DBContext;
-using NHASoftware.Entities.Forums;
-using NHASoftware.Entities.Social_Entities;
-using NHASoftware.Services.CacheGoblin;
-using NHASoftware.Services.CookieMonster;
-using NHASoftware.Services.Forums;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 
-namespace NHASoftware.Controllers.WebAPIs
+namespace NHA.Website.Software.Controllers.WebAPIs
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -117,25 +114,25 @@ namespace NHASoftware.Controllers.WebAPIs
         }
         private bool ForumCommentExists(int id)
         {
-            return _context.ForumComments.Any(e => e.Id == id);
+            return _context.ForumComments!.Any(e => e.Id == id);
         }
 
         private bool ForumPostExists(int id)
         {
-            return _context.ForumPosts.Any(e => e.Id == id);
+            return _context.ForumPosts!.Any(e => e.Id == id);
         }
 
         private async Task<IActionResult> TryIncrementPostLikes(int id)
         {
             var post = await _unitOfWork.ForumPostRepository.GetForumPostWithLazyLoadingAsync(id);
 
-            if(post == null)
+            if (post == null)
             {
                 return new JsonResult(new { success = false });
             }
             else
             {
-                post.LikeCount ++;
+                post.LikeCount++;
             }
 
             try
@@ -162,13 +159,13 @@ namespace NHASoftware.Controllers.WebAPIs
         {
             var comment = await _unitOfWork.ForumCommentRepository.GetByIdAsync(id);
 
-            if(comment == null)
+            if (comment == null)
             {
                 return new JsonResult(new { success = false });
             }
             else
             {
-                comment.LikeCount ++;
+                comment.LikeCount++;
             }
 
             try

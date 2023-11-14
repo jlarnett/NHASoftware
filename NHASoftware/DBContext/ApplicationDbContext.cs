@@ -22,14 +22,8 @@ namespace NHASoftware.DBContext
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
-            builder.Entity<Subscription>().HasOne(e => e.TaskItem).WithMany(e => e.Subscriptions)
-                .OnDelete(DeleteBehavior.SetNull);
         }
 
-        public DbSet<Subscription>? Subscriptions { get; set; }
-        public DbSet<TaskFrequency>?  Frequencies { get; set; }
-        public DbSet<TaskItem>? Tasks { get; set; }
         public DbSet<ForumSection>? ForumSections { get; set; }
         public DbSet<ForumTopic>? ForumTopics { get; set; }
         public DbSet<ForumPost>? ForumPosts { get; set; }

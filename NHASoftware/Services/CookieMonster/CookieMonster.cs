@@ -1,4 +1,4 @@
-﻿namespace NHASoftware.Services.CookieMonster;
+﻿namespace NHA.Website.Software.Services.CookieMonster;
 
 public class CookieMonster : ICookieMonster
 {
@@ -6,7 +6,7 @@ public class CookieMonster : ICookieMonster
 
     public CookieMonster(IHttpContextAccessor contextAccessor)
     {
-        this._contextAccessor = contextAccessor;
+        _contextAccessor = contextAccessor;
     }
     public string TryRetrieveCookie(string key)
     {

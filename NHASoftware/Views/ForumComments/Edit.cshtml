@@ -37,7 +37,7 @@
 </div>
 
 <div>
-    @if (!string.IsNullOrWhiteSpace(ViewData["Reffer"].ToString()))
+    @if (!string.IsNullOrWhiteSpace(ViewData["Reffer"]!.ToString()))
     {
         <a href="@ViewData["reffer"]">Return to Post</a>
     }

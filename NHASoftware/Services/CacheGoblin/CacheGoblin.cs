@@ -1,4 +1,4 @@
-﻿namespace NHASoftware.Services.CacheGoblin
+﻿namespace NHA.Website.Software.Services.CacheGoblin
 {
     public class CacheGoblin<T> : ICacheGoblin<T>
     {

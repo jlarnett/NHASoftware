@@ -1,9 +1,9 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using Microsoft.JSInterop
-@using NHASoftware.Services.AccessWarden
-@inject IWarden _accessWarden
+﻿@inject IWarden _accessWarden
 @inject IJSRuntime JsRuntime
-@model NHASoftware.ViewModels.ForumIndexViewModel
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.JSInterop
+@using NHA.Website.Software.Services.AccessWarden
+@model NHA.Website.Software.Views.ViewModels.ForumVMs.ForumIndexViewModel
 
 @{
     ViewData["Title"] = "Forums";

@@ -1,8 +1,8 @@
-﻿using NHASoftware.DBContext;
+﻿using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+using NHASoftware.DBContext;
 using NHASoftware.Entities.Anime;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 
-namespace NHASoftware.Services.Anime
+namespace NHA.Website.Software.Services.Anime
 {
     public class AnimePageRepository : GenericRepository<AnimePage>, IAnimePageRepository
     {

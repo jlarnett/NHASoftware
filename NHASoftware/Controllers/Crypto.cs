@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
 
-namespace NHASoftware.Controllers
+namespace NHA.Website.Software.Controllers
 {
     [FeatureGate("CryptoEnabled")]
     public class Crypto : Controller

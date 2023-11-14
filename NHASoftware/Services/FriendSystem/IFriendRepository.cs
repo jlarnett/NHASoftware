@@ -1,8 +1,7 @@
 ﻿using NHA.Website.Software.Entities.FriendSystem;
-using NHASoftware.Entities.Social_Entities;
-using NHASoftware.Services.RepositoryPatternFoundationals;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 
-namespace NHASoftware.Services.FriendSystem
+namespace NHA.Website.Software.Services.FriendSystem
 {
     public interface IFriendRepository : IGenericRepository<Friends>
     {

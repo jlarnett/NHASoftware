@@ -1,10 +1,10 @@
-﻿using NHA.Website.Software.Services.Social;
+﻿using NHA.Website.Software.Services.Anime;
+using NHA.Website.Software.Services.Forums;
+using NHA.Website.Software.Services.FriendSystem;
+using NHA.Website.Software.Services.Social;
 using NHASoftware.DBContext;
-using NHASoftware.Services.Anime;
-using NHASoftware.Services.Forums;
-using NHASoftware.Services.FriendSystem;
 
-namespace NHASoftware.Services.RepositoryPatternFoundationals
+namespace NHA.Website.Software.Services.RepositoryPatternFoundationals
 {
     public class UnitOfWork : IUnitOfWork
     {

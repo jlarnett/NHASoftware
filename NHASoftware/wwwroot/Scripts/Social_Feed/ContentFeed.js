@@ -176,22 +176,18 @@
     });
 
     $(window).scroll(function() {
-        //Checks the home page scroll bar. When the scrollbar is lower than the specified percentage it fires home feed content loading.
-        var scrollbarValue = $(window).scrollTop() + $(window).height();
-        var windowHeightPercentToLoadFeed = 55;
-        var windowHeight = Math.trunc($(document).height());
-        var percentScrolled = Math.trunc((scrollbarValue / windowHeight) * 100);
-
-        //Debugging Log
-        //console.log("Percent Scrolled - " + percentScrolled);
-
-        if(percentScrolled >= windowHeightPercentToLoadFeed || percentScrolled == 100) {
-            LoadMorePostToMainContentFeed();
+        //Called whenever the user scrolls the document. Handles loading more post for infinite feed loop
+        //Handles loading images as the user scrolls the feed. This keeps the base load time for post faster
+        if (IsUserProfileFeed() === undefined) {
+            ShouldContentFeedShouldLoadMorePosts();
         }
 
+        ShouldPostLoadImagesFromDB();
     });
 
-    var profileUserId = $('#ContentFeed').attr("profile-user-id");
+
+    //Tries to load content feed with user profile post only if content feed is on user profile page.
+    var profileUserId = IsUserProfileFeed();
     if (profileUserId !== undefined) {
         console.log("Attempting to load user profile post.");
         LoadFeedWithProfilePost(profileUserId);
@@ -199,6 +195,46 @@
 
     RebuildFeedTextboxes();
 });
+
+function IsUserProfileFeed() {
+    //Returns profile-user-Id This determines whether the content feed is main feed or user profile
+    return $('#ContentFeed').attr("profile-user-id");
+}
+
+function ShouldPostLoadImagesFromDB() {
+    //This function is called every time the user scrolls. Goes over each post & checks whether
+    //Images should be loaded. If images need to be loaded then it calls the API Retrieval method
+    //and appends it to the post. 
+    $('.post-container').filter(function() {
+        var postIsPartiallyVisibleInView = Utils.isElementInView(this, false);
+        var postIsFullyVisibleInView = Utils.isElementInView(this, true);
+        
+        var postHasImagesAttached = $(this).attr("images-attached");
+        var postHasLoadedImagesAlready = $(this).attr("images-loaded");
+        var postId = $(this).attr("post-id");
+        var uuid = $(this).attr("post-uuid");
+
+        if (postIsPartiallyVisibleInView && postHasImagesAttached !== "false" && postHasLoadedImagesAlready === "false") {
+            $(this).attr("images-loaded", "true");
+            RetrieveImagesForPost(postId, uuid);
+        }
+    });
+}
+
+function ShouldContentFeedShouldLoadMorePosts() {
+    //Checks the home page scroll bar. When the scrollbar is lower than the specified percentage it fires home feed content loading.
+    var scrollbarValue = $(window).scrollTop() + $(window).height();
+    var windowHeightPercentToLoadFeed = 55;
+    var windowHeight = Math.trunc($(document).height());
+    var percentScrolled = Math.trunc((scrollbarValue / windowHeight) * 100);
+
+    //Debugging Log
+    //console.log("Percent Scrolled - " + percentScrolled);
+
+    if(percentScrolled >= windowHeightPercentToLoadFeed || percentScrolled == 100) {
+        LoadMorePostToMainContentFeed();
+    }
+}
 
 var canGo = true;
 function LoadMorePostToMainContentFeed() {
@@ -219,7 +255,7 @@ function LoadMorePostToMainContentFeed() {
 
 function RemovePostFromContentFeed(postId) {
     //Removes the post from the content feed'Ss HTML. This doesn't affect the BD just HTML. 
-    var postContainer = $('[post-delete-id=' + postId + ']');
+    var postContainer = $('[post-id=' + postId + ']');
     postContainer.remove();
 }
 
@@ -255,6 +291,16 @@ function HidePostFromProfile(postId) {
     });
 }
 
+function RetrieveImagesForPost(postId, uuid) {
+    //Retrieves images for the specified postId & appends it to the post. 
+    AddSpinnerToImageSection(uuid);
+    $.get("/api/posts/GetPostImages/" + postId, function (data) {
+        var imagesHtml = GeneratePostImagesHtmlRedesign(data);
+        $("[unique-image-section=" + uuid + "]").append(imagesHtml);
+        RemoveSpinnerFromImageSection();
+    });
+}
+
 function RetrieveMorePosts() {
     ///AJAX CALL TO api/posts webapi. Returns async result of posts
     return $.get("api/posts", function (data) {
@@ -270,8 +316,7 @@ function RetrievePostComments(postId) {
 
 function RetrieveAllPostForUser(userId) {
     //Calls the Post WebAPI & gets all post created under supplied userId
-        return $.get("/api/posts/GetSocialPostForUserId/" + userId, function(data) {
-    });
+    return $.get("/api/posts/GetSocialPostForUserId/" + userId, function(data) {});
 }
 
 function AddCommentDynamically(uuid, data) {
@@ -333,6 +378,7 @@ function OptimizedMainContentFeedLoad() {
 
 function LoadFeedWithProfilePost(userId) {
     //Loads the id #ContentFeed with all posts created by user. Calls Post WebAPI
+    AddSpinnerToContentFeed();
     RetrieveAllPostForUser(userId).then(function (posts) {
         var feedHtml = [];
 
@@ -344,6 +390,7 @@ function LoadFeedWithProfilePost(userId) {
         $("#ContentFeed").empty();
         $("#ContentFeed").append(builtFeedHtml);
         RebuildFeedTextboxes();
+        RemoveSpinnerFromContentFeed();
     });
 }
 
@@ -362,7 +409,7 @@ function GeneratePostRedesign(post) {
     //console.log("Post Id - " + post.id + " Current Date & Time - " + currentDate.month() + "/" + currentDate.date() + "/" + currentDate.year() + " - Time - " + currentDate.hour() + ":" + currentDate.minute() + ":" + currentDate.second() + ":" + currentDate.millisecond());
     //console.log("Post Date Difference in seconds = " + postDateDifferenceInSeconds);
 
-    postHtml.push('<div class="container-fluid border border-primary mt-2" post-delete-id="', post.id, '">',
+    postHtml.push('<div class="container-fluid border border-primary mt-2 post-container" post-id="', post.id, '"', 'images-attached="', post.hasImagesAttached, '" images-loaded="false" post-uuid="', uuid, '">',
             '<div class="row align-items-center">',
                 '<!--User Profile image & display name-->',
                 '<div class="col-1 px-0">',
@@ -397,8 +444,7 @@ function GeneratePostRedesign(post) {
             '</div>',
             '<div class="row text-break">',
                 '<div class="col-sm-1 px-0"></div>',
-                '<div class="row col px-0">',
-                    GeneratePostImagesHtml(post),
+                '<div class="row col px-0" unique-image-section="', uuid, '">',
                 '</div>',
             '</div>',
             '<!--Posts Likes & Comment Show section-->',
@@ -419,9 +465,11 @@ function GeneratePostRedesign(post) {
     return postHtml.join('');
 }
 
-function GeneratePostImagesHtml(post) {
+function GeneratePostImagesHtmlRedesign(images) {
+    //Takes in the list of images retrieved from API Call and creates the HTML for images.
+    //The HTML is appended to image section of post. 
     postImageHtml = [];
-    post.imageDataSources.forEach((image) => postImageHtml.push('<div class="col-5"><img class="col img-thumbnail MainFeedPostImages" src="', image , '"/></div>'));
+    images.forEach((image) => postImageHtml.push('<div class="col-5"><img class="col img-thumbnail MainFeedPostImages" src="', image , '"/></div>'));
     return postImageHtml.join('');
 }
 
@@ -635,6 +683,14 @@ function AddSpinnerToContentFeed() {
 }
 
 function RemoveSpinnerFromContentFeed() {
+    $('#LoadingSpinner').remove();
+}
+
+function AddSpinnerToImageSection(uuid) {
+    $("[unique-image-section=" + uuid + "]").append('<div id="LoadingSpinner" class="text-center mt-2" ><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+}
+
+function RemoveSpinnerFromImageSection(uuid) {
     $('#LoadingSpinner').remove();
 }
 

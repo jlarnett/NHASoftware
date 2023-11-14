@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NHASoftware.Services.FileExtensionValidator;
+using NHA.Website.Software.Services.FileExtensionValidator;
 
 namespace NHA.Testing.FileExtensionValidatorTests
 {

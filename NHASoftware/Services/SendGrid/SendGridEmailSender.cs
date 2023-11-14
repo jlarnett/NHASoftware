@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
-using NHASoftware.Services.SendGrid.Configuration;
+using NHA.Website.Software.Services.SendGrid.Configuration;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
-namespace NHASoftware.Services.SendGrid
+namespace NHA.Website.Software.Services.SendGrid
 {
     public class SendGridEmailSender : IEmailSender
     {

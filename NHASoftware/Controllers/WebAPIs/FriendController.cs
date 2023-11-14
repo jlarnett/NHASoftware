@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NHA.Website.Software.Services.FriendSystem;
 using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.FriendSystem;
-using NHASoftware.Services.FriendSystem;
 
-namespace NHASoftware.Controllers.WebAPIs
+namespace NHA.Website.Software.Controllers.WebAPIs
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -20,23 +20,23 @@ namespace NHASoftware.Controllers.WebAPIs
         public FriendController(ApplicationDbContext context, IFriendSystem friendSystem, IMapper mapper, ILogger<ILogger> logger)
         {
             _context = context;
-            this._friendSystem = friendSystem;
-            this._mapper = mapper;
-            this._logger = logger;
+            _friendSystem = friendSystem;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         // GET: api/FriendRequests
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FriendRequest>>> GetFriendRequests()
         {
-            return await _context.FriendRequests.ToListAsync();
+            return await _context.FriendRequests!.ToListAsync();
         }
 
         // GET: api/FriendRequests/5
         [HttpGet("{id}")]
         public async Task<ActionResult<FriendRequest>> GetFriendRequest(int id)
         {
-            var friendRequest = await _context.FriendRequests.FindAsync(id);
+            var friendRequest = await _context.FriendRequests!.FindAsync(id);
 
             if (friendRequest == null)
             {
@@ -85,13 +85,13 @@ namespace NHASoftware.Controllers.WebAPIs
             //Checks if friend request is trying to send to the same user
             if (friendRequestDto.RecipientUserId.Equals(friendRequestDto.SenderUserId))
             {
-                return BadRequest(new {success = false});
+                return BadRequest(new { success = false });
             }
 
 
             friendRequestDto.Status = FriendRequestStatuses.Inprogress;
             var requestSent = await _friendSystem.SendFriendRequestAsync(friendRequestDto);
-            return requestSent ? new JsonResult(new {success = true}) : new JsonResult(new {success = false});
+            return requestSent ? new JsonResult(new { success = true }) : new JsonResult(new { success = false });
         }
 
         /// <summary>
@@ -169,10 +169,10 @@ namespace NHASoftware.Controllers.WebAPIs
 
             if (result)
             {
-                return Ok(new {success = true});
+                return Ok(new { success = true });
             }
 
-            return BadRequest(new {success = false});
+            return BadRequest(new { success = false });
         }
 
         /// <summary>
@@ -188,10 +188,10 @@ namespace NHASoftware.Controllers.WebAPIs
 
             if (result)
             {
-                return Ok(new {success = true});
+                return Ok(new { success = true });
             }
 
-            return BadRequest(new {success = false});
+            return BadRequest(new { success = false });
         }
 
         /// <summary>
@@ -203,8 +203,8 @@ namespace NHASoftware.Controllers.WebAPIs
         [HttpGet("RetrieveMutualFriends")]
         public async Task<IActionResult> RetrieveMutualFriends(FriendRequestDTO friendRequestDto)
         {
-            var mutualFriends= await _friendSystem.GetMutualFriendsAsync(friendRequestDto.RecipientUserId, friendRequestDto.SenderUserId);
-            return mutualFriends.Any() ? Ok(new {success = true, data = mutualFriends}) : NoContent();
+            var mutualFriends = await _friendSystem.GetMutualFriendsAsync(friendRequestDto.RecipientUserId, friendRequestDto.SenderUserId);
+            return mutualFriends.Any() ? Ok(new { success = true, data = mutualFriends }) : NoContent();
         }
 
         /// <summary>
@@ -217,12 +217,12 @@ namespace NHASoftware.Controllers.WebAPIs
         public async Task<IActionResult> RetrieveFriends(string userId)
         {
             var friendList = await _friendSystem.GetUsersFriendListAsync(userId);
-            return friendList.Any() ? Ok(new {success = true, data = friendList}) : NoContent();
+            return friendList.Any() ? Ok(new { success = true, data = friendList }) : NoContent();
         }
 
         private bool FriendRequestExists(int id)
         {
-            return _context.FriendRequests.Any(e => e.Id == id);
+            return _context.FriendRequests!.Any(e => e.Id == id);
         }
     }
 }

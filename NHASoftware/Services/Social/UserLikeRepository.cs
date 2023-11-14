@@ -1,6 +1,6 @@
-﻿using NHASoftware.DBContext;
+﻿using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+using NHASoftware.DBContext;
 using NHASoftware.Entities.Social_Entities;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 
 namespace NHA.Website.Software.Services.Social
 {

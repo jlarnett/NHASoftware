@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -13,13 +14,13 @@ using NHA.Helpers.ImageDataSourceTranslator;
 using NHA.Website.Software.Caching;
 using NHA.Website.Software.Entities.Social_Entities;
 using NHA.Website.Software.Services.CacheLoadingManager;
+using NHA.Website.Software.Services.FileExtensionValidator;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHASoftware.ConsumableEntities.DTOs;
 using NHASoftware.Entities.Identity;
 using NHASoftware.Entities.Social_Entities;
-using NHASoftware.Services.FileExtensionValidator;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 
-namespace NHASoftware.Controllers.WebAPIs
+namespace NHA.Website.Software.Controllers.WebAPIs
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -38,14 +39,14 @@ namespace NHASoftware.Controllers.WebAPIs
         public PostsController(IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager,
             ILogger<PostDTO> logger, IFileExtensionValidator validator, IImageDataSourceTranslator imageTranslator, IMemoryCache memoryCache, ICacheLoadingManager cacheLoadingManager)
         {
-            this._mapper = mapper;
-            this._unitOfWork = unitOfWork;
-            this._userManager = userManager;
-            this._logger = logger;
-            this._fileExtensionValidator = validator;
-            this._imageDataSourceTranslator = imageTranslator;
-            this._memoryCache = memoryCache;
-            this._cacheLoadingManager = cacheLoadingManager;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _userManager = userManager;
+            _logger = logger;
+            _fileExtensionValidator = validator;
+            _imageDataSourceTranslator = imageTranslator;
+            _memoryCache = memoryCache;
+            _cacheLoadingManager = cacheLoadingManager;
         }
 
         /// <summary>
@@ -54,35 +55,20 @@ namespace NHASoftware.Controllers.WebAPIs
         /// </summary>
         /// <returns>IEnumerable of all posts.</returns>
         [HttpGet]
-        public async Task<IEnumerable<PostDTO>> GetPosts()
+        public async Task<List<PostDTO>> GetPosts()
         {
             var shouldReloadCache = _cacheLoadingManager.ShouldCacheReload(CachingKeys.Posts);
-            var postDTOs = new List<PostDTO>();
 
-            if (!_memoryCache.TryGetValue(CachingKeys.Posts, out List<Post>? posts) || shouldReloadCache)
+            if (!_memoryCache.TryGetValue(CachingKeys.PopulatedPostDTOs, out List<PostDTO>? populatedPostDTOs) || shouldReloadCache)
             {
-                posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
-
-                _memoryCache.Set(CachingKeys.Posts, posts, cacheEntryOptions);
-            }
-
-            if (posts != null)
-            {
-                postDTOs = posts.Select((_mapper.Map<Post, PostDTO>)).ToList();
-            }
-
-            if (!_memoryCache.TryGetValue(CachingKeys.PopulatedPostDTOs, out IEnumerable<PostDTO>? populatedPostDTOs) || shouldReloadCache)
-            {
-                populatedPostDTOs = await PopulatePostDTOLikeDetails(postDTOs);
+                populatedPostDTOs = await GeneratePostDTOList();
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
 
                 _memoryCache.Set(CachingKeys.PopulatedPostDTOs, populatedPostDTOs, cacheEntryOptions);
             }
 
-            return populatedPostDTOs;
+            return populatedPostDTOs!;
         }
 
         /// <summary>
@@ -94,8 +80,8 @@ namespace NHASoftware.Controllers.WebAPIs
         public async Task<IEnumerable<PostDTO>> GetAllPostForUserId(string userId)
         {
             var posts = await _unitOfWork.PostRepository.GetUsersSocialPostsAsync(userId);
-            var postsDtos = posts.Select((_mapper.Map<Post, PostDTO>)).ToList();
-            return await PopulatePostDTOLikeDetails(postsDtos);
+            var postsDtos = posts.Select(_mapper.Map<Post, PostDTO>).ToList();
+            return await PopulatePostDTODetails(postsDtos);
         }
 
         // GET: api/Posts/5
@@ -113,64 +99,72 @@ namespace NHASoftware.Controllers.WebAPIs
         }
 
         [HttpGet("FindChildrenPosts/{id}")]
-        public async Task<IEnumerable<PostDTO>> FindChildrenPosts(int? id)
+        public async Task<List<PostDTO>> FindChildrenPosts(int? id)
         {
             var posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
             var childrenPosts = posts.Where(p => p.ParentPostId == id && p.IsHiddenFromUserProfile == false).ToList();
 
-            var postsDtos = childrenPosts.Select((_mapper.Map<Post, PostDTO>)).ToList();
-            return await PopulatePostDTOLikeDetails(postsDtos);
+            var postsDtos = childrenPosts.Select(_mapper.Map<Post, PostDTO>).ToList();
+            return await PopulatePostDTODetails(postsDtos);
         }
 
         [HttpGet("GetUserSocialPosts/{id}")]
         public async Task<List<PostDTO>> GetUsersSocialPosts(string id)
         {
             var posts = await _unitOfWork.PostRepository.GetUsersSocialPostsAsync(id);
-            return posts.Select((_mapper.Map<Post, PostDTO>)).ToList();
-        } 
+            return posts.Select(_mapper.Map<Post, PostDTO>).ToList();
+        }
+
+        [HttpGet("GetPostImages/{id}")]
+        public async Task<ActionResult<List<string>>> GetPostImages(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var images = await _unitOfWork.PostImageRepository.GetPostImagesAsync(id);
+            List<string> imageDataSources = new List<string>();
+
+            foreach (var image in images)
+            {
+                var imageDataSource =
+                    _imageDataSourceTranslator.GetDataSourceTranslation(image.FileExtensionType, image.ImageBytes!);
+                imageDataSources.Add(imageDataSource);
+            }
+
+            return Ok(imageDataSources);
+        }
+
+        private async Task<List<PostDTO>> GeneratePostDTOList()
+        {
+            var posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
+            var postDTOs = posts.Select(_mapper.Map<Post, PostDTO>).ToList();
+            return await PopulatePostDTODetails(postDTOs);
+        }
 
         /// <summary>
         /// Goes through the entire list of post & repopulates the postDtos with like counters. 
         /// </summary>
         /// <param name="postDtos">List of postsDto objects.</param>
         /// <returns>IEnumerable list of postDtos with the like counters populated. </returns>
-        private async Task<IEnumerable<PostDTO>> PopulatePostDTOLikeDetails(List<PostDTO> postDtos)
+        private async Task<List<PostDTO>> PopulatePostDTODetails(List<PostDTO> postDtos)
         {
             List<PostDTO> posts = new List<PostDTO>();
             foreach (var dto in postDtos)
             {
                 posts.Add(await PopulatePostDTO(dto));
             }
-            return posts.AsEnumerable();
+            return posts;
         }
 
         private async Task<PostDTO> PopulatePostDTO(PostDTO dto)
         {
-            var postDto = new PostDTO()
-            {
-                CreationDate = dto.CreationDate,
-                DislikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id && p.IsDislike).Count(),
-                UserLikedPost = UserLikedPost(dto.Id),
-                UserDislikedPost = UserDislikedPost(dto.Id),
-                UserId = dto.UserId,
-                User = dto.User,
-                Id = dto.Id,
-                LikeCount = _unitOfWork.UserLikeRepository.Find(p => p.PostId == dto.Id && !p.IsDislike).Count(),
-                ParentPostId = dto.ParentPostId,
-                ParentPost = dto.ParentPost,
-                Summary = dto.Summary,
-            };
+            dto.LikeCount = (await _unitOfWork.UserLikeRepository.FindAsync(p => p.PostId == dto.Id && !p.IsDislike)).Count();
+            dto.DislikeCount = (await _unitOfWork.UserLikeRepository.FindAsync(p => p.PostId == dto.Id && p.IsDislike)).Count();
+            dto.UserLikedPost = await UserLikedPost(dto.Id);
+            dto.UserDislikedPost = await UserDislikedPost(dto.Id);
+            dto.HasImagesAttached = await _unitOfWork.PostImageRepository.HasImagesAttachedAsync(dto.Id);
 
-            var images = await _unitOfWork.PostImageRepository.GetPostImagesAsync(postDto.Id);
-
-            foreach (var image in images)
-            {
-                var imageDataSource =
-                    _imageDataSourceTranslator.GetDataSourceTranslation(image.FileExtensionType, image.ImageBytes);
-                postDto.ImageDataSources.Add(imageDataSource);
-            }
-
-            return postDto;
+            return dto;
         }
 
         /// <summary>
@@ -178,10 +172,10 @@ namespace NHASoftware.Controllers.WebAPIs
         /// </summary>
         /// <param name="id">Post Id</param>
         /// <returns>Returns boolean condition if user liked post id</returns>
-        private bool UserLikedPost(int? id)
+        private async Task<bool> UserLikedPost(int? id)
         {
-            return _unitOfWork.UserLikeRepository.Find(ul =>
-                ul.PostId == id && ul.IsDislike == false && ul.UserId == _userManager.GetUserId(User)).Any();
+            return (await _unitOfWork.UserLikeRepository.FindAsync(ul =>
+                ul.PostId == id && ul.IsDislike == false && ul.UserId == _userManager.GetUserId(User))).Any();
         }
 
         /// <summary>
@@ -189,10 +183,10 @@ namespace NHASoftware.Controllers.WebAPIs
         /// </summary>
         /// <param name="id">Post Id</param>
         /// <returns>Returns boolean condition if user Disliked post id</returns>
-        private bool UserDislikedPost(int? id)
+        private async Task<bool> UserDislikedPost(int? id)
         {
-            return _unitOfWork.UserLikeRepository.Find(ul =>
-                ul.PostId == id && ul.IsDislike == true && ul.UserId == _userManager.GetUserId(User)).Any();
+            return (await _unitOfWork.UserLikeRepository.FindAsync(ul =>
+                ul.PostId == id && ul.IsDislike == true && ul.UserId == _userManager.GetUserId(User))).Any();
         }
 
 
@@ -201,7 +195,7 @@ namespace NHASoftware.Controllers.WebAPIs
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPost(int? id, PostDTO postDto)
         {
-            var post =_mapper.Map<PostDTO, Post>(postDto);
+            var post = _mapper.Map<PostDTO, Post>(postDto);
 
             if (id != post.Id)
             {
@@ -249,13 +243,13 @@ namespace NHASoftware.Controllers.WebAPIs
             if (result > 0)
             {
                 var newPost = _unitOfWork.PostRepository.Find(p =>
-                    p.Summary.Equals(postdto.Summary) && p.UserId.Equals(postdto.UserId)).FirstOrDefault();
+                    p.Summary.Equals(postdto.Summary) && p.UserId!.Equals(postdto.UserId)).FirstOrDefault();
 
                 //Populating the postDto
                 if (newPost != null)
                 {
                     var newPostWithIncludes = await _unitOfWork.PostRepository.GetPostByIDWithIncludesAsync(newPost.Id.GetValueOrDefault());
-                    var postDto = PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes));
+                    var postDto = PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes!));
                     _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", postDto);
 
                     _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
@@ -263,7 +257,7 @@ namespace NHASoftware.Controllers.WebAPIs
                 }
                 else
                 {
-                    return BadRequest(new {success = false});
+                    return BadRequest(new { success = false });
                 }
             }
             else
@@ -285,50 +279,57 @@ namespace NHASoftware.Controllers.WebAPIs
         [FeatureGate("CustomizedPostsEnabled")]
         public async Task<IActionResult> PostCustomizedPost([FromForm] PostDTO postdto)
         {
-            bool imageFilesIncluded = postdto.ImageFiles != null && postdto.ImageFiles.Count > 0;
+            var imageFilesIncluded = postdto.ImageFiles != null && postdto.ImageFiles.Count > 0;
 
             if (imageFilesIncluded)
             {
-                foreach (var imageFile in postdto.ImageFiles)
+                foreach (var imageFile in postdto.ImageFiles!)
                 {
                     if (!_fileExtensionValidator.CheckValidImageExtensions(imageFile.FileName))
                         return BadRequest(new
-                            { success = false, message = "Unable To Submit Custom Post - File is Not Image Extension" });
+                        { success = false, message = "Unable To Submit Custom Post - File is Not Image Extension" });
                 }
             }
 
-            postdto.UserId = _userManager.GetUserId(User);
             var post = _mapper.Map<PostDTO, Post>(postdto);
             post.CreationDate = DateTime.Now;
+            post.UserId = _userManager.GetUserId(User);
+
             _unitOfWork.PostRepository.Add(post);
             var result = await _unitOfWork.CompleteAsync();
 
             if (result > 0)
             {
-                var newPost = _unitOfWork.PostRepository.Find(p =>
-                    p.Summary.Equals(postdto.Summary) && p.UserId.Equals(postdto.UserId)).FirstOrDefault();
+                var newPost = (await _unitOfWork.PostRepository.FindAsync(p =>
+                    p.Summary.Equals(postdto.Summary) && p.UserId!.Equals(postdto.UserId))).FirstOrDefault();
 
                 //Populating the postDto
                 if (newPost != null)
                 {
                     if (imageFilesIncluded)
                     {
-                        var imageSaveResult = await SavePostImagesToDatabase(newPost.Id, postdto.ImageFiles);
+                        var imageSaveResult = await SavePostImagesToDatabase(newPost.Id, postdto.ImageFiles!);
 
                         if (!imageSaveResult)
                         {
-                            return BadRequest(new {success = false, message = "Error Saving Images To DB"});
+                            return BadRequest(new { success = false, message = "Error Saving Images To DB" });
                         }
                     }
                     var newPostWithIncludes = await _unitOfWork.PostRepository.GetPostByIDWithIncludesAsync(newPost.Id.GetValueOrDefault());
-                    var postDto = PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes));
-                    _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", postDto);
-                    _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
-                    return Ok(new { success = true, data = postDto });
+                    if (newPostWithIncludes != null)
+                    {
+                        var postDto = PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes));
+                        _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", postDto);
+                        _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
+                        return Ok(new { success = true, data = postDto });
+                    }
+
+                    return NotFound(new {success = false});
+
                 }
                 else
                 {
-                    return BadRequest(new {success = false});
+                    return BadRequest(new { success = false });
                 }
             }
             else
@@ -347,7 +348,7 @@ namespace NHASoftware.Controllers.WebAPIs
         public async Task<IActionResult> DeletePost(int? id)
         {
             var post = await _unitOfWork.PostRepository.GetByIdAsync(id);
-            _logger.Log(LogLevel.Information,"attempted to execute - {0}, parameters - {1}", nameof(DeletePost), HttpContext.Request.Body);
+            _logger.Log(LogLevel.Information, "attempted to execute - {0}, parameters - {1}", nameof(DeletePost), HttpContext.Request.Body);
 
             if (post == null)
             {
@@ -391,7 +392,7 @@ namespace NHASoftware.Controllers.WebAPIs
             _unitOfWork.PostRepository.Update(post);
             var result = await _unitOfWork.CompleteAsync();
 
-            return result > 0 ? Ok(new {success = true}) : BadRequest(new {success = false});
+            return result > 0 ? Ok(new { success = true }) : BadRequest(new { success = false });
         }
 
 
@@ -415,7 +416,7 @@ namespace NHASoftware.Controllers.WebAPIs
             _unitOfWork.PostRepository.Update(post);
             var result = await _unitOfWork.CompleteAsync();
 
-            return result > 0 ? Ok(new {success=true}) : BadRequest(new {success=false});
+            return result > 0 ? Ok(new { success = true }) : BadRequest(new { success = false });
         }
 
         private bool PostExists(int? id)

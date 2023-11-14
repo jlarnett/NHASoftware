@@ -1,4 +1,4 @@
-﻿namespace NHASoftware.Services.FriendSystem
+﻿namespace NHA.Website.Software.Services.FriendSystem
 {
     public static class FriendRequestStatuses
     {

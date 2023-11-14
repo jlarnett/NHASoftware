@@ -1,4 +1,4 @@
-﻿namespace NHASoftware.Services.SendGrid.Configuration
+﻿namespace NHA.Website.Software.Services.SendGrid.Configuration
 {
     public class SendGridEmailSenderOptions
     {

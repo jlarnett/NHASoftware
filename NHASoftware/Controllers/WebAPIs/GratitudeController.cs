@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using NHA.Website.Software.Caching;
 using NHA.Website.Software.Services.CacheLoadingManager;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHASoftware.Entities.Social_Entities;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 
-namespace NHASoftware.Controllers.WebAPIs
+namespace NHA.Website.Software.Controllers.WebAPIs
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -32,10 +32,10 @@ namespace NHASoftware.Controllers.WebAPIs
                 if (rowsAltered > 0)
                 {
                     _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
-                    return new JsonResult(new { success = true});
+                    return new JsonResult(new { success = true });
                 }
             }
-            return new JsonResult(new {success=false});
+            return new JsonResult(new { success = false });
         }
 
         [HttpPost("UserLike/Exists")]

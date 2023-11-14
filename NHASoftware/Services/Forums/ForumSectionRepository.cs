@@ -1,8 +1,8 @@
-﻿using NHASoftware.DBContext;
+﻿using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+using NHASoftware.DBContext;
 using NHASoftware.Entities.Forums;
-using NHASoftware.Services.RepositoryPatternFoundationals;
 
-namespace NHASoftware.Services.Forums
+namespace NHA.Website.Software.Services.Forums
 {
     public class ForumSectionRepository : GenericRepository<ForumSection>, IForumSectionRepository
     {

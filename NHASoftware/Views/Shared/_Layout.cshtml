@@ -1,9 +1,10 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.Razor.TagHelpers
+﻿@using NHASoftware.Entities.Identity
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.FeatureManagement.Mvc.TagHelpers
 @using NHA.Website.Software.FeatureManagement
-@using NHASoftware.Entities.Identity
-@using NHASoftware.Services.AccessWarden
-@using NHASoftware.Services.FriendSystem
+@using NHA.Website.Software.Services.AccessWarden
+@using NHA.Website.Software.Services.FriendSystem
 @inject UserManager<ApplicationUser> UserManager
 @inject IFriendSystem FriendSystem
 @inject IWarden Warden
@@ -96,7 +97,7 @@
 
 <!--Secondary Action Bar -->
 
-@if (User.Identity.IsAuthenticated)
+@if (User.Identity!.IsAuthenticated)
 {
     <div class="container-fluid">
         <div class="row align-items-center bg-primary">
@@ -122,7 +123,7 @@
                                 {
                                     <div class="row border-bottom p-2" friend-request-id="@item.Id">
                                         <div class="col-2">
-                                            <img src="~/ProfilePictures/@item.SenderUser.ProfilePicturePath" class="img-fluid"/>
+                                            <img src="~/ProfilePictures/@item.SenderUser!.ProfilePicturePath" class="img-fluid"/>
                                         </div>
                                         <p class="col-auto"><a href="~/Users/GetProfiles?userId=@item.SenderUser.Id">@item.SenderUser.DisplayName</a> wants to be your friend!</p>
                                         <div class="col-2">

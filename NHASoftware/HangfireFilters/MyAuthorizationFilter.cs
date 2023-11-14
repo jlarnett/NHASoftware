@@ -1,7 +1,6 @@
 ﻿using Hangfire.Dashboard;
-using NHASoftware.Services.AccessWarden;
 
-namespace NHASoftware.HangfireFilters
+namespace NHA.Website.Software.HangfireFilters
 {
     public class MyAuthorizationFilter : IDashboardAuthorizationFilter
     {
