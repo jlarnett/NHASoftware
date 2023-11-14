@@ -20,15 +20,15 @@ namespace NHASoftware.Entities.Identity
             _sender = sender;
         }
 
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         public bool DisplayConfirmAccountLink { get; set; }
 
-        public string EmailConfirmationUrl { get; set; }
+        public string EmailConfirmationUrl { get; set; } = string.Empty;
 
         public async Task<IActionResult> OnGetAsync(string email, string? returnUrl = null)
         {
-            if (email == null)
+            if (email.Equals(string.Empty))
             {
                 return RedirectToPage("/Index");
             }
@@ -51,7 +51,7 @@ namespace NHASoftware.Entities.Identity
                     "/Account/ConfirmEmail",
                     pageHandler: null,
                     values: new { area = "Identity", userId, code, returnUrl },
-                    protocol: Request.Scheme);
+                    protocol: Request.Scheme)!;
             }
 
             return Page();

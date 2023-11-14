@@ -127,7 +127,7 @@ namespace NHA.Website.Software.Controllers.WebAPIs
             foreach (var image in images)
             {
                 var imageDataSource =
-                    _imageDataSourceTranslator.GetDataSourceTranslation(image.FileExtensionType, image.ImageBytes);
+                    _imageDataSourceTranslator.GetDataSourceTranslation(image.FileExtensionType, image.ImageBytes!);
                 imageDataSources.Add(imageDataSource);
             }
 
@@ -300,8 +300,8 @@ namespace NHA.Website.Software.Controllers.WebAPIs
 
             if (result > 0)
             {
-                var newPost = _unitOfWork.PostRepository.Find(p =>
-                    p.Summary.Equals(postdto.Summary) && p.UserId!.Equals(postdto.UserId)).FirstOrDefault();
+                var newPost = (await _unitOfWork.PostRepository.FindAsync(p =>
+                    p.Summary.Equals(postdto.Summary) && p.UserId!.Equals(postdto.UserId))).FirstOrDefault();
 
                 //Populating the postDto
                 if (newPost != null)
@@ -316,10 +316,16 @@ namespace NHA.Website.Software.Controllers.WebAPIs
                         }
                     }
                     var newPostWithIncludes = await _unitOfWork.PostRepository.GetPostByIDWithIncludesAsync(newPost.Id.GetValueOrDefault());
-                    var postDto = PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes));
-                    _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", postDto);
-                    _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
-                    return Ok(new { success = true, data = postDto });
+                    if (newPostWithIncludes != null)
+                    {
+                        var postDto = PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes));
+                        _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", postDto);
+                        _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
+                        return Ok(new { success = true, data = postDto });
+                    }
+
+                    return NotFound(new {success = false});
+
                 }
                 else
                 {

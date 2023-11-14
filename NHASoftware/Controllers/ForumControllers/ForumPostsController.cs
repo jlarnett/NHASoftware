@@ -109,9 +109,12 @@ namespace NHASoftware.Controllers
             {
                 var topic = await _unitOfWork.ForumTopicRepository.GetByIdAsync(forumPost.ForumTopicId);
 
-                topic.PostCount += 1;
-                topic.ThreadCount += 1;
-                topic.LastestPost = DateTime.Now;
+                if (topic != null)
+                {
+                    topic.PostCount += 1;
+                    topic.ThreadCount += 1;
+                    topic.LastestPost = DateTime.Now;
+                }
 
                 _unitOfWork.ForumPostRepository.Add(forumPost);
                 await _unitOfWork.CompleteAsync();
@@ -253,9 +256,12 @@ namespace NHASoftware.Controllers
                     var topic = await _unitOfWork.ForumTopicRepository.GetByIdAsync(forumPost.ForumTopicId);
                     var postCommentsNumber = await _unitOfWork.ForumCommentRepository.GetNumberOfCommentsForPost(forumPost.Id);
 
-                    topic.PostCount -= postCommentsNumber + 1;
-                    topic.ThreadCount -= 1;
-                    topic.LastestPost = DateTime.Now;
+                    if (topic != null)
+                    {
+                        topic.PostCount -= postCommentsNumber + 1;
+                        topic.ThreadCount -= 1;
+                        topic.LastestPost = DateTime.Now;
+                    }
 
                     var oldPostTopicId = forumPost.ForumTopicId;
 
@@ -283,7 +289,7 @@ namespace NHASoftware.Controllers
         /// <returns>Returns true if ForumPost exist.</returns>
         private bool ForumPostExists(int id)
         {
-            return _context.ForumPosts.Any(e => e.Id == id);
+            return _context.ForumPosts!.Any(e => e.Id == id);
         }
 
         /// <summary>
