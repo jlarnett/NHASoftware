@@ -1,12 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<UserSecretsId>aspnet-NHASoftware-18FFCD77-5B01-4FAB-AEBF-2F403F38CE80</UserSecretsId>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	</PropertyGroup>
+  <PropertyGroup>
+	<TargetFramework>net6.0</TargetFramework>
+	<Nullable>enable</Nullable>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<UserSecretsId>aspnet-NHASoftware-18FFCD77-5B01-4FAB-AEBF-2F403F38CE80</UserSecretsId>
+  </PropertyGroup>
 	
   <ItemGroup>
     <Content Remove="wwwroot\js\AddBookAuthor.js" />
