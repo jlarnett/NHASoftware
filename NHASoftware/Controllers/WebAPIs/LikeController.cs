@@ -1,10 +1,10 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NHA.Website.Software.ConsumableEntities;
 using NHA.Website.Software.Services.CacheGoblin;
 using NHA.Website.Software.Services.CookieMonster;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
-using NHASoftware.ConsumableEntities;
 using NHASoftware.DBContext;
 
 namespace NHA.Website.Software.Controllers.WebAPIs
@@ -39,13 +39,9 @@ namespace NHA.Website.Software.Controllers.WebAPIs
         {
             var currentSessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
 
-            if (currentSessionId != null)
+            if (!currentSessionId.Equals(string.Empty))
             {
-                var user = new CookieTrackingObject
-                {
-                    CookieGuid = currentSessionId,
-                    ObjectIdentifierId = id
-                };
+                var user = new CookieTrackingObject(id, currentSessionId);
 
                 var commentLikeExists = _commentCacheGoblin.Exists(user);
 
@@ -62,11 +58,9 @@ namespace NHA.Website.Software.Controllers.WebAPIs
             else
             {
                 _cookieMonster.CreateCookie(CookieKeys.Session, Guid.NewGuid().ToString());
-                _commentCacheGoblin.Add(new CookieTrackingObject()
-                {
-                    CookieGuid = _cookieMonster.TryRetrieveCookie(CookieKeys.Session),
-                    ObjectIdentifierId = id
-                });
+
+
+                _commentCacheGoblin.Add(new CookieTrackingObject(id, _cookieMonster.TryRetrieveCookie(CookieKeys.Session)));
                 return await TryIncrementCommentLikes(id);
             }
         }
@@ -81,13 +75,9 @@ namespace NHA.Website.Software.Controllers.WebAPIs
         {
             var currentSessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
 
-            if (currentSessionId != null)
+            if (!currentSessionId.Equals(string.Empty))
             {
-                var user = new CookieTrackingObject
-                {
-                    CookieGuid = currentSessionId,
-                    ObjectIdentifierId = id
-                };
+                var user = new CookieTrackingObject(id, currentSessionId);
 
                 var postLikeExists = _postCacheGoblin.Exists(user);
 
@@ -104,11 +94,8 @@ namespace NHA.Website.Software.Controllers.WebAPIs
             else
             {
                 _cookieMonster.CreateCookie(CookieKeys.Session, Guid.NewGuid().ToString());
-                _postCacheGoblin.Add(new CookieTrackingObject()
-                {
-                    CookieGuid = _cookieMonster.TryRetrieveCookie(CookieKeys.Session),
-                    ObjectIdentifierId = id
-                });
+
+                _postCacheGoblin.Add(new CookieTrackingObject(id, _cookieMonster.TryRetrieveCookie(CookieKeys.Session)));
                 return await TryIncrementPostLikes(id);
             }
         }

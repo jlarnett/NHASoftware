@@ -1,9 +1,15 @@
-﻿namespace NHASoftware.ConsumableEntities
+﻿namespace NHA.Website.Software.ConsumableEntities
 {
     public class CookieTrackingObject
     {
-        public int ObjectIdentifierId { get; set; }
-        public string CookieGuid { get; set; } = string.Empty;
+        public readonly int ObjectIdentifierId;
+        public readonly string CookieGuid;
+
+        public CookieTrackingObject(int objectIdentifierId, string cookieGuid)
+        {
+            ObjectIdentifierId = objectIdentifierId;
+            CookieGuid = cookieGuid;
+        }
 
         public override bool Equals(object? obj)
         {
@@ -13,6 +19,14 @@
             }
 
             return false;
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 13;
+            hash = (hash * 7) + ObjectIdentifierId.GetHashCode();
+            hash = (hash * 7) + CookieGuid.GetHashCode();
+            return hash;
         }
     }
 }
