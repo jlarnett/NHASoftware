@@ -293,9 +293,11 @@ function HidePostFromProfile(postId) {
 
 function RetrieveImagesForPost(postId, uuid) {
     //Retrieves images for the specified postId & appends it to the post. 
+    AddSpinnerToImageSection(uuid);
     $.get("/api/posts/GetPostImages/" + postId, function (data) {
         var imagesHtml = GeneratePostImagesHtmlRedesign(data);
         $("[unique-image-section=" + uuid + "]").append(imagesHtml);
+        RemoveSpinnerFromImageSection();
     });
 }
 
@@ -681,6 +683,14 @@ function AddSpinnerToContentFeed() {
 }
 
 function RemoveSpinnerFromContentFeed() {
+    $('#LoadingSpinner').remove();
+}
+
+function AddSpinnerToImageSection(uuid) {
+    $("[unique-image-section=" + uuid + "]").append('<div id="LoadingSpinner" class="text-center mt-2" ><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+}
+
+function RemoveSpinnerFromImageSection(uuid) {
     $('#LoadingSpinner').remove();
 }
 
