@@ -1,5 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NHAHelpers.AlphabetSimplify;
+using NHA.Helpers.AlphabetSimplify;
 
 namespace NHA.Testing.AlphabetSimplifyTests
 {

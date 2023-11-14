@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
+using NHA.Helpers.AlphabetSimplify;
+using NHA.Helpers.HtmlStringCleaner;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
-using NHAHelpers.AlphabetSimplify;
-using NHAHelpers.HtmlStringCleaner;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Anime;
 using NHASoftware.Entities.Forums;

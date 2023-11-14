@@ -1,4 +1,4 @@
-﻿namespace NHAHelpers.HtmlStringCleaner;
+﻿namespace NHA.Helpers.HtmlStringCleaner;
 
 public interface IHtmlStringCleaner
 {
