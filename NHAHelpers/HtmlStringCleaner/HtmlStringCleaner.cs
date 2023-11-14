@@ -3,7 +3,7 @@
 namespace NHAHelpers.HtmlStringCleaner;
     public class HtmlStringCleaner : IHtmlStringCleaner
     {
-        public string output { get; set; }
+        public string output { get; set; } = string.Empty;
 
         public HtmlStringCleaner initialize(string input)
         {
