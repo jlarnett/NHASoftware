@@ -1,4 +1,3 @@
-
 using AutoMapper;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Hangfire;
@@ -16,7 +15,6 @@ using NHA.Website.Software.Services.CacheLoadingManager;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHASoftware.DBContext;
 using NHASoftware.Entities.Identity;
-using NHAHelpers.HtmlStringCleaner;
 using NHA.Website.Software.Services.Social;
 using NHA.Website.Software.Services.CacheGoblin;
 using NHA.Website.Software.Services.Forums;
@@ -27,12 +25,10 @@ using NHA.Website.Software.Services.Anime;
 using NHA.Website.Software.Services.FriendSystem;
 using NHA.Website.Software.Services.SendGrid;
 using NHA.Website.Software.Services.SendGrid.Configuration;
+using NHA.Helpers.HtmlStringCleaner;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
-
-
-
 
 // gets the connectionString from Configuration.
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];

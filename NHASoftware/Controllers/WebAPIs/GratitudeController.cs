@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using NHA.Website.Software.Caching;
 using NHA.Website.Software.Services.CacheLoadingManager;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
