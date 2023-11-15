@@ -70,5 +70,9 @@
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<GenerateProgramFile>false</GenerateProgramFile>
+	</PropertyGroup>
+
 </Project>
 
