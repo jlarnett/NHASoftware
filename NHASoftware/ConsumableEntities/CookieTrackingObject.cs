@@ -1,32 +1,30 @@
-﻿namespace NHA.Website.Software.ConsumableEntities
+﻿namespace NHA.Website.Software.ConsumableEntities;
+public class CookieTrackingObject
 {
-    public class CookieTrackingObject
+    public readonly int ObjectIdentifierId;
+    public readonly string CookieGuid;
+
+    public CookieTrackingObject(int objectIdentifierId, string cookieGuid)
     {
-        public readonly int ObjectIdentifierId;
-        public readonly string CookieGuid;
+        ObjectIdentifierId = objectIdentifierId;
+        CookieGuid = cookieGuid;
+    }
 
-        public CookieTrackingObject(int objectIdentifierId, string cookieGuid)
+    public override bool Equals(object? obj)
+    {
+        if (obj is CookieTrackingObject other)
         {
-            ObjectIdentifierId = objectIdentifierId;
-            CookieGuid = cookieGuid;
+            return other.CookieGuid == CookieGuid && other.ObjectIdentifierId == ObjectIdentifierId;
         }
 
-        public override bool Equals(object? obj)
-        {
-            if (obj is CookieTrackingObject other)
-            {
-                return other.CookieGuid == CookieGuid && other.ObjectIdentifierId == ObjectIdentifierId;
-            }
+        return false;
+    }
 
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            int hash = 13;
-            hash = (hash * 7) + ObjectIdentifierId.GetHashCode();
-            hash = (hash * 7) + CookieGuid.GetHashCode();
-            return hash;
-        }
+    public override int GetHashCode()
+    {
+        int hash = 13;
+        hash = (hash * 7) + ObjectIdentifierId.GetHashCode();
+        hash = (hash * 7) + CookieGuid.GetHashCode();
+        return hash;
     }
 }

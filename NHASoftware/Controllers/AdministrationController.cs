@@ -1,53 +1,48 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using NHASoftware.Entities.Identity;
-using NHASoftware.ViewModels;
-
-namespace NHASoftware.Controllers
+using NHA.Website.Software.Entities.Identity;
+using NHA.Website.Software.Views.ViewModels;
+namespace NHA.Website.Software.Controllers;
+public class AdministrationController : Controller
 {
-    public class AdministrationController : Controller
+    private readonly RoleManager<IdentityRole> _roleManager;
+    public AdministrationController(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
     {
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<ApplicationUser> _userManager;
-        public AdministrationController(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
-        {
-            _roleManager = roleManager;
-            _userManager = userManager;
-        }
+        _roleManager = roleManager;
+    }
 
-        [HttpGet]
-        [Authorize(Roles = "admin")]
-        public IActionResult CreateRole()
-        {
-            return View();
-        }
+    [HttpGet]
+    [Authorize(Roles = "admin")]
+    public IActionResult CreateRole()
+    {
+        return View();
+    }
 
-        [HttpPost]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> CreateRole(CreateRoleViewModel model)
+    [HttpPost]
+    [Authorize(Roles = "admin")]
+    public async Task<IActionResult> CreateRole(CreateRoleViewModel model)
+    {
+        if (ModelState.IsValid)
         {
-            if (ModelState.IsValid)
+            IdentityRole identityRole = new IdentityRole()
             {
-                IdentityRole identityRole = new IdentityRole()
-                {
-                    Name = model.RoleName
-                };
+                Name = model.RoleName
+            };
 
-                IdentityResult result = await _roleManager.CreateAsync(identityRole);
+            IdentityResult result = await _roleManager.CreateAsync(identityRole);
 
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("index", "Home");
-                }
-
-                foreach (IdentityError error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
+            if (result.Succeeded)
+            {
+                return RedirectToAction("index", "Home");
             }
 
-            return View(model);
+            foreach (IdentityError error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
         }
+
+        return View(model);
     }
 }

@@ -1,11 +1,8 @@
 ﻿using System.Security.Claims;
-
-namespace NHA.Website.Software.Services.AccessWarden
+namespace NHA.Website.Software.Services.AccessWarden;
+public interface IWarden
 {
-    public interface IWarden
-    {
-        bool IsForumAdmin(ClaimsPrincipal user);
-        bool IsAdmin(ClaimsPrincipal user);
+    bool IsForumAdmin(ClaimsPrincipal user);
+    bool IsAdmin(ClaimsPrincipal user);
 
-    }
 }

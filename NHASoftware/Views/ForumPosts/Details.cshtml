@@ -1,17 +1,15 @@
-﻿@using NHASoftware.Entities.Identity
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using NHA.Website.Software.Entities.Identity
 @using NHA.Website.Software.Services.AccessWarden
 @model NHA.Website.Software.Views.ViewModels.ForumVMs.ForumPostDetailModel
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject IWarden AccessWarden
-
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <head>
     <link rel="stylesheet" href="~/css/ForumStyles.css">
     <script src="~/Scripts/ForumPostDetails.js"></script>

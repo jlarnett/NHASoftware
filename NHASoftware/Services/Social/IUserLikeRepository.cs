@@ -1,9 +1,6 @@
-﻿using NHA.Website.Software.Services.RepositoryPatternFoundationals;
-using NHASoftware.Entities.Social_Entities;
-
-namespace NHA.Website.Software.Services.Social
+﻿using NHA.Website.Software.Entities.Social_Entities;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+namespace NHA.Website.Software.Services.Social;
+public interface IUserLikeRepository : IGenericRepository<UserLikes>
 {
-    public interface IUserLikeRepository : IGenericRepository<UserLikes>
-    {
-    }
 }

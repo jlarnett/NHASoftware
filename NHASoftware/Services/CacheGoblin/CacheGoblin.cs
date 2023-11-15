@@ -1,49 +1,47 @@
-﻿namespace NHA.Website.Software.Services.CacheGoblin
+﻿namespace NHA.Website.Software.Services.CacheGoblin;
+public class CacheGoblin<T> : ICacheGoblin<T>
 {
-    public class CacheGoblin<T> : ICacheGoblin<T>
+    public int cacheResetThreshold { get; set; } = 10000;
+    public HashSet<T> cacheitems = new HashSet<T>();
+
+    public CacheGoblin()
     {
-        public int cacheResetThreshold { get; set; } = 10000;
-        public HashSet<T> cacheitems = new HashSet<T>();
 
-        public CacheGoblin()
+    }
+
+    public void Add(T item)
+    {
+        if (cacheitems.Count > 50000)
         {
-
+            Clear();
         }
 
-        public void Add(T item)
+        if (!Exists(item))
         {
-            if (cacheitems.Count > 50000)
+            cacheitems.Add(item);
+        }
+    }
+
+    public void Clear()
+    {
+        cacheitems.Clear();
+    }
+
+    public bool Exists(T item)
+    {
+        foreach (var cItem in cacheitems)
+        {
+            if (cItem == null)
             {
-                Clear();
+                return false;
             }
 
-            if (!Exists(item))
+            if (cItem.Equals(item))
             {
-                cacheitems.Add(item);
+                return true;
             }
         }
 
-        public void Clear()
-        {
-            cacheitems.Clear();
-        }
-
-        public bool Exists(T item)
-        {
-            foreach (var cItem in cacheitems)
-            {
-                if (cItem == null)
-                {
-                    return false;
-                }
-
-                if (cItem.Equals(item))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
+        return false;
     }
 }

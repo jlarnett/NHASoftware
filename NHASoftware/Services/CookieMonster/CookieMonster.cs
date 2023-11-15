@@ -1,5 +1,4 @@
 ﻿namespace NHA.Website.Software.Services.CookieMonster;
-
 public class CookieMonster : ICookieMonster
 {
     private readonly IHttpContextAccessor _contextAccessor;

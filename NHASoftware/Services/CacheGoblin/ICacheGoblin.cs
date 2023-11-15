@@ -1,9 +1,7 @@
-﻿namespace NHA.Website.Software.Services.CacheGoblin
+﻿namespace NHA.Website.Software.Services.CacheGoblin;
+public interface ICacheGoblin<T>
 {
-    public interface ICacheGoblin<T>
-    {
-        void Add(T item);
-        void Clear();
-        bool Exists(T item);
-    }
+    void Add(T item);
+    void Clear();
+    bool Exists(T item);
 }

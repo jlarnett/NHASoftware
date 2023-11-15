@@ -1,14 +1,11 @@
-﻿using NHA.Website.Software.Services.RepositoryPatternFoundationals;
-using NHASoftware.DBContext;
-using NHASoftware.Entities.Social_Entities;
-
-namespace NHA.Website.Software.Services.Social
+﻿using NHA.Website.Software.DBContext;
+using NHA.Website.Software.Entities.Social_Entities;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+namespace NHA.Website.Software.Services.Social;
+public class UserLikeRepository : GenericRepository<UserLikes>, IUserLikeRepository
 {
-    public class UserLikeRepository : GenericRepository<UserLikes>, IUserLikeRepository
+    public UserLikeRepository(ApplicationDbContext context) : base(context)
     {
-        public UserLikeRepository(ApplicationDbContext context) : base(context)
-        {
 
-        }
     }
 }

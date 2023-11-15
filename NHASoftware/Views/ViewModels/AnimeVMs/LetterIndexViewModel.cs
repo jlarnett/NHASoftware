@@ -1,10 +1,7 @@
-﻿using NHASoftware.Entities.Anime;
-
-namespace NHASoftware.ViewModels.AnimeVMs
+﻿using NHA.Website.Software.Entities.Anime;
+namespace NHA.Website.Software.Views.ViewModels.AnimeVMs;
+public class LetterIndexViewModel
 {
-    public class LetterIndexViewModel
-    {
-        public char AlphabetLetter { get; set; }
-        public List<AnimePage> AnimeList { get; set; } = new List<AnimePage>();
-    }
+    public char AlphabetLetter { get; set; }
+    public List<AnimePage> AnimeList { get; set; } = new List<AnimePage>();
 }

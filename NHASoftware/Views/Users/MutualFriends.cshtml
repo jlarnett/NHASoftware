@@ -1,15 +1,8 @@
-﻿@using NHASoftware.Entities.Identity
-@using Microsoft.AspNetCore.Identity
-@using NHA.Website.Software.Services.FriendSystem
-@model NHA.Website.Software.Views.ViewModels.FriendVMs.MutualFriendListVM
-@inject UserManager<ApplicationUser> userManager
-@inject IFriendSystem friendSystem
-
+﻿@model NHA.Website.Software.Views.ViewModels.FriendVMs.MutualFriendListVM
 @{
     ViewData["Title"] = "User Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <head>
     <script src="~/Scripts/FriendSystem/MutualFriendList.js"></script>
 </head>

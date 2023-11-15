@@ -4,7 +4,6 @@ using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using NHASoftware.Profiles;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.FeatureManagement;
@@ -13,8 +12,6 @@ using NHA.Website.Software.HangfireFilters;
 using NHA.Website.Software.RequestDurationMiddleware;
 using NHA.Website.Software.Services.CacheLoadingManager;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
-using NHASoftware.DBContext;
-using NHASoftware.Entities.Identity;
 using NHA.Website.Software.Services.Social;
 using NHA.Website.Software.Services.CacheGoblin;
 using NHA.Website.Software.Services.Forums;
@@ -26,6 +23,9 @@ using NHA.Website.Software.Services.FriendSystem;
 using NHA.Website.Software.Services.SendGrid;
 using NHA.Website.Software.Services.SendGrid.Configuration;
 using NHA.Helpers.HtmlStringCleaner;
+using NHA.Website.Software.DBContext;
+using NHA.Website.Software.Entities.Identity;
+using NHA.Website.Software.Profiles;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
@@ -63,7 +63,6 @@ var mapperConfig = new MapperConfiguration(mc =>
 IMapper mapper = mapperConfig.CreateMapper();
 
 #region ManageBuilderServices
-
 
 //Application database config
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
@@ -191,8 +190,6 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions()
     //Passes the authorization to app. 
     Authorization = new []{new MyAuthorizationFilter()}
 });
-
-//app.UseHangfireServer();
 
 app.MapControllerRoute(
     name: "default",

@@ -8,119 +8,114 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-
-namespace NHASoftware.Entities.Identity
+namespace NHA.Website.Software.Entities.Identity;
+[AllowAnonymous]
+public class RegisterModel : PageModel
 {
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ILogger<RegisterModel> _logger;
+    private readonly IEmailSender _emailSender;
+    private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
-    [AllowAnonymous]
-    public class RegisterModel : PageModel
+    [BindProperty] public InputModel Input { get; set; } = new InputModel();
+    public IList<AuthenticationScheme> ExternalLogins { get; set; } = new List<AuthenticationScheme>();
+    public string ReturnUrl { get; set; } = string.Empty;
+    public RegisterModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<RegisterModel> logger, IEmailSender emailSender, IWebHostEnvironment webHostEnvironment, RoleManager<IdentityRole> roleManager)
     {
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        _userManager = userManager;
+        _signInManager = signInManager;
+        _logger = logger;
+        _emailSender = emailSender;
+        _webHostEnvironment = webHostEnvironment;
+        _roleManager = roleManager;
+    }
 
-        [BindProperty] public InputModel Input { get; set; } = new InputModel();
-        public IList<AuthenticationScheme> ExternalLogins { get; set; } = new List<AuthenticationScheme>();
-        public string ReturnUrl { get; set; } = string.Empty;
-        public RegisterModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<RegisterModel> logger, IEmailSender emailSender, IWebHostEnvironment webHostEnvironment, RoleManager<IdentityRole> roleManager)
+    public async Task OnGetAsync(string? returnUrl = null)
+    {
+        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+    }
+
+    public async Task<IActionResult> OnPostAsync()
+    {
+        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+        if (ModelState.IsValid)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _logger = logger;
-            _emailSender = emailSender;
-            _webHostEnvironment = webHostEnvironment;
-            _roleManager = roleManager;
-        }
-
-        public async Task OnGetAsync(string? returnUrl = null)
-        {
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-        }
-
-        public async Task<IActionResult> OnPostAsync()
-        {
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
-            if (ModelState.IsValid)
+            var user = new ApplicationUser()
             {
-                var user = new ApplicationUser()
+                UserName = Input.Email,
+                Email = Input.Email,
+                UserCash = 0.00,
+                LastLoginDate = DateTime.Today,
+                ProfilePicturePath = "DefaultProfilePicture.png",
+                DisplayName = "Gangsta"
+            };
+
+            var result = await _userManager.CreateAsync(user, Input.Password);
+
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "basic");
+                _logger.LogInformation("User created a new account with password.");
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+                var callbackUrl = Url.Page(
+                    "/Account/ConfirmEmail",
+                    pageHandler: null,
+                    values: new { area = "Identity", userId = user.Id, code },
+                    protocol: Request.Scheme);
+
+
+                if (callbackUrl != null)
                 {
-                    UserName = Input.Email,
-                    Email = Input.Email,
-                    UserCash = 0.00,
-                    LastLoginDate = DateTime.Today,
-                    ProfilePicturePath = "DefaultProfilePicture.png",
-                    DisplayName = "Gangsta"
-                };
-
-                var result = await _userManager.CreateAsync(user, Input.Password);
-
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(user, "basic");
-                    _logger.LogInformation("User created a new account with password.");
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = user.Id, code },
-                        protocol: Request.Scheme);
-
-
-                    if (callbackUrl != null)
-                    {
-                        await _emailSender.SendEmailAsync(Input.Email, "NHA Software Registration Confirmation",
-                            $"Welcome to NHA Industries social media site! " +
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-                    }
-
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
-                    }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return RedirectToAction("index", "home");
-                    }
+                    await _emailSender.SendEmailAsync(Input.Email, "NHA Software Registration Confirmation",
+                        $"Welcome to NHA Industries social media site! " +
+                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
                 }
 
-                foreach (var error in result.Errors)
+
+                if (_userManager.Options.SignIn.RequireConfirmedAccount)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
+                }
+                else
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("index", "home");
                 }
             }
 
-            // If we got this far, something failed, redisplay form
-            return Page();
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
         }
 
-        public class InputModel
-        {
-            [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
-            public string Email { get; set; } = string.Empty;
+        // If we got this far, something failed, redisplay form
+        return Page();
+    }
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
-                MinimumLength = 6)]
-            [DataType(DataType.Password)]
-            [Display(Name = "Password")]
-            public string Password { get; set; } = string.Empty;
+    public class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; } = string.Empty;
 
-            [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; } = string.Empty;
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
+            MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; } = string.Empty;
 
-        }
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+
     }
 }
-

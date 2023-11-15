@@ -1,10 +1,7 @@
-﻿using NHA.Website.Software.Services.RepositoryPatternFoundationals;
-using NHASoftware.Entities.FriendSystem;
-
-namespace NHA.Website.Software.Services.FriendSystem
+﻿using NHA.Website.Software.Entities.FriendSystem;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+namespace NHA.Website.Software.Services.FriendSystem;
+public interface IFriendRequestRepository : IGenericRepository<FriendRequest>
 {
-    public interface IFriendRequestRepository : IGenericRepository<FriendRequest>
-    {
-        IEnumerable<FriendRequest> GetUsersPendingFriendRequest(string userId);
-    }
+    IEnumerable<FriendRequest> GetUsersPendingFriendRequest(string userId);
 }
