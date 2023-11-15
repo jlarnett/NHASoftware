@@ -71,6 +71,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
+		<!--ABSOLUTELY CRITIAL TO BUILD WITH WARNINGS AS ERRORS. NEEDED BECAUSE OF TEST RUNNER IN PROJECT-->
 		<GenerateProgramFile>false</GenerateProgramFile>
 	</PropertyGroup>
 
