@@ -1,9 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@using NHASoftware.Entities.Identity
+@using NHA.Website.Software.Entities.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
-
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {

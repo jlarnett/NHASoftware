@@ -1,7 +1,5 @@
-﻿namespace NHA.Website.Software.Services.FileExtensionValidator
+﻿namespace NHA.Website.Software.Services.FileExtensionValidator;
+public interface IFileExtensionValidator
 {
-    public interface IFileExtensionValidator
-    {
-        bool CheckValidImageExtensions(string uploadedFileName);
-    }
+    bool CheckValidImageExtensions(string uploadedFileName);
 }

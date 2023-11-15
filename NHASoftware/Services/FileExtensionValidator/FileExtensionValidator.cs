@@ -1,22 +1,20 @@
-﻿namespace NHA.Website.Software.Services.FileExtensionValidator
+﻿namespace NHA.Website.Software.Services.FileExtensionValidator;
+public class FileExtensionValidator : IFileExtensionValidator
 {
-    public class FileExtensionValidator : IFileExtensionValidator
+    public bool CheckValidImageExtensions(string uploadedFileName)
     {
-        public bool CheckValidImageExtensions(string uploadedFileName)
+        string[] permittedExtensions = { ".jpg", ".png", ".jpeg", ".bmp" };
+        var ext = Path.GetExtension(uploadedFileName).ToLowerInvariant();
+        return IsExtensionPathEmptyOrIncorrect(ext, permittedExtensions);
+    }
+
+    private bool IsExtensionPathEmptyOrIncorrect(string ext, string[] permittedExtensions)
+    {
+        if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
         {
-            string[] permittedExtensions = { ".jpg", ".png", ".jpeg", ".bmp" };
-            var ext = Path.GetExtension(uploadedFileName).ToLowerInvariant();
-            return IsExtensionPathEmptyOrIncorrect(ext, permittedExtensions);
+            return false;
         }
 
-        private bool IsExtensionPathEmptyOrIncorrect(string ext, string[] permittedExtensions)
-        {
-            if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
-            {
-                return false;
-            }
-
-            return true;
-        }
+        return true;
     }
 }

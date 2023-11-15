@@ -1,10 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
-namespace NHASoftware.ViewModels
+namespace NHA.Website.Software.Views.ViewModels;
+public class CreateRoleViewModel
 {
-    public class CreateRoleViewModel
-    {
-        [Required]
-        public string RoleName { get; set; } = string.Empty;
-    }
+    [Required]
+    public string RoleName { get; set; } = string.Empty;
 }

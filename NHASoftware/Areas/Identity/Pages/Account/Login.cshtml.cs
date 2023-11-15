@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using NHASoftware.Entities.Identity;
+using NHA.Website.Software.Entities.Identity;
 
 namespace NHASoftware.Areas.Identity.Pages.Account
 {

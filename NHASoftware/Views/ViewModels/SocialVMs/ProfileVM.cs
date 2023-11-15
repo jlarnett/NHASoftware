@@ -1,5 +1,5 @@
-﻿using NHASoftware.Entities.Identity;
-using NHASoftware.ConsumableEntities.DTOs;
+﻿using NHA.Website.Software.ConsumableEntities.DTOs;
+using NHA.Website.Software.Entities.Identity;
 
 namespace NHASoftware.Views.ViewModels.SocialVMs
 {

@@ -1,13 +1,13 @@
-﻿@using NHASoftware.Entities.Identity
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.FeatureManagement.Mvc.TagHelpers
+@using NHA.Website.Software.Entities.Identity
 @using NHA.Website.Software.FeatureManagement
 @inject UserManager<ApplicationUser> _UserManager
 @inject SignInManager<ApplicationUser> _SignInManager
-
 @{
     ViewData["Title"] = "Home Page";
 }
-
 <head>
     <link rel="stylesheet" href="~/css/MainPostFeed.css">
 </head>
@@ -53,7 +53,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            @model NHASoftware.ConsumableEntities.DTOs.PostDTO
+                            @model             NHA.Website.Software.ConsumableEntities.DTOs.PostDTO
                             <form id="CustomPostForm" method="post" enctype="multipart/form-data">
                                 <div class="row mb-2">
                                     <div id="CustomPostTextboxContainer" class="p-0">

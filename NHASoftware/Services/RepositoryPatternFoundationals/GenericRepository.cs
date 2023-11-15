@@ -1,10 +1,8 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using NHASoftware.DBContext;
-
+using NHA.Website.Software.DBContext;
 namespace NHA.Website.Software.Services.RepositoryPatternFoundationals;
-
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
     protected readonly ApplicationDbContext _context;
