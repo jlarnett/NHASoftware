@@ -65,7 +65,7 @@ public class ForumCommentsController : Controller
         var comment = new ForumComment()
         {
             CreationDate = DateTime.Now,
-            UserId = _userManager.GetUserId(HttpContext.User),
+            UserId = _userManager.GetUserId(HttpContext.User)!,
             ForumPostId = id
         };
 

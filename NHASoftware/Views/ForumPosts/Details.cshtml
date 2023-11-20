@@ -53,8 +53,8 @@
                     <h3>@Model.ForumPost.LikeCount</h3>
                 </div>
                 @{
-                    ApplicationUser user = await UserManager.GetUserAsync(User);
-                    if (SignInManager.IsSignedIn(User) && user.Id == Model.ForumPost.UserId)
+                    var user = await UserManager.GetUserAsync(User);
+                    if (SignInManager.IsSignedIn(User) && user!.Id == Model.ForumPost.UserId)
                     {
                         <div class="modern-post-action">
                             <button class="btn-dark" id="EditPost" post-id="@id">Edit Post</button>
@@ -97,7 +97,7 @@
             var comments = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumComments))');
 
             @{
-                string userId = UserManager.GetUserId(User);
+                string userId = UserManager.GetUserId(User)!;
                 bool adminUser = AccessWarden.IsForumAdmin(User);
             }
 

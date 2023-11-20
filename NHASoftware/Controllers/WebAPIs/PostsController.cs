@@ -128,7 +128,7 @@ public class PostsController : ControllerBase
 
     private async Task<List<PostDTO>> GeneratePostDTOList()
     {
-        var posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
+        var posts = (await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync()).Where(p => p.ParentPostId == null);
         var postDTOs = posts.Select(_mapper.Map<Post, PostDTO>).ToList();
         return await PopulatePostDTODetails(postDTOs);
     }
@@ -221,21 +221,22 @@ public class PostsController : ControllerBase
     /// </summary>
     /// <param name="postdto"></param>
     /// <returns>Returns IActionResult with new post. </returns>
-    [HttpPost]
+    [HttpPost("BasicPost")]
     [ValidateAntiForgeryToken]
     [Authorize]
-    public async Task<IActionResult> PostPost([Bind("Summary,UserId,ParentPostId")] PostDTO postdto)
+    public async Task<IActionResult> PostPost([FromForm] PostDTO postdto)
     {
         var post = _mapper.Map<PostDTO, Post>(postdto);
         post.CreationDate = DateTime.Now;
+        post.UserId = _userManager.GetUserId(User);
 
         _unitOfWork.PostRepository.Add(post);
         var result = await _unitOfWork.CompleteAsync();
 
         if (result > 0)
         {
-            var newPost = _unitOfWork.PostRepository.Find(p =>
-                p.Summary.Equals(postdto.Summary) && p.UserId!.Equals(postdto.UserId)).FirstOrDefault();
+            var newPost = (await _unitOfWork.PostRepository.FindAsync(p =>
+                p.Summary.Equals(post.Summary) && p.UserId!.Equals(post.UserId))).FirstOrDefault();
 
             //Populating the postDto
             if (newPost != null)
@@ -293,7 +294,7 @@ public class PostsController : ControllerBase
         if (result > 0)
         {
             var newPost = (await _unitOfWork.PostRepository.FindAsync(p =>
-                p.Summary.Equals(postdto.Summary) && p.UserId!.Equals(postdto.UserId))).FirstOrDefault();
+                p.Summary.Equals(post.Summary) && p.UserId!.Equals(post.UserId))).FirstOrDefault();
 
             //Populating the postDto
             if (newPost != null)

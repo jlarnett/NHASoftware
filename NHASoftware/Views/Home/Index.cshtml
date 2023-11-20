@@ -24,9 +24,11 @@
                     <h1 class="h1">Create New Post</h1>
                 </div>
                 <div class="row">
-                    <div id="MainPostTextboxContainer" class="p-0">
-                        <div id="MainPostTextbox"></div>
-                    </div>
+                    <form id="BasicPostForm" method="post" enctype="multipart/form-data">
+                        <div id="MainPostTextboxContainer" class="p-0">
+                            <textarea id="MainPostTextbox" name="Summary"></textarea>
+                        </div>
+                    </form>
                 </div>
                 <div class="row p-0">
                     <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="col btn-dark p-0 fs-2">Upload Post</button>
@@ -53,7 +55,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            @model             NHA.Website.Software.ConsumableEntities.DTOs.PostDTO
+                            @model NHA.Website.Software.ConsumableEntities.DTOs.PostDTO
                             <form id="CustomPostForm" method="post" enctype="multipart/form-data">
                                 <div class="row mb-2">
                                     <div id="CustomPostTextboxContainer" class="p-0">
