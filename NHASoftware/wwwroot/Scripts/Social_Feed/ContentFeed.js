@@ -72,23 +72,19 @@
         }
     });
 
-    $("#SubmitBtn").click(function(e) {
+    $("#SubmitBtn").on("click", function(e) {
+        e.preventDefault();
         AddSpinnerSubmitPostBtn();
-        var userId = RetrieveCurrentUserId();
-        var postContent = $($("#MainPostTextbox").summernote("code")).text()
-
-        var newPostObject = {};
-        newPostObject.Summary = postContent;
-        newPostObject.UserId = userId;
-        newPostObject.CreationDate = null;
-        newPostObject.ParentPostId = null;
+        var form = document.getElementById("BasicPostForm");
+        var formData = new FormData(form);
+        formData.set("Summary", $($("#MainPostTextbox").summernote("code")).text())
 
         $.ajax({
-            url: '/api/Posts',
+            url: '/api/Posts/BasicPost',
             method: 'POST',
-            contentType: "application/json; charset=utf-8",
-            datatype: 'json',
-            data: JSON.stringify(newPostObject),
+            contentType: false,
+            processData: false,
+            data: formData,
             headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
             success: function(data) {
                 if (data.success) {
@@ -105,12 +101,11 @@
         });
     });
 
-   $("#SubmitCustomPostBtn").click(function(e) {
+   $("#SubmitCustomPostBtn").on("click", function(e) {
         e.preventDefault();
         AddSpinnerSubmitCustomPostBtn();
         var form = document.getElementById("CustomPostForm");
         var formData = new FormData(form);
-
         formData.set("Summary", $($("#CustomPostTextbox").summernote("code")).text())
 
         $.ajax({
@@ -137,33 +132,28 @@
     });
 
     $("#ContentFeed").on("click", ".comment-send-btn", function (e) { 
+        e.preventDefault();
 
         var SendButton = $(e.target);
-
         var uniquePostIdentifier = SendButton.attr("unique-identifier");
-        var commentTextbox = $("div[unique-comment-identifier$="+ uniquePostIdentifier +"]");
+        var fatherPostId = SendButton.attr("parent-post-id");
 
-        var userId = RetrieveCurrentUserId();
-        var fatherPostId = commentTextbox.attr("post-id");
-        var postContent = $($("div[unique-comment-identifier$="+ uniquePostIdentifier +"]").summernote("code")).text()
-
-        var newPostObject = {};
-        newPostObject.Summary = postContent;
-        newPostObject.UserId = userId;
-        newPostObject.ParentPostId = fatherPostId;
-        newPostObject.CreationDate = null;
+        var form = document.querySelector('[comment-form-uuid="' + uniquePostIdentifier + '"]');
+        var formData = new FormData(form);
+        formData.set("Summary", $($("#comment-textbox-" + uniquePostIdentifier + "").summernote("code")).text());
+        formData.set("ParentPostId", fatherPostId);
 
         $.ajax({
-            url: '/api/Posts',
+            url: '/api/Posts/BasicPost',
             method: 'POST',
-            contentType: "application/json; charset=utf-8",
-            datatype: 'json',
-            data: JSON.stringify(newPostObject),
+            contentType: false,
+            processData: false,
+            data: formData,
             headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
             success: function(data) {
                 if (data.success) {
                     ////Clear summernote textbox after successful submission.
-                    $(commentTextbox).summernote('reset');
+                    $("#comment-textbox-" + uniquePostIdentifier + "").summernote("reset");
                     $("span[unique-error-identifier$="+ uniquePostIdentifier +"]").hide("slow");
                     AddCommentDynamically(uniquePostIdentifier, data.data.result);
                 }
@@ -175,7 +165,7 @@
         });
     });
 
-    $(window).scroll(function() {
+    $(window).on("scroll", function() {
         //Called whenever the user scrolls the document. Handles loading more post for infinite feed loop
         //Handles loading images as the user scrolls the feed. This keeps the base load time for post faster
         if (IsUserProfileFeed() === undefined) {
@@ -458,7 +448,9 @@ function GeneratePostRedesign(post) {
             '<div unique-comment-section="', uuid, '" style="display: none">',
                     '<ul unique-comment-list="', uuid, '" class="list-unstyled">',
                     '</ul>',
-                    InsertCommentTextboxRedesignHtml(post.id, uuid),
+                    "<form method='post' enctype='multipart/form-data' comment-form-uuid='", uuid ,"'>",
+                        InsertCommentTextboxRedesignHtml(post.id, uuid),
+                    "</form>",
             '</div>',
         '</div>');
 
@@ -620,10 +612,10 @@ function InsertCommentTextboxRedesignHtml(postId, uuid) {
         Html.push('<div class="row mb-2">',
             '<div class="col-2"></div>',
             '<div class="col-5">',
-                '<div class="summernote-comments" post-id="', postId, '" unique-comment-identifier="', uuid  ,'">',
-                '</div>',
+                '<textarea class="summernote-comments" post-id="', postId, '" id="comment-textbox-', uuid  ,'" name="Summary">',
+                '</textarea>',
             '</div>',
-            '<button class="btn-dark comment-send-btn col-1" unique-identifier="', uuid ,'">Reply</button>',
+            '<button class="btn-dark comment-send-btn col-1" unique-identifier="', uuid ,'" parent-post-id="', postId ,'">Reply</button>',
             '</div>', '<span unique-error-identifier="', uuid, '" style="display: none; color: red">Error Submitting Post.....</span>');
     }
     else {

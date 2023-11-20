@@ -9,12 +9,6 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
     {
     }
 
-    public void AddUsingSproc(Post post)
-    {
-        var newPost = _context.Posts!.FromSqlRaw(
-            $"posts_InsertPostData {post.Summary.ToString()}, {post.CreationDate}, {post.UserId}, {null}");
-    }
-
     /// <summary>
     /// Accesses the EF context & gets all social media post. DOES NOT INCLUDE POST WITH ISDELETEDFLAG set to true
     /// </summary>
@@ -23,7 +17,7 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
             .Include(p => p.User)
             .Include(p => p.ParentPost)
             .Where(p => p.IsDeletedFlag.Equals(false))
-            .OrderByDescending(P => P.CreationDate)
+            .OrderByDescending(p => p.CreationDate)
             .ToListAsync();
 
     public async Task<Post?> GetPostByIDWithIncludesAsync(int postId)

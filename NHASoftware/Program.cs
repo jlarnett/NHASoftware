@@ -33,21 +33,14 @@ var builder = WebApplication.CreateBuilder(args);
 // gets the connectionString from Configuration.
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
 
-builder.Host.ConfigureAppConfiguration((context, config) =>
+if (builder.Environment.IsProduction())
 {
-    /************************************************************
-     *  This is setup for Azure Key Vault. 
-     ************************************************************/
-    if (context.HostingEnvironment.IsProduction())
-    {
-        var builtConfig = config.Build();
-        var secretClient = new SecretClient(
-            new Uri($"https://{builtConfig["KeyVaultName"]}.vault.azure.net/"),
-            new DefaultAzureCredential());
+    var secretClient = new SecretClient(
+        new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
+        new DefaultAzureCredential());
 
-        config.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
-    }
-});
+    builder.Configuration.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
+}
 
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
@@ -65,7 +58,7 @@ IMapper mapper = mapperConfig.CreateMapper();
 #region ManageBuilderServices
 
 //Application database config
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString!));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -104,8 +97,8 @@ builder.Services.AddHangfire(options =>
 builder.Services.Configure<SendGridEmailSenderOptions>(options =>
 {
     // Gets sendgrid secrets from azure key config / azure key vault. 
-    options.ApiKey = builder.Configuration["SendGrid:ApiKey"];
-    options.SenderEmail = builder.Configuration["SendGrid:SenderEmail"];
+    options.ApiKey = builder.Configuration["SendGrid:ApiKey"]!;
+    options.SenderEmail = builder.Configuration["SendGrid:SenderEmail"]!;
     options.SenderName = "NHA Industry";
 });
 

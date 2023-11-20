@@ -25,8 +25,8 @@ public class UsersController : Controller
     [HttpGet]
     public async Task<IActionResult> GetProfiles(string? userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        var posts = _unitOfWork.PostRepository.Find(p => p.UserId!.Equals(user.Id));
+        var user = await _userManager.FindByIdAsync(userId!);
+        var posts = _unitOfWork.PostRepository.Find(p => p.UserId!.Equals(user!.Id));
 
         var profileVM = new ProfileVM()
         {
@@ -43,7 +43,7 @@ public class UsersController : Controller
 
         var user = await _userManager.FindByIdAsync(userId);
         var friendList = await _friendSystem.GetUsersFriendListAsync(userId);
-        var friendListVM = new FriendListVM(user, friendList);
+        var friendListVM = new FriendListVM(user!, friendList);
 
         return View("Friends", friendListVM);
     }
@@ -54,8 +54,7 @@ public class UsersController : Controller
         if (userIdOne == null || userIdTwo == null) return NotFound();
         var modelProfileUser = await _userManager.FindByIdAsync(userIdOne);
         var mutualFriendList = await _friendSystem.GetMutualFriendsAsync(userIdOne, userIdTwo);
-        var mutualFriendListVM = new MutualFriendListVM(modelProfileUser, mutualFriendList);
-
+        var mutualFriendListVM = new MutualFriendListVM(modelProfileUser!, mutualFriendList);
         return View("MutualFriends", mutualFriendListVM);
     }
 }

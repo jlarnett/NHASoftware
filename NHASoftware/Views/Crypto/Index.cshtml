@@ -3,46 +3,53 @@
 }
 <head>
     <link rel="stylesheet" href="~/css/Crypto.css">
-
 </head>
 
-<h1>Crypto Index!</h1>
+<h1>Crypto Price Index</h1>
 
 <div class="container-fluid">
-    <div class="row">
-
-        <div class="col">
-            <h3 class="text-white">Bitcoin</h3>
-            <img id="BitcoinPicture" src="Images/BitcoinPhoto.jpg" alt="bitcoin image" class="img-fluid image-full rounded selected" role="button"/>
+    <div class="row mb-auto">
+        <div class="col img-cover">
+            <div class="row">
+                <h3 class="text-white">Bitcoin</h3>
+            </div>
+            <div class="row">
+                <img id="BitcoinPicture" src="Images/Bitcoin.png" alt="bitcoin image" class="img-fluid rounded selected" role="button"/>
+            </div>
         </div>
-
-        <div class="col">
-            <h3 class="text-white">Ethereum</h3>
-            <img id="EthereumPicture" src="Images/EthereumPhoto.jpeg" alt="ethereum image" class="img-fluid image-full rounded" role="button"/>
+        <div class="col img-cover">
+            <div class="row">
+                <h3 class="text-white">Ethereum</h3>
+            </div>
+            <div class="row">
+                <img id="EthereumPicture" src="Images/EthereumPhoto.jpeg" alt="ethereum image" class="img-fluid img-cover rounded" role="button"/>
+            </div>
         </div>
-
-        <div class="col">
-            <h3 class="text-white">Doge Coin</h3>
-            <img id="dogePicture" src="Images/dogecoin.jpg" alt="dogecoin image" class="img-fluid image-full rounded" role="button"/>
+        <div class="col img-cover">
+            <div class="row">
+                <h3 class="text-white">Doge Coin</h3>
+            </div>
+            <div class="row">
+                <img id="dogePicture" src="Images/dogecoin.jpg" alt="dogecoin image" class="img-fluid rounded" role="button"/>
+            </div>
         </div>
-
-        <div class="col">
-            <h3 class="text-white">lite Coin</h3>
-            <img id="litecoinPicture" src="Images/litecoin.png" alt="litecoin image" class="img-fluid image-full rounded" role="button"/>
+        <div class="col img-cover">
+            <div class="row">
+                <h3 class="text-white">lite Coin</h3>
+            </div>
+            <div class="row">
+                <img id="litecoinPicture" src="Images/litecoin.png" alt="litecoin image" class="img-fluid rounded" role="button"/>
+            </div>
         </div>
     </div>
-
+    <div class="row">
+        <div id="CryptoLabel" class="text-white">Coin Symbol: </div>
+        <div id="CryptoPrice" class="text-white">USD Price: </div>
+    </div>
+    <div class="row mt-2">
+        <input type="button" class="btn btn-dark" id="Submit" value="Get Crypto"/>
+    </div>
 </div>
-
-<div class="container">
-    <div id="CryptoLabel" class="text-white">Coin Symbol: </div>
-    <div id="CryptoPrice" class="text-white">USD Price: </div>
-</div>
-
-<div class="container">
-    <input type="button" class="btn btn-dark" id="Submit" value="Get Crypto"/>
-</div>
-
 
 @section Scripts
 {

@@ -6,7 +6,7 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        ApplicationUser user = await UserManager.GetUserAsync(User);
+        var user = await UserManager.GetUserAsync(User);
 
         @if(user != null)
         {
