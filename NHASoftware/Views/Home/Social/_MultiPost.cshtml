@@ -1,0 +1,8 @@
+﻿@model NHA.Website.Software.Views.Home.Social.ViewModels.MultiPostVM
+
+@{
+    foreach (var postDTO in @Model.Posts)
+    {
+        await Html.RenderPartialAsync("Social/_Post", postDTO);
+    }
+}

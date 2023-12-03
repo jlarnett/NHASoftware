@@ -13,8 +13,8 @@ public class FriendRequestRepository : GenericRepository<FriendRequest>, IFriend
     /// </summary>
     /// <param name="userId">Friend Request's Recipient Userid</param>
     /// <returns></returns>
-    public IEnumerable<FriendRequest> GetUsersPendingFriendRequest(string userId)
+    public async Task<List<FriendRequest>> GetUsersPendingFriendRequestAsync(string userId)
     {
-        return _context.FriendRequests!.Include(fq => fq.RecipientUser).Include(fq => fq.SenderUser).Where(fq => fq.RecipientUserId.Equals(userId) && fq.Status == FriendRequestStatuses.Inprogress).AsEnumerable();
+        return await _context.FriendRequests!.Include(fq => fq.RecipientUser).Include(fq => fq.SenderUser).Where(fq => fq.RecipientUserId.Equals(userId) && fq.Status == FriendRequestStatuses.Inprogress).ToListAsync();
     }
 }

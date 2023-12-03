@@ -15,7 +15,7 @@
 </head>
 
 @{
-    var friendCount = friendSystem.GetFriendCount(Model.User!.Id);
+    var friendCount = await friendSystem.GetFriendCountAsync(Model.User!.Id);
     var mutualFriends = await friendSystem.GetMutualFriendsAsync(Model.User.Id, userManager.GetUserId(User)!);
     var mutualFriendCount = mutualFriends.Count();
 
@@ -92,8 +92,8 @@
         </div>
         
         @{
-            string isFriends = friendSystem.IsFriends(@Model.User.Id, @userManager.GetUserId(User)!).ToString();
-            string friendRequestSent = friendSystem.FriendRequestSent(@userManager.GetUserId(User)!, @Model.User.Id).ToString();
+            string isFriends = (await friendSystem.IsFriendsAsync(@Model.User.Id, @userManager.GetUserId(User)!)).ToString();
+            string friendRequestSent = (await friendSystem.IsFriendRequestSentAsync(@userManager.GetUserId(User)!, @Model.User.Id)).ToString();
         }
 
         <div class="dropdown col-md-4 p-1 align-self-center" id="FriendRequestButton" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)" isFriends="@isFriends" friendRequestSent="@friendRequestSent">

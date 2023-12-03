@@ -1,0 +1,84 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using NHA.Website.Software.Entities.Identity
+@using NHA.Website.Software.Services.Social.PostBuilderService
+@using NHA.Website.Software.Services.Time
+@model NHA.Website.Software.ConsumableEntities.DTOs.PostDTO
+@inject SignInManager<ApplicationUser> _SignInManager
+@inject ITimeBender _TimeBender
+@inject IPostBuilder _PostBuilder
+
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@{
+    var uuid = Guid.NewGuid();
+}
+
+<div class="container-fluid border border-primary mt-2 post-container" post-id="@Model.Id" images-attached="@Model.HasImagesAttached.ToString()" images-loaded="false" post-uuid="@uuid.ToString()">
+    <div class="row align-items-center mt-2">
+        <!--User Profile image & display name-->
+        <div class="col-1 px-2">
+            <img src="/ProfilePictures/@Model.User!.ProfilePicturePath" class="img-fluid img-thumbnail" alt="@Model.User!.DisplayName Profile Picture"/>
+        </div>
+        <div class="col-sm-auto border-primary border-start">
+            <a class="h3 text-decoration-none profile-link" role="button" userId="@Model.UserId">@Model.User!.DisplayName</a>
+        </div>
+        <div class="col-auto">
+            <a class="h3 text-decoration-none" role="button">-</a>
+        </div>
+        <div class="col-2">
+            <a class="h3 text-decoration-none" role="button">@_TimeBender.GetTimeShortHandString(@Model.CreationDate!.Value)</a>
+        </div>
+        <div class="col">
+        </div>
+        <!--Post Action dropdown-->
+        <div class="col-auto">
+            @{ await Html.RenderPartialAsync("Social/_PostActionButtonSection", @Model); }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-1 px-0"></div>
+        <div class="col border-bottom border-primary">
+            <div class="h4 text-primary">Summary</div>
+        </div>
+    </div>
+    <!--Posts summary section. Text content is posted here-->
+    <div class="row text-break">
+        <div class="col-sm-1 px-0"></div>
+        <p class="text-black col text-white border-bottom border-start border-primary">@Model.Summary</p>
+    </div>
+    <div class="row text-break">
+        <div class="col-sm-1 px-0"></div>
+        <div class="row col px-0" unique-image-section="@uuid.ToString()">
+        </div>
+    </div>
+    <!--Posts Likes & Comment Show section-->
+    <div class="row align-items-center m-2">
+        <div class="col-auto">
+            <a class="link-light hide-comments" comment-count="@await _PostBuilder.GetCommentCountForPost(@Model.Id)" unique-post-id="@uuid.ToString()" post-id="@Model.Id" role="button">Show Comments (@await _PostBuilder.GetCommentCountForPost(@Model.Id))</a>
+        </div>
+        <div class="col-5"></div>
+        @{ await Html.RenderPartialAsync("Social/_PostLikeSection", @Model); }
+    </div>
+    <div unique-comment-section="@uuid.ToString()" style="display: none">
+        <ul unique-comment-list="@uuid.ToString()" class="list-unstyled">
+        </ul>
+        <form method="post" enctype="multipart/form-data" comment-form-uuid="@uuid.ToString()">
+            @{
+                if (_SignInManager.IsSignedIn(User))
+                {
+                    <div class="row mb-2">
+                        <div class="col-2"></div>
+                        <div class="col-5">
+                            <textarea class="summernote-comments" post-id="@Model.Id" comment-textbox-uuid="@uuid.ToString()" name="Summary">
+                            </textarea>
+                        </div>
+                        <button class="btn-dark comment-send-btn col-1" unique-identifier="@uuid.ToString()" parent-post-id="@Model.Id">Reply</button>
+                    </div> 
+                    <span unique-error-identifier="@uuid.ToString()" style="display: none; color: red">Error Submitting Post.....</span>
+                }
+            }
+        </form>
+    </div>
+</div>

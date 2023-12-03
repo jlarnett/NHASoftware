@@ -92,7 +92,7 @@
 
 @{
     //Returns IEnumerable list of all pending FriendRequestDTOs
-    var requests = FriendSystem.GetPendingFriendRequests(UserManager.GetUserId(User)!);
+    var requests = await FriendSystem.GetPendingFriendRequestsAsync(UserManager.GetUserId(User)!);
 }
 
 <!--Secondary Action Bar -->

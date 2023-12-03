@@ -44,9 +44,9 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return _context.Update(entity);
     }
 
-    public int Count(Expression<Func<T, bool>> expression)
+    public async Task<int> CountAsync(Expression<Func<T, bool>> expression)
     {
-        return _context.Set<T>().Where(expression).Count();
+        return await _context.Set<T>().Where(expression).CountAsync();
     }
 
     public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> expression)

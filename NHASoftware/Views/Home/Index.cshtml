@@ -3,10 +3,17 @@
 @using Microsoft.FeatureManagement.Mvc.TagHelpers
 @using NHA.Website.Software.Entities.Identity
 @using NHA.Website.Software.FeatureManagement
+@using NHA.Website.Software.Services.Social.PostBuilderService
+@using NHA.Website.Software.Views.Home.Social.ViewModels
+
+
+
 @inject UserManager<ApplicationUser> _UserManager
 @inject SignInManager<ApplicationUser> _SignInManager
+@inject IPostBuilder _PostBuilder
+
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "NHA Home";
 }
 <head>
     <link rel="stylesheet" href="~/css/MainPostFeed.css">
@@ -86,6 +93,10 @@
         <div class="HomeContainer col p-0">
             <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
                 <div id="ContentFeed">
+                    @{
+                        var posts = await _PostBuilder.RetrieveParentPosts();
+                        await Html.RenderPartialAsync("Social/_MultiPost", new MultiPostVM(posts));
+                    }
                 </div>
             </div>
         </div>
@@ -101,7 +112,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            OptimizedMainContentFeedLoad();
+            //OptimizedMainContentFeedLoad();
         });
     </script>
 }
