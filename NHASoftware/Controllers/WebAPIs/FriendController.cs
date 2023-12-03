@@ -45,7 +45,6 @@ public class FriendController : ControllerBase
     }
 
     // PUT: api/FriendRequests/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
     public async Task<IActionResult> PutFriendRequest(int id, FriendRequest friendRequest)
     {
@@ -76,7 +75,11 @@ public class FriendController : ControllerBase
     }
 
     // POST: api/FriendRequests
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    /// Creates the friend request between the desired users.
+    /// </summary>
+    /// <param name="friendRequestDto">friendRequestDTO containing both sender & recipient</param>
+    /// <returns></returns>
     [HttpPost("FriendRequest")]
     public async Task<ActionResult<FriendRequest>> PostFriendRequest(FriendRequestDTO friendRequestDto)
     {
@@ -98,11 +101,11 @@ public class FriendController : ControllerBase
     /// <param name="userId">recipient userId</param>
     /// <returns></returns>
     [HttpGet("PendingFriendRequest/{userId}")]
-    public ActionResult<IEnumerable<FriendRequestDTO>> PendingFriendRequest(string userId)
+    public async Task<ActionResult<IEnumerable<FriendRequestDTO>>> PendingFriendRequest(string userId)
     {
         if (!userId.Equals(string.Empty))
         {
-            return Ok(_friendSystem.GetPendingFriendRequests(userId));
+            return Ok(await _friendSystem.GetPendingFriendRequestsAsync(userId));
         }
         else
         {
@@ -146,6 +149,7 @@ public class FriendController : ControllerBase
     public async Task<IActionResult> DeleteFriendRequest(int id)
     {
         var result = await _friendSystem.DeleteFriendRequestAsync(id);
+
         if (result)
         {
             return Ok();
@@ -202,7 +206,7 @@ public class FriendController : ControllerBase
     public async Task<IActionResult> RetrieveMutualFriends(FriendRequestDTO friendRequestDto)
     {
         var mutualFriends = await _friendSystem.GetMutualFriendsAsync(friendRequestDto.RecipientUserId, friendRequestDto.SenderUserId);
-        return mutualFriends.Any() ? Ok(new { success = true, data = mutualFriends }) : NoContent();
+        return mutualFriends.Count != 0 ? Ok(new { success = true, data = mutualFriends }) : NoContent();
     }
 
     /// <summary>
@@ -215,7 +219,7 @@ public class FriendController : ControllerBase
     public async Task<IActionResult> RetrieveFriends(string userId)
     {
         var friendList = await _friendSystem.GetUsersFriendListAsync(userId);
-        return friendList.Any() ? Ok(new { success = true, data = friendList }) : NoContent();
+        return friendList.Count != 0 ? Ok(new { success = true, data = friendList }) : NoContent();
     }
 
     private bool FriendRequestExists(int id)

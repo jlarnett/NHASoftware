@@ -26,6 +26,8 @@ using NHA.Helpers.HtmlStringCleaner;
 using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Profiles;
+using NHA.Website.Software.Services.Social.PostBuilderService;
+using NHA.Website.Software.Services.Time;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
@@ -123,6 +125,8 @@ builder.Services.AddTransient<IPostRepository, PostRepository>();
 builder.Services.AddTransient<IUserLikeRepository, UserLikeRepository>();
 builder.Services.AddTransient<IFriendRepository, FriendRepository>();
 builder.Services.AddTransient<IFriendRequestRepository, FriendRequestRepository>();
+builder.Services.AddTransient<ITimeBender, TimeBender>();
+builder.Services.AddTransient<IPostBuilder, PostBuilder>();
 
 
 //Cookie service
@@ -160,6 +164,8 @@ app.UseAzureAppConfiguration();
 //Custom Middleware to log request duration
 app.UseRequestDurationMiddleware();
 
+
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -188,6 +194,13 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+//Used by postbuilder to access claims.current
+app.Use(async (context, next) =>
+{
+    Thread.CurrentPrincipal = context.User;
+    await next(context);
+});
 
 app.Run();
 

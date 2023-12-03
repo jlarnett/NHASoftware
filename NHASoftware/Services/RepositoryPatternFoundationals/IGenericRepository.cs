@@ -11,6 +11,6 @@ public interface IGenericRepository<T> where T : class
     public void Remove(T entity);
     public void RemoveRange(IEnumerable<T> entities);
     public EntityEntry<T> Update(T entity);
-    public int Count(Expression<Func<T, bool>> expression);
+    public Task<int> CountAsync(Expression<Func<T, bool>> expression);
     public Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> expression);
 }

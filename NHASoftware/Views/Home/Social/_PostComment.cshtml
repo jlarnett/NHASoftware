@@ -1,0 +1,38 @@
+﻿@using NHA.Website.Software.Services.Time
+@model NHA.Website.Software.ConsumableEntities.DTOs.PostDTO
+@inject ITimeBender _TimeBender
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<li comment-delete-id="@Model.Id">
+    <div>
+        <div class="row align-items-center">
+            <div class="col-1"></div>
+            <div class="col-1 px-0">
+                <div class="row align">
+                    <img class="img-fluid img-thumbnail col-6 m-auto" src="/ProfilePictures/@Model.User!.ProfilePicturePath" />
+                </div>
+                </div>
+            <div class="col-auto border-primary border-start">
+                <a class="profile-link ms-4 h6 text-decoration-none" role="button" userId="@Model.User.Id">@Model.User!.DisplayName</a>
+                </div>
+            <div class="col-auto">
+                <a class="text-decoration-none ms-2 h6">-</a>
+            </div>
+            <div class="col-2">
+                <a class="text-decoration-none ms-2 h6">@_TimeBender.GetTimeShortHandString(@Model.CreationDate.GetValueOrDefault())</a>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto">
+                @{await Html.RenderPartialAsync("Social/_PostActionButtonSection", @Model);}
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-2"></div>
+            <div class="col-6 align-middle ms-4 p-2 border-primary border-bottom">@Model.Summary</div>
+        </div>
+        @{await Html.RenderPartialAsync("Social/_PostLikeSection", @Model);}
+        <hr/>
+    </div>
+</li>

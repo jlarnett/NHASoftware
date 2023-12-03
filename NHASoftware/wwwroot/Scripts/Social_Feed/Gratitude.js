@@ -54,7 +54,7 @@
 
         if (userSessionActive) {
 
-            if (currentBtnImageSrc.toLowerCase() === "/images/dislike_remake.png") {
+            if (currentBtnImageSrc.toLowerCase() === '/images/dislike_remake.png') {
                 //SEND DISLIKE TO API
                 LikePost(userId, postId, true).then(function (data) {
                     if (data.success === true) {

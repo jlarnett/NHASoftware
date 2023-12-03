@@ -2,44 +2,107 @@
 using System.Diagnostics;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using NHA.Website.Software.Services.CookieMonster;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
-using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Entities.Identity;
+using NHA.Website.Software.Services.Social.PostBuilderService;
 using NHA.Website.Software.Views.ViewModels;
+using NHA.Website.Software.Views.Home.Social.ViewModels;
+using NHA.Website.Software.ConsumableEntities.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NHA.Website.Software.Controllers;
 public class HomeController : Controller
 {
     private ILogger<HomeController> _logger;
-    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ICookieMonster _cookieMonster;
-    private readonly IMapper _mapper;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IPostBuilder _postBuilder;
 
     public HomeController(ILogger<HomeController> logger,
-        ApplicationDbContext context,
-        IEmailSender emailService,
         UserManager<ApplicationUser> userManager,
         ICookieMonster cookieMonster,
-        IMapper mapper, IUnitOfWork unitOfWork)
+        IMapper mapper, IUnitOfWork unitOfWork, IPostBuilder postBuilder)
     {
         /*************************************************************************************
          *  Dependency injection services
          *************************************************************************************/
 
         _logger = logger;
-        _userManager = userManager;
         _cookieMonster = cookieMonster;
-        _mapper = mapper;
-        _unitOfWork = unitOfWork;
+        _postBuilder = postBuilder;
     }
 
     public IActionResult Index()
     {
         AssignSessionGuidCookie();
         return View();
+    }
+
+    /// <summary>
+    /// Home/ReturnSocialPosts
+    /// Gets all parent post from post builder & returns _MultiPost partial view result. 
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<IActionResult> ReturnSocialPosts()
+    {
+        var postDTOs = await _postBuilder.RetrieveParentPosts();
+        return PartialView("Social/_MultiPost", new MultiPostVM(postDTOs));
+    }
+
+    /// <summary>
+    /// GET : Home/ReturnCommentPosts
+    /// Gets all comments for specified post Id & returns partial view containing them all
+    /// </summary>
+    /// <param name="id">postId you want to retrieve comments for</param>
+    /// <returns>_MultiComment partial view result</returns>
+    [HttpGet]
+    public async Task<IActionResult> ReturnCommentPosts(int? id)
+    {
+        var postDTOs = await _postBuilder.FindPostChildren(id);
+        return PartialView("Social/_MultiComment", new MultiPostVM(postDTOs));
+    }
+
+    /// <summary>
+    /// GET : /GetAllPostForUser/userId
+    /// Gets all social posts for supplied userId.
+    /// Converts the list of postDTOs retrieved from postbuilder and returns _MultiPost partial view.
+    /// </summary>
+    /// <param name="userId">Users Identity Id you want posts for</param>
+    /// <returns>_MultiPost partial view result</returns>
+    [HttpGet("GetAllPostForUser/{userId}")]
+    public async Task<IActionResult> GetAllPostForUser(string userId)
+    {
+        var postDTOs  = await _postBuilder.GetAllPostForUser(userId);
+        return PartialView("Social/_MultiPost", new MultiPostVM(postDTOs));
+    }
+
+    /// <summary>
+    /// POST: /ReturnPostPartialView
+    /// Takes inputted postDTO & returns a _Post partial view. Basically converts DTO -> partial view.
+    /// </summary>
+    /// <param name="postdto">Fully Populated Post DTO that you want to receive partial view for</param>
+    /// <returns>_Post Partial View Result</returns>
+    [HttpPost("ReturnPostPartialView")]
+    [ValidateAntiForgeryToken]
+    [Authorize]
+    public IActionResult ReturnPostPartialView(PostDTO postdto)
+    {
+        return PartialView("Social/_Post", postdto);
+    }
+
+    /// <summary>
+    /// POST: /ReturnCommentPartialView
+    /// Takes inputted postDTO & returns a _PostComment partial view. Basically converts DTO -> partial view.
+    /// </summary>
+    /// <param name="postdto">Fully Populated Post DTO that you want to receive _PostComment partial view for</param>
+    /// <returns>_PostComment Partial View Result</returns>
+    [HttpPost("ReturnCommentPartialView")]
+    [ValidateAntiForgeryToken]
+    [Authorize]
+    public IActionResult ReturnCommentPartialView(PostDTO postdto)
+    {
+        return PartialView("Social/_PostComment", postdto);
     }
 
     private void AssignSessionGuidCookie()

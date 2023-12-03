@@ -21,10 +21,10 @@ public class FriendSystem : IFriendSystem
     /// <param name="senderId">Application User Id 1</param>
     /// <param name="recipientId">Application User Id 2</param>
     /// <returns></returns>
-    public bool FriendRequestSent(string senderId, string recipientId)
+    public async Task<bool> IsFriendRequestSentAsync(string senderId, string recipientId)
     {
-        return _unitOfWork.FriendRequestRepository
-            .Find(f => f.RecipientUserId == recipientId && f.SenderUserId == senderId && f.Status == FriendRequestStatuses.Inprogress).Any();
+        return (await _unitOfWork.FriendRequestRepository
+            .FindAsync(f => f.RecipientUserId == recipientId && f.SenderUserId == senderId && f.Status == FriendRequestStatuses.Inprogress)).Any();
     }
 
     /// <summary>
@@ -33,10 +33,9 @@ public class FriendSystem : IFriendSystem
     /// <param name="senderId">Application User Id 1</param>
     /// <param name="recipientId">Application User Id 2</param>
     /// <returns>True if users are friends already.</returns>
-    public bool IsFriends(string senderId, string recipientId)
+    public async Task<bool> IsFriendsAsync(string senderId, string recipientId)
     {
-        var isFriends = _unitOfWork.FriendRepository
-            .Find(f => f.FriendOneId == senderId && f.FriendTwoId == recipientId || f.FriendOneId == recipientId && f.FriendTwoId == senderId)
+        var isFriends = (await _unitOfWork.FriendRepository.FindAsync(f => f.FriendOneId == senderId && f.FriendTwoId == recipientId || f.FriendOneId == recipientId && f.FriendTwoId == senderId))
             .Any();
 
         return isFriends;
@@ -49,7 +48,7 @@ public class FriendSystem : IFriendSystem
     /// <returns></returns>
     public async Task<bool> SendFriendRequestAsync(FriendRequestDTO friendRequestDto)
     {
-        if (!FriendRequestSent(friendRequestDto.SenderUserId, friendRequestDto.RecipientUserId) && !IsFriends(friendRequestDto.SenderUserId, friendRequestDto.RecipientUserId))
+        if (!await IsFriendRequestSentAsync(friendRequestDto.SenderUserId, friendRequestDto.RecipientUserId) && !await IsFriendsAsync(friendRequestDto.SenderUserId, friendRequestDto.RecipientUserId))
         {
             var friendRequest = _mapper.Map<FriendRequestDTO, FriendRequest>(friendRequestDto);
             _unitOfWork.FriendRequestRepository.Add(friendRequest);
@@ -77,7 +76,7 @@ public class FriendSystem : IFriendSystem
         if (friendRequest != null)
         {
 
-            if (!IsFriends(friendRequest.SenderUserId, friendRequest.RecipientUserId))
+            if (!await IsFriendsAsync(friendRequest.SenderUserId, friendRequest.RecipientUserId))
             {
                 friendRequest.Status = FriendRequestStatuses.Accepted;
 
@@ -99,14 +98,14 @@ public class FriendSystem : IFriendSystem
     }
 
     /// <summary>
-    /// Returns IEnumerable with all waiting friend request for supplied userId.
+    /// Returns list with all pending friend request for supplied userId.
     /// </summary>
     /// <param name="userId">recipient userId</param>
-    /// <returns>IEnumerable of FriendRequestDtos</returns>
-    public IEnumerable<FriendRequestDTO> GetPendingFriendRequests(string userId)
+    /// <returns> List of pending request of FriendRequestDTOs</returns>
+    public async Task<List<FriendRequestDTO>> GetPendingFriendRequestsAsync(string userId)
     {
-        var requests = _unitOfWork.FriendRequestRepository.GetUsersPendingFriendRequest(userId);
-        return _mapper.Map<IEnumerable<FriendRequest>, IEnumerable<FriendRequestDTO>>(requests);
+        var requests = await _unitOfWork.FriendRequestRepository.GetUsersPendingFriendRequestAsync(userId);
+        return _mapper.Map<List<FriendRequest>, List<FriendRequestDTO>>(requests);
     }
 
     /// <summary>
@@ -153,9 +152,9 @@ public class FriendSystem : IFriendSystem
     /// </summary>
     /// <param name="userId">Identity UserId you want to check friend count for</param>
     /// <returns>int # of friends for specified userId</returns>
-    public int GetFriendCount(string userId)
+    public async Task<int> GetFriendCountAsync(string userId)
     {
-        return _unitOfWork.FriendRepository.Count(f => f.FriendOneId.Equals(userId) || f.FriendTwoId.Equals(userId));
+        return await _unitOfWork.FriendRepository.CountAsync(f => f.FriendOneId.Equals(userId) || f.FriendTwoId.Equals(userId));
     }
 
     /// <summary>
@@ -165,7 +164,7 @@ public class FriendSystem : IFriendSystem
     /// <returns>Bool whether the friendship was able to be removed or not. </returns>
     public async Task<bool> RemoveFriendsAsync(FriendRequestDTO friendRequestDto)
     {
-        var friendRecords = _unitOfWork.FriendRepository.Find(f =>
+        var friendRecords = await _unitOfWork.FriendRepository.FindAsync(f =>
             f.FriendOneId.Equals(friendRequestDto.RecipientUserId) &&
              f.FriendTwoId.Equals(friendRequestDto.SenderUserId) ||
              f.FriendOneId.Equals(friendRequestDto.SenderUserId) &&
@@ -190,10 +189,10 @@ public class FriendSystem : IFriendSystem
     /// <returns>Bool whether the friend request was canceled or not.  </returns>
     public async Task<bool> CancelFriendRequestAsync(FriendRequestDTO friendRequestDto)
     {
-        var friendRequest = _unitOfWork.FriendRequestRepository.Find(fq =>
+        var friendRequest = (await _unitOfWork.FriendRequestRepository.FindAsync(fq =>
             fq.RecipientUserId.Equals(friendRequestDto.RecipientUserId) &&
             fq.SenderUserId.Equals(friendRequestDto.SenderUserId) &&
-            fq.Status.Equals(FriendRequestStatuses.Inprogress)).FirstOrDefault();
+            fq.Status.Equals(FriendRequestStatuses.Inprogress))).FirstOrDefault();
 
         if (friendRequest != null)
         {
@@ -210,7 +209,7 @@ public class FriendSystem : IFriendSystem
     /// </summary>
     /// <param name="userId">userId you want to retrieve friend list for</param>
     /// <returns>IEnumerable friend list for the supplied user</returns>
-    public async Task<IEnumerable<ApplicationUser>> GetUsersFriendListAsync(string userId)
+    public async Task<List<ApplicationUser>> GetUsersFriendListAsync(string userId)
     {
         var friendList = await _unitOfWork.FriendRepository.GetUsersFriendListAsync(userId);
         return ReturnListOfUsersFriends(userId, friendList);
@@ -222,7 +221,7 @@ public class FriendSystem : IFriendSystem
     /// <param name="userIdOne">AppUser 1 id</param>
     /// <param name="userIdTwo">AppUser 2 id</param>
     /// <returns>List of all mutual friends between the two specified users. </returns>
-    public async Task<IEnumerable<ApplicationUser>> GetMutualFriendsAsync(string userIdOne, string userIdTwo)
+    public async Task<List<ApplicationUser>> GetMutualFriendsAsync(string userIdOne, string userIdTwo)
     {
         var userFriendships = await _unitOfWork.FriendRepository.GetUsersFriendListAsync(userIdOne);
         var userTwoFriendships = await _unitOfWork.FriendRepository.GetUsersFriendListAsync(userIdTwo);
@@ -243,23 +242,20 @@ public class FriendSystem : IFriendSystem
     {
         List<ApplicationUser> friends = new List<ApplicationUser>();
 
-        if (friendList.Any())
+        foreach (var friendship in friendList)
         {
-            foreach (var friendship in friendList)
+            if (friendship.FriendOneId.Equals(userId))
             {
-                if (friendship.FriendOneId.Equals(userId))
+                if (friendship.FriendTwo != null)
                 {
-                    if (friendship.FriendTwo != null)
-                    {
-                        friends.Add(friendship.FriendTwo);
-                    }
+                    friends.Add(friendship.FriendTwo);
                 }
-                else
+            }
+            else
+            {
+                if (friendship.FriendOne != null)
                 {
-                    if (friendship.FriendOne != null)
-                    {
-                        friends.Add(friendship.FriendOne);
-                    }
+                    friends.Add(friendship.FriendOne);
                 }
             }
         }
