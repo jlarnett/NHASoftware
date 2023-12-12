@@ -1,5 +1,5 @@
 ﻿using NHA.Website.Software.ConsumableEntities.DTOs;
-namespace NHA.Website.Software.Views.Home.Social.ViewModels;
+namespace NHA.Website.Software.Views.Shared.Social.ViewModels;
 
 public class MultiPostVM
 {

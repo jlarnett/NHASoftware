@@ -12,7 +12,8 @@
 *@
 
 @{
-    var uuid = Guid.NewGuid();
+    string uuid = Guid.NewGuid().ToString();
+
 }
 
 <div class="container-fluid border border-primary mt-2 post-container" post-id="@Model.Id" images-attached="@Model.HasImagesAttached.ToString()" images-loaded="false" post-uuid="@uuid.ToString()">
@@ -50,15 +51,26 @@
     </div>
     <div class="row text-break">
         <div class="col-sm-1 px-0"></div>
-        <div class="row col px-0" unique-image-section="@uuid.ToString()">
+        <div unique-image-section="@uuid" class="col">
+            <div id="Image-Carousel-@uuid" class="carousel slide border border-white" data-bs-interval="false" style="display: none">
+                <div class="carousel-inner" id="Image-Carousel-Inner-@uuid">
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#Image-Carousel-@uuid" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#Image-Carousel-@uuid" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
         </div>
     </div>
     <!--Posts Likes & Comment Show section-->
     <div class="row align-items-center m-2">
-        <div class="col-auto">
+        <div class="col-2">
             <a class="link-light hide-comments" comment-count="@await _PostBuilder.GetCommentCountForPost(@Model.Id)" unique-post-id="@uuid.ToString()" post-id="@Model.Id" role="button">Show Comments (@await _PostBuilder.GetCommentCountForPost(@Model.Id))</a>
         </div>
-        <div class="col-5"></div>
         @{ await Html.RenderPartialAsync("Social/_PostLikeSection", @Model); }
     </div>
     <div unique-comment-section="@uuid.ToString()" style="display: none">

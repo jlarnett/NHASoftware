@@ -14,7 +14,6 @@ using NHA.Website.Software.Services.CacheLoadingManager;
 using NHA.Website.Software.Services.FileExtensionValidator;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHA.Website.Software.Services.Social.PostBuilderService;
-using NHA.Website.Software.Views.Home.Social.ViewModels;
 
 namespace NHA.Website.Software.Controllers.WebAPIs.SocialAPI;
 [Route("api/[controller]")]
@@ -117,11 +116,11 @@ public class PostsController : ControllerBase
             _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
 
             _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", newlyCreatedPost);
-            return Ok(new { success = true, post = newlyCreatedPost});
+            return Ok(new { success = true, post = newlyCreatedPost, message = "Post successfully submitted to DB."});
         } 
 
         _logger.Log(LogLevel.Debug, "system was unable to add postDto to DB.");
-        return BadRequest(new { success = false });
+        return BadRequest(new { success = false , message = "POST API returned bad request. Post was not saved to DB."});
     }
 
     /// <summary>
@@ -144,7 +143,7 @@ public class PostsController : ControllerBase
             {
                 if (!_fileExtensionValidator.CheckValidImageExtensions(imageFile.FileName))
                     return BadRequest(new
-                    { success = false, message = "Unable To Submit Custom Post - File is Not Image Extension" });
+                    { success = false, message = "Unable To Submit Custom Post - Image file extension not supported." });
             }
         }
 
@@ -167,11 +166,11 @@ public class PostsController : ControllerBase
             _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
 
             _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", newPost);
-            return Ok(new { success = true, post = newPost });
+            return Ok(new { success = true, post = newPost, message = "Post successfully submitted to DB."});
         }
 
         _logger.Log(LogLevel.Debug, "system was unable to add postDto to DB.");
-        return BadRequest(new { success = false });
+        return BadRequest(new { success = false, message = "Unable to submit post. Post was not saved to DB - Bad Request"});
     }
 
     /// <summary>
