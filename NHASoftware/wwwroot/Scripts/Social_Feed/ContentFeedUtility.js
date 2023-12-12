@@ -3,7 +3,6 @@
     static postUploadButtonText = "";
 
     static AddPostToContentFeedUI(postDTO) {
-
         ContentFeedAjaxCalls.ConvertPostDTOToPartialView(postDTO).then(function (postPartialView) {
             ContentFeedUtility.PrependPostsToContentFeed(postPartialView);
             ContentFeedUtility.RebuildFeedTextboxes();

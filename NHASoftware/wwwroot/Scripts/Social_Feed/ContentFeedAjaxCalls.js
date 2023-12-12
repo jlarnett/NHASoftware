@@ -1,16 +1,17 @@
 ﻿class ContentFeedAjaxCalls {
     static RetrieveMorePosts() {
-        //AJAX CALL TO api/posts webapi. Returns async result of posts
+        //AJAX CALL TO /Home/ReturnSocialPosts endpoint. Returns async result of posts inside MultiPost partial view ready for consumption
         return $.get("/Home/ReturnSocialPosts", function (data) {});
     }
 
     static RetrievePostComments(postId) {
-        ///AJAX CALL TO api/posts/findchildrenposts webapi endpoint. 
-        //Returns async result all 'Comments' => Comments are just post with fatherPostId populated.
+        ///AJAX CALL TO Home/Return/CommentPosts/ endpoint. 
+        //Returns async result all 'Comments' for specified postId. Returns them in a MultiComment partial view ready for appending.
         return $.get("/Home/ReturnCommentPosts/" + postId, function(data) {});
     }
 
     static ConvertPostDTOToPartialView(postDTO) {
+        //Takes PostDTO data in and sends it to Home controller /ReturnPostPartialView endpoint to convert into partial view.
         return $.ajax({
             url: '/ReturnPostPartialView',
             method: 'POST',
@@ -26,6 +27,7 @@
     }
 
     static ConvertCommentDTOToPartialView(commentDTO) {
+        //Takes PostDTO data in and sends it to Home controller /ReturnCommentPartialView endpoint to convert into partial view.
         return $.ajax({
             url: '/ReturnCommentPartialView',
             method: 'POST',
@@ -71,10 +73,12 @@
     }
 
     static RetrieveImagesForPost(postId) {
+        //Retrieves images for specified postId from API. 
         return $.get("/api/posts/GetPostImages/" + postId, function (data) {});
     }
 
     static CreatePost(ApiUrl, postForm) {
+        //Generic method for sending post objects to API for creation. Takes in the API endpoint & the postForm to send. 
         return $.ajax({
             url: ApiUrl,
             method: 'POST',
