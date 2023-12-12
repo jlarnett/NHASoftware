@@ -7,9 +7,9 @@ using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Services.Social.PostBuilderService;
 using NHA.Website.Software.Views.ViewModels;
-using NHA.Website.Software.Views.Home.Social.ViewModels;
 using NHA.Website.Software.ConsumableEntities.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using NHA.Website.Software.Views.Shared.Social.ViewModels;
 
 namespace NHA.Website.Software.Controllers;
 public class HomeController : Controller

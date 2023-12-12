@@ -44,11 +44,13 @@ if (builder.Environment.IsProduction())
     builder.Configuration.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
 }
 
-builder.Configuration.AddAzureAppConfiguration(options =>
+if (builder.Environment.IsProduction())
 {
-    options.Connect(builder.Configuration["ConnectionStrings:AppConfigurationConnection"]).UseFeatureFlags();
-});
-
+    builder.Configuration.AddAzureAppConfiguration(options =>
+    {
+        options.Connect(builder.Configuration["ConnectionStrings:AppConfigurationConnection"]).UseFeatureFlags();
+    });
+}
 
 var mapperConfig = new MapperConfiguration(mc =>
 {
@@ -159,12 +161,14 @@ else
 }
 
 //Setup fp for azure dynamic app configurations / Feature flags
-app.UseAzureAppConfiguration();
+
+if (app.Environment.IsProduction())
+{
+    app.UseAzureAppConfiguration();
+}
 
 //Custom Middleware to log request duration
 app.UseRequestDurationMiddleware();
-
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

@@ -82,7 +82,7 @@ public class PostBuilder : IPostBuilder
     public async Task<int> GetCommentCountForPost(int? postId)
     {
         return await _unitOfWork.PostRepository.CountAsync(p =>
-            p.ParentPostId == postId && p.IsHiddenFromUserProfile == false);
+            p.ParentPostId == postId && p.IsHiddenFromUserProfile == false && p.IsDeletedFlag == false);
     }
 
     public async Task<PostDTO> LocateNewlyCreatedPost(Post post)

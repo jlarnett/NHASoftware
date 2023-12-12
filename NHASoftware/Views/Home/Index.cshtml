@@ -4,7 +4,7 @@
 @using NHA.Website.Software.Entities.Identity
 @using NHA.Website.Software.FeatureManagement
 @using NHA.Website.Software.Services.Social.PostBuilderService
-@using NHA.Website.Software.Views.Home.Social.ViewModels
+@using NHA.Website.Software.Views.Shared.Social.ViewModels
 
 
 
@@ -34,6 +34,7 @@
                     <form id="BasicPostForm" method="post" enctype="multipart/form-data">
                         <div id="MainPostTextboxContainer" class="p-0">
                             <textarea id="MainPostTextbox" name="Summary"></textarea>
+                            <span asp-validation-for="Summary" class="text-danger"></span>
                         </div>
                     </form>
                 </div>
@@ -108,11 +109,10 @@
 
 @section Scripts {
     <script src="~/Scripts/Social_Feed/Gratitude.js"></script>
+    <script src="~/Scripts/Social_Feed/ContentFeed.Input.js"></script>
+    <script src="~/Scripts/Social_Feed/ContentFeedAjaxCalls.js"></script>
+    <script src="~/Scripts/Social_Feed/ContentFeedUtility.js"></script>
     <script src="~/Scripts/Social_Feed/ContentFeed.js"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            //OptimizedMainContentFeedLoad();
-        });
-    </script>
+    <script src="~/Scripts/Social_Feed/ContentFeedImageLoader.js"></script>
+    <script src="~/Scripts/Social_Feed/ContentFeedLoader.js"></script>
 }
