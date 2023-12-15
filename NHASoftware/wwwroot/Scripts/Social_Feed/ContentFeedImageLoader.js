@@ -20,15 +20,26 @@
         });
     }
 
+    static StoredPostImages = {};
+;
     static RetrieveImagesForPost(postId, uuid) {
-        //Retrieves images for the specified postId & appends it to the post. 
+        //Retrieves images for the specified postId & appends it to the post.
+
         ContentFeedUtility.AddSpinnerToImageSection(uuid);
 
-        ContentFeedAjaxCalls.RetrieveImagesForPost(postId).then(function (images) {
-            ContentFeedUtility.RemoveSpinnerFromImageSection(uuid);
-            ImageLoader.LoadImagesToPost(images, uuid);
+        if (!(postId in this.StoredPostImages)) {
+            ContentFeedAjaxCalls.RetrieveImagesForPost(postId).then(function (images) {
+                ContentFeedUtility.RemoveSpinnerFromImageSection(uuid);
+                ImageLoader.LoadImagesToPost(images, uuid);
+                ContentFeedUtility.ShowPostImageCarousel(uuid);
+                ImageLoader.StoredPostImages[postId] = images;
+            });
+        }
+        else {
+            ImageLoader.LoadImagesToPost(this.StoredPostImages[postId], uuid);
             ContentFeedUtility.ShowPostImageCarousel(uuid);
-        });
+            ContentFeedUtility.RemoveSpinnerFromImageSection(uuid);
+        }
     }
 
     static LoadImagesToPost(images, uuid) {

@@ -57,10 +57,15 @@ public class HomeController : Controller
     /// <param name="id">postId you want to retrieve comments for</param>
     /// <returns>_MultiComment partial view result</returns>
     [HttpGet]
-    public async Task<IActionResult> ReturnCommentPosts(int? id)
+    public async Task<IActionResult> ReturnCommentPosts(int? id, Guid? uuid)
     {
+        if (id == null)
+        {
+            return BadRequest(new {sucess = false});
+        }
+
         var postDTOs = await _postBuilder.FindPostChildren(id);
-        return PartialView("Social/_MultiComment", new MultiPostVM(postDTOs));
+        return PartialView("Social/_MultiComment", new MultiPostVM(postDTOs, uuid));
     }
 
     /// <summary>

@@ -4,10 +4,10 @@
         return $.get("/Home/ReturnSocialPosts", function (data) {});
     }
 
-    static RetrievePostComments(postId) {
+    static RetrievePostComments(postId, uuid) {
         ///AJAX CALL TO Home/Return/CommentPosts/ endpoint. 
         //Returns async result all 'Comments' for specified postId. Returns them in a MultiComment partial view ready for appending.
-        return $.get("/Home/ReturnCommentPosts/" + postId, function(data) {});
+        return $.get("/Home/ReturnCommentPosts?id=" + postId + "&uuid=" + uuid, function(data) {});
     }
 
     static ConvertPostDTOToPartialView(postDTO) {

@@ -8,5 +8,12 @@ public class MultiPostVM
         Posts = posts;
     }
 
+    public MultiPostVM(List<PostDTO> posts, Guid? uuid)
+    {
+        Posts = posts;
+        UUID = uuid;
+    }
+
     public List<PostDTO> Posts { get; set; } = new List<PostDTO>();
+    public Guid? UUID { get; set; } = Guid.Empty;
 }

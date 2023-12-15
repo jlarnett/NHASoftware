@@ -54,7 +54,7 @@
         //Loads comments for post using bootstrap redesign. Takes the post-id & uuid to determine which comment section to load
         //Called by Hide Comments js script. 
 
-        ContentFeedAjaxCalls.RetrievePostComments(postId).then(function (comments) {
+        ContentFeedAjaxCalls.RetrievePostComments(postId, uuid).then(function (comments) {
             ContentFeedUtility.AppendCommentsToPost(uuid, comments)
         });
     }
@@ -128,12 +128,21 @@
         CommentCounter.text(CommentCounter.text().replace(count, count + 1));
     }
 
+    
+    static DecrementPostCommentCounter(uuid) {
+        let CommentCounter = $("a[unique-post-id$=" + uuid + "]");
+        let count = parseInt(CommentCounter.attr("comment-count"));
+        CommentCounter.attr("comment-count", count + 1);
+        CommentCounter.text(CommentCounter.text().replace(count, count - 1));
+    }
+
     //static AddSpinnerGeneric(id, uuid = undefined) {
     //    $("#ContentFeed").append('<div id="ContentFeedLoadingSpinner" class="text-center mt-2"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>');
     //}
 
     static RebuildFeedTextboxes() {
         //Used to rebuild summernote text boxes. This is needed whenever the textboxes are added dynamically to feed.
+
         $('.summernote-comments').summernote({
             toolbar: [
             // [groupName, [list of button]]
@@ -144,7 +153,7 @@
 
         $('#MainPostTextbox').summernote({
             toolbar: [
-            // [groupName, [list of button]]
+                ['misc', ['emoji']]
             ],
             disableResizeEditor: true,
             placeholder: 'Type Post Summary Here.......'

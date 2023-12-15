@@ -25,13 +25,13 @@
             if (isLoggedInUsersPost || _Warden.IsAdmin(User))
             {
                 <li>
-                    <a class="dropdown-item delete-post-link" post-id="@Model.Id" is-comment="@isCommentBool.ToString()">Delete Post</a>
+                    <a class="dropdown-item delete-post-link" post-id="@Model.Id" is-comment="@isCommentBool.ToString()" uuid="@Model.UUID">Delete Post</a>
                 </li>
                 <li>
-                    <a class="dropdown-item hide-post-link" post-id="@Model.Id" is-comment="@isCommentBool.ToString()">Hide Post</a>
+                    <a class="dropdown-item hide-post-link" post-id="@Model.Id" is-comment="@isCommentBool.ToString()" uuid="@Model.UUID">Hide Post</a>
                 </li>
                 <li>
-                    <a class="dropdown-item report-post-link" post-id="@Model.Id" is-comment="@isCommentBool">Report Post</a>
+                    <a class="dropdown-item report-post-link" post-id="@Model.Id" is-comment="@isCommentBool" uuid="@Model.UUID">Report Post</a>
                 </li>
             }
         }

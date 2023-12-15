@@ -33,9 +33,13 @@
                 <div class="row">
                     <form id="BasicPostForm" method="post" enctype="multipart/form-data">
                         <div id="MainPostTextboxContainer" class="p-0">
-                            <textarea id="MainPostTextbox" name="Summary"></textarea>
+                            @* <textarea id="MainPostTextbox" name="Summary"></textarea> *@
+                            <input asp-for="Summary" id="MainPostTextbox" />
+                        </div>
+                        <div class="row">
                             <span asp-validation-for="Summary" class="text-danger"></span>
                         </div>
+
                     </form>
                 </div>
                 <div class="row p-0">
@@ -107,7 +111,10 @@
 
 </div>
 
+
+
 @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/Scripts/Social_Feed/Gratitude.js"></script>
     <script src="~/Scripts/Social_Feed/ContentFeed.Input.js"></script>
     <script src="~/Scripts/Social_Feed/ContentFeedAjaxCalls.js"></script>
