@@ -44,6 +44,8 @@ if (builder.Environment.IsProduction())
     builder.Configuration.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
 }
 
+builder.Logging(LogLevel.Debug, "");
+
 if (builder.Environment.IsProduction())
 {
     builder.Configuration.AddAzureAppConfiguration(options =>
@@ -148,6 +150,11 @@ builder.Services.AddMemoryCache();
 //Creates the Web application object by calling the WebBuilder.Build() method. All services should be added before here. 
 var app = builder.Build();
 
+var logger = app.Services.GetService<ILogger<Program>>();
+logger!.LogDebug($"Web App starting environment is production - {app.Environment.IsProduction().ToString()}");
+logger!.LogDebug($"Web App starting environment is development - {app.Environment.IsDevelopment().ToString()}");
+logger!.LogDebug($"Web App builder starting environment is production - {builder.Environment.IsProduction().ToString()}");
+logger!.LogDebug($"Web App builder environment is development - {builder.Environment.IsDevelopment().ToString()}");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
