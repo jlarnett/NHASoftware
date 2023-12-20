@@ -8,29 +8,27 @@
 }
 
 <head>
-    <link rel="stylesheet" href="css/ForumStyles.css">
+    <link rel="stylesheet" href="css/Forums/ForumStyles.css">
     <script src="~/Scripts/Forums/ForumIndexScript.js" type="text/javascript"></script>
-
-
 </head>
 
 
-<h1>Forums</h1>
+<div class="container-fluid">
+    <div class="row h1">Forums</div>
 
-<div>
-    @if (User.IsInRole("admin"))
-    {
-        <a asp-action="Create" asp-controller="ForumSections" class="btn-dark">Add Forum Section</a>
-        <a asp-action="Create" asp-controller="ForumTopics"class="btn-dark">Add Section Topic</a>
-    }
-</div>
+    <div class="row">
+        @if (User.IsInRole("admin"))
+        {
+            <a asp-action="Create" asp-controller="ForumSections" class="btn-dark col-auto">Add Forum Section</a>
+            <a asp-action="Create" asp-controller="ForumTopics"class="btn-dark col-auto">Add Section Topic</a>
+        }
+    </div>
 
-<div class="modern-forum-index-header-text">
     <p>The ability to add, edit, and delete Forum Sections and topics is limited to admins & forum admins. To become an forum admin for NHA Forums please email nhaindustries@gmail.com with your account email and reasons why you should become forum admin. Alternatively if you are just interested in getting a topic or section added to the forum you can mention that in the email.</p>
     <p>Forum rules are extremely free. Free Speech is the only metric here. The only things that can't be posted about includes sexual assualt & violent crimes. Please respect these rules.</p>
 </div>
 
-<div>
+<div class="container-fluid m-2">
     @{
         foreach (var section in @Model.ForumSections)
         {
@@ -42,13 +40,13 @@
             var name = section.Name;
             var id = section.Id;
 
-            <details open class="forum-group">
+            <details open class="row p-0 mb-2">
 
                 @if (_accessWarden.IsForumAdmin(User))
                 {
-                    <summary class="forum-stats">
-                        <h2 class="forum-group__heading">@name</h2>
-                        <div class="modern-section-actions">
+                    <summary class="modern-forum-post-container col row rounded-pill">
+                        <h2 class="col">@name</h2>
+                        <div class="col m-auto">
                             <button class="btn-primary js-edit-section" section-id="@id">Edit Section</button>
                             <button class="btn-primary js-delete-section" section-id="@id">Delete Section</button>
                         </div>
@@ -56,14 +54,13 @@
                 }
                 else
                 {
-                    <summary class="forum-stats">
-                        <h2 class="forum-group__heading">@name</h2>
+
+                    <summary class="modern-forum-post-container">
+                        <h2 class="">@name</h2>
                     </summary>
                 }
 
-
-
-                <table id="@id" class="tableCustom">
+                <table id="@id" class="tableCustom" width="100%">
                     <thead>
                     <tr>
                         <th></th>

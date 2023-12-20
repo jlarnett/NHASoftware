@@ -28,9 +28,9 @@
     }
 }
 
-<div class="container-fluid border border-primary">
-    <div class="row">
-        <div class="border-end border-primary col-4">
+<div class="container-fluid">
+    <div class="row border-primary border">
+        <div class="border-end border-primary col-4 p-0">
             <img class="img-fluid" src="~/ProfilePictures/@Model.User.ProfilePicturePath" alt="@Model.User.DisplayName's Profile Picture'"/>
         </div>
         <div class="col border-end border-bottom border-primary text-center">
@@ -86,8 +86,8 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="border border-3 border-danger col-md-4 align-self-center">
+    <div class="row border border-primary">
+        <div class="p-0 col-4 align-self-center border border-3 border-danger">
             <h2 class="text-center display-2">@Model.User.DisplayName</h2>
         </div>
         
@@ -108,15 +108,13 @@
         </div>
     </div>
 </div>
-<div>
-    <div id="SocialWall">
-        
-        <div class="container-fluid">
-            <p class="text-center h1 mt-3">User's Wall</p>
-        </div>
-        
-        <div id="ContentFeed" profile-user-id="@Model.User.Id">
-        </div>
+
+<div id="SocialWall" class="container-fluid">
+    <div class="row">
+        <p class="text-center h1 mt-3">User's Wall</p>
+    </div>
+    
+    <div id="ContentFeed" class="row" profile-user-id="@Model.User.Id">
     </div>
 </div>
 

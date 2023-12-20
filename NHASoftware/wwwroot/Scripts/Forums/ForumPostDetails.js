@@ -14,24 +14,34 @@
 
         var commentPicture = "/ProfilePictures/" + comments[i].user.profilePicturePath;
 
-        commentsTable.row.add( ["<div class='modern-forum-post-container'>" +
-                                    "<div class='modern-forum-post-row-container'>" +
-                                        "<div class='modern-post-profile'>" +
-                                            "<div class='modern-post-profile-picture-container'>" +
-                                                "<img src='" + commentPicture + "' class='modern-comment-profile-picture'/>" +
+        commentsTable.row.add( ["<div class='container-fluid modern-forum-post-container p-4' role='button'>" +
+                                    "<div class='row'>" +
+                                        "<div class='col-2'>" +
+                                            //
+                                            "<div class='row border border-4 border-danger rounded-pill m-auto p-2'>" +
+                                                "<div class='row col-auto align-contents-center w-100 m-auto'>" +
+                                                    "<img src='" + commentPicture + "' class='col-10 img-fluid rounded-pill m-auto'/>" +
+                                                "</div>" +
+                                                "<div class='row align-contents-center w-100 m-auto'>" + 
+                                                    "<div class='text-center text-danger h4 m-auto'>" +comments[i].user.displayName + "</div>" +
+                                                "</div>" +
                                             "</div>" +
-                                                "<div class='modern-post-profile-displayname'>" + comments[i].user.displayName + "</div>" +
                                         "</div>" +
-                                            "<div class='modern-post-details'>" + "<p class='modern-post-text'>" + comments[i].commentText + "</p>" + "</div>" +
-                                            "</div>" +
-                                    "<div class='modern-post-actions'>" +
-                                        "<div class='modern-post-action'>" +
+                                        "<div class='col text-center align-self-center text-break'>" + 
+                                            "<div class='text-cyan h2'>" + comments[i].commentText + "</div>" + 
+                                        "</div>" +
+                                    "</div>" +
+                                    "<div class='row align-content-end'>" +
+                                        "<div class='col-auto'>" +
                                             "<h3 >" + date + "</h3>" +
                                         "</div>" +
-                                        "<div class='modern-post-actions-like modern-post-action'>" +
-                                            "<input type='image' src='/Images/LikeIcon.png' class='modern-post-action-like-picture js-like-comment' comment-id='" + comments[i].id + "'/>" +
-                                            "<h3>" + comments[i].likeCount + "</h3>" +
-                                        "</div>" + checkIfCommentUser(comments[i], userId, adminUserBool) +
+                                        checkIfCommentUser(comments[i], userId, adminUserBool) +
+                                            "<div class='col-auto row'>" +
+                                                "<div class='col-2'>" +
+                                                    "<input type='image' src='/Images/LikeIcon.png' class='img-fluid js-like-comment' comment-id='" + comments[i].id + "'/>" +
+                                                "</div>" +
+                                            "<div class='h3 col-auto'>" + comments[i].likeCount + "</div>" +
+                                        "</div>" + 
                                     "</div>" +
                                 "</div>"] ).draw();
 
@@ -41,12 +51,12 @@
 function checkIfCommentUser(data, userIdString, adminUserBool) {
 
     if (userIdString === data.user.id || adminUserBool) {
-        return "<div class='modern-post-action'>" +
+        return "<div class='col-auto'>" +
             "<button class='btn-primary js-edit-comment' comment-id='" +
             data.id +
             "'>Edit Comment</button>" +
             "</div>" +
-            "<div class='modern-post-action'>" +
+            "<div class='col'>" +
             "<button class='btn-primary js-delete-comment' comment-id='" +
             data.id +
             "'>Delete Comment</button>" +

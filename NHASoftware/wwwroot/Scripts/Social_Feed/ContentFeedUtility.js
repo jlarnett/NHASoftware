@@ -153,7 +153,7 @@
 
         $('#MainPostTextbox').summernote({
             toolbar: [
-                ['misc', ['emoji']]
+                //['misc', ['emoji']]
             ],
             disableResizeEditor: true,
             placeholder: 'Type Post Summary Here.......'

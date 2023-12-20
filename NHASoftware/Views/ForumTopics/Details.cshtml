@@ -5,22 +5,25 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <head>
-    <link rel="stylesheet" href="~/css/ForumStyles.css">
+    <link rel="stylesheet" href="~/css/Forums/ForumStyles.css">
     <script src="~/Scripts/Forums/ForumTopicDetails.js" type="text/javascript"></script>
 </head>
 
-<h1>@Model.topic.Title</h1>
-
-<div>
-    <a asp-controller="ForumPosts" asp-area="" asp-action="Create" asp-route-id="@Model.topic.Id" class=" btn-primary btn-dark btn-link">Create Post</a>
+<div class="container-fluid">
+    <h1 class="row col-auto">@Model.topic.Title</h1>
+    <div class="row">
+        <a asp-controller="ForumPosts" asp-area="" asp-action="Create" asp-route-id="@Model.topic.Id" class="col-auto btn-primary btn-dark btn-link">Create Post</a>
+    </div>
+    
+    <div class="row">
+        <table id="ForumPostTable" class="tableCustom" width="100%">
+        </table>
+    </div>
 </div>
 
 <hr />
 
-<div>
-    <table id="ForumPostTable" class="tableCustom">
-    </table>
-</div>
+
 
 @section Scripts
 {
