@@ -3,6 +3,7 @@
     static postUploadButtonText = "";
 
     static AddPostToContentFeedUI(postDTO) {
+        //Takes input of postDTO. Calls the Controller to convert to partial view since its dynamic. 
         ContentFeedAjaxCalls.ConvertPostDTOToPartialView(postDTO).then(function (postPartialView) {
             ContentFeedUtility.PrependPostsToContentFeed(postPartialView);
             ContentFeedUtility.RebuildFeedTextboxes();
@@ -12,6 +13,7 @@
     }
 
     static AddCommentToContentFeedUI(uuid, commentDTO) {
+        //Takes input of commentDTO. Calls the Controller to convert to partial view since its dynamic. 
         ContentFeedAjaxCalls.ConvertCommentDTOToPartialView(commentDTO).then(function (commentsPartialView) {
             ContentFeedUtility.AppendCommentsToPost(uuid, commentsPartialView);
             ContentFeedUtility.IncrementPostCommentCounter(uuid);
@@ -52,9 +54,9 @@
 
     static LoadCommentsRedesign(postId, uuid) {
         //Loads comments for post using bootstrap redesign. Takes the post-id & uuid to determine which comment section to load
-        //Called by Hide Comments js script. 
+        //Called by Hide Comments js script
 
-        ContentFeedAjaxCalls.RetrievePostComments(postId).then(function (comments) {
+        ContentFeedAjaxCalls.RetrievePostComments(postId, uuid).then(function (comments) {
             ContentFeedUtility.AppendCommentsToPost(uuid, comments)
         });
     }
@@ -65,67 +67,90 @@
     }
 
     static PrependPostsToContentFeed(posts) {
+        //Prepends post to content feed. E.G. post partial view
         $("#ContentFeed").prepend(posts)
     }
     static AppendPostsToContentFeed(posts) {
+        //Appends post to content feed. E.G. post partial view
         $("#ContentFeed").append(posts)
     }
 
     static AppendCommentsToPost(uuid, comments) {
+        //Appends commentPartialView "comments" to supplied uuid post
         $("ul[unique-comment-list$=" + uuid + "]").append(comments);
     }
 
     static HideCustomPostModal() {
+        //Hides the Custom post modal
         $('#AddPostPhotosModal').modal('hide');
     }
 
     static ShowPostImageCarousel(uuid) {
+        //Makes the image carousel on posts visible for specified uuid.
         $("#Image-Carousel-" + uuid).show();
     }
 
     static AddSpinnerToImageSection(uuid) {
+        //Adds loading spinner to the image section of specified post uuid
         $("[unique-image-section=" + uuid + "]").append('<div image-loader-uuid="' + uuid + '" class="text-center mt-2"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>');
     }
 
     static RemoveSpinnerFromImageSection(uuid) {
+        //Removes loading spinner to the image section of specified post uuid
         $("#ContentFeed").find('[image-loader-uuid="' + uuid + '"]').remove();
     }
 
     static AddSpinnerToContentFeed() {
-    $("#ContentFeed").append('<div id="ContentFeedLoadingSpinner" class="text-center mt-2"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>');
-}
+    //Adds loading spinner to the Content Feed
+        $("#ContentFeed").append('<div id="ContentFeedLoadingSpinner" class="text-center mt-2"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+    }
 
     static RemoveSpinnerFromContentFeed() {
+        //Removes loading spinner from Content Feed
         $('#ContentFeedLoadingSpinner').remove();
     }
 
     static AddSpinnerSubmitCustomPostBtn() {
+        //Adds loading spinner to submit custom post btn. 
         this.postUploadButtonText = $('#SubmitCustomPostBtn').text();
         $('#SubmitCustomPostBtn').text("");
         $('#SubmitCustomPostBtn').prepend("<span id='CustomPostLoadingSpinner' class='spinner-border spinner-border' role='status' aria-hidden='true'></span>");
     }
 
     static AddSpinnerSubmitPostBtn() {
+        //Add loading spinner to basic post submit button. 
         this.postUploadButtonText = $('#SubmitBtn').text();
         $('#SubmitBtn').text("");
         $('#SubmitBtn').prepend("<span id='BasicPostLoadingSpinner' class='spinner-border spinner-border' role='status' aria-hidden='true'></span>");
     }
 
     static RemoveSpinnerSubmitCustomPostBtn() {
+        //Remove loading spinner from custom post submit button. 
         $('#CustomPostLoadingSpinner').remove();
         $('#SubmitCustomPostBtn').text(this.postUploadButtonText);
     }
 
     static RemoveSpinnerSubmitPostBtn() {
+        //Remove loading spinner from basic post submit button. 
         $('#BasicPostLoadingSpinner').remove();
         $('#SubmitBtn').text(this.postUploadButtonText);
     }
 
     static IncrementPostCommentCounter(uuid) {
+        //Incrememnts the comment counter attribute & changes text for the specified uuid post
         let CommentCounter = $("a[unique-post-id$=" + uuid + "]");
         let count = parseInt(CommentCounter.attr("comment-count"));
         CommentCounter.attr("comment-count", count + 1);
         CommentCounter.text(CommentCounter.text().replace(count, count + 1));
+    }
+
+    
+    static DecrementPostCommentCounter(uuid) {
+        //Incrememnts the comment counter attribute & changes text for the specified uuid post
+        let CommentCounter = $("a[unique-post-id$=" + uuid + "]");
+        let count = parseInt(CommentCounter.attr("comment-count"));
+        CommentCounter.attr("comment-count", count + 1);
+        CommentCounter.text(CommentCounter.text().replace(count, count - 1));
     }
 
     //static AddSpinnerGeneric(id, uuid = undefined) {
@@ -134,6 +159,7 @@
 
     static RebuildFeedTextboxes() {
         //Used to rebuild summernote text boxes. This is needed whenever the textboxes are added dynamically to feed.
+
         $('.summernote-comments').summernote({
             toolbar: [
             // [groupName, [list of button]]
@@ -144,7 +170,7 @@
 
         $('#MainPostTextbox').summernote({
             toolbar: [
-            // [groupName, [list of button]]
+                //['misc', ['emoji']]
             ],
             disableResizeEditor: true,
             placeholder: 'Type Post Summary Here.......'

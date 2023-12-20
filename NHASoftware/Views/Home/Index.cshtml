@@ -25,16 +25,15 @@
     <div class="container-fluid">
         <div class="row">
             @Html.AntiForgeryToken()
-            <div class="col-1"></div>
             <div class="col border border-2 border-white p-3">
                 <div class="row text-center">
                     <h1 class="h1">Create New Post</h1>
                 </div>
-                <div class="row">
+                <div class="row border rounde" style="min-width: 100%; width: 0;">
                     <form id="BasicPostForm" method="post" enctype="multipart/form-data">
                         <div id="MainPostTextboxContainer" class="p-0">
-                            <textarea id="MainPostTextbox" name="Summary"></textarea>
-                            <span asp-validation-for="Summary" class="text-danger"></span>
+                            @* <textarea id="MainPostTextbox" name="Summary"></textarea> *@
+                            <input asp-for="Summary" id="MainPostTextbox" />
                         </div>
                     </form>
                 </div>
@@ -48,7 +47,6 @@
                     <span id="MainPostTextboxValidationMessage" style="display: none; color: red">Error Submitting Post.....</span>
                 </div>
             </div>
-            <div class="col-1"></div>
         </div>
 
         <!--Add Post Photos Modal-->
@@ -90,7 +88,6 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-1"></div>
         <div class="HomeContainer col p-0">
             <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
                 <div id="ContentFeed">
@@ -101,11 +98,11 @@
                 </div>
             </div>
         </div>
-        <div class="col-1"></div>
-
     </div>
 
 </div>
+
+
 
 @section Scripts {
     <script src="~/Scripts/Social_Feed/Gratitude.js"></script>

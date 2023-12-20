@@ -4,22 +4,23 @@
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h1>Customize Post</h1>
 <hr />
-
-<div class="row">
-    <div class="col-md-4">
+<div class="row h2 m-2">
+    Customize Post
+</div>
+<div class="row m-2">
+    <div class="col">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Title" class="form-label"></label>
-                <input asp-for="Title" class="form-control " />
+                <input asp-for="Title" class="form-control "/>
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <div class="form-group">
+                <div class="form-group" style="min-width: 100%; width: 0">
                     <label asp-for="ForumText" class="form-label"></label>
-                    <textarea asp-for="ForumText" class="form-control post-create-input text-wrap:normal" type="text" placeholder="Add Forum post text "></textarea>
+                    <textarea asp-for="ForumText" class="form-control text-wrap:normal" type="text" placeholder="Add Forum post text "></textarea>
                     <span asp-validation-for="ForumText" class="text-danger"></span>
                 </div>
             </div>
@@ -35,7 +36,7 @@
                 @Html.HiddenFor(m => m.CommentCount)
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary"/>
             </div>
         </form>
     </div>

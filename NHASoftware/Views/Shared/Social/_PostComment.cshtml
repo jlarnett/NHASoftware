@@ -7,7 +7,7 @@
 
 <li comment-delete-id="@Model.Id">
     <div>
-        <div class="row align-items-center">
+        <div class="row align-items-center mb-1">
             <div class="col-1"></div>
             <div class="col-1 px-0">
                 <div class="row align">
@@ -25,12 +25,12 @@
             </div>
             <div class="col"></div>
             <div class="col-auto">
-                @{await Html.RenderPartialAsync("Social/_PostActionButtonSection", @Model);}
+                @{ await Html.RenderPartialAsync("Social/_PostActionButtonSection", @Model); } 
             </div>
         </div>
         <div class="row align-items-center">
             <div class="col-2"></div>
-            <div class="col-6 align-middle ms-4 p-2 border-primary border-bottom">@Model.Summary</div>
+            <div class="col align-middle p-2 border-primary border-top">@Model.Summary</div>
         </div>
         <div class="row align-items-center m-2">
             <div class="col-2"></div>

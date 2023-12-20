@@ -5,14 +5,20 @@
         var EventBtn = $(e.target);
         var postId = EventBtn.attr("post-id");
         var isComment = EventBtn.attr("is-comment");
+        let uuid = EventBtn.attr("uuid");
 
         ContentFeedAjaxCalls.DeletePost(postId).then(function (response) {
             if (response.success === true) {
-                isComment === "True" ? ContentFeedUtility.RemoveCommentFromContentFeedUI(postId) : ContentFeedUtility.RemovePostFromContentFeedUI(postId);
+                if (isComment === "True") {
+                    ContentFeedUtility.RemoveCommentFromContentFeedUI(postId);
+                    ContentFeedUtility.DecrementPostCommentCounter(uuid);
+                }
+                else {
+                    ContentFeedUtility.RemovePostFromContentFeedUI(postId);
+                }                    
             }
-            else {
-                console.log("Failed to send DELETE Post request to api. ");
-            }
+        }).catch(function (response) {
+            console.log("Failed to delete post from Server.");
         });
     });
 
@@ -21,14 +27,21 @@
         var EventBtn = $(e.target);
         var postId = EventBtn.attr("post-id");
         var isComment = EventBtn.attr("is-comment");
+        let uuid = EventBtn.attr("uuid");
 
         ContentFeedAjaxCalls.HidePostFromProfile(postId).then(function (data) {
             if (data.success === true) {
-                isComment === 'True' ? ContentFeedUtility.RemoveCommentFromContentFeedUI(postId) : ContentFeedUtility.RemovePostFromContentFeedUI(postId);
+
+                if (isComment === "True") {
+                    ContentFeedUtility.RemoveCommentFromContentFeedUI(postId);
+                    ContentFeedUtility.DecrementPostCommentCounter(uuid);
+                }
+                else {
+                    ContentFeedUtility.RemovePostFromContentFeedUI(postId);
+                }  
             }
-            else {
-                console.log("Failed to send Hide Post request to api. ");
-            }
+        }).catch(function (response) {
+            console.log("Failed to send hide post request to Server.");
         });
     });
 
@@ -73,7 +86,6 @@
     $("#SubmitBtn").on("click", function(e) {
         e.preventDefault();
         ContentFeedUtility.AddSpinnerSubmitPostBtn();
-
         let formData = ContentFeedInput.GetInputForm();
 
         ContentFeedAjaxCalls.CreatePost('/api/Posts/BasicPost', formData).then(function (response) {
@@ -83,14 +95,15 @@
                 ContentFeedInput.ClearBasicPostForm();
                 ContentFeedUtility.AddPostToContentFeedUI(response.post);
             }
-            else {
-                ContentFeedUtility.RemoveSpinnerSubmitPostBtn();
-                $("#CustomPostValidationMessage").text(response.message);
-                $("#MainPostTextboxValidationMessage").show(100);
-            }
         }).catch(function (response) {
             ContentFeedUtility.RemoveSpinnerSubmitPostBtn();
-            $("#MainPostTextboxValidationMessage").text(response.responseJSON.errors.Summary);
+            if (response.responseJSON.message !== undefined) {
+                $("#MainPostTextboxValidationMessage").text(response.responseJSON.message);
+            }
+            else {
+                $("#MainPostTextboxValidationMessage").text(response.responseJSON.errors.Summary);
+            }
+
             $("#MainPostTextboxValidationMessage").show(100);
         });
     });
@@ -98,6 +111,8 @@
    $("#SubmitCustomPostBtn").on("click", function(e) {
         e.preventDefault();
         ContentFeedUtility.AddSpinnerSubmitCustomPostBtn();
+
+
         let formData = ContentFeedInput.GetInputForm("custom");
 
         ContentFeedAjaxCalls.CreatePost('/api/Posts/CustomizedPost', formData).then(function (response) {
@@ -107,11 +122,6 @@
                 ContentFeedInput.ClearCustomPostForm();
                 ContentFeedUtility.AddPostToContentFeedUI(response.post);
                 ContentFeedUtility.HideCustomPostModal();
-            }
-            else {
-                ContentFeedUtility.RemoveSpinnerSubmitCustomPostBtn();
-                $("#CustomPostValidationMessage").text(response.message);
-                $("#CustomPostValidationMessage").show(100);
             }
         }).catch(function (response) {
             ContentFeedUtility.RemoveSpinnerSubmitCustomPostBtn();
@@ -132,6 +142,7 @@
         let uuid = SendButton.attr("unique-identifier");
         let parentPostId = SendButton.attr("parent-post-id");
 
+
         let formData = ContentFeedInput.GetInputForm("comment", uuid, parentPostId);
 
         ContentFeedAjaxCalls.CreatePost('/api/Posts/BasicPost', formData).then(function (response) {
@@ -140,10 +151,6 @@
                 //Clear summernote textbox after successful submission.
                 ContentFeedInput.ClearCommentForm(uuid);
                 ContentFeedUtility.AddCommentToContentFeedUI(uuid, response.post);
-            }
-            else {
-                $("span[unique-error-identifier$="+ uuid +"]").show(100);
-                console.log(response);
             }
         }).catch(function (response) {
             let validationMessageElement = $("span[unique-error-identifier$="+ uuid +"]");
@@ -158,4 +165,5 @@
             validationMessageElement.show(100);
         });
     });
+
 });

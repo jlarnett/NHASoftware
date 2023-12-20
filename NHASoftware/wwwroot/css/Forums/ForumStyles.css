@@ -1,0 +1,19 @@
+﻿
+/*****************************************************************************************************
+    This is the seperator of modern forum post styling
+******************************************************************************************************/
+
+.modern-forum-post-container {
+    background: transparent url(https://www.runescape.com/img/rs3/forums/panel.jpg) repeat bottom left;
+}
+
+.modern-forum-post-container:hover {
+    filter: brightness(1.5);
+}
+
+.modern-thread-link {
+    text-decoration: none;
+}
+
+
+

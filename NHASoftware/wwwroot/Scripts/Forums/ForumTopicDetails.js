@@ -11,24 +11,32 @@
                     var str = spacetime(post.creationDate);
                     var date = str.format('{month}-{date-pad}-{year} {time}{am pm}');
 
-                    return "<div class='modern-forum-post-container'> <a class='modern-thread-link' post-id='" + post.id + "'>" +
-                        "<div class='modern-forum-post-row-container'>" +
-                        "<div class='modern-forum-topic-title'>" + "<h3 class='modern-post-text'>" + post.title + "</h3>" + "</div>" +
-                        "</div>" +
-                        "<div class='modern-post-actions'>" +
-                        "<div class='modern-post-actions-like modern-post-action'>" +
-                        "<input type='image' src='/Images/likeIcon.png' class='modern-threads-picture js-thread-comment' comment-id='" + "commentid" + "'/>" +
-                        "<h3>" + post.likeCount + "</h3>" +
-                        "</div>" +
-                        "<div class='modern-post-actions-like modern-post-action'>" +
-                        "<input type='image' src='/Images/PostIcon.png' class='modern-threads-picture js-thread-comment' comment-id='" + "commentid" + "'/>" +
-                        "<h3>" + post.commentCount + "</h3>" +
-                        "</div>" +
-                        "<div class='modern-post-action'>" +
-                        "<h5>" + "Thread Last Updated: " + date + "</h5>" +
-                        "</div>" +
-                        "</div>" +
-                        "</a></div>";
+                    return "<div class='container-fluid modern-forum-post-container'>" + 
+                                "<a class='modern-thread-link' role='button' post-id='" + post.id + "'>" +
+                                    "<div class='row'>" +
+                                        "<div class='col'>" + 
+                                            "<h3 class='modern-post-text'>" + post.title + "</h3>" + 
+                                        "</div>" +
+                                    "</div>" +
+                                    "<div class='row align-content-center m-auto'>" +
+                                        "<div class='col-2 row'>" +
+                                            "<div class='col-5 m-auto'>" +
+                                                "<input type='image' src='/Images/likeIcon.png' class='img-fluid js-thread-comment' comment-id='" + "commentid" + "'/>" +
+                                            "</div>"+
+                                            "<div class='h3 col'>" + post.likeCount + "</div>" +
+                                        "</div>" +
+                                        "<div class='col-2 row'>" +
+                                            "<div class='col-5 m-auto'>" +
+                                                "<input type='image' src='/Images/PostIcon.png' class='img-fluid js-thread-comment' comment-id='" + "commentid" + "'/>" +
+                                             "</div>" +
+                                            "<div class='h3 col'>" + post.commentCount + "</div>" +
+                                        "</div>" +
+                                        "<div class='col-auto'>" +
+                                            "<div class='m-auto'>" + "Thread Last Updated: " + date + "</div>" +
+                                        "</div>" +
+                                    "</div>" +
+                                "</a>" +
+                            "</div>";
                 }
             }
         ]

@@ -3,6 +3,7 @@
 @{
     foreach (var postDTO in @Model.Posts)
     {
+        postDTO.UUID = Model.UUID;
         await Html.RenderPartialAsync("Social/_PostComment", postDTO);
     }
 }
