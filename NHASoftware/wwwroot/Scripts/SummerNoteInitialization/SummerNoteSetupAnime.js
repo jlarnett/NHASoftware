@@ -1,7 +1,5 @@
 ﻿$(document).ready(function () {
     $('#AnimeSummary').summernote({
-        height: 400,
-        width: 1500,
         toolbar: [
         // [groupName, [list of button]]
         ['style', ['style']],

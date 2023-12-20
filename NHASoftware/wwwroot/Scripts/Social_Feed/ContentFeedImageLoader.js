@@ -23,7 +23,8 @@
     static StoredPostImages = {};
 ;
     static RetrieveImagesForPost(postId, uuid) {
-        //Retrieves images for the specified postId & appends it to the post.
+        //Retrieves images for the specified postId & appends it to the post. Also checks the cache
+        //For the chance the post is getting repeated by the post selection algorithm
 
         ContentFeedUtility.AddSpinnerToImageSection(uuid);
 
@@ -59,6 +60,7 @@
     }
 
     static GenerateCarouselIndicatorHtml(images, uuid) {
+        //Returns the HTML for carousel photo indicator - the little dashes that shows which picture & how many in carousel.
         let IndicatorHtml = [];
         let imageCount = 0;
 
