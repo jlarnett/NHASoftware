@@ -44,8 +44,6 @@ if (builder.Environment.IsProduction())
     builder.Configuration.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
 }
 
-builder.Logging(LogLevel.Debug, "");
-
 if (builder.Environment.IsProduction())
 {
     builder.Configuration.AddAzureAppConfiguration(options =>
