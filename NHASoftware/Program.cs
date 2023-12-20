@@ -149,10 +149,10 @@ builder.Services.AddMemoryCache();
 var app = builder.Build();
 
 var logger = app.Services.GetService<ILogger<Program>>();
-logger!.LogDebug($"Web App starting environment is production - {app.Environment.IsProduction().ToString()}");
-logger!.LogDebug($"Web App starting environment is development - {app.Environment.IsDevelopment().ToString()}");
-logger!.LogDebug($"Web App builder starting environment is production - {builder.Environment.IsProduction().ToString()}");
-logger!.LogDebug($"Web App builder environment is development - {builder.Environment.IsDevelopment().ToString()}");
+logger!.LogTrace($"Web App starting environment is production - {app.Environment.IsProduction().ToString()}");
+logger!.LogTrace($"Web App starting environment is development - {app.Environment.IsDevelopment().ToString()}");
+logger!.LogTrace($"Web App builder starting environment is production - {builder.Environment.IsProduction().ToString()}");
+logger!.LogTrace($"Web App builder environment is development - {builder.Environment.IsDevelopment().ToString()}");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
