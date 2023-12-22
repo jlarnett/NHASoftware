@@ -8,7 +8,7 @@ using NHA.Website.Software.DBContext;
 
 #nullable disable
 
-namespace NHASoftware.Migrations
+namespace NHA.Website.Software.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -17,10 +17,10 @@ namespace NHASoftware.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.12")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -55,7 +55,7 @@ namespace NHASoftware.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -80,7 +80,7 @@ namespace NHASoftware.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -159,64 +159,13 @@ namespace NHASoftware.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("NHA.Website.Software.Entities.FriendSystem.Friends", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Anime.AnimeEpisode", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("FriendOneId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("FriendTwoId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FriendOneId");
-
-                    b.HasIndex("FriendTwoId");
-
-                    b.ToTable("Friends");
-                });
-
-            modelBuilder.Entity("NHA.Website.Software.Entities.Social_Entities.PostImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("FileExtensionType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("ImageBytes")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<int?>("PostId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("PostImages");
-                });
-
-            modelBuilder.Entity("NHASoftware.Entities.Anime.AnimeEpisode", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AnimePageId")
                         .HasColumnType("int");
@@ -248,13 +197,13 @@ namespace NHASoftware.Migrations
                     b.ToTable("AnimeEpisodes");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Anime.AnimePage", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Anime.AnimePage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AnimeName")
                         .IsRequired()
@@ -275,13 +224,13 @@ namespace NHASoftware.Migrations
                     b.ToTable("AnimePages");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Forums.ForumComment", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Forums.ForumComment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CommentText")
                         .IsRequired()
@@ -312,13 +261,13 @@ namespace NHASoftware.Migrations
                     b.ToTable("ForumComments");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Forums.ForumPost", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Forums.ForumPost", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CommentCount")
                         .HasColumnType("int");
@@ -355,13 +304,13 @@ namespace NHASoftware.Migrations
                     b.ToTable("ForumPosts");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Forums.ForumSection", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Forums.ForumSection", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -372,13 +321,13 @@ namespace NHASoftware.Migrations
                     b.ToTable("ForumSections");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Forums.ForumTopic", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Forums.ForumTopic", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -407,13 +356,13 @@ namespace NHASoftware.Migrations
                     b.ToTable("ForumTopics");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.FriendSystem.FriendRequest", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.FriendSystem.FriendRequest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("RecipientUserId")
                         .IsRequired()
@@ -436,7 +385,32 @@ namespace NHASoftware.Migrations
                     b.ToTable("FriendRequests");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Identity.ApplicationUser", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.FriendSystem.Friends", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FriendOneId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FriendTwoId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FriendOneId");
+
+                    b.HasIndex("FriendTwoId");
+
+                    b.ToTable("Friends");
+                });
+
+            modelBuilder.Entity("NHA.Website.Software.Entities.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -513,13 +487,39 @@ namespace NHASoftware.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Social_Entities.Post", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Session.SessionHistoryEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("LoginEventDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("userId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("SessionHistory");
+                });
+
+            modelBuilder.Entity("NHA.Website.Software.Entities.Social_Entities.Post", b =>
                 {
                     b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
@@ -552,13 +552,38 @@ namespace NHASoftware.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Social_Entities.UserLikes", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Social_Entities.PostImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FileExtensionType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("ImageBytes")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int?>("PostId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostImages");
+                });
+
+            modelBuilder.Entity("NHA.Website.Software.Entities.Social_Entities.UserLikes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsDislike")
                         .HasColumnType("bit");
@@ -590,7 +615,7 @@ namespace NHASoftware.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", null)
+                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -599,7 +624,7 @@ namespace NHASoftware.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", null)
+                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -614,7 +639,7 @@ namespace NHASoftware.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", null)
+                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -623,44 +648,16 @@ namespace NHASoftware.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", null)
+                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("NHA.Website.Software.Entities.FriendSystem.Friends", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Anime.AnimeEpisode", b =>
                 {
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "FriendOne")
-                        .WithMany()
-                        .HasForeignKey("FriendOneId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "FriendTwo")
-                        .WithMany()
-                        .HasForeignKey("FriendTwoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FriendOne");
-
-                    b.Navigation("FriendTwo");
-                });
-
-            modelBuilder.Entity("NHA.Website.Software.Entities.Social_Entities.PostImage", b =>
-                {
-                    b.HasOne("NHASoftware.Entities.Social_Entities.Post", "Post")
-                        .WithMany("PostImages")
-                        .HasForeignKey("PostId");
-
-                    b.Navigation("Post");
-                });
-
-            modelBuilder.Entity("NHASoftware.Entities.Anime.AnimeEpisode", b =>
-                {
-                    b.HasOne("NHASoftware.Entities.Anime.AnimePage", "AnimePage")
+                    b.HasOne("NHA.Website.Software.Entities.Anime.AnimePage", "AnimePage")
                         .WithMany()
                         .HasForeignKey("AnimePageId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -669,15 +666,15 @@ namespace NHASoftware.Migrations
                     b.Navigation("AnimePage");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Forums.ForumComment", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Forums.ForumComment", b =>
                 {
-                    b.HasOne("NHASoftware.Entities.Forums.ForumPost", "ForumPost")
+                    b.HasOne("NHA.Website.Software.Entities.Forums.ForumPost", "ForumPost")
                         .WithMany()
                         .HasForeignKey("ForumPostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "User")
+                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -688,15 +685,15 @@ namespace NHASoftware.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Forums.ForumPost", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Forums.ForumPost", b =>
                 {
-                    b.HasOne("NHASoftware.Entities.Forums.ForumTopic", "ForumTopic")
+                    b.HasOne("NHA.Website.Software.Entities.Forums.ForumTopic", "ForumTopic")
                         .WithMany()
                         .HasForeignKey("ForumTopicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "User")
+                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
@@ -705,9 +702,9 @@ namespace NHASoftware.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Forums.ForumTopic", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Forums.ForumTopic", b =>
                 {
-                    b.HasOne("NHASoftware.Entities.Forums.ForumSection", "ForumSection")
+                    b.HasOne("NHA.Website.Software.Entities.Forums.ForumSection", "ForumSection")
                         .WithMany()
                         .HasForeignKey("ForumSectionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -716,15 +713,15 @@ namespace NHASoftware.Migrations
                     b.Navigation("ForumSection");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.FriendSystem.FriendRequest", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.FriendSystem.FriendRequest", b =>
                 {
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "RecipientUser")
+                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", "RecipientUser")
                         .WithMany()
                         .HasForeignKey("RecipientUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "SenderUser")
+                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", "SenderUser")
                         .WithMany()
                         .HasForeignKey("SenderUserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -735,13 +732,44 @@ namespace NHASoftware.Migrations
                     b.Navigation("SenderUser");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Social_Entities.Post", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.FriendSystem.Friends", b =>
                 {
-                    b.HasOne("NHASoftware.Entities.Social_Entities.Post", "ParentPost")
+                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", "FriendOne")
                         .WithMany()
-                        .HasForeignKey("ParentPostId");
+                        .HasForeignKey("FriendOneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "User")
+                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", "FriendTwo")
+                        .WithMany()
+                        .HasForeignKey("FriendTwoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FriendOne");
+
+                    b.Navigation("FriendTwo");
+                });
+
+            modelBuilder.Entity("NHA.Website.Software.Entities.Session.SessionHistoryEvent", b =>
+                {
+                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NHA.Website.Software.Entities.Social_Entities.Post", b =>
+                {
+                    b.HasOne("NHA.Website.Software.Entities.Social_Entities.Post", "ParentPost")
+                        .WithMany("Comments")
+                        .HasForeignKey("ParentPostId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
@@ -750,15 +778,25 @@ namespace NHASoftware.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Social_Entities.UserLikes", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Social_Entities.PostImage", b =>
                 {
-                    b.HasOne("NHASoftware.Entities.Social_Entities.Post", "Post")
+                    b.HasOne("NHA.Website.Software.Entities.Social_Entities.Post", "Post")
+                        .WithMany("PostImages")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("NHA.Website.Software.Entities.Social_Entities.UserLikes", b =>
+                {
+                    b.HasOne("NHA.Website.Software.Entities.Social_Entities.Post", "Post")
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("NHASoftware.Entities.Identity.ApplicationUser", "User")
+                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -769,8 +807,10 @@ namespace NHASoftware.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("NHASoftware.Entities.Social_Entities.Post", b =>
+            modelBuilder.Entity("NHA.Website.Software.Entities.Social_Entities.Post", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("PostImages");
                 });
 #pragma warning restore 612, 618

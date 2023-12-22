@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
@@ -15,6 +16,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using NHA.Website.Software.Entities.Identity;
+using NHA.Website.Software.Entities.Session;
+using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+using NHA.Website.Software.Services.SessionHistory;
 
 namespace NHASoftware.Areas.Identity.Pages.Account
 {
@@ -22,6 +26,8 @@ namespace NHASoftware.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IActiveSessionTracker _sessionTracker;
+
 
         public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
         {

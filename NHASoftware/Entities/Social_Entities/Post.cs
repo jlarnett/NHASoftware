@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using NHA.Website.Software.Entities.Identity;
 namespace NHA.Website.Software.Entities.Social_Entities;
 public class Post
@@ -10,10 +11,12 @@ public class Post
     public string? UserId { get; set; }
     public ApplicationUser? User { get; set; }
     public int? ParentPostId { get; set; }
+    [DeleteBehavior(DeleteBehavior.NoAction)]
     public Post? ParentPost { get; set; }
     public bool IsHiddenFromUserProfile { get; set; } = false;
     public bool IsHiddenFromMainContentFeed { get; set; } = false;
     [Required] public bool IsDeletedFlag { get; set; } = false;
 
     public ICollection<PostImage> PostImages { get; } = new List<PostImage>();
+    public List<Post>? Comments { get; set; } = new List<Post>();
 }

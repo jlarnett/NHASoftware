@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using NHA.Website.Software.Services.SessionHistory;
+
 namespace NHA.Website.Software.Entities.Identity;
 [AllowAnonymous]
 public class LoginModel : PageModel
@@ -11,12 +13,14 @@ public class LoginModel : PageModel
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ILogger<LoginModel> _logger;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IActiveSessionTracker _sessionTracker;
 
-    public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, UserManager<ApplicationUser> userManager)
+    public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, UserManager<ApplicationUser> userManager, IActiveSessionTracker activeSessionTracker)
     {
         _signInManager = signInManager;
         _logger = logger;
         _userManager = userManager;
+        _sessionTracker = activeSessionTracker;
     }
 
     [BindProperty] public InputModel Input { get; set; } = new InputModel();
@@ -85,8 +89,9 @@ public class LoginModel : PageModel
         ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
+        returnUrl ??= Url.Content("~/");
         ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
         if (ModelState.IsValid)
@@ -101,8 +106,11 @@ public class LoginModel : PageModel
                 user.LastLoginDate = DateTime.Today;
                 await _userManager.UpdateAsync(user);
 
+
+                await _sessionTracker.CreateLoginEvent(user.Email!);
+                
                 _logger.LogInformation("User logged in.");
-                return RedirectToAction("Index", "Home");
+                return LocalRedirect(returnUrl);
             }
             if (result.RequiresTwoFactor)
             {

@@ -155,10 +155,10 @@
 <div class="container-fluid" id="MainPageContentContainer" userId="@UserManager.GetUserId(User)" user-session-active="@SignInManager.IsSignedIn(User).ToString()" admin-user="@userIsAdmin.ToString()">
     <div class="row">
         <div class="col-2 border-end border-primary"></div>
-        <main role="main" class="col p-2 mt-12">
+        <main role="main" class="col p-0 pt-2 mt-12">
             @RenderBody()
         </main>
-        <div class="col-2 mt-12">
+        <div class="col-2 mt-12 bg-black">
             @{ await Html.RenderPartialAsync("FriendList/_FriendListPartial");}
         </div>
     </div>

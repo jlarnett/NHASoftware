@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace NHASoftware.Migrations
+namespace NHA.Website.Software.Migrations
 {
-    public partial class ResettingEFAfterModifyingVariousNamespaces : Migration
+    /// <inheritdoc />
+    public partial class InitialReset : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -79,20 +81,6 @@ namespace NHASoftware.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ForumSections", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Frequencies",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FrequencyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FrequencyValue = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Frequencies", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -227,6 +215,110 @@ namespace NHASoftware.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FriendRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SenderUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RecipientUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FriendRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FriendRequests_AspNetUsers_RecipientUserId",
+                        column: x => x.RecipientUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_FriendRequests_AspNetUsers_SenderUserId",
+                        column: x => x.SenderUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Friends",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FriendOneId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FriendTwoId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Friends", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Friends_AspNetUsers_FriendOneId",
+                        column: x => x.FriendOneId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_Friends_AspNetUsers_FriendTwoId",
+                        column: x => x.FriendTwoId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Summary = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ParentPostId = table.Column<int>(type: "int", nullable: true),
+                    IsHiddenFromUserProfile = table.Column<bool>(type: "bit", nullable: false),
+                    IsHiddenFromMainContentFeed = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeletedFlag = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Posts_Posts_ParentPostId",
+                        column: x => x.ParentPostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SessionHistory",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    userId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginEventDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Time = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SessionHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SessionHistory_AspNetUsers_userId",
+                        column: x => x.userId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ForumTopics",
                 columns: table => new
                 {
@@ -247,39 +339,55 @@ namespace NHASoftware.Migrations
                         column: x => x.ForumSectionId,
                         principalTable: "ForumSections",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tasks",
+                name: "PostImages",
                 columns: table => new
                 {
-                    TaskId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TaskDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TaskIsFinished = table.Column<bool>(type: "bit", nullable: false),
-                    TaskStartDate = table.Column<DateTime>(type: "Date", nullable: false),
-                    TaskExecutionTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    FrequencyId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    NextTaskDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    JobCrated = table.Column<bool>(type: "bit", nullable: false)
+                    ImageBytes = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    PostId = table.Column<int>(type: "int", nullable: true),
+                    FileExtensionType = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tasks", x => x.TaskId);
+                    table.PrimaryKey("PK_PostImages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tasks_AspNetUsers_UserId",
+                        name: "FK_PostImages_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserLikes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    IsDislike = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLikes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserLikes_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_Tasks_Frequencies_FrequencyId",
-                        column: x => x.FrequencyId,
-                        principalTable: "Frequencies",
+                        name: "FK_UserLikes_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -310,36 +418,6 @@ namespace NHASoftware.Migrations
                         column: x => x.ForumTopicId,
                         principalTable: "ForumTopics",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Subscriptions",
-                columns: table => new
-                {
-                    SubscriptionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SubscriptionName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SubscriptionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SubscriptionDay = table.Column<int>(type: "int", nullable: false),
-                    SubscriptionCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TaskItemId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Subscriptions", x => x.SubscriptionId);
-                    table.ForeignKey(
-                        name: "FK_Subscriptions_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Subscriptions_Tasks_TaskItemId",
-                        column: x => x.TaskItemId,
-                        principalTable: "Tasks",
-                        principalColumn: "TaskId",
                         onDelete: ReferentialAction.NoAction);
                 });
 
@@ -364,13 +442,13 @@ namespace NHASoftware.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_ForumComments_ForumPosts_ForumPostId",
                         column: x => x.ForumPostId,
                         principalTable: "ForumPosts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(
@@ -443,26 +521,57 @@ namespace NHASoftware.Migrations
                 column: "ForumSectionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Subscriptions_TaskItemId",
-                table: "Subscriptions",
-                column: "TaskItemId");
+                name: "IX_FriendRequests_RecipientUserId",
+                table: "FriendRequests",
+                column: "RecipientUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Subscriptions_UserId",
-                table: "Subscriptions",
+                name: "IX_FriendRequests_SenderUserId",
+                table: "FriendRequests",
+                column: "SenderUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Friends_FriendOneId",
+                table: "Friends",
+                column: "FriendOneId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Friends_FriendTwoId",
+                table: "Friends",
+                column: "FriendTwoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostImages_PostId",
+                table: "PostImages",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_ParentPostId",
+                table: "Posts",
+                column: "ParentPostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_UserId",
+                table: "Posts",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_FrequencyId",
-                table: "Tasks",
-                column: "FrequencyId");
+                name: "IX_SessionHistory_userId",
+                table: "SessionHistory",
+                column: "userId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_UserId",
-                table: "Tasks",
+                name: "IX_UserLikes_PostId",
+                table: "UserLikes",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLikes_UserId",
+                table: "UserLikes",
                 column: "UserId");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
@@ -487,7 +596,19 @@ namespace NHASoftware.Migrations
                 name: "ForumComments");
 
             migrationBuilder.DropTable(
-                name: "Subscriptions");
+                name: "FriendRequests");
+
+            migrationBuilder.DropTable(
+                name: "Friends");
+
+            migrationBuilder.DropTable(
+                name: "PostImages");
+
+            migrationBuilder.DropTable(
+                name: "SessionHistory");
+
+            migrationBuilder.DropTable(
+                name: "UserLikes");
 
             migrationBuilder.DropTable(
                 name: "AnimePages");
@@ -499,16 +620,13 @@ namespace NHASoftware.Migrations
                 name: "ForumPosts");
 
             migrationBuilder.DropTable(
-                name: "Tasks");
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "ForumTopics");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Frequencies");
 
             migrationBuilder.DropTable(
                 name: "ForumSections");
