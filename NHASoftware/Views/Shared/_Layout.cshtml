@@ -32,6 +32,9 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/Scripts/Shared/common.js"></script>
     <script src="~/Scripts/Actionbar/Actionbar.js"></script>
+    <script src="~/Scripts/ChatSystem/ChatSystem.js"></script>
+    <script src="~/Scripts/FriendSystem/Social_FriendList_UI.js"></script>
+
     
     <!--External JS Packages!-->
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.js"></script>
@@ -77,16 +80,19 @@
                     @{
                         //Returns IEnumerable list of all pending FriendRequestDTOs
                         var requests = await FriendSystem.GetPendingFriendRequestsAsync(UserManager.GetUserId(User)!);
-                    }
 
-                    <li class="align-self-center">
-                        <button type="button" class="rounded-circle btn btn-secondary m-1" data-bs-toggle="modal" data-bs-target="#friendRequestModal">
-                            <div class="col p-0 position-relative">
-                                <span id="FriendRequestCounter" class="text-danger bg-danger position-absolute bottom-25 start-75 rounded-circle h4 text-white ps-2 pe-2">@requests.Count()</span>
-                                <span><img src="~/Images/Bell_Icon.png" class="img-fluid"/></span>
-                            </div>
-                        </button>
-                    </li>
+                        if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="align-self-center">
+                                <button type="button" class="rounded-circle btn btn-secondary m-1" data-bs-toggle="modal" data-bs-target="#friendRequestModal">
+                                    <div class="col p-0 position-relative">
+                                        <span id="FriendRequestCounter" class="text-danger bg-danger position-absolute bottom-25 start-75 rounded-circle h4 text-white ps-2 pe-2">@requests.Count()</span>
+                                        <span><img src="~/Images/Bell_Icon.png" class="img-fluid"/></span>
+                                    </div>
+                                </button>
+                            </li>
+                        }
+                    }
 
                 </ul>
                 <partial name="_LoginPartial"/>
@@ -161,6 +167,15 @@
         <div class="col-2 mt-12 bg-black">
             @{ await Html.RenderPartialAsync("FriendList/_FriendListPartial");}
         </div>
+    </div>
+</div>
+
+<div class="container-fluid fixed-bottom h-50 pe-none">
+    <div class="row align-items-end fixed-bottom">
+        <div class="col-2"></div>
+        <div class="col row flex-row-reverse p-0 border border-danger" id="ChsContainer">
+        </div>
+        <div class="col-1"></div>
     </div>
 </div>
 

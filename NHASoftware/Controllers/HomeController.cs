@@ -17,6 +17,8 @@ public class HomeController : Controller
     private ILogger<HomeController> _logger;
     private readonly ICookieMonster _cookieMonster;
     private readonly IPostBuilder _postBuilder;
+    private readonly UserManager<ApplicationUser> _userManager;
+
 
     public HomeController(ILogger<HomeController> logger,
         UserManager<ApplicationUser> userManager,
@@ -30,6 +32,7 @@ public class HomeController : Controller
         _logger = logger;
         _cookieMonster = cookieMonster;
         _postBuilder = postBuilder;
+        _userManager = userManager;
     }
 
     public IActionResult Index()
@@ -109,6 +112,17 @@ public class HomeController : Controller
     {
         return PartialView("Social/_PostComment", postdto);
     }
+
+    [HttpGet("ReturnChatPartialView")]
+    [ValidateAntiForgeryToken]
+    [Authorize]
+    public async Task<IActionResult> ReturnChatPartialView(FriendRequestDTO requestDTO)
+    {
+        var friend = await _userManager.FindByIdAsync(requestDTO.RecipientUserId);
+        return PartialView("ChatSystem/_ChatUI", friend);
+    }
+
+    
 
     private void AssignSessionGuidCookie()
     {
