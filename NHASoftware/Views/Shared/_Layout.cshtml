@@ -164,7 +164,7 @@
         <main role="main" class="col p-0 pt-2 mt-12">
             @RenderBody()
         </main>
-        <div class="col-2 mt-12 bg-black">
+        <div class="col-2 mt-12 bg-black" style="min-height: 75.5em;">
             @{ await Html.RenderPartialAsync("FriendList/_FriendListPartial");}
         </div>
     </div>
@@ -173,7 +173,7 @@
 <div class="container-fluid fixed-bottom h-50 pe-none">
     <div class="row align-items-end fixed-bottom">
         <div class="col-2"></div>
-        <div class="col row flex-row-reverse p-0 border border-danger" id="ChsContainer">
+        <div class="col row flex-row-reverse p-0" id="ChsContainer">
         </div>
         <div class="col-1"></div>
     </div>

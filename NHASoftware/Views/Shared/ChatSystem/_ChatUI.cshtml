@@ -1,44 +1,43 @@
-﻿@model NHA.Website.Software.Entities.Identity.ApplicationUser
+﻿@using Microsoft.AspNetCore.Identity
+@using NHA.Website.Software.ConsumableEntities.DTOs
+@using NHA.Website.Software.Entities.Identity
+@using NHA.Website.Software.Views.ViewModels.ChatUI
+@inject UserManager<ApplicationUser> _UserManager
+@model NHA.Website.Software.Views.ViewModels.ChatUI.ChatUIViewModel
 
 @{
     var chatUUID = Guid.NewGuid();
 }
 
 
-<div class="col-2 border border-2 border-dark pe-auto bg-light p-0 ms-1 h-50" id="chs-@chatUUID">
-    <div class="row m-auto p-1 bg-warning border-bottom border-primary mb-3">
+<div class="col-3 border border-2 border-danger pe-auto bg-light p-0 ms-2 h-50 rounded" id="chs-@chatUUID" chs-container="@chatUUID" chs-recipient="@Model.Friend!.Id">
+    <div class="row m-auto p-1 bg-dark bg-opacity-100 bg-gradient border-bottom border-3 border-danger mb-3">
         <div class="col-2 p-0 m-auto">
-            <img class="img-fluid rounded-circle col-10 m-auto" src="~/ProfilePictures/@Model.ProfilePicturePath"/>
+            <img class="img-fluid rounded-circle col-10 m-auto" src="~/ProfilePictures/@Model.Friend!.ProfilePicturePath"/>
         </div>
-        <div class="col-4 p-0 text-wrap m-auto">
-            <a class="h5 text-center m-auto profile-link" role="button" userId="@Model.Id">@Model.DisplayName</a>
+        <div class="col p-0 text-wrap m-auto text-truncate text-center">
+            <a class="h6 text-center m-auto profile-link" role="button" userId="@Model.Friend.Id">@Model.Friend.DisplayName</a>
         </div>
         <div class="col-auto m-auto">
-            <button type="button" class="close close-chat" chs-uuid="@chatUUID" recipientId="@Model.Id">
-                <span aria-hidden="true" chs-uuid="@chatUUID" class="h2" recipientId="@Model.Id">&times;</span>
+            <button type="button" class="close close-chat" chs-uuid="@chatUUID" recipientId="@Model.Friend.Id">
+                <span aria-hidden="true" chs-uuid="@chatUUID" class="h2" recipientId="@Model.Friend.Id">&times;</span>
             </button>
         </div>
     </div>
     <div class="row col m-auto p-3 justify-content-center" chs-body-uuid="@chatUUID">
-        <div class="row mb-3 p-0 h-25" id="chs-messages-@chatUUID">
-            <div class="col text-wrap text-break p-2 chat-scroll-y" style="max-height: 20em">
-                TESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFS
-                TESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFS
-                TESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFS
-                TESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFS
-                TESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFS
-                TESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFSTESTING TESTING TESTING TESTIONG TESTSING TESTING SASFSDFSFDSDFSDFFSFSDFSFSDFS
+        <div class="row mb-3 p-0 h-25 border-bottom border-primary border-2" >
+            <div class="col text-wrap text-break p-2 chat-scroll-y" style="max-height: 20em" id="chs-messages-@chatUUID">
+                
+                @{
+                    await Html.RenderPartialAsync("ChatSystem/_ChatUIMultiMessage", new ChatUIMultiMessageVM(Model.ChatMessages));
+                }
             </div>
         </div>
-        <div class="row p-0" >
-            <div class="col-8 p-0">
-                <form asp-controller="">
-                    <input type="text" class="form-control"/>
-                </form>
-            </div>
-            <div class="col p-0">
-                <button class="btn-primary btn">SEND</button>
-            </div>
-        </div>
+        @{ await Html.RenderPartialAsync("ChatSystem/_ChatUIForm", new ChatMessageDTO()
+           {
+               RecipientUserId = Model.Friend.Id,
+               SenderUserId = _UserManager.GetUserId(User),
+               ChsUUID = @chatUUID
+           });}
     </div>
 </div>

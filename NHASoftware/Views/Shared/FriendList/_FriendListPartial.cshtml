@@ -46,14 +46,14 @@
                         foreach (var friend in onlineUsers)
                         {
                             <div class="row m-auto rounded-1 p-1 brightness-2 border-top border-bottom border-dark">
-                                <button class="col btn-dark border-light border bg-black bg-opacity-50 rounded-pill p-0 fl-click" friend-id="@friend.Key.Id">
-                                    <a class="col row bg-transparent m-auto text-decoration-none" role="button">
+                                <button id="friend-click" class="col btn-dark border-light border bg-black bg-opacity-50 rounded-pill p-0" friend-id="@friend.Key.Id">
+                                    <div class="col row bg-transparent m-auto text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
                                         <div class="col-3 m-auto p-0">
-                                            <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" class="img-fluid col-12 rounded-circle bg-primary" />
+                                            <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid col-12 rounded-circle bg-primary" />
                                         </div>
-                                        <div class="col m-auto text-wrap">@friend.Key.DisplayName</div>
-                                        <div class="col-auto m-auto bg-success rounded-pill">@friend.Value</div>
-                                    </a>
+                                        <div class="col m-auto text-wrap text-truncate" friend-id="@friend.Key.Id">@friend.Key.DisplayName</div>
+                                        <div class="col-auto m-auto bg-success rounded-pill" friend-id="@friend.Key.Id">@friend.Value</div>
+                                    </div>
                                 </button>
                             </div>
                         }
@@ -70,7 +70,7 @@
                                         <div class="col-3 m-auto p-0">
                                             <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid col-12 rounded-circle bg-primary" />
                                         </div>
-                                        <div class="col m-auto text-wrap" friend-id="@friend.Key.Id">@friend.Key.DisplayName</div>
+                                        <div class="col m-auto text-wrap text-truncate" friend-id="@friend.Key.Id">@friend.Key.DisplayName</div>
                                         <div class="col-auto m-auto bg-danger rounded-pill" friend-id="@friend.Key.Id">@friend.Value</div>
                                     </div>
                                 </button>

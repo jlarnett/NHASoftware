@@ -1,0 +1,12 @@
+﻿@model NHA.Website.Software.ConsumableEntities.DTOs.ChatMessageDTO
+
+<form id="chs-form-@Model.ChsUUID" asp-controller="Chat" asp-action="SendMessage" method="post" class="row p-0" >
+    <div class="col-9 p-0">
+        <input id="chs-form-summary-@Model.ChsUUID" type="text" asp-for="Summary" class="form-control"/>
+        @Html.HiddenFor(c => c.RecipientUserId)
+        @Html.HiddenFor(c => c.SenderUserId)
+    </div>
+    <div class="col p-0">
+        <input type="submit" value="SEND" class="btn btn-primary submit-chat" chs-uuid="@Model.ChsUUID" />
+    </div>
+</form>

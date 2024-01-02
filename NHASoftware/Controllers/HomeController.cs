@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using AutoMapper;
+using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using NHA.Website.Software.Services.CookieMonster;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
@@ -9,7 +10,12 @@ using NHA.Website.Software.Services.Social.PostBuilderService;
 using NHA.Website.Software.Views.ViewModels;
 using NHA.Website.Software.ConsumableEntities.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using NHA.Website.Software.Entities.ChatSystem;
+using NHA.Website.Software.Services.ProfilePicture;
 using NHA.Website.Software.Views.Shared.Social.ViewModels;
+using NHA.Website.Software.Views.ViewModels.ChatUI;
+using NHA.Website.Software.Entities.Social_Entities;
+using Microsoft.Extensions.Hosting;
 
 namespace NHA.Website.Software.Controllers;
 public class HomeController : Controller
@@ -18,12 +24,15 @@ public class HomeController : Controller
     private readonly ICookieMonster _cookieMonster;
     private readonly IPostBuilder _postBuilder;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IProfilePictureFileScrubber _scrubber;
+    private readonly IMapper _mapper;
 
 
     public HomeController(ILogger<HomeController> logger,
         UserManager<ApplicationUser> userManager,
         ICookieMonster cookieMonster,
-        IMapper mapper, IUnitOfWork unitOfWork, IPostBuilder postBuilder)
+        IMapper mapper, IUnitOfWork unitOfWork, IPostBuilder postBuilder, IProfilePictureFileScrubber scrubber)
     {
         /*************************************************************************************
          *  Dependency injection services
@@ -33,10 +42,14 @@ public class HomeController : Controller
         _cookieMonster = cookieMonster;
         _postBuilder = postBuilder;
         _userManager = userManager;
+        _unitOfWork = unitOfWork;
+        _scrubber = scrubber;
+        _mapper = mapper;
     }
 
     public IActionResult Index()
     {
+        CreateProfilePictureHangfireJob();
         AssignSessionGuidCookie();
         return View();
     }
@@ -119,7 +132,39 @@ public class HomeController : Controller
     public async Task<IActionResult> ReturnChatPartialView(FriendRequestDTO requestDTO)
     {
         var friend = await _userManager.FindByIdAsync(requestDTO.RecipientUserId);
-        return PartialView("ChatSystem/_ChatUI", friend);
+        var chatMessages =
+            await _unitOfWork.ChatMessageRepository.GetChatMessagesAsync(requestDTO.SenderUserId,
+                requestDTO.RecipientUserId);
+
+        var chatMessageDTOs = chatMessages.Select(_mapper.Map<ChatMessage, ChatMessageDTO>).ToList();
+
+        ChatUIViewModel vm = new ChatUIViewModel(friend, chatMessageDTOs);
+        var updateResult = await UpdateChatMessageToSeen(chatMessages);
+
+        if (!updateResult)
+            _logger.LogTrace($"Failed to update chat message seen value in DB {DateTime.UtcNow}");
+
+        return PartialView("ChatSystem/_ChatUI", vm);
+
+    }
+
+    private async Task<bool> UpdateChatMessageToSeen(List<ChatMessage> chatMessages)
+    {
+        foreach (var chat in chatMessages)
+        {
+            if (!chat.MessageViewedByRecipient && _userManager.GetUserId(User)!.Equals(chat.RecipientUserId))
+            {
+                chat.MessageViewedByRecipient = true;
+                _unitOfWork.ChatMessageRepository.Update(chat);
+            }
+        }
+        var result = await _unitOfWork.CompleteAsync();
+        return result > 0;
+    }
+
+    private void CreateProfilePictureHangfireJob()
+    {
+        RecurringJob.AddOrUpdate<IProfilePictureFileScrubber>(x=> x.RemoveOldProfilePicturesFromFolder(), Cron.Hourly);
     }
 
     

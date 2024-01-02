@@ -1,4 +1,5 @@
 ﻿using NHA.Website.Software.Services.Anime;
+using NHA.Website.Software.Services.ChatSystem;
 using NHA.Website.Software.Services.Forums;
 using NHA.Website.Software.Services.FriendSystem;
 using NHA.Website.Software.Services.SessionHistory;
@@ -17,5 +18,6 @@ public interface IUnitOfWork
     IFriendRepository FriendRepository { get; }
     IPostImageRepository PostImageRepository { get; }
     ISessionHistoryRepository SessionHistoryRepository { get; }
+    IChatMessageRepository ChatMessageRepository { get; }
     Task<int> CompleteAsync();
 }

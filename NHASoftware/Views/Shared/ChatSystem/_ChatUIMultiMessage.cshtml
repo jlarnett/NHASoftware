@@ -1,0 +1,26 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using NHA.Website.Software.Entities.Identity
+@model NHA.Website.Software.Views.ViewModels.ChatUI.ChatUIMultiMessageVM
+@inject UserManager<ApplicationUser> _UserManager
+@{
+    bool newMessagesDividerCreated = false;
+
+    foreach (var message in @Model.ChatMessages)
+    {
+        if (!message.MessageViewedByRecipient && newMessagesDividerCreated == false)
+        {
+            if ((await _UserManager.GetUserAsync(User))!.Id.Equals(message.RecipientUserId) )
+            {
+                <div class="row m-auto border-top border-primary p-1">
+                    <div class="row p-0 m-auto">
+                        <div class="bg-danger border-2 col text-black h2 text-center m-auto p-2">New Messages</div>
+                    </div>
+                </div>
+                newMessagesDividerCreated = true;
+            }
+        }
+
+        await Html.RenderPartialAsync("ChatSystem/_ChatUIMessage", message);
+    }
+}
+

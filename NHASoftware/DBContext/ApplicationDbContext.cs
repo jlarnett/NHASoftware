@@ -37,5 +37,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<PostImage>? PostImages { get; set; }
     public DbSet<SessionHistoryEvent>? SessionHistory { get; set; }
     public DbSet<ChatMessage>? ChatMessages { get; set; }
+    public DbSet<RemovedProfilePicturePath>? RemovedProfilePicturePaths { get; set; }
 
 }
