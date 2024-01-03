@@ -3,8 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using NHA.Website.Software.Entities.FriendSystem;
 using NHA.Website.Software.Entities.Social_Entities;
 using NHA.Website.Software.Entities.Anime;
+using NHA.Website.Software.Entities.ChatSystem;
 using NHA.Website.Software.Entities.Forums;
 using NHA.Website.Software.Entities.Identity;
+using NHA.Website.Software.Entities.Session;
 
 namespace NHA.Website.Software.DBContext;
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -17,7 +19,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        builder.Entity<Post>().HasMany(p => p.Comments).WithOne(p => p.ParentPost).HasForeignKey(p => p.ParentPostId);
+        builder.Entity<Post>().HasMany(p => p.PostImages).WithOne(p => p.Post).OnDelete(DeleteBehavior.Restrict);
     }
+
 
     public DbSet<ForumSection>? ForumSections { get; set; }
     public DbSet<ForumTopic>? ForumTopics { get; set; }
@@ -30,5 +35,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<FriendRequest>? FriendRequests { get; set; }
     public DbSet<Friends>? Friends { get; set; }
     public DbSet<PostImage>? PostImages { get; set; }
+    public DbSet<SessionHistoryEvent>? SessionHistory { get; set; }
+    public DbSet<ChatMessage>? ChatMessages { get; set; }
+    public DbSet<RemovedProfilePicturePath>? RemovedProfilePicturePaths { get; set; }
 
 }

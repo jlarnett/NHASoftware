@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using NHA.Website.Software.Entities.Identity
+@using NHA.Website.Software.Services.Time
+@model NHA.Website.Software.ConsumableEntities.DTOs.ChatMessageDTO
+@inject UserManager<ApplicationUser> _UserManager
+@inject ITimeBender _TimeBender
+@{
+    var currentUserId = _UserManager.GetUserId(User);
+
+    if (currentUserId != null)
+    {
+        if (currentUserId.Equals(Model.SenderUserId))
+        {
+            <div class="row m-auto border-top border-primary p-1">
+                <div class="row p-0 m-auto">
+                    <div class="col">
+                        <div class="text-danger">@Model.Summary</div>
+                    </div>
+                    <div class="col-4 m-auto">
+                        <img class="img-fluid col-10 rounded-pill bg-danger m-auto" src="~/ProfilePictures/@Model.SenderUser!.ProfilePicturePath"/>
+                    </div>
+                </div>
+                <div class="row p-0 m-auto">
+                    <div class="text-primary text-end col">@_TimeBender.GetTimeShortHandString(Model.CreationDate!.Value)</div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row m-auto border-top border-primary p-1">
+                <div class="row p-0">
+                    <div class="col-4">
+                        <img class="img-fluid col-10 rounded-pill bg-secondary" src="~/ProfilePictures/@Model.SenderUser!.ProfilePicturePath" />
+                    </div>
+                    <div class="col text-black">
+                        @Model.Summary
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="text-primary">@_TimeBender.GetTimeShortHandString(Model.CreationDate!.Value)</div>
+                </div>
+            </div>
+        }
+    }
+}
+

@@ -1,7 +1,9 @@
 ﻿using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Services.Anime;
+using NHA.Website.Software.Services.ChatSystem;
 using NHA.Website.Software.Services.Forums;
 using NHA.Website.Software.Services.FriendSystem;
+using NHA.Website.Software.Services.SessionHistory;
 using NHA.Website.Software.Services.Social;
 namespace NHA.Website.Software.Services.RepositoryPatternFoundationals;
 public class UnitOfWork : IUnitOfWork
@@ -18,6 +20,8 @@ public class UnitOfWork : IUnitOfWork
     public IFriendRequestRepository FriendRequestRepository { get; set; }
     public IFriendRepository FriendRepository { get; set; }
     public IPostImageRepository PostImageRepository { get; set; }
+    public ISessionHistoryRepository SessionHistoryRepository { get; set; }
+    public IChatMessageRepository ChatMessageRepository { get; set; }
 
 
 
@@ -34,6 +38,8 @@ public class UnitOfWork : IUnitOfWork
         FriendRequestRepository = new FriendRequestRepository(_context);
         FriendRepository = new FriendRepository(_context);
         PostImageRepository = new PostImageRepository(_context);
+        SessionHistoryRepository = new SessionHistoryRepository(_context);
+        ChatMessageRepository = new ChatMessageRepository(_context);
     }
 
     public async Task<int> CompleteAsync()

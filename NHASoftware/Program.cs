@@ -26,8 +26,12 @@ using NHA.Helpers.HtmlStringCleaner;
 using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Profiles;
+using NHA.Website.Software.Services.ChatSystem;
+using NHA.Website.Software.Services.ProfilePicture;
+using NHA.Website.Software.Services.SessionHistory;
 using NHA.Website.Software.Services.Social.PostBuilderService;
 using NHA.Website.Software.Services.Time;
+using NHA.Website.Software.SessionTrackingMiddleware;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
@@ -114,6 +118,7 @@ builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
 builder.Services.AddSingleton<IFileExtensionValidator, FileExtensionValidator>();
 builder.Services.AddTransient<IWarden, AccessWarden>();
 builder.Services.AddTransient<IHtmlStringCleaner, HtmlStringCleaner>();
+builder.Services.AddTransient<IProfilePictureFileScrubber, ProfilePictureFileScrubber>();
 
 //Setup for generic repository system
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -127,8 +132,11 @@ builder.Services.AddTransient<IPostRepository, PostRepository>();
 builder.Services.AddTransient<IUserLikeRepository, UserLikeRepository>();
 builder.Services.AddTransient<IFriendRepository, FriendRepository>();
 builder.Services.AddTransient<IFriendRequestRepository, FriendRequestRepository>();
+builder.Services.AddTransient<IChatMessageRepository, ChatMessageRepository>();
 builder.Services.AddTransient<ITimeBender, TimeBender>();
 builder.Services.AddTransient<IPostBuilder, PostBuilder>();
+builder.Services.AddTransient<ISessionHistoryRepository, SessionHistoryRepository>();
+builder.Services.AddTransient<IActiveSessionTracker, ActiveSessionTracker>();
 
 
 //Cookie service
@@ -185,6 +193,9 @@ app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSessionTrackerMiddleware();
+
 
 using (var scope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
 {

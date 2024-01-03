@@ -1,34 +1,83 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using NHA.Website.Software.Entities.Identity
 @using NHA.Website.Software.Services.FriendSystem
+@using NHA.Website.Software.Services.SessionHistory
+@using NHA.Website.Software.Services.Time
 @inject IFriendSystem _FriendSystem
 @inject SignInManager<ApplicationUser> _SignInManager
 @inject UserManager<ApplicationUser> _UserManager
-
+@inject IActiveSessionTracker _SessionTracker
+@inject ITimeBender _TimeBender
 @{
     if (_SignInManager.IsSignedIn(User))
     {
-        <div class="col position-fixed border border-danger overflow-scroll" style="height: 100%;">
+        <div id="FriendListUI" class="col position-fixed bg-gradient overflow-scroll w-inherit" style="height: 100%;">
             <div class="row m-auto border-bottom border-primary">
                 <div class="h3 text-center">Friends</div>
             </div>
 
             @{
                 var friends = await _FriendSystem.GetUsersFriendListAsync(_UserManager.GetUserId(User)!);
+                Dictionary<ApplicationUser, string> onlineUsers = new Dictionary<ApplicationUser, string>();
+                Dictionary<ApplicationUser, string> offlineUsers = new Dictionary<ApplicationUser, string>();
 
                 foreach (var friend in friends)
                 {
-                    <div class="row m-auto rounded-1 p-2 brightness-2">
-                        <button class="col btn-dark border-light border bg-black bg-opacity-50 rounded-pill">
-                            <a class="col row bg-transparent m-auto text-decoration-none" role="button">
-                                <div class="col-4 m-auto p-0">
-                                    <img src="~/ProfilePictures/@friend.ProfilePicturePath" class="img-fluid col-12 rounded-circle bg-primary"/>
-                                </div>
-                                <div class="col m-auto">@friend.DisplayName</div>
-                            </a>
-                        </button>
-                    </div>
+                    var lastSessionActivityDate = await _SessionTracker.GetUserLastActiveTime(friend);
+
+                    if (lastSessionActivityDate.HasValue)
+                    {
+                        var minutesSinceLastActivity = (int)(DateTime.UtcNow - lastSessionActivityDate.Value).TotalMinutes;
+
+                        if(minutesSinceLastActivity < 10)
+                            onlineUsers.Add(friend, _TimeBender.GetTimeShortHandString(lastSessionActivityDate.Value));
+                        else
+                            offlineUsers.Add(friend, _TimeBender.GetTimeShortHandString(lastSessionActivityDate.Value));
+                    }
+                    else
+                    {
+                        offlineUsers.Add(friend, "offline");
+                    }
                 }
+                
+                <details class="row m-auto" open>
+                    <summary>Online (@onlineUsers.Count)</summary>
+                    @{
+                        foreach (var friend in onlineUsers)
+                        {
+                            <div class="row m-auto rounded-1 p-1 brightness-2 border-top border-bottom border-dark">
+                                <button id="friend-click" class="col btn-dark border-light border bg-black bg-opacity-50 rounded-pill p-0" friend-id="@friend.Key.Id">
+                                    <div class="col row bg-transparent m-auto text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
+                                        <div class="col-3 m-auto p-0">
+                                            <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid col-12 rounded-circle bg-primary" />
+                                        </div>
+                                        <div class="col m-auto text-wrap text-truncate" friend-id="@friend.Key.Id">@friend.Key.DisplayName</div>
+                                        <div class="col-auto m-auto bg-success rounded-pill" friend-id="@friend.Key.Id">@friend.Value</div>
+                                    </div>
+                                </button>
+                            </div>
+                        }
+                    }
+                </details>
+                <details class="row m-auto" open>
+                    <summary>Offline (@offlineUsers.Count)</summary>
+                    @{
+                        foreach (var friend in offlineUsers)
+                        {
+                            <div class="row m-auto rounded-1 p-1 brightness-2 border-top border-bottom border-dark" >
+                                <button id="friend-click" class="col btn-dark border-light border bg-black bg-opacity-50 rounded-pill p-0" friend-id="@friend.Key.Id">
+                                    <div class="col row bg-transparent m-auto text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
+                                        <div class="col-3 m-auto p-0">
+                                            <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid col-12 rounded-circle bg-primary" />
+                                        </div>
+                                        <div class="col m-auto text-wrap text-truncate" friend-id="@friend.Key.Id">@friend.Key.DisplayName</div>
+                                        <div class="col-auto m-auto bg-danger rounded-pill" friend-id="@friend.Key.Id">@friend.Value</div>
+                                    </div>
+                                </button>
+                            </div>
+                        }
+                    }
+                </details>
             }
         </div>
     }

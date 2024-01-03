@@ -124,7 +124,7 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
                 }
             }
 
-            bool PictureUpdated = TryUpdateProfilePicture(user);
+            bool PictureUpdated = await TryUpdateProfilePicture(user);
             bool DisplayNameUpdated = TryUpdateDisplayName(user);
 
             if (!PictureUpdated || !DisplayNameUpdated)
@@ -165,12 +165,12 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
         /// </summary>
         /// <param name="user">The User to update.</param>
         /// <returns></returns>
-        private bool TryUpdateProfilePicture(ApplicationUser user)
+        private async Task<bool> TryUpdateProfilePicture(ApplicationUser user)
         {
             if(Input.ProfilePicture != null)
             {
                 //Getting the user & updating the profile picture photo path in user database. 
-                var updatedUser = _context.Users.Find(user.Id);
+                var updatedUser = await _context.Users.FindAsync(user.Id);
                 string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "ProfilePictures");
 
                 //Checking for file extension validation. 
@@ -180,15 +180,9 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
                     if (updatedUser!.ProfilePicturePath != null)
                     {
                         string oldProfilePicturePath = Path.Combine(uploadsFolder, updatedUser.ProfilePicturePath);
-
-                        if (System.IO.File.Exists(oldProfilePicturePath))
-                        {
-                            System.IO.File.Delete(oldProfilePicturePath);
-                        }
-                        else
-                        {
-                            StatusMessage = "Error Unable to locate profile picture despite, Profile Picture Path being populated";
-                        }
+                        await _context.RemovedProfilePicturePaths!.AddAsync(new RemovedProfilePicturePath(oldProfilePicturePath));
+                        var result = await _context.SaveChangesAsync();
+                        StatusMessage = result > 0 ? "" : "Failed to add profile picture path to DB to be removed";
                     }
 
                     //Assigning unique GUID + filename to create unique name for path. 
@@ -199,7 +193,7 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
                     Input.ProfilePicture.CopyTo(new FileStream(filePath, FileMode.Create));
 
                     updatedUser.ProfilePicturePath = uniqueFileName;
-                    var dataChanges = _context.SaveChanges();
+                    var dataChanges = await _context.SaveChangesAsync();
 
                     if (dataChanges == 0)
                     {

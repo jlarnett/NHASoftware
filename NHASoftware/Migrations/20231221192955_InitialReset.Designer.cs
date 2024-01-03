@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NHA.Website.Software.DBContext;
 
@@ -11,9 +12,11 @@ using NHA.Website.Software.DBContext;
 namespace NHA.Website.Software.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231221192955_InitialReset")]
+    partial class InitialReset
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -222,41 +225,6 @@ namespace NHA.Website.Software.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AnimePages");
-                });
-
-            modelBuilder.Entity("NHA.Website.Software.Entities.ChatSystem.ChatMessage", b =>
-                {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
-
-                    b.Property<DateTime?>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("MessageViewedByRecipient")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("RecipientUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SenderUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Summary")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RecipientUserId");
-
-                    b.HasIndex("SenderUserId");
-
-                    b.ToTable("ChatMessages");
                 });
 
             modelBuilder.Entity("NHA.Website.Software.Entities.Forums.ForumComment", b =>
@@ -522,23 +490,6 @@ namespace NHA.Website.Software.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("NHA.Website.Software.Entities.Identity.RemovedProfilePicturePath", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RemovedProfilePicturePaths");
-                });
-
             modelBuilder.Entity("NHA.Website.Software.Entities.Session.SessionHistoryEvent", b =>
                 {
                     b.Property<int>("Id")
@@ -718,25 +669,6 @@ namespace NHA.Website.Software.Migrations
                     b.Navigation("AnimePage");
                 });
 
-            modelBuilder.Entity("NHA.Website.Software.Entities.ChatSystem.ChatMessage", b =>
-                {
-                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", "RecipientUser")
-                        .WithMany()
-                        .HasForeignKey("RecipientUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", "SenderUser")
-                        .WithMany()
-                        .HasForeignKey("SenderUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RecipientUser");
-
-                    b.Navigation("SenderUser");
-                });
-
             modelBuilder.Entity("NHA.Website.Software.Entities.Forums.ForumComment", b =>
                 {
                     b.HasOne("NHA.Website.Software.Entities.Forums.ForumPost", "ForumPost")
@@ -838,7 +770,7 @@ namespace NHA.Website.Software.Migrations
                     b.HasOne("NHA.Website.Software.Entities.Social_Entities.Post", "ParentPost")
                         .WithMany("Comments")
                         .HasForeignKey("ParentPostId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("NHA.Website.Software.Entities.Identity.ApplicationUser", "User")
                         .WithMany()
