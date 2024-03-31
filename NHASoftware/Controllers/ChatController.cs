@@ -7,7 +7,7 @@ using NHA.Website.Software.Entities.ChatSystem;
 using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Services.ChatSystem;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
-using NHA.Website.Software.Views.ViewModels.ChatUI;
+using NHA.Website.Software.Views.Shared.ChatSystem.ViewModels;
 
 namespace NHA.Website.Software.Controllers
 {
@@ -82,11 +82,11 @@ namespace NHA.Website.Software.Controllers
             if (currentUser != null && senderUserId != null)
             {
                 var newMessages =
-                    await _unitOfWork.ChatMessageRepository.GetNewMessageBetweenUsers(senderUserId, currentUser.Id);
+                    await _unitOfWork.ChatMessageRepository.GetNewMessageBetweenUsersAsync(senderUserId, currentUser.Id);
                 var newMessageDTOs = newMessages.Select(_mapper.Map<ChatMessage, ChatMessageDTO>).ToList();
                 await UpdateChatMessageToSeen(newMessages);
 
-                return PartialView("ChatSystem/_ChatUIMultiMessage", new ChatUIMultiMessageVM(newMessageDTOs));
+                return PartialView("ChatSystem/_ChatUIMultiMessage", new ChatUIMultiMessage(newMessageDTOs));
             }
 
             return BadRequest();

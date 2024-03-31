@@ -13,9 +13,10 @@ using Microsoft.AspNetCore.Authorization;
 using NHA.Website.Software.Entities.ChatSystem;
 using NHA.Website.Software.Services.ProfilePicture;
 using NHA.Website.Software.Views.Shared.Social.ViewModels;
-using NHA.Website.Software.Views.ViewModels.ChatUI;
 using NHA.Website.Software.Entities.Social_Entities;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using NHA.Website.Software.Views.Shared.ChatSystem.ViewModels;
 
 namespace NHA.Website.Software.Controllers;
 public class HomeController : Controller
@@ -131,6 +132,12 @@ public class HomeController : Controller
     [Authorize]
     public async Task<IActionResult> ReturnChatPartialView(FriendRequestDTO requestDTO)
     {
+
+        if (requestDTO.RecipientUserId.IsNullOrEmpty() || requestDTO.RecipientUserId.IsNullOrEmpty())
+        {
+            return BadRequest();
+        }
+
         var friend = await _userManager.FindByIdAsync(requestDTO.RecipientUserId);
         var chatMessages =
             await _unitOfWork.ChatMessageRepository.GetChatMessagesAsync(requestDTO.SenderUserId,

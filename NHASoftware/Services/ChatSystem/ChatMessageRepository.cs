@@ -17,7 +17,7 @@ namespace NHA.Website.Software.Services.ChatSystem
                 .Where(cm => (cm.SenderUserId!.Equals(senderUserId) && cm.RecipientUserId!.Equals(recipientUserId) ) || (cm.RecipientUserId!.Equals(senderUserId)) && cm.SenderUserId.Equals(recipientUserId) ).OrderBy(cm => cm.CreationDate).ToListAsync();
         }
 
-        public async Task<List<ChatMessage>> GetNewMessageBetweenUsers(string senderUserId, string recipientUserId)
+        public async Task<List<ChatMessage>> GetNewMessageBetweenUsersAsync(string senderUserId, string recipientUserId)
         {
             var result = (await _context.ChatMessages!.Include(cm => cm.SenderUser).Include(cm => cm.RecipientUser)
                 .Where(cm =>

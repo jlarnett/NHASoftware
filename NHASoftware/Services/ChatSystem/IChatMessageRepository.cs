@@ -5,5 +5,5 @@ namespace NHA.Website.Software.Services.ChatSystem;
 public interface IChatMessageRepository : IGenericRepository<ChatMessage>
 {
     Task<List<ChatMessage>> GetChatMessagesAsync(string senderUserId, string recipientUserId);
-    Task<List<ChatMessage>> GetNewMessageBetweenUsers(string senderUserId, string recipientUserId);
+    Task<List<ChatMessage>> GetNewMessageBetweenUsersAsync(string senderUserId, string recipientUserId);
 }

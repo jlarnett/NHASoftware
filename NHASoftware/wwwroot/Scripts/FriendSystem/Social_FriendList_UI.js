@@ -1,15 +1,5 @@
 ﻿$(window).on("load", function () {
 
-    $('#FriendListUI').on('click', '.fl-click' ,function (e) {
-
-        let EventBtn = $(e.target);
-        let friendUserId = EventBtn.attr("friend-id");
-
-        if (friendUserId !== undefined) {
-            OpenFriendChat(friendUserId);
-        }
-    });
-
     $("#ChsContainer").on('click', '.profile-link', function (e) {
         var SendButton = $(e.target);
         var userId = SendButton.attr("userId");
@@ -81,6 +71,8 @@ function LoadStoredChats() {
         return;
     }
 
+    SystemNotification.createNotification("Loading previous chat windows..");
+
     storedChats.forEach(chat => {
         OpenFriendChat(chat.recipientId);
     });
@@ -88,11 +80,18 @@ function LoadStoredChats() {
 
 function CheckForNewMessages() {
     let delay = 10000
+    let maxDelay = 600000
 
     setInterval(function () {
+
+        //SystemNotification.createNotification("Polling DB for new chat messages. <a type='button'>Profile</a>");
         GetNewMessagesFromChatController().then(function (response) {
 
             let senderUserIds = [];
+
+            if (response.messages.length < 1 && delay < maxDelay) {
+                delay *= 1.5;
+            }
 
             response.messages.forEach(cm => {
                 if (CheckActiveChatsForUserId(cm.senderUserId)) {
@@ -118,6 +117,11 @@ function CheckForNewMessages() {
                         }
                     }
                 }
+
+                //let friendListChatCounter = $("#Friend-chat-notification-counter-" + cm.senderUserId ).children().first().text("0");
+                //let newFriendListChatCounter = parseInt(friendListChatCounter) + 1;
+                //let friendListChatCounter = $("#Friend-chat-notification-counter-" + cm.senderUserId).children().first().text(newFriendListChatCounter);
+                //$("#Friend-chat-notification-counter-" + cm.senderUserId).show();
             });
         });
     }, delay);

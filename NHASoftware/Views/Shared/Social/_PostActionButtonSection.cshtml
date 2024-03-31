@@ -9,34 +9,40 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 
-<div class="dropstart">
-    <button class="btn btn-dark dropdown-toggle" type="button" id="dropstartMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="/Images/options.png" class="img-fluid"/>
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropstartMenuButton" style="">
-        <li><h6 class="dropdown-header">Actions</h6></li>
-        <li><hr class="dropdown-divider"></li>
-        @{
-            bool isCommentBool = Model.ParentPostId != null;
-            var userId = await _UserManager.GetUserAsync(User) != null ? (await _UserManager.GetUserAsync(User))!.Id : "-1";
+@{
+    bool isCommentBool = Model.ParentPostId != null;
+    var userId = await _UserManager.GetUserAsync(User) != null ? (await _UserManager.GetUserAsync(User))!.Id : "-1";
+    bool isLoggedInUsersPost = (@Model.User!.Id == userId);
 
-            bool isLoggedInUsersPost = (@Model.User!.Id == userId);
-
-            if (isLoggedInUsersPost || _Warden.IsAdmin(User))
-            {
-                <li>
-                    <a class="dropdown-item delete-post-link" post-id="@Model.Id" is-comment="@isCommentBool.ToString()" uuid="@Model.UUID">Delete Post</a>
-                </li>
-                <li>
-                    <a class="dropdown-item hide-post-link" post-id="@Model.Id" is-comment="@isCommentBool.ToString()" uuid="@Model.UUID">Hide Post</a>
-                </li>
-                <li>
-                    <a class="dropdown-item report-post-link" post-id="@Model.Id" is-comment="@isCommentBool" uuid="@Model.UUID">Report Post</a>
-                </li>
-            }
-        }
-
-    </ul>
-</div>
+    if (User.Identity!.IsAuthenticated)
+    {
+        <div class="dropstart">
+            <button class="btn btn-dark dropdown-toggle" type="button" id="dropstartMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="/Images/options.png" class="img-fluid"/>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropstartMenuButton" style="">
+                <li><h6 class="dropdown-header">Actions</h6></li>
+                <li><hr class="dropdown-divider"></li>
+                @{
 
 
+                    if (isLoggedInUsersPost || _Warden.IsAdmin(User))
+                    {
+                        <li>
+                            <a class="dropdown-item delete-post-link" post-id="@Model.Id" is-comment="@isCommentBool.ToString()" uuid="@Model.UUID">Delete Post</a>
+                        </li>
+                    }
+
+                    <li>
+                        <a class="dropdown-item hide-post-link" post-id="@Model.Id" is-comment="@isCommentBool.ToString()" uuid="@Model.UUID">Hide Post</a>
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item report-post-link" post-id="@Model.Id" is-comment="@isCommentBool" uuid="@Model.UUID">Report Post</a>
+                    </li>
+                }
+
+            </ul>
+        </div>
+    }
+}

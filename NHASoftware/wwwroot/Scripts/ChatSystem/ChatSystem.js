@@ -35,7 +35,16 @@
         });
     });
 
+    $('#FriendListUI').on('click', '.open-chat' ,function (e) {
 
+        let EventBtn = $(e.target);
+        let friendUserId = EventBtn.attr("friend-id");
+
+        if (friendUserId !== undefined) {
+            OpenFriendChat(friendUserId);
+            $("#Friend-chat-notification-counter-" + friendUserId).hide();
+        }
+    });
 
 
 });

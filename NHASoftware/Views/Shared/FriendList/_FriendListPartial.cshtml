@@ -3,11 +3,14 @@
 @using NHA.Website.Software.Services.FriendSystem
 @using NHA.Website.Software.Services.SessionHistory
 @using NHA.Website.Software.Services.Time
+@using NHA.Website.Software.Services.RepositoryPatternFoundationals
+
 @inject IFriendSystem _FriendSystem
 @inject SignInManager<ApplicationUser> _SignInManager
 @inject UserManager<ApplicationUser> _UserManager
 @inject IActiveSessionTracker _SessionTracker
 @inject ITimeBender _TimeBender
+@inject IUnitOfWork _UnitOfWork
 @{
     if (_SignInManager.IsSignedIn(User))
     {
@@ -20,6 +23,7 @@
                 var friends = await _FriendSystem.GetUsersFriendListAsync(_UserManager.GetUserId(User)!);
                 Dictionary<ApplicationUser, string> onlineUsers = new Dictionary<ApplicationUser, string>();
                 Dictionary<ApplicationUser, string> offlineUsers = new Dictionary<ApplicationUser, string>();
+
 
                 foreach (var friend in friends)
                 {
@@ -45,8 +49,13 @@
                     @{
                         foreach (var friend in onlineUsers)
                         {
-                            <div class="row m-auto rounded-1 p-1 brightness-2 border-top border-bottom border-dark">
-                                <button id="friend-click" class="col btn-dark border-light border bg-black bg-opacity-50 rounded-pill p-0" friend-id="@friend.Key.Id">
+                            Random random = new Random();
+                            int friendButtonIdNumber = random.Next();
+                            var newMessages = await _UnitOfWork.ChatMessageRepository.GetNewMessageBetweenUsersAsync(friend.Key.Id, _UserManager.GetUserId(User)!);
+
+
+                            <div class="row m-auto rounded-1 p-1 border-top border-bottom border-dark dropdown">
+                                <button id="friend-dropdown-@friendButtonIdNumber" class="col btn-dark border-light border bg-black bg-opacity-50 rounded-pill p-0" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
                                     <div class="col row bg-transparent m-auto text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
                                         <div class="col-3 m-auto p-0">
                                             <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid col-12 rounded-circle bg-primary" />
@@ -55,6 +64,29 @@
                                         <div class="col-auto m-auto bg-success rounded-pill" friend-id="@friend.Key.Id">@friend.Value</div>
                                     </div>
                                 </button>
+                                <ul class="dropdown-menu" aria-labelledby="friend-dropdown-@friendButtonIdNumber" style="z-index: 1002342442;">
+                                    <li>
+                                        <button id="OpenChat" class="dropdown-item open-chat" type="button" friend-id="@friend.Key.Id" )>
+                                            <div class="row" friend-id="@friend.Key.Id">
+                                                <div class="col" friend-id="@friend.Key.Id">Chat</div>
+
+                                                @if (newMessages.Count > 0)
+                                                {
+                                                    <div id="Friend-chat-notification-counter-@friend.Key.Id" class="bg-danger rounded-circle col-2 m-auto p-1" friend-id="@friend.Key.Id">
+                                                        <div class="text-center m-auto h5 text-white" friend-id="@friend.Key.Id">@newMessages.Count</div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div id="Friend-chat-notification-counter-@friend.Key.Id" class="bg-danger rounded-circle col-2 m-auto p-1" friend-id="@friend.Key.Id" style="display: none;">
+                                                        <div class="text-center m-auto h5 text-white" friend-id="@friend.Key.Id">@newMessages.Count</div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </button>
+                                    </li>
+                                    <li><a class="dropdown-item" type="button" asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@friend.Key.Id">Profile</a></li>
+                                </ul>
                             </div>
                         }
                     }
@@ -64,8 +96,13 @@
                     @{
                         foreach (var friend in offlineUsers)
                         {
-                            <div class="row m-auto rounded-1 p-1 brightness-2 border-top border-bottom border-dark" >
-                                <button id="friend-click" class="col btn-dark border-light border bg-black bg-opacity-50 rounded-pill p-0" friend-id="@friend.Key.Id">
+                            Random random = new Random();
+                            int friendButtonIdNumber = random.Next();
+                            var newMessages = await _UnitOfWork.ChatMessageRepository.GetNewMessageBetweenUsersAsync(friend.Key.Id, _UserManager.GetUserId(User)!);
+
+
+                            <div class="row m-auto rounded-1 p-1 border-top border-bottom border-dark dropdown">
+                                <button id="friend-dropdown-@friendButtonIdNumber" class="col btn-dark border-light border bg-black bg-opacity-50 rounded-pill p-0" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
                                     <div class="col row bg-transparent m-auto text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
                                         <div class="col-3 m-auto p-0">
                                             <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid col-12 rounded-circle bg-primary" />
@@ -74,6 +111,30 @@
                                         <div class="col-auto m-auto bg-danger rounded-pill" friend-id="@friend.Key.Id">@friend.Value</div>
                                     </div>
                                 </button>
+                                <ul class="dropdown-menu" aria-labelledby="friend-dropdown-@friendButtonIdNumber" style="z-index: 1002342442;">
+                                    <li>
+                                        <button id="OpenChat" class="dropdown-item open-chat" type="button" friend-id="@friend.Key.Id")>
+                                            <div class="row" friend-id="@friend.Key.Id">
+                                                <div class="col" friend-id="@friend.Key.Id">Chat</div>
+                                                
+                                                @if (newMessages.Count > 0)
+                                                {
+                                                    <div id="Friend-chat-notification-counter-@friend.Key.Id" class="bg-danger rounded-circle col-2 m-auto p-1" friend-id="@friend.Key.Id">
+                                                        <div class="text-center m-auto h5 text-white" friend-id="@friend.Key.Id">@newMessages.Count</div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div id="Friend-chat-notification-counter-@friend.Key.Id" class="bg-danger rounded-circle col-2 m-auto p-1" friend-id="@friend.Key.Id" style="display: none;">
+                                                        <div class="text-center m-auto h5 text-white" friend-id="@friend.Key.Id">@newMessages.Count</div>
+                                                    </div>
+                                                }
+
+                                            </div>
+                                        </button>
+                                    </li>
+                                    <li><a class="dropdown-item" type="button" asp-controller="Users"  asp-action="GetProfiles" asp-route-userId="@friend.Key.Id">Profile</a></li>
+                                </ul>
                             </div>
                         }
                     }
