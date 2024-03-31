@@ -40,12 +40,12 @@
             var name = section.Name;
             var id = section.Id;
 
-            <details open class="row p-0 mb-2">
+            <details open class="row mb-2">
 
                 @if (_accessWarden.IsForumAdmin(User))
                 {
-                    <summary class="modern-forum-post-container col row rounded-pill">
-                        <h2 class="col">@name</h2>
+                    <summary class="modern-forum-post-container row">
+                        <h2 class="col h2">@name</h2>
                         <div class="col m-auto">
                             <button class="btn-primary js-edit-section" section-id="@id">Edit Section</button>
                             <button class="btn-primary js-delete-section" section-id="@id">Delete Section</button>
@@ -54,13 +54,12 @@
                 }
                 else
                 {
-
                     <summary class="modern-forum-post-container">
-                        <h2 class="">@name</h2>
+                        <div class="col h2">@name</div>
                     </summary>
                 }
 
-                <table id="@id" class="tableCustom" width="100%">
+                <table id="@id" class="tableCustom p-0" width="100%">
                     <thead>
                     <tr>
                         <th></th>

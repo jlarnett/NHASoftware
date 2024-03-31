@@ -20,7 +20,7 @@
             var str = spacetime(ForumsKV[i].value.latestDate);
             var date2 = str.format('{month}-{date-pad}-{year} {time}{am pm}');
 
-            table2.row.add(["<div class='container-fluid modern-forum-post-container rounded-3 mb-2'> <a role='button' class='text-decoration-none modern-thread-link' topic-id='" + ForumsKV[i].value.id + "'>" +
+            table2.row.add(["<div class='container-fluid modern-forum-post-container mb-2'> <a role='button' class='text-decoration-none modern-thread-link' topic-id='" + ForumsKV[i].value.id + "'>" +
                                 "<div class='row'>" +
                                     "<div class='col-auto'>" + "<h3 class='h1 text-danger text-decoration-none'>" + ForumsKV[i].value.title + "</h3>" + "</div>" +
                                 "</div>" +

@@ -4,15 +4,25 @@
 ******************************************************************************************************/
 
 .modern-forum-post-container {
-    background: transparent url(https://www.runescape.com/img/rs3/forums/panel.jpg) repeat bottom left;
+    /*background-color: #00701e;*/
+    background-color: darkgreen;
+    border-radius: 40px;
 }
 
 .modern-forum-post-container:hover {
-    filter: brightness(1.5);
+    filter: brightness(1.2);
 }
 
 .modern-thread-link {
     text-decoration: none;
+}
+
+details > summary {
+    list-style: none;
+}
+
+details > summary::-webkit-details-marker {
+    display: none;
 }
 
 

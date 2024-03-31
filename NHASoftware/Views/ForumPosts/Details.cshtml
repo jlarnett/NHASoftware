@@ -15,11 +15,11 @@
     <script src="~/Scripts/Forums/ForumPostDetails.js"></script>
 </head>
 
-<div>
-    <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="@Model.ForumPost.Id" class=" btn-primary btn-dark btn-link">Create Comment</a>
-    <hr />
+<div class="d-grid gap-2">
+    <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="@Model.ForumPost.Id" class=" btn btn-outline-warning">Create Comment</a>
 </div>
 
+<hr />
 
 <div class="main">
         @{
@@ -28,22 +28,21 @@
             string forumPostText = Model.ForumPost.ForumText;
         }
         
-        
-        <div class="container-fluid modern-forum-post-container rounded-3 p-4">
-            <div class="row align-items-center">
-                <div class="col-3 align-self-start border border-danger border-2 rounded-pill p-2 me-4">
+        <div class="container-fluid modern-forum-post-container p-4">
+            <div class="row align-items-center border-bottom border-dark mb-2 p-2">
+                <div class="col-3 align-self-start border border-dark border-4 rounded-pill bg-warning p-4 me-4 shadow">
                     <div class="row col m-auto">
-                        <img src="@Url.Content(profilePicture)" class="img-fluid rounded-pill col-10 m-auto"/>
+                        <img src="@Url.Content(profilePicture)" class="img-fluid rounded-pill col-12 m-auto"/>
                     </div>
-                    <div class="row h2 text-center text-magenta">
-                         <div>@Model.ForumPost.User.DisplayName</div>
+                    <div class="row h2 text-center text-black text-break">
+                         <div class="text-break col">@Model.ForumPost.User.DisplayName</div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col border-start border-dark">
                     <div class="row align-content-center">
                         <div class="h1 text-center text-danger">@Model.ForumPost.Title</div>
                     </div>
-                    <div class="row text-cyan text-center">@Html.Raw(forumPostText)</div>
+                    <div class="row text-center">@Html.Raw(forumPostText)</div>
                 </div>
             </div>
             <div class="row m-auto">

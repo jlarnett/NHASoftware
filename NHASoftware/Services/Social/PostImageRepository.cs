@@ -11,11 +11,14 @@ public class PostImageRepository : GenericRepository<PostImage>, IPostImageRepos
 
     public async Task<List<PostImage>> GetPostImagesAsync(int? postId)
     {
-        return await _context.PostImages!.Where(pi => pi.PostId.Equals(postId)).ToListAsync();
+        return await _context.PostImages!.FromSql($"GetPostImages {postId}").ToListAsync();
+        //return await _context.PostImages!.Where(pi => pi.PostId.Equals(postId)).ToListAsync();
     }
 
     public async Task<bool> HasImagesAttachedAsync(int? postId)
     {
-        return await _context.PostImages!.AnyAsync(pi => pi.PostId.Equals(postId));
+        var result = await _context.PostImages!.FromSql($"CheckImagesExistForPost {postId}").ToListAsync();
+        var firstPost = result.FirstOrDefault();
+        return firstPost != null;
     }
 }

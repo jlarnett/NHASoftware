@@ -14,21 +14,20 @@
 
         var commentPicture = "/ProfilePictures/" + comments[i].user.profilePicturePath;
 
-        commentsTable.row.add( ["<div class='container-fluid modern-forum-post-container p-4' role='button'>" +
-                                    "<div class='row'>" +
-                                        "<div class='col-2'>" +
-                                            //
-                                            "<div class='row border border-4 border-danger rounded-pill m-auto p-2'>" +
+        commentsTable.row.add( ["<div class='container-fluid modern-forum-post-container p-4 mb-2' role='button'>" +
+                                    "<div class='row mb-4 border-bottom border-dark p-2'>" +
+                                        "<div class='col-3'>" +
+                                            "<div class='row border border-4 border-dark shadow-lg bg-warning rounded-pill m-auto p-4'>" +
                                                 "<div class='row col-auto align-contents-center w-100 m-auto'>" +
-                                                    "<img src='" + commentPicture + "' class='col-10 img-fluid rounded-pill m-auto'/>" +
+                                                    "<img src='" + commentPicture + "' class='col-12 img-fluid rounded-pill m-auto'/>" +
                                                 "</div>" +
-                                                "<div class='row align-contents-center w-100 m-auto'>" + 
-                                                    "<div class='text-center text-danger h4 m-auto'>" +comments[i].user.displayName + "</div>" +
+                                                "<div class='row align-contents-center w-100 m-auto text-break'>" + 
+                                                    "<div class='text-center text-black h4 m-auto text-break'>" +comments[i].user.displayName + "</div>" +
                                                 "</div>" +
                                             "</div>" +
                                         "</div>" +
-                                        "<div class='col text-center align-self-center text-break'>" + 
-                                            "<div class='text-cyan h2'>" + comments[i].commentText + "</div>" + 
+                                        "<div class='col text-center align-self-center text-break border-start border-dark'>" + 
+                                            "<div class='h2'>" + comments[i].commentText + "</div>" + 
                                         "</div>" +
                                     "</div>" +
                                     "<div class='row align-content-end'>" +

@@ -10,10 +10,12 @@
 </head>
 
 <div class="container-fluid">
-    <h1 class="row col-auto">@Model.topic.Title</h1>
-    <div class="row">
-        <a asp-controller="ForumPosts" asp-area="" asp-action="Create" asp-route-id="@Model.topic.Id" class="col-auto btn-primary btn-dark btn-link">Create Post</a>
+    <h1 class="row col-auto">Topic - @Model.topic.Title</h1>
+    <div class="row d-grid gap-2">
+        <a asp-controller="ForumPosts" asp-area="" asp-action="Create" asp-route-id="@Model.topic.Id" class="btn btn-outline-warning">Create Post</a>
     </div>
+    
+    <hr/>
     
     <div class="row">
         <table id="ForumPostTable" class="tableCustom" width="100%">
