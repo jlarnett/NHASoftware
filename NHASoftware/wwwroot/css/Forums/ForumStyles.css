@@ -5,8 +5,8 @@
 
 .modern-forum-post-container {
     /*background-color: #00701e;*/
-    background-color: darkgreen;
-    border-radius: 40px;
+    background-image: linear-gradient(to right, #3a3f44, darkgray);
+    border-radius: 25px;
 }
 
 .modern-forum-post-container:hover {

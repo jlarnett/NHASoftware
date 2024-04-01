@@ -55,12 +55,12 @@ function CheckForAdminButtons(data, adminButtons)
     if (adminButtons === true) {
         return "<div class='col row m-auto'>" +
         "<div class='col-auto'>" +
-                "<button class='btn-dark js-edit-topic' topic-id='" +
+                "<button class='btn btn-outline-warning js-edit-topic' topic-id='" +
                     data.value.id +
                 "'>Edit Topic</button>" +
             "</div>" +
             "<div class='col-auto'>" +
-            "<button class='btn-dark js-delete-topic' topic-id='" +
+            "<button class='btn btn-outline-danger js-delete-topic' topic-id='" +
             data.value.id +
             "'>Delete Topic</button>" +
             "</div>" + "</div>";

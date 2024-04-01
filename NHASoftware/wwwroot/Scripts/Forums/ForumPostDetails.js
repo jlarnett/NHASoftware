@@ -51,12 +51,12 @@ function checkIfCommentUser(data, userIdString, adminUserBool) {
 
     if (userIdString === data.user.id || adminUserBool) {
         return "<div class='col-auto'>" +
-            "<button class='btn-primary js-edit-comment' comment-id='" +
+            "<button class='btn btn-outline-warning js-edit-comment' comment-id='" +
             data.id +
             "'>Edit Comment</button>" +
             "</div>" +
             "<div class='col'>" +
-            "<button class='btn-primary js-delete-comment' comment-id='" +
+            "<button class='btn btn-outline-warning js-delete-comment' comment-id='" +
             data.id +
             "'>Delete Comment</button>" +
             "</div>";

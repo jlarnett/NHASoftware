@@ -82,6 +82,11 @@
         </tr>
         </thead>
     </table>
+
+    <div class="d-grid gap-2">
+        <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="@Model.ForumPost.Id" class=" btn btn-outline-warning">Create Comment</a>
+    </div>
+
 </div>
 
 
