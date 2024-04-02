@@ -30,12 +30,12 @@
         
         <div class="container-fluid modern-forum-post-container p-4">
             <div class="row align-items-center border-bottom border-dark mb-2 p-2">
-                <div class="col-3 align-self-start border border-dark border-4 rounded-pill bg-warning p-4 me-4 shadow">
+                <div class="col-3 align-self-start border border-dark border-4 rounded-pill p-4 me-4 shadow">
                     <div class="row col m-auto">
                         <img src="@Url.Content(profilePicture)" class="img-fluid rounded-pill col-12 m-auto"/>
                     </div>
                     <div class="row h2 text-center text-black text-break">
-                         <div class="text-break col">@Model.ForumPost.User.DisplayName</div>
+                         <div class="text-break col text-danger">@Model.ForumPost.User.DisplayName</div>
                     </div>
                 </div>
                 <div class="col border-start border-dark">
@@ -59,13 +59,13 @@
                 </div>
                 @{
                     var user = await UserManager.GetUserAsync(User);
-                    if (SignInManager.IsSignedIn(User) && user!.Id == Model.ForumPost.UserId)
+                    if (SignInManager.IsSignedIn(User) && user!.Id == Model.ForumPost.UserId || AccessWarden.IsForumAdmin(User))
                     {
                         <div class="col-auto">
-                            <button class="btn-dark" id="EditPost" post-id="@id">Edit Post</button>
+                            <button class="btn btn-outline-warning" id="EditPost" post-id="@id">Edit Post</button>
                         </div>
                         <div class="col-auto">
-                            <button class="btn-dark" id="DeletePost" post-id="@id">Delete Post</button>
+                            <button class="btn btn-outline-danger" id="DeletePost" post-id="@id">Delete Post</button>
                         </div>
                     }
                 }

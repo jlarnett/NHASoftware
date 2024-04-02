@@ -5,8 +5,9 @@
 
 .modern-forum-post-container {
     /*background-color: #00701e;*/
-    background-image: linear-gradient(to right, #3a3f44, darkgray);
+    background-image: linear-gradient(to right, #3a3f44, 90%, black);
     border-radius: 25px;
+    border: thick solid red;
 }
 
 .modern-forum-post-container:hover {
