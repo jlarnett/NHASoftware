@@ -27,9 +27,9 @@
             @Html.AntiForgeryToken()
             <div class="col border border-2 border-white p-3">
                 <div class="row text-center">
-                    <h1 class="h1">Create New Post</h1>
+                    <h1 class="h1 text-warning">Create New Post</h1>
                 </div>
-                <div class="row border rounde" style="min-width: 100%; width: 0;">
+                <div class="row border m-auto" style="min-width: 100%; width: 0;">
                     <form id="BasicPostForm" method="post" enctype="multipart/form-data">
                         <div id="MainPostTextboxContainer" class="p-0">
                             @* <textarea id="MainPostTextbox" name="Summary"></textarea> *@
@@ -37,10 +37,10 @@
                         </div>
                     </form>
                 </div>
-                <div class="row p-0">
-                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="col btn-dark p-0 fs-2">Upload Post</button>
+                <div class="row p-2">
+                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="col btn btn-outline-warning p-0 fs-2">Upload Post</button>
                     <feature name="@FeatureFlags.CustomizedPostsEnabled">
-                        <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col btn-dark p-0 fs-2" data-bs-toggle="modal" data-bs-target="#AddPostPhotosModal">Add Photos</button>
+                        <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col btn btn-outline-warning p-0 fs-2" data-bs-toggle="modal" data-bs-target="#AddPostPhotosModal">Add Photos</button>
                     </feature>
                 </div>
                 <div class="row p-0">
@@ -55,7 +55,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header border-bottom">
-                            <h5 class="modal-title" id="AddPostPhotosModalLabel">Customized Post</h5>
+                            <h5 class="modal-title text-warning" id="AddPostPhotosModalLabel">Customized Post</h5>
                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -72,7 +72,7 @@
                                     <input type="file" id="CustomPostImageFileInput" class="p-0" multiple="multiple" role="button" name="ImageFiles" />
                                 </div>
                                 <div class="row mb-2">
-                                    <button id="SubmitCustomPostBtn" class="btn btn-primary" value="Create" type="Submit">Upload Custom Post</button>
+                                    <button id="SubmitCustomPostBtn" class="btn btn-outline-warning" value="Create" type="Submit">Upload Custom Post</button>
                                 </div>
                                 <div class="row p-0">
                                     <span id="CustomPostValidationMessage" style="display: none; color: red">Error Submitting Post.....</span>

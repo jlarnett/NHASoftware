@@ -44,18 +44,18 @@
 
                 @if (_accessWarden.IsForumAdmin(User))
                 {
-                    <summary class="modern-forum-post-container row">
-                        <h2 class="col h2">@name</h2>
+                    <summary class="modern-forum-post-container row mb-2">
+                        <h2 class="col-8 h1">@name</h2>
                         <div class="col m-auto">
-                            <button class="btn-primary js-edit-section" section-id="@id">Edit Section</button>
-                            <button class="btn-primary js-delete-section" section-id="@id">Delete Section</button>
+                            <button class="btn btn-outline-warning js-edit-section" section-id="@id">Edit Section</button>
+                            <button class="btn btn-outline-danger js-delete-section" section-id="@id">Delete Section</button>
                         </div>
                     </summary>
                 }
                 else
                 {
-                    <summary class="modern-forum-post-container">
-                        <div class="col h2">@name</div>
+                    <summary class="modern-forum-post-container mb-2">
+                        <div class="col h1">@name</div>
                     </summary>
                 }
 

@@ -106,7 +106,7 @@ public class ForumCommentsController : Controller
 
             return RedirectToAction("Details", "ForumPosts", new { id = forumComment.ForumPostId });
         }
-        return View(forumComment);
+        return RedirectToAction("Details", "ForumPosts", new { id = forumComment.ForumPostId });
     }
 
     /// <summary>

@@ -17,12 +17,12 @@
         commentsTable.row.add( ["<div class='container-fluid modern-forum-post-container p-4 mb-2' role='button'>" +
                                     "<div class='row mb-4 border-bottom border-dark p-2'>" +
                                         "<div class='col-3'>" +
-                                            "<div class='row border border-4 border-dark shadow-lg bg-warning rounded-pill m-auto p-4'>" +
+                                            "<div class='row border border-4 border-dark shadow-lg rounded-pill m-auto p-4'>" +
                                                 "<div class='row col-auto align-contents-center w-100 m-auto'>" +
                                                     "<img src='" + commentPicture + "' class='col-12 img-fluid rounded-pill m-auto'/>" +
                                                 "</div>" +
                                                 "<div class='row align-contents-center w-100 m-auto text-break'>" + 
-                                                    "<div class='text-center text-black h4 m-auto text-break'>" +comments[i].user.displayName + "</div>" +
+                                                    "<div class='text-center text-danger h4 m-auto text-break'>" +comments[i].user.displayName + "</div>" +
                                                 "</div>" +
                                             "</div>" +
                                         "</div>" +
@@ -51,12 +51,12 @@ function checkIfCommentUser(data, userIdString, adminUserBool) {
 
     if (userIdString === data.user.id || adminUserBool) {
         return "<div class='col-auto'>" +
-            "<button class='btn-primary js-edit-comment' comment-id='" +
+            "<button class='btn btn-outline-warning js-edit-comment' comment-id='" +
             data.id +
             "'>Edit Comment</button>" +
             "</div>" +
             "<div class='col'>" +
-            "<button class='btn-primary js-delete-comment' comment-id='" +
+            "<button class='btn btn-outline-warning js-delete-comment' comment-id='" +
             data.id +
             "'>Delete Comment</button>" +
             "</div>";
