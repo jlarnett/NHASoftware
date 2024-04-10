@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using NHA.Website.Software.Entities.Forums
 @using NHA.Website.Software.Entities.Identity
 @using NHA.Website.Software.Services.AccessWarden
 @model NHA.Website.Software.Views.ViewModels.ForumVMs.ForumPostDetailModel
@@ -46,11 +47,11 @@
                 </div>
             </div>
             <div class="row m-auto">
-                <div class="col-auto">
+                <div class="col m-auto">
                     <h3 id="PostDate"></h3>
                 </div>
-                <div class="col-auto">
-                    <div class="row align-content-center">
+                <div class="col-auto m-auto">
+                    <div class="row align-content-center m-auto">
                         <div class="col-2">
                             <input type="image" src="~/Images/LikeIcon.png" class="img-fluid" post-id="@id"/>
                         </div>
@@ -82,17 +83,24 @@
         </tr>
         </thead>
     </table>
+    
+    @{
+        var comment = new ForumComment()
+        {
+            CreationDate = DateTime.Now,
+            UserId = UserManager.GetUserId(User)!,
+            ForumPostId = id
+        };
 
-    <div class="d-grid gap-2">
-        <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="@Model.ForumPost.Id" class=" btn btn-outline-warning">Create Comment</a>
-    </div>
-
+        await Html.RenderPartialAsync("Forums/_CreateCommentPartial", comment);
+    }
 </div>
 
 
 
 @section Scripts
 {
+
     <script type="text/javascript">
 
         $(document).ready(function() {
@@ -184,7 +192,11 @@
                 window.location.href = "/ForumPosts/Delete/" + button.attr("post-id");
             });
         });
-
     </script>
+    
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
+    <script src="~/Scripts/SummerNoteInitialization/SummerNoteSetupComments.js" type = "text/javascript" ></script>
 }

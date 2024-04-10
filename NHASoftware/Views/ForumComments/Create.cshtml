@@ -36,7 +36,10 @@
 </div>
 
 <div>
-    @if (!string.IsNullOrWhiteSpace(ViewData["Reffer"]!.ToString()))
+    @{
+        var refer = ViewData["Reffer"] as string;
+    }
+    @if (!string.IsNullOrEmpty(refer))
     {
         <a href="@ViewData["reffer"]">Return to Forum Post</a>
     }

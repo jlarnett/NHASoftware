@@ -80,7 +80,8 @@ body {
 }
 
 .o-fit {
-    height: 100%;
+    height: 50px;
+    width: 50px;
     object-fit: cover;
 }
 
