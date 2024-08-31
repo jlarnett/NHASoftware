@@ -52,34 +52,34 @@
 <body>
 <header>
     <!--Navigation Bar-->
-    <nav class="navbar navbar-expand-sm navbar-dark bg-secondary border-bottom box-shadow fixed-top">
-        <div class="container-fluid"style="width: 100%; height: auto;">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark border-bottom box-shadow fixed-top">
+        <div class="container-fluid m-0 p-0"style="width: 100%; height: auto;">
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between ">
                 <ul class="navbar-nav flex-grow-1">
 
-                    <li class="nav-item align-self-center"><a class="nav-link link-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item align-self-center"><a class="nav-link btn-dark text-danger h3 m-0" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
 
                     @if (Warden.IsAdmin(User))
                     {
-                        <li class="nav-item align-self-center"><a class="nav-link" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a></li>
+                            <li class="nav-item align-self-center"><a class="nav-link btn-dark text-danger h3 m-0" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a></li>
                     }
                     
                     <feature name="@FeatureFlags.AnimeEnabled">
-                        <li class="nav-item align-self-center"><a class="nav-link" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
+                            <li class="nav-item align-self-center"><a class="nav-link btn-dark text-danger h3 m-0" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
                     </feature>
                     
                     <feature name="@FeatureFlags.ForumsEnabled">
-                        <li class="nav-item align-self-center"><a class="nav-link" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
+                            <li class="nav-item align-self-center"><a class="nav-link btn-dark text-danger h3 m-0" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
                     </feature>
                     
                     <feature name="@FeatureFlags.CryptoEnabled">
-                        <li class="nav-item align-self-center"><a class="nav-link" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
+                            <li class="nav-item align-self-center"><a class="nav-link btn-dark text-danger h3 m-0" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
                     </feature>
                     
                     @{
@@ -88,8 +88,8 @@
 
                         if (SignInManager.IsSignedIn(User))
                         {
-                            <li class="align-self-center">
-                                <button type="button" class="rounded-circle btn btn-secondary m-1" data-bs-toggle="modal" data-bs-target="#friendRequestModal">
+                            <li class="align-self-center nav-item">
+                                <button type="button" class="rounded btn btn-warning m-0" data-bs-toggle="modal" data-bs-target="#friendRequestModal">
                                     <div class="col p-0 position-relative">
                                         <span id="FriendRequestCounter" class="text-danger bg-danger position-absolute bottom-25 start-75 rounded-circle h4 text-white ps-2 pe-2">@requests.Count()</span>
                                         <span><img src="~/Images/Bell_Icon.png" class="img-fluid"/></span>
@@ -171,7 +171,7 @@
         <main role="main" class="col p-2 pt-2 mt-12">
             @RenderBody()
         </main>
-        <div class="col-2 mt-12 bg-black" style="min-height: 75.5em;">
+        <div class="col-2 mt-12 bg-black p-1" style="min-height: 75.5em;">
             @{ await Html.RenderPartialAsync("FriendList/_FriendListPartial");}
         </div>
     </div>
