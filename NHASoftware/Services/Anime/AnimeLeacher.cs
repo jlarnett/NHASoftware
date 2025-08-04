@@ -97,7 +97,7 @@ namespace NHA.Website.Software.Services.Anime
                 }
 
                 // Optional: sleep to respect rate limits (Jikan recommends)
-                await Task.Delay(500);
+                await Task.Delay(2000);
             }
 
             return allAnime;
