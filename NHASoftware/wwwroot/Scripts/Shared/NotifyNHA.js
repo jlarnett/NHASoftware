@@ -7,7 +7,7 @@
     }
 
     static createNotification(message) {
-        this.playNotificationAudio();
+        //this.playNotificationAudio();
         $.jGrowl(message, 
             {position: "bottom-left"},
             {life: 30000}
