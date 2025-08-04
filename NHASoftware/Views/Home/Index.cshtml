@@ -25,9 +25,9 @@
     <div class="container-fluid">
         <div class="row">
             @Html.AntiForgeryToken()
-            <div class="col border border-2 border-white p-3">
+            <div class="col border border-2 border-dark rounded-2 p-3">
                 <div class="row text-center">
-                    <h1 class="h1 text-warning">Create New Post</h1>
+                    <h1 class="h1 text-primary">Speak Your Mind</h1>
                 </div>
                 <div class="row border m-auto" style="min-width: 100%; width: 0;">
                     <form id="BasicPostForm" method="post" enctype="multipart/form-data">
@@ -38,9 +38,9 @@
                     </form>
                 </div>
                 <div class="row p-2">
-                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="col btn btn-outline-warning p-0 fs-2">Upload Post</button>
+                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="col btn btn-outline-primary p-0 fs-2">Upload</button>
                     <feature name="@FeatureFlags.CustomizedPostsEnabled">
-                        <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col btn btn-outline-warning p-0 fs-2" data-bs-toggle="modal" data-bs-target="#AddPostPhotosModal">Add Photos</button>
+                        <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col btn btn-outline-primary p-0 fs-2" data-bs-toggle="modal" data-bs-target="#AddPostPhotosModal">Upload With Photos</button>
                     </feature>
                 </div>
                 <div class="row p-0">
@@ -88,7 +88,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="HomeContainer col p-0">
+        <div class="HomeContainer col p-4">
             <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
                 <div id="ContentFeed">
                     @{

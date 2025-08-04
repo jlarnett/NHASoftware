@@ -14,9 +14,9 @@
 @{
     if (_SignInManager.IsSignedIn(User))
     {
-        <div id="FriendListUI" class="col position-fixed bg-dark overflow-scroll w-inherit" style="height: 100%;">
-            <div class="row m-auto border-bottom border-primary">
-                <div class="h3 text-center text-warning">Friends List</div>
+        <div id="FriendListUI" class="col position-fixed border-start border-primary bg-light overflow-scroll w-inherit" style="height: 100%;">
+            <div class="row m-auto pt-2 border-bottom border-primary">
+                <div class="h3 text-center text-primary">Friends List</div>
             </div>
 
             @{
@@ -55,7 +55,7 @@
 
 
                             <div class="row m-auto rounded-1 p-1 border-top border-bottom border-dark dropdown">
-                                <button id="friend-dropdown-@friendButtonIdNumber" class="col btn-dark border-light border bg-black bg-opacity-50 rounded-pill p-0" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
+                                <button id="friend-dropdown-@friendButtonIdNumber" class="col btn bg-transparent border-light border bg-opacity-50 rounded-pill p-0" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
                                     <div class="col row bg-transparent m-auto text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
                                         <div class="col-3 m-auto p-0">
                                             <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid col-12 rounded-circle bg-primary" />
@@ -102,13 +102,13 @@
 
 
                             <div class="row m-auto rounded-1 p-1 border-top border-bottom border-dark dropdown">
-                                <button id="friend-dropdown-@friendButtonIdNumber" class="col btn-dark border-light border bg-black bg-opacity-50 rounded-pill p-0" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
+                                <button id="friend-dropdown-@friendButtonIdNumber" class="col btn btn-dark border-primary border bg-black bg-opacity-50 rounded-pill p-0" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
                                     <div class="col row bg-transparent m-auto text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
                                         <div class="col-3 m-auto p-0">
-                                            <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid col-12 rounded-circle bg-primary" />
+                                            <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid col-12 rounded-start-pill bg-primary" />
                                         </div>
                                         <div class="col m-auto text-wrap text-truncate" friend-id="@friend.Key.Id">@friend.Key.DisplayName</div>
-                                        <div class="col-auto m-auto bg-danger rounded-pill" friend-id="@friend.Key.Id">@friend.Value</div>
+                                        <div class="col-auto m-auto bg-primary rounded-pill" friend-id="@friend.Key.Id">@friend.Value</div>
                                     </div>
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="friend-dropdown-@friendButtonIdNumber" style="z-index: 1002342442;">
@@ -141,5 +141,9 @@
                 </details>
             }
         </div>
+    }
+    else
+    {
+        <div class="text-primary position-fixed h5 align-items-center top-50 justify-content-center h-50">Login to display friends List</div>
     }
 }

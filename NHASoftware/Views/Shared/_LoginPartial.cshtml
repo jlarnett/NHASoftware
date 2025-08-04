@@ -15,29 +15,29 @@
                 <img id="ProfilePicture" src="@Url.Content(profilePicture)" class="rounded login-profile-picture"/>
             </li>
             <li class="nav-item align-self-center">
-                <a class="nav-link btn-dark text-danger h3 m-0" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @user.DisplayName!</a>
+                <a class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @user.DisplayName!</a>
             </li>
         }
         else
         {
             <li class="nav-item align-self-center">
-                <a class="nav-link btn-dark text-danger h3 m-0" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello Gangsta!</a>
+                <a class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello Gangsta!</a>
             </li>
         }
 
         <li class="nav-item align-self-center">
             <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <a type="submit" class="nav-link btn-dark text-danger h3 m-0" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">Logout</a>
+                <a type="submit" class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">Logout</a>
             </form>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link btn-dark text-danger h3 m-0" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="Identity" asp-page="/Account/Register">Register</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link btn-dark text-danger h3 m-0" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            <a class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="Identity" asp-page="/Account/Login">Login</a>
         </li>
     }
 </ul>
