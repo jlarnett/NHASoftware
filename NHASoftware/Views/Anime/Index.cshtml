@@ -20,7 +20,7 @@
 
         foreach (var letter in alphabet)
         {
-            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-light index-letters">@letter</a>
+            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters">@letter</a>
             letterCounter++;
         }
     }
