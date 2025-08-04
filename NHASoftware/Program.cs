@@ -215,7 +215,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
-//Used by postbuilder to access claims.current
+//Used by post builder to access claims.current
 app.Use(async (context, next) =>
 {
     Thread.CurrentPrincipal = context.User;
