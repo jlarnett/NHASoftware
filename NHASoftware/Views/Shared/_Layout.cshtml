@@ -165,12 +165,12 @@
 <!-- Main body Content / Contains current user's id for common.js use -->
 <div class="container-fluid bg-gradient" id="MainPageContentContainer" userId="@UserManager.GetUserId(User)" user-session-active="@SignInManager.IsSignedIn(User).ToString()" admin-user="@userIsAdmin.ToString()">
     <div class="row">
-        <div id="LeftMenu" class="col-2 border-end border-primary">
+        <div id="LeftMenu" class="col-2 mt-12 border-end border-primary p-1">
         </div>
         <main role="main" class="col p-4 pt-2 mt-12">
             @RenderBody()
         </main>
-        <div class="col-2 mt-12 bg-transparent p-1" style="min-height: 75.5em;">
+        <div class="col-2 mt-12 border-start border-primary bg-transparent p-1" style="min-height: 75.5em;">
             @{ await Html.RenderPartialAsync("FriendList/_FriendListPartial");}
         </div>
     </div>

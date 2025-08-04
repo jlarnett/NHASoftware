@@ -16,6 +16,7 @@ using NHA.Website.Software.Views.Shared.Social.ViewModels;
 using NHA.Website.Software.Entities.Social_Entities;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using NHA.Website.Software.Services.Anime;
 using NHA.Website.Software.Views.Shared.ChatSystem.ViewModels;
 
 namespace NHA.Website.Software.Controllers;
@@ -51,6 +52,7 @@ public class HomeController : Controller
     public IActionResult Index()
     {
         CreateProfilePictureHangfireJob();
+        CreateAnimeLoadHangfireJob();
         AssignSessionGuidCookie();
         return View();
     }
@@ -172,6 +174,11 @@ public class HomeController : Controller
     private void CreateProfilePictureHangfireJob()
     {
         RecurringJob.AddOrUpdate<IProfilePictureFileScrubber>(x=> x.RemoveOldProfilePicturesFromFolder(), Cron.Hourly);
+    }
+
+    private void CreateAnimeLoadHangfireJob()
+    {
+        RecurringJob.AddOrUpdate<IAnimeLeecher>(x=> x.LoadExternalAnime(), Cron.Hourly);
     }
 
     
