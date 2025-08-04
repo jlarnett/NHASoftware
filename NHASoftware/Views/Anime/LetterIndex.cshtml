@@ -14,7 +14,7 @@
 @{
     foreach (var anime in Model.AnimeList)
     {
-        <a asp-action="AnimePage" asp-route-id="@anime.Id" asp-controller="Anime" class="link-light animepage-links">@anime.AnimeName</a>
+        <a asp-action="AnimePage" asp-route-id="@anime.Id" asp-controller="Anime" class="link-primary animepage-links">@anime.AnimeName</a>
         <br/>
     }
 }
