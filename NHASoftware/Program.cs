@@ -137,6 +137,7 @@ builder.Services.AddTransient<ITimeBender, TimeBender>();
 builder.Services.AddTransient<IPostBuilder, PostBuilder>();
 builder.Services.AddTransient<ISessionHistoryRepository, SessionHistoryRepository>();
 builder.Services.AddTransient<IActiveSessionTracker, ActiveSessionTracker>();
+builder.Services.AddTransient<IAnimeLeecher, AnimeLeecher>();
 
 
 //Cookie service
