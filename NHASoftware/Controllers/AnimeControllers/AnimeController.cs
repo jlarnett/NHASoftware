@@ -37,6 +37,8 @@ public class AnimeController : Controller
         //Getting all anime that starts with specific alphabet letter
         foreach (var anime in completeAnimeList)
         {
+            if(anime.AnimeName == null) continue;
+            
             if (anime.AnimeName.StartsWith(letter))
             {
                 animeList.Add(anime);
