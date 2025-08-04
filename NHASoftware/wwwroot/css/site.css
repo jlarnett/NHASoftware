@@ -45,9 +45,8 @@ body {
 
 /*Upper Right Navbar Profile Picture. Shown when logged in. */
 .login-profile-picture {
-    width: 60px;
-    height: 60px;
-    margin-right: 2px;
+    width: 50px;
+    height: 50px;
 }
 
 .form-group {
