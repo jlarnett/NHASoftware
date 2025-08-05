@@ -42,21 +42,43 @@ namespace NHA.Website.Software.Services.Anime
                     {
                         if (anime.title_english != null && anime.title != null)
                         {
-                            if (knownAnimeList.Add(anime.title_english))
+                            var exists = knownAnimeList.Contains(anime.title_english) ||
+                                         knownAnimeList.Contains(anime.title);
+                            
+                            if (!exists)
                             {
                                 if(anime.title_english == null && anime.title == null) 
                                     continue;
+
+                                var name = (string.IsNullOrEmpty(anime.title_english)
+                                    ? anime.title_english
+                                    : anime.title) ?? string.Empty;
                             
                                 var animePage = new AnimePage()
                                 {
-                                    AnimeName = (string.IsNullOrEmpty(anime.title_english)
-                                        ? anime.title_english
-                                        : anime.title) ?? string.Empty,
-                                    AnimeSummary = anime.synopsis
+                                    AnimeName = name,
+                                    AnimeSummary = anime.synopsis,
+                                    AnimeImageUrl = anime.images.jpg.image_url
                                 };
 
                                 _unitOfWork.AnimePageRepository.Add(animePage);
-                            }  
+                                knownAnimeList.Add(name);
+                            }
+                            else
+                            {
+                                var animePages = await _unitOfWork.AnimePageRepository.FindAsync(x => x.AnimeName.Equals(anime.title_english)
+                                                                               || x.AnimeName.Equals(
+                                                                                   anime.title_english));
+
+                                foreach (var animePage in animePages)
+                                {
+                                    animePage.AnimeName = (string.IsNullOrEmpty(anime.title_english)
+                                        ? anime.title_english
+                                        : anime.title) ?? string.Empty;
+                                    animePage.AnimeSummary = anime.synopsis;
+                                    animePage.AnimeImageUrl = anime.images.jpg.image_url;
+                                }
+                            }
                         }
                     }
 
@@ -69,7 +91,7 @@ namespace NHA.Website.Software.Services.Anime
                 }
 
                 // Optional: sleep to respect rate limits (Jikan recommends)
-                await Task.Delay(5000);
+                await Task.Delay(2500);
             }
         }
         
@@ -105,37 +127,5 @@ namespace NHA.Website.Software.Services.Anime
         {
             public List<Anime> data { get; set; } = [];
         }
-
-        public async Task<List<Anime>> FetchAllAnimeAsync()
-        {
-            var allAnime = new List<Anime>();
-            int page = 1;
-            bool hasMore = true;
-
-            using var http = new HttpClient();
-
-            while (hasMore)
-            {
-                var url = $"https://api.jikan.moe/v4/anime?page={page}&limit=25";
-                var response = await http.GetFromJsonAsync<ApiResponse>(url);
-
-                if (response?.data?.Count > 0)
-                {
-                    allAnime.AddRange(response.data);
-                    page++;
-                }
-                else
-                {
-                    hasMore = false;
-                }
-
-                // Optional: sleep to respect rate limits (Jikan recommends)
-                await Task.Delay(2);
-            }
-
-            return allAnime;
-        }
     }
-    
-    
 }

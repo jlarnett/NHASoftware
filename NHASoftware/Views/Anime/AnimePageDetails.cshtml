@@ -4,7 +4,17 @@
 <div>
     <h2>@Model.AnimeName</h2>
     <hr />
-    <div clas="AnimeSummary">
+    
+    @{
+        if (@Model.AnimeImageUrl != null)
+        {
+            <div>
+                <img src="@Model.AnimeImageUrl" class="img-fluid"/>
+            </div>
+        }
+    }
+
+    <div class="AnimeSummary">
         @Html.Raw(@Model.AnimeSummary)
     </div>
 </div>

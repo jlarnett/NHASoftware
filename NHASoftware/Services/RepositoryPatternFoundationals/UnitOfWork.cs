@@ -23,9 +23,9 @@ public class UnitOfWork : IUnitOfWork
     public ISessionHistoryRepository SessionHistoryRepository { get; set; }
     public IChatMessageRepository ChatMessageRepository { get; set; }
 
+    private readonly ILogger<UnitOfWork> _logger;
 
-
-    public UnitOfWork(ApplicationDbContext context)
+    public UnitOfWork(ApplicationDbContext context, ILogger<UnitOfWork> logger)
     {
         _context = context;
         ForumSectionRepository = new ForumSectionRepository(_context);
@@ -40,11 +40,21 @@ public class UnitOfWork : IUnitOfWork
         PostImageRepository = new PostImageRepository(_context);
         SessionHistoryRepository = new SessionHistoryRepository(_context);
         ChatMessageRepository = new ChatMessageRepository(_context);
+
+        _logger = logger;
     }
 
     public async Task<int> CompleteAsync()
     {
-        return await _context.SaveChangesAsync();
+        try
+        {
+            return await _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            return 0;
+        }
     }
     public async void Dispose()
     {

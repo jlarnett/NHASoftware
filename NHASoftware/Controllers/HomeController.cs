@@ -173,12 +173,12 @@ public class HomeController : Controller
 
     private void CreateProfilePictureHangfireJob()
     {
-        RecurringJob.AddOrUpdate<IProfilePictureFileScrubber>(x=> x.RemoveOldProfilePicturesFromFolder(), Cron.Hourly);
+        RecurringJob.AddOrUpdate<IProfilePictureFileScrubber>("ProfilePictureScrubber", x=> x.RemoveOldProfilePicturesFromFolder(), Cron.Hourly);
     }
 
     private void CreateAnimeLoadHangfireJob()
     {
-        RecurringJob.AddOrUpdate<IAnimeLeecher>(x=> x.LoadExternalAnime(), Cron.Hourly);
+        RecurringJob.AddOrUpdate<IAnimeLeecher>("AnimeLeecher", x=> x.LoadExternalAnime(), Cron.Weekly);
     }
 
     
