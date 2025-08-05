@@ -10,6 +10,7 @@
 @inject IFriendSystem FriendSystem
 @inject IWarden Warden
 @inject SignInManager<ApplicationUser> SignInManager
+@inject IWebHostEnvironment WebHostEnvironment
 
 <!DOCTYPE html>
 <html lang="en">
@@ -66,15 +67,13 @@
 
                         <li class="nav-item align-self-center"><a class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
 
-                    @if (Warden.IsAdmin(User))
-                    {
-                            <li class="nav-item align-self-center"><a class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a></li>
-                    }
-                    
                     <feature name="@FeatureFlags.AnimeEnabled">
                             <li class="nav-item align-self-center"><a class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
                     </feature>
-                    
+                    <feature name="@FeatureFlags.">
+                        <li class="nav-item align-self-center"><a class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="" asp-controller="Anime" asp-action="Index">Game Wiki</a></li>
+                    </feature>
+
                     <feature name="@FeatureFlags.ForumsEnabled">
                             <li class="nav-item align-self-center"><a class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
                     </feature>
@@ -82,8 +81,11 @@
                     <feature name="@FeatureFlags.CryptoEnabled">
                             <li class="nav-item align-self-center"><a class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
                     </feature>
-                    
-                    @{
+                        @if (Warden.IsAdmin(User))
+                        {
+                            <li class="nav-item align-self-center"><a class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a></li>
+                        }
+                        @{
                         //Returns IEnumerable list of all pending FriendRequestDTOs
                         var requests = await FriendSystem.GetPendingFriendRequestsAsync(UserManager.GetUserId(User)!);
 
@@ -166,9 +168,8 @@
 <!-- Main body Content / Contains current user's id for common.js use -->
 <div class="container-fluid bg-gradient" id="MainPageContentContainer" userId="@UserManager.GetUserId(User)" user-session-active="@SignInManager.IsSignedIn(User).ToString()" admin-user="@userIsAdmin.ToString()">
     <div class="row">
-        <div id="LeftMenu" class="col-2 mt-12 border-end border-primary p-1">
-            @{ await Html.RenderPartialAsync("Sponsers/_SponsorListPartial");}
-
+        <div id="LeftMenu" class="col-2 mt-12 border-end border-primary bg-transparent p-1">
+                @{ await Html.RenderPartialAsync("Sponsers/_SponsorListPartial"); }
         </div>
         <main role="main" class="col p-4 pt-2 mt-12">
             @RenderBody()

@@ -39,6 +39,10 @@
     left: 0;
 }
 
+.ridge {
+    border-style: ridge;
+}
+
 .carousel-item img {
     height: 100%; /* Bootstrap handles width already */
     object-fit: contain; /* or 'contain' if you want stretch instead of crop */

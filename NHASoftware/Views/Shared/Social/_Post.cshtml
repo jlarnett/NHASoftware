@@ -16,7 +16,7 @@
 
 }
 
-<div class="container-fluid border shadow-sm border-primary rounded-2 mt-2 post-container" post-id="@Model.Id" images-attached="@Model.HasImagesAttached.ToString()" images-loaded="false" post-uuid="@uuid.ToString()">
+<div class="container-fluid border border-2 shadow border-primary ridge rounded-2 mt-2 post-container" post-id="@Model.Id" images-attached="@Model.HasImagesAttached.ToString()" images-loaded="false" post-uuid="@uuid.ToString()">
     <div class="row align-items-center mt-2">
         <!--User Profile image & display name-->
         <div class="col-1 px-2">
@@ -57,11 +57,11 @@
             <div id="Image-Carousel-@uuid" class="carousel slide border border-white" data-bs-interval="false" style="display: none">
                 <div class="carousel-inner" id="Image-Carousel-Inner-@uuid">
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#Image-Carousel-@uuid" data-bs-slide="prev">
+                <button class="carousel-control-prev bg-black" type="button" data-bs-target="#Image-Carousel-@uuid" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#Image-Carousel-@uuid" data-bs-slide="next">
+                <button class="carousel-control-next bg-black" type="button" data-bs-target="#Image-Carousel-@uuid" data-bs-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Next</span>
                 </button>

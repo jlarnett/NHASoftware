@@ -35,7 +35,7 @@ body {
 }
 
 .selected {
-    border: solid 1px yellow;
+    border: ridge 2px red;
 }
 
 .post-create-input {
