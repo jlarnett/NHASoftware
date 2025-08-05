@@ -72,10 +72,6 @@ namespace NHA.Website.Software.Services.Anime
 
                                 foreach (var animePage in animePages)
                                 {
-                                    animePage.AnimeName = (string.IsNullOrEmpty(anime.title_english)
-                                        ? anime.title_english
-                                        : anime.title) ?? string.Empty;
-                                    animePage.AnimeSummary = anime.synopsis;
                                     animePage.AnimeImageUrl = anime.images.jpg.image_url;
                                 }
                             }

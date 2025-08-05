@@ -7,6 +7,7 @@ using NHA.Website.Software.Entities.ChatSystem;
 using NHA.Website.Software.Entities.Forums;
 using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Entities.Session;
+using NHA.Website.Software.Entities.Sponsors;
 
 namespace NHA.Website.Software.DBContext;
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -23,7 +24,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Post>().HasMany(p => p.PostImages).WithOne(p => p.Post).OnDelete(DeleteBehavior.Restrict);
     }
 
-
     public DbSet<ForumSection>? ForumSections { get; set; }
     public DbSet<ForumTopic>? ForumTopics { get; set; }
     public DbSet<ForumPost>? ForumPosts { get; set; }
@@ -38,5 +38,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<SessionHistoryEvent>? SessionHistory { get; set; }
     public DbSet<ChatMessage>? ChatMessages { get; set; }
     public DbSet<RemovedProfilePicturePath>? RemovedProfilePicturePaths { get; set; }
+    public DbSet<SponsorAd>? Ads { get; set; }
 
 }

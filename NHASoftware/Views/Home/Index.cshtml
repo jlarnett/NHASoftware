@@ -38,13 +38,13 @@
                     </form>
                 </div>
                 <div class="row p-2">
-                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="col btn btn-outline-primary p-0 fs-2">Upload</button>
+                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="col btn btn-primary p-0 fs-2">Upload</button>
                     <feature name="@FeatureFlags.CustomizedPostsEnabled">
-                        <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col btn btn-outline-primary p-0 fs-2" data-bs-toggle="modal" data-bs-target="#AddPostPhotosModal">Upload With Photos</button>
+                        <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col btn btn-dark p-0 fs-2" data-bs-toggle="modal" data-bs-target="#AddPostPhotosModal">Upload With Photos</button>
                     </feature>
                 </div>
                 <div class="row p-0">
-                    <span id="MainPostTextboxValidationMessage" style="display: none; color: red">Error Submitting Post.....</span>
+                    <span id="MainPostTextboxValidationMessage" class="text-primary" style="display: none;">Error Submitting Post.....</span>
                 </div>
             </div>
         </div>

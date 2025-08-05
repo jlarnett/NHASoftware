@@ -5,6 +5,7 @@
 @using NHA.Website.Software.FeatureManagement
 @using NHA.Website.Software.Services.AccessWarden
 @using NHA.Website.Software.Services.FriendSystem
+@using NHA.Website.Software.Services.Sponsors
 @inject UserManager<ApplicationUser> UserManager
 @inject IFriendSystem FriendSystem
 @inject IWarden Warden
@@ -166,6 +167,8 @@
 <div class="container-fluid bg-gradient" id="MainPageContentContainer" userId="@UserManager.GetUserId(User)" user-session-active="@SignInManager.IsSignedIn(User).ToString()" admin-user="@userIsAdmin.ToString()">
     <div class="row">
         <div id="LeftMenu" class="col-2 mt-12 border-end border-primary p-1">
+            @{ await Html.RenderPartialAsync("Sponsers/_SponsorListPartial");}
+
         </div>
         <main role="main" class="col p-4 pt-2 mt-12">
             @RenderBody()

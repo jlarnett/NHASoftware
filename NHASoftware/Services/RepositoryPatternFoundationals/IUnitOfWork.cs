@@ -4,6 +4,8 @@ using NHA.Website.Software.Services.Forums;
 using NHA.Website.Software.Services.FriendSystem;
 using NHA.Website.Software.Services.SessionHistory;
 using NHA.Website.Software.Services.Social;
+using NHA.Website.Software.Services.Sponsors;
+
 namespace NHA.Website.Software.Services.RepositoryPatternFoundationals;
 public interface IUnitOfWork
 {
@@ -19,5 +21,6 @@ public interface IUnitOfWork
     IPostImageRepository PostImageRepository { get; }
     ISessionHistoryRepository SessionHistoryRepository { get; }
     IChatMessageRepository ChatMessageRepository { get; }
+    ISponsorAdRepository SponsorAdRepository { get; }
     Task<int> CompleteAsync();
 }

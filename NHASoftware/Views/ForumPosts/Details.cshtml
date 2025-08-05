@@ -17,7 +17,7 @@
 </head>
 
 <div class="d-grid gap-2">
-    <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="@Model.ForumPost.Id" class=" btn btn-outline-warning">Create Comment</a>
+    <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="@Model.ForumPost.Id" class=" btn btn-dark">Create Comment</a>
 </div>
 
 <hr />
@@ -29,26 +29,26 @@
             string forumPostText = Model.ForumPost.ForumText;
         }
         
-        <div class="container-fluid modern-forum-post-container p-4">
+        <div class="container-fluid modern-forum-post-container p-4 shadow">
             <div class="row align-items-center border-bottom border-dark mb-2 p-2">
-                <div class="col-3 align-self-start border border-dark border-4 rounded-pill p-4 me-4 shadow">
+                <div class="col-3 align-self-start border border-dark border-2 rounded-pill p-4 me-4 shadow">
                     <div class="row col m-auto">
                         <img src="@Url.Content(profilePicture)" class="img-fluid rounded-pill col-12 m-auto"/>
                     </div>
-                    <div class="row h2 text-center text-black text-break">
-                         <div class="text-break col text-danger">@Model.ForumPost.User.DisplayName</div>
+                    <div class="row h4 text-center text-black text-break">
+                         <div class="text-break col text-primary">@Model.ForumPost.User.DisplayName</div>
                     </div>
                 </div>
                 <div class="col border-start border-dark">
                     <div class="row align-content-center">
-                        <div class="h1 text-center text-danger">@Model.ForumPost.Title</div>
+                        <div class="h3 text-center text-primary">@Model.ForumPost.Title</div>
                     </div>
-                    <div class="row text-center">@Html.Raw(forumPostText)</div>
+                    <div class="row h5 text-center">@Html.Raw(forumPostText)</div>
                 </div>
             </div>
             <div class="row m-auto">
                 <div class="col m-auto">
-                    <h3 id="PostDate"></h3>
+                    <h5 id="PostDate"></h5>
                 </div>
                 <div class="col-auto m-auto">
                     <div class="row align-content-center m-auto">

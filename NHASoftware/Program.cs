@@ -30,6 +30,7 @@ using NHA.Website.Software.Services.ChatSystem;
 using NHA.Website.Software.Services.ProfilePicture;
 using NHA.Website.Software.Services.SessionHistory;
 using NHA.Website.Software.Services.Social.PostBuilderService;
+using NHA.Website.Software.Services.Sponsors;
 using NHA.Website.Software.Services.Time;
 using NHA.Website.Software.SessionTrackingMiddleware;
 
@@ -136,8 +137,10 @@ builder.Services.AddTransient<IChatMessageRepository, ChatMessageRepository>();
 builder.Services.AddTransient<ITimeBender, TimeBender>();
 builder.Services.AddTransient<IPostBuilder, PostBuilder>();
 builder.Services.AddTransient<ISessionHistoryRepository, SessionHistoryRepository>();
+builder.Services.AddTransient<ISponsorAdRepository, SponsorAdRepository>();
 builder.Services.AddTransient<IActiveSessionTracker, ActiveSessionTracker>();
 builder.Services.AddTransient<IAnimeLeecher, AnimeLeecher>();
+builder.Services.AddTransient<IAdMaximizerService, AdMaximizerService>();
 
 
 //Cookie service

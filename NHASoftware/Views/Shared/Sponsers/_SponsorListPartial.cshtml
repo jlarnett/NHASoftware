@@ -1,0 +1,43 @@
+﻿@using NHA.Website.Software.Services.Sponsors
+@inject IAdMaximizerService AdMaximizerService
+
+@{
+        <div id="SponsorListUI" class="col position-fixed bg-light overflow-scroll w-inherit" style="height: 100%;">
+            <div class="row m-auto pt-2 border-bottom border-primary">
+                <div class="h3 text-center text-primary">Site Sponsors</div>
+            </div>
+            
+            @{
+                var ads = await AdMaximizerService.GetBestAdsForUserAsync();
+
+                foreach (var ad in ads)
+                {
+                    if (ad.VideoUrl != null)
+                    {
+                        <div class="row m-auto pt-1 pb-1">
+                            <iframe src=@ad.VideoUrl
+                                    title="Sponsor Video"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
+                    }
+
+                    if (ad.ImageUrl != null)
+                    {
+                        <div class="row m-auto pt-1 pb-1">
+                            <iframe src=@ad.ImageUrl
+                                    title="Sponsor Video"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
+                    }
+                }
+            }
+            <div class="row m-auto pt-1 pb-1">
+                <p>Huge shoutout to all of our sponsors for supporting the site, it wouldn't be possible without you.</p>
+                <p>if you would like your channel promoted or featured click this link.</p>
+            </div>
+        </div>
+}

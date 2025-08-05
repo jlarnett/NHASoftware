@@ -14,10 +14,10 @@
 
         var commentPicture = "/ProfilePictures/" + comments[i].user.profilePicturePath;
 
-        commentsTable.row.add( ["<div class='container-fluid modern-forum-post-container p-4 mb-2' role='button'>" +
+        commentsTable.row.add( ["<div class='container-fluid shadow modern-forum-post-container p-4 mb-2' role='button'>" +
                                     "<div class='row mb-4 border-bottom border-dark p-2'>" +
                                         "<div class='col-3'>" +
-                                            "<div class='row border border-4 border-dark shadow-lg rounded-pill m-auto p-4'>" +
+                                            "<div class='row border border-2 border-dark shadow-lg rounded-pill m-auto p-4'>" +
                                                 "<div class='row col-auto align-contents-center w-100 m-auto'>" +
                                                     "<img src='" + commentPicture + "' class='col-12 img-fluid rounded-pill m-auto'/>" +
                                                 "</div>" +
@@ -27,12 +27,12 @@
                                             "</div>" +
                                         "</div>" +
                                         "<div class='col text-center align-self-center text-break border-start border-dark'>" + 
-                                            "<div class='h2'>" + comments[i].commentText + "</div>" + 
+                                            "<div class='h5'>" + comments[i].commentText + "</div>" + 
                                         "</div>" +
                                     "</div>" +
                                     "<div class='row align-content-end'>" +
                                         "<div class='col-auto'>" +
-                                            "<h3 >" + date + "</h3>" +
+                                            "<h5>" + date + "</h3>" +
                                         "</div>" +
                                         checkIfCommentUser(comments[i], userId, adminUserBool) +
                                             "<div class='col-auto row'>" +

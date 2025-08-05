@@ -74,9 +74,9 @@ function LoadFriendListTable(friends) {
             {
                 data : null,
                 render: function (data, type, row, meta) {
-                    return "<div class='border-primary border'> " +
+                    return "<div class='border-primary rounded-2 border p-2'> " +
                                 "<div class='col text-center'> " +
-                                    "<a class='h1 link-secondary text-decoration-none' href='/Users/GetProfiles?userId=" + row.id + "'>" + row.displayName + "</a>" +
+                                    "<a class='h5 link-black text-decoration-none' href='/Users/GetProfiles?userId=" + row.id + "'>" + row.displayName + "</a>" +
                                 "</div>" +
                             "</div>"
                 }
@@ -86,9 +86,9 @@ function LoadFriendListTable(friends) {
                 render: function (data, type, row, meta) {
 
                     if (IsCurrentUserAdmin() === "True" || friendListTableJquery.attr("profile-user-id") === RetrieveCurrentUserId()) {
-                        return "<div class='border-primary border'> " +
+                        return "<div class='border-primary rounded-2 border p-2'> " +
                             "<div class='border-end border-primary'> " +
-                            "<a class='h1 link-danger remove-friend' role='button' data-bs-toggle='modal' friend-user-displayname='" + row.displayName + "' friend-user-id='" + row.id + "' data-bs-target='#DeleteFriendModal'>Delete</a>"
+                            "<a class='h5 link-primary remove-friend' role='button' data-bs-toggle='modal' friend-user-displayname='" + row.displayName + "' friend-user-id='" + row.id + "' data-bs-target='#DeleteFriendModal'>Delete</a>"
                         "</div>" +
                             "</div>"
                     }

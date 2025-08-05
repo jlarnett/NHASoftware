@@ -5,6 +5,8 @@ using NHA.Website.Software.Services.Forums;
 using NHA.Website.Software.Services.FriendSystem;
 using NHA.Website.Software.Services.SessionHistory;
 using NHA.Website.Software.Services.Social;
+using NHA.Website.Software.Services.Sponsors;
+
 namespace NHA.Website.Software.Services.RepositoryPatternFoundationals;
 public class UnitOfWork : IUnitOfWork
 {
@@ -22,6 +24,8 @@ public class UnitOfWork : IUnitOfWork
     public IPostImageRepository PostImageRepository { get; set; }
     public ISessionHistoryRepository SessionHistoryRepository { get; set; }
     public IChatMessageRepository ChatMessageRepository { get; set; }
+    public ISponsorAdRepository SponsorAdRepository { get; set; }
+
 
     private readonly ILogger<UnitOfWork> _logger;
 
@@ -40,7 +44,8 @@ public class UnitOfWork : IUnitOfWork
         PostImageRepository = new PostImageRepository(_context);
         SessionHistoryRepository = new SessionHistoryRepository(_context);
         ChatMessageRepository = new ChatMessageRepository(_context);
-
+        SponsorAdRepository = new SponsorAdRepository(_context);
+        
         _logger = logger;
     }
 

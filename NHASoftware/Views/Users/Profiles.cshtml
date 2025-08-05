@@ -29,19 +29,19 @@
 }
 
 <div class="container-fluid">
-    <div class="row border-primary border">
-        <div class="border-end border-primary col-4 p-0">
-            <img class="img-fluid" src="~/ProfilePictures/@Model.User.ProfilePicturePath" alt="@Model.User.DisplayName's Profile Picture'"/>
+    <div class="row border-primary border rounded-2">
+        <div class="border-end border-primary col-4 p-2">
+            <img class="img-fluid rounded-2" src="~/ProfilePictures/@Model.User.ProfilePicturePath" alt="@Model.User.DisplayName's Profile Picture'"/>
         </div>
-        <div class="col border-end border-bottom border-primary text-center">
+        <div class="col border-end border-primary text-center">
 
-            <a class="link-secondary h1" role="button" href="/Users/FriendsView?userId=@Model.User.Id">@friendCount Friends</a>
+            <a class="link-primary h5" role="button" href="/Users/FriendsView?userId=@Model.User.Id">@friendCount Friends</a>
             
             @if (User.Identity!.IsAuthenticated && !userManager.GetUserId(User)!.Equals(Model.User.Id))
             {
 
-                <div class="border border-primary mb-2">
-                    <a class="link-secondary h1 border-bottom border-primary" role="button" href="/Users/MutualFriendsView?userIdOne=@Model.User.Id&userIdTwo=@activeUserId">@mutualFriendCount Mutual Friends</a>
+                <div class="border-top border-dark mb-2">
+                    <a class="link-dark h5" role="button" href="/Users/MutualFriendsView?userIdOne=@Model.User.Id&userIdTwo=@activeUserId">@mutualFriendCount Mutual Friends</a>
                     <div class="flex-wrap">
                         @{
                             var mutualFriendCounter = 0;
@@ -51,12 +51,12 @@
                             {
                                 if (mutualFriendCounter < mutualFriendMax)
                                 {
-                                    <div class="d-flex border-bottom border-primary">
+                                    <div class="d-flex border-bottom border-dark p-2">
                                         <div class="text-center">
-                                            <div class="col-2 m-auto">
+                                           <div class="col-2 m-auto">
                                                 <img class="img-fluid" src="~/ProfilePictures/@user.ProfilePicturePath" href="" alt="@user.DisplayName's Profile Picture'"/>
                                             </div>
-                                            <a class="link-secondary h3" href="/Users/GetProfiles?userId=@user.Id" role="button">@user.DisplayName</a>
+                                            <a class="link-primary h3" href="/Users/GetProfiles?userId=@user.Id" role="button">@user.DisplayName</a>
                                         </div>
                                     </div>
                                     mutualFriendCounter++;
@@ -72,22 +72,22 @@
             }
 
         </div>
-        <div class="col border-bottom border-primary">
-            <h1 class="text-center h1">User Biography</h1>
+        <div class="col">
+            <h1 clas s="text-center h1">User Biography</h1>
             <div>This is a test biography that needs to be modified.This is a test biography that needs to be modified.
                 This is a test biography that needs to be modified.This is a test biography that needs to be modified.</div>
             <div class="container-fluid">
                 <div class="row">
                     <div class="col"></div>
-                    <button class="btn-dark m-md-auto col-2">
+                    <button class="btn-outline-dark rounded-2 m-md-auto col-2">
                         edit
                     </button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row border border-primary">
-        <div class="p-2 col-4 align-self-center border border-3 border-danger">
+    <div class="row border-start border-end border-bottom border-primary">
+        <div class="p-2 col-4 align-self-center ">
             <h2 class="text-center display-6 text-break m-auto">@Model.User.DisplayName</h2>
         </div>
         
@@ -99,7 +99,7 @@
         <div class="dropdown col-md-4 p-1 align-self-center" id="FriendRequestButton" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)" isFriends="@isFriends" friendRequestSent="@friendRequestSent">
             @Html.AntiForgeryToken()
 
-            <a class="btn btn-primary dropdown-toggle col-6 my-auto" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="btn btn-outline-primary dropdown-toggle col-6 my-auto" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <img id="FriendRequestIcon" src="~/Images/CheckMarkIcon.png" alt="FriendCheckMarkIcon" class=" col img-fluid"/>
                 <div id="FriendDropdownText" class="d-inline-block">TEST VALUE</div>
             </a>

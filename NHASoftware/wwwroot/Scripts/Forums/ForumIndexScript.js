@@ -11,6 +11,7 @@
             else {
                 var table = $("#" + ForumsKV[i].key).DataTable();
                 keys.push(ForumsKV[i].key);
+                table.columns.adjust().draw();
             }
         }
 
@@ -47,6 +48,7 @@
                                     "</div>" +
                                 "</div>" +
                 "</a></div>"]).draw();
+                table2.columns.adjust().draw();
         }
 }
 

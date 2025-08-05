@@ -46,13 +46,13 @@
 
 /*Controls the Main post summernote textbox text color*/
 .note-editor.note-frame .note-editing-area .note-editable {
-    color: #d7dbe1;
+    color: black;
     /*width: 80.3em;*/
 }
 
 /*Controls the Main post summernote textbox text color*/
 .note-editable > p {
-    color: #d7dbe1;
+    color: black;
 }
 
 /*Helps disable summernote drag & drop image problem*/
