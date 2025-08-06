@@ -40,45 +40,55 @@ namespace NHA.Website.Software.Services.Anime
                 {
                     foreach (var anime in response.data)
                     {
-                        if (anime.title_english != null && anime.title != null)
+                        if (anime is not { title_english: not null, title: not null }) continue;
+                        
+                        var exists = knownAnimeList.Contains(anime.title_english) ||
+                                     knownAnimeList.Contains(anime.title);
+                            
+                        if (!exists)
                         {
-                            var exists = knownAnimeList.Contains(anime.title_english) ||
-                                         knownAnimeList.Contains(anime.title);
+                            if(anime.title_english == null && anime.title == null) 
+                                continue;
+
+                            var name = (string.IsNullOrEmpty(anime.title_english)
+                                ? anime.title_english
+                                : anime.title) ?? string.Empty;
                             
-                            if (!exists)
-                            {
-                                if(anime.title_english == null && anime.title == null) 
-                                    continue;
-
-                                var name = (string.IsNullOrEmpty(anime.title_english)
-                                    ? anime.title_english
-                                    : anime.title) ?? string.Empty;
+                                var genres = anime.genres.Select((x) => x.name);
                             
-                                var animePage = new AnimePage()
-                                {
-                                    AnimeName = name,
-                                    AnimeSummary = anime.synopsis,
-                                    AnimeImageUrl = anime.images.jpg.image_url
-                                };
-
-                                _unitOfWork.AnimePageRepository.Add(animePage);
-                                knownAnimeList.Add(name);
-                            }
-                            else
+                            var animePage = new AnimePage()
                             {
-                                var animePages = await _unitOfWork.AnimePageRepository.FindAsync(x => x.AnimeName.Equals(anime.title_english)
-                                                                               || x.AnimeName.Equals(
-                                                                                   anime.title_english));
+                                AnimeName = name,
+                                AnimeSummary = anime.synopsis,
+                                AnimeImageUrl = anime.images.jpg.image_url,
+                                AnimeStatus = anime.status,
+                                AnimeJikanScore = anime.score,
+                                AnimeGenres = string.Join(';', anime.genres.Select(x => x.name))
+                            };
 
-                                foreach (var animePage in animePages)
-                                {
-                                    animePage.AnimeImageUrl = anime.images.jpg.image_url;
-                                }
+                            _unitOfWork.AnimePageRepository.Add(animePage);
+                            knownAnimeList.Add(name);
+                        }
+                        else
+                        {
+                            //Exists we just want ot handle certain updates
+                            var animePages = await _unitOfWork.AnimePageRepository.FindAsync(x => x.AnimeName.Equals(anime.title_english)
+                                || x.AnimeName.Equals(
+                                    anime.title_english));
+
+                            foreach (var animePage in animePages)
+                            {
+                                animePage.AnimeImageUrl = anime.images.jpg.image_url;
+                                animePage.AnimeSummary = anime.synopsis;
+                                animePage.AnimeImageUrl = anime.images.jpg.image_url;
+                                animePage.AnimeStatus = anime.status;
+                                animePage.AnimeJikanScore = anime.score;
+                                animePage.AnimeGenres = string.Join(';', anime.genres.Select(x => x.name));
                             }
                         }
                     }
 
-                    await _unitOfWork.CompleteAsync();
+                    var affectedRows = await _unitOfWork.CompleteAsync();
                     this.pageNumber++;
                 }
                 else

@@ -88,9 +88,9 @@
                             <textarea class="summernote-comments text-black" post-id="@Model.Id" comment-textbox-uuid="@uuid.ToString()" name="Summary">
                             </textarea>
                         </div>
-                        <button class="btn-outline-dark rounded-2 col-1" unique-identifier="@uuid.ToString()" parent-post-id="@Model.Id">Reply</button>
+                        <button class="btn btn-dark rounded-2 col-1" unique-identifier="@uuid.ToString()" parent-post-id="@Model.Id">Reply</button>
                     </div> 
-                    <span unique-error-identifier="@uuid.ToString()" style="display: none; color: red">Error Submitting Post.....</span>
+                    <span unique-error-identifier="@uuid.ToString()" style="display: none;" class="text-primary">Error Submitting Post.....</span>
                 }
             }
         </form>

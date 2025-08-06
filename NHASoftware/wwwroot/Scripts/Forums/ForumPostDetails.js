@@ -35,11 +35,13 @@
                                             "<h5>" + date + "</h3>" +
                                         "</div>" +
                                         checkIfCommentUser(comments[i], userId, adminUserBool) +
-                                            "<div class='col-auto row'>" +
-                                                "<div class='col-2'>" +
-                                                    "<input type='image' src='/Images/LikeIcon.png' class='img-fluid js-like-comment' comment-id='" + comments[i].id + "'/>" +
+                                            "<div class='col-auto btn btn-primary js-like-comment' comment-id='" + comments[i].id + "'>" +
+                                                "<div class='row align-items-center'>" +
+                                                "<div class='col-auto'>" +
+                                                    "<input type='image' src='/Images/Facebook-Like-Filled.png' class='img-fluid col-10' />" +
                                                 "</div>" +
                                             "<div class='h3 col-auto'>" + comments[i].likeCount + "</div>" +
+                                            "</div>" +
                                         "</div>" + 
                                     "</div>" +
                                 "</div>"] ).draw();
@@ -51,12 +53,12 @@ function checkIfCommentUser(data, userIdString, adminUserBool) {
 
     if (userIdString === data.user.id || adminUserBool) {
         return "<div class='col-auto'>" +
-            "<button class='btn btn-outline-warning js-edit-comment' comment-id='" +
+            "<button class='btn btn-dark js-edit-comment' comment-id='" +
             data.id +
             "'>Edit Comment</button>" +
             "</div>" +
             "<div class='col'>" +
-            "<button class='btn btn-outline-warning js-delete-comment' comment-id='" +
+            "<button class='btn btn-primary js-delete-comment' comment-id='" +
             data.id +
             "'>Delete Comment</button>" +
             "</div>";

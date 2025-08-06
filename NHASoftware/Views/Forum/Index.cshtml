@@ -14,7 +14,7 @@
 
 
 <div class="container-fluid">
-    <div class="row h1">Forums</div>
+    <div class="row h2">Forums</div>
 
     <div class="row">
         @if (User.IsInRole("admin"))
@@ -44,18 +44,23 @@
 
                 @if (_accessWarden.IsForumAdmin(User))
                 {
-                    <summary class="modern-forum-post-container row mb-2">
-                        <h2 class="col-8 h1">@name</h2>
-                        <div class="col m-auto">
-                            <button class="btn btn-outline-warning js-edit-section" section-id="@id">Edit Section</button>
-                            <button class="btn btn-outline-danger js-delete-section" section-id="@id">Delete Section</button>
+                    <summary class="border-bottom mb-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h2 class="h1 mb-0">@name</h2>
+                            @if (_accessWarden.IsForumAdmin(User))
+                            {
+                                <div>
+                                    <button class="btn btn-dark js-edit-section" section-id="@id">Edit Section</button>
+                                    <button class="btn btn-primary js-delete-section" section-id="@id">Delete Section</button>
+                                </div>
+                            }
                         </div>
                     </summary>
                 }
                 else
                 {
-                    <summary class="modern-forum-post-container mb-2">
-                        <div class="col h1">@name</div>
+                    <summary class="border-bottom mb-2">
+                            <h2 class="h1 mb-0">@name</h2>
                     </summary>
                 }
 

@@ -6,11 +6,11 @@
 .modern-forum-post-container {
     /*background-color: #00701e;*/
     border-radius: 15px;
-    border: thin solid red;
+    border: 2px ridge red;
 }
 
 .modern-forum-post-container:hover {
-    filter: brightness(1.2);
+    filter: brightness(.85);
 }
 
 .modern-thread-link {
@@ -23,6 +23,11 @@ details > summary {
 
 details > summary::-webkit-details-marker {
     display: none;
+}
+
+summary {
+    display: list-item; /* ensures default disclosure triangle appears */
+    cursor: pointer;
 }
 
 

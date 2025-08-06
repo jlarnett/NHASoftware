@@ -10,9 +10,9 @@
 </head>
 
 <div class="container-fluid">
-    <h1 class="row col-auto">Topic - @Model.topic.Title</h1>
+    <h2 class="row col-auto">Topic - @Model.topic.Title</h2>
     <div class="row d-grid gap-2">
-        <a asp-controller="ForumPosts" asp-area="" asp-action="Create" asp-route-id="@Model.topic.Id" class="btn btn-outline-warning">Create Post</a>
+        <a asp-controller="ForumPosts" asp-area="" asp-action="Create" asp-route-id="@Model.topic.Id" class="btn btn-dark">Create Post</a>
     </div>
     
     <hr/>

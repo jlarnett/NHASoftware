@@ -5,6 +5,7 @@ using NHA.Website.Software.Entities.Social_Entities;
 using NHA.Website.Software.Entities.Anime;
 using NHA.Website.Software.Entities.ChatSystem;
 using NHA.Website.Software.Entities.Forums;
+using NHA.Website.Software.Entities.Game;
 using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Entities.Session;
 using NHA.Website.Software.Entities.Sponsors;
@@ -39,5 +40,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<ChatMessage>? ChatMessages { get; set; }
     public DbSet<RemovedProfilePicturePath>? RemovedProfilePicturePaths { get; set; }
     public DbSet<SponsorAd>? Ads { get; set; }
+    public DbSet<GamePage>? GamePages { get; set; }
+    
 
 }
