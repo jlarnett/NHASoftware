@@ -1,6 +1,6 @@
 ﻿@model NHA.Website.Software.Views.ViewModels.FriendVMs.FriendListVM
 @{
-    ViewData["Title"] = "User Profile";
+    ViewData["Title"] = $"{Model.User.DisplayName}'s Friends";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <head>

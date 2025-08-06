@@ -1,5 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model NHA.Website.Software.Entities.Anime.AnimePage
+@{
+    ViewData["Title"] = @Model.AnimeName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
 <div>
     <h2>@Model.AnimeName</h2>

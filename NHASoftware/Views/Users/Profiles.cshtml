@@ -6,7 +6,7 @@
 @inject IFriendSystem friendSystem
 
 @{
-    ViewData["Title"] = "User Profile";
+    ViewData["Title"] = @Model.User!.DisplayName;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 

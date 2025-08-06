@@ -53,13 +53,13 @@ namespace NHA.Website.Software.Services.Anime
                             var name = (string.IsNullOrEmpty(anime.title_english)
                                 ? anime.title_english
                                 : anime.title) ?? string.Empty;
-                            
-                                var genres = anime.genres.Select((x) => x.name);
+
+                            var summary = anime.synopsis ?? string.Empty;
                             
                             var animePage = new AnimePage()
                             {
                                 AnimeName = name,
-                                AnimeSummary = anime.synopsis,
+                                AnimeSummary = summary,
                                 AnimeImageUrl = anime.images.jpg.image_url,
                                 AnimeStatus = anime.status,
                                 AnimeJikanScore = anime.score,
@@ -75,11 +75,11 @@ namespace NHA.Website.Software.Services.Anime
                             var animePages = await _unitOfWork.AnimePageRepository.FindAsync(x => x.AnimeName.Equals(anime.title_english)
                                 || x.AnimeName.Equals(
                                     anime.title_english));
+                            var summary = anime.synopsis ?? string.Empty;
 
                             foreach (var animePage in animePages)
                             {
-                                animePage.AnimeImageUrl = anime.images.jpg.image_url;
-                                animePage.AnimeSummary = anime.synopsis;
+                                animePage.AnimeSummary = summary;
                                 animePage.AnimeImageUrl = anime.images.jpg.image_url;
                                 animePage.AnimeStatus = anime.status;
                                 animePage.AnimeJikanScore = anime.score;
@@ -109,9 +109,10 @@ namespace NHA.Website.Software.Services.Anime
             public string status { get; set; } = "";
             public int? episodes { get; set; }
             public double? score { get; set; }
-            public string synopsis { get; set; } = "";
+            public string? synopsis { get; set; } = "";
             public List<Genre> genres { get; set; } = [];
             public ImageGroup images { get; set; } = new ImageGroup();
+            public string? title_japanese = "";
         }
 
         public class Genre
