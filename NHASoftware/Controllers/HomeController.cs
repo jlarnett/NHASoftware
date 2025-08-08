@@ -17,6 +17,7 @@ using NHA.Website.Software.Entities.Social_Entities;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using NHA.Website.Software.Services.Anime;
+using NHA.Website.Software.Services.Game;
 using NHA.Website.Software.Views.Shared.ChatSystem.ViewModels;
 
 namespace NHA.Website.Software.Controllers;
@@ -53,6 +54,7 @@ public class HomeController : Controller
     {
         CreateProfilePictureHangfireJob();
         CreateAnimeLoadHangfireJob();
+        CreateGameLoadHangfireJob();
         AssignSessionGuidCookie();
         return View();
     }
@@ -171,17 +173,23 @@ public class HomeController : Controller
         return result > 0;
     }
 
-    private void CreateProfilePictureHangfireJob()
-    {
+    /// <summary>
+    /// Makes sure the recurring profile picture scrubber hangfire job is scheduled weekly
+    /// </summary>
+    private void CreateProfilePictureHangfireJob() =>
         RecurringJob.AddOrUpdate<IProfilePictureFileScrubber>("ProfilePictureScrubber", x=> x.RemoveOldProfilePicturesFromFolder(), Cron.Hourly);
-    }
 
-    private void CreateAnimeLoadHangfireJob()
-    {
+    /// <summary>
+    /// Make sure the recurring anime load hangfire job is scheduled weekly
+    /// </summary>
+    private void CreateAnimeLoadHangfireJob() =>
         RecurringJob.AddOrUpdate<IAnimeLeecher>("AnimeLeecher", x=> x.LoadExternalAnime(), Cron.Weekly);
-    }
 
-    
+    /// <summary>
+    /// Make sure the recurring game load hangfire job is scheduled weekly
+    /// </summary>
+    private void CreateGameLoadHangfireJob() =>
+        RecurringJob.AddOrUpdate<IGameLeecher>("GameLeecher", x=> x.LoadExternalGameInformation(), Cron.Weekly);
 
     private void AssignSessionGuidCookie()
     {

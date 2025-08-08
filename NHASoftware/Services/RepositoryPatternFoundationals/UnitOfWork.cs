@@ -3,6 +3,7 @@ using NHA.Website.Software.Services.Anime;
 using NHA.Website.Software.Services.ChatSystem;
 using NHA.Website.Software.Services.Forums;
 using NHA.Website.Software.Services.FriendSystem;
+using NHA.Website.Software.Services.Game;
 using NHA.Website.Software.Services.SessionHistory;
 using NHA.Website.Software.Services.Social;
 using NHA.Website.Software.Services.Sponsors;
@@ -25,6 +26,7 @@ public class UnitOfWork : IUnitOfWork
     public ISessionHistoryRepository SessionHistoryRepository { get; set; }
     public IChatMessageRepository ChatMessageRepository { get; set; }
     public ISponsorAdRepository SponsorAdRepository { get; set; }
+    public IGamePageRepository GamePageRepository { get; set; }
 
 
     private readonly ILogger<UnitOfWork> _logger;
@@ -45,10 +47,15 @@ public class UnitOfWork : IUnitOfWork
         SessionHistoryRepository = new SessionHistoryRepository(_context);
         ChatMessageRepository = new ChatMessageRepository(_context);
         SponsorAdRepository = new SponsorAdRepository(_context);
+        GamePageRepository = new GamePageRepository(_context);
         
         _logger = logger;
     }
 
+    /// <summary>
+    /// Saves all changes for unit of work service.
+    /// </summary>
+    /// <returns></returns>
     public async Task<int> CompleteAsync()
     {
         try
@@ -61,6 +68,10 @@ public class UnitOfWork : IUnitOfWork
             return 0;
         }
     }
+    
+    /// <summary>
+    /// Dispose of the ApplicationDBContext
+    /// </summary>
     public async void Dispose()
     {
         await _context.DisposeAsync();

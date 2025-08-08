@@ -27,6 +27,7 @@ using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Profiles;
 using NHA.Website.Software.Services.ChatSystem;
+using NHA.Website.Software.Services.Game;
 using NHA.Website.Software.Services.ProfilePicture;
 using NHA.Website.Software.Services.SessionHistory;
 using NHA.Website.Software.Services.Social.PostBuilderService;
@@ -140,6 +141,7 @@ builder.Services.AddTransient<ISessionHistoryRepository, SessionHistoryRepositor
 builder.Services.AddTransient<ISponsorAdRepository, SponsorAdRepository>();
 builder.Services.AddTransient<IActiveSessionTracker, ActiveSessionTracker>();
 builder.Services.AddTransient<IAnimeLeecher, AnimeLeecher>();
+builder.Services.AddTransient<IGameLeecher, GameLeecher>();
 builder.Services.AddTransient<IAdMaximizerService, AdMaximizerService>();
 
 

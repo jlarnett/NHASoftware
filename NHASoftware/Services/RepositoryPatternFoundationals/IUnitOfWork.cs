@@ -2,6 +2,7 @@
 using NHA.Website.Software.Services.ChatSystem;
 using NHA.Website.Software.Services.Forums;
 using NHA.Website.Software.Services.FriendSystem;
+using NHA.Website.Software.Services.Game;
 using NHA.Website.Software.Services.SessionHistory;
 using NHA.Website.Software.Services.Social;
 using NHA.Website.Software.Services.Sponsors;
@@ -22,5 +23,6 @@ public interface IUnitOfWork
     ISessionHistoryRepository SessionHistoryRepository { get; }
     IChatMessageRepository ChatMessageRepository { get; }
     ISponsorAdRepository SponsorAdRepository { get; }
+    IGamePageRepository GamePageRepository { get; }
     Task<int> CompleteAsync();
 }

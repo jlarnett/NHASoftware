@@ -1,0 +1,94 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model NHA.Website.Software.Entities.Game.GamePage
+@{
+    ViewData["Title"] = @Model.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+    <h2>@Model.Name</h2>
+    <hr />
+    
+    @{
+        if (@Model.ImageUrl != null)
+        {
+            <div class="row mb-4">
+                <div class="col-6">
+                    <img src="@Model.ImageUrl" class="img-fluid"/>
+                </div>
+            </div>
+        }
+        if (@Model.GameScore != null)
+        {
+            <div>RawgScore: <strong>@Model.GameScore</strong></div>
+        }
+        if (@Model.Released != null)
+        {
+            <div>Released on: <strong>@Model.Released</strong></div>            
+        }
+
+        <hr/>
+
+        <div class="row">
+            @if (@Model.Genres != null)
+            {
+                var genres = @Model.Genres.Split(';');
+
+                <div class="col">
+                    <div class="h5 text-primary">Genres:</div>
+
+                    @for (int i = 0; i < genres.Length; i++)
+                    {
+                        if (i % 2 == 0)
+                        {
+                            <span class="badge text-bg-dark p-2 mb-2">@genres[i]</span>
+                        }
+                        else
+                        {
+                            <span class="badge text-bg-primary p-2 mb-2">@genres[i]</span>
+                        }
+                    }
+                </div>
+
+                <div class="col">
+                    @if (@Model.Platforms != null)
+                    {
+                        var platforms = @Model.Platforms.Split(';');
+                        var colorIndex = 0;
+
+                        <div class="h5 text-dark">Platforms:</div>
+
+                        for (int i = 0; i < platforms.Length; i++)
+                        {
+                            switch (i)
+                            {
+                                case 0:
+                                    <span class="badge text-bg-primary col-auto p-2">@platforms[i]</span>
+                                    break;
+                                case 1:
+                                    <span class="badge text-bg-warning col-auto p-2">@platforms[i]</span>
+                                    break;
+                                case 2:
+                                    <span class="badge text-bg-dark col-auto p-2">@platforms[i]</span>
+                                    colorIndex = 0;
+                                    break;
+                            }
+
+                            colorIndex++;
+                        }
+                    }
+                </div>
+
+            }
+        </div>
+    }
+    
+    <hr/>
+    <div class="AnimeSummary">
+        @Html.Raw(@Model.Summary)
+    </div>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -40,10 +40,10 @@ namespace NHA.Website.Software.Services.Anime
                 {
                     foreach (var anime in response.data)
                     {
-                        if (anime is not { title_english: not null, title: not null }) continue;
+                        if (anime is not { title_english: not null, title: not null, title_japanese: not null }) continue;
                         
                         var exists = knownAnimeList.Contains(anime.title_english) ||
-                                     knownAnimeList.Contains(anime.title);
+                                     knownAnimeList.Contains(anime.title) || knownAnimeList.Contains(anime.title_japanese);
                             
                         if (!exists)
                         {
@@ -54,6 +54,9 @@ namespace NHA.Website.Software.Services.Anime
                                 ? anime.title_english
                                 : anime.title) ?? string.Empty;
 
+                            if (name.Equals(""))
+                                name = anime.title_japanese ?? string.Empty;
+                            
                             var summary = anime.synopsis ?? string.Empty;
                             
                             var animePage = new AnimePage()
@@ -63,7 +66,7 @@ namespace NHA.Website.Software.Services.Anime
                                 AnimeImageUrl = anime.images.jpg.image_url,
                                 AnimeStatus = anime.status,
                                 AnimeJikanScore = anime.score,
-                                AnimeGenres = string.Join(';', anime.genres.Select(x => x.name))
+                                AnimeGenres = string.Join(';', anime.genres.Select(x => x.name)),
                             };
 
                             _unitOfWork.AnimePageRepository.Add(animePage);
@@ -72,9 +75,9 @@ namespace NHA.Website.Software.Services.Anime
                         else
                         {
                             //Exists we just want ot handle certain updates
-                            var animePages = await _unitOfWork.AnimePageRepository.FindAsync(x => x.AnimeName.Equals(anime.title_english)
-                                || x.AnimeName.Equals(
-                                    anime.title_english));
+                            var animePages = await _unitOfWork.AnimePageRepository.
+                                FindAsync(x => x.AnimeName.Equals(anime.title_english) || x.AnimeName.Equals(anime.title_japanese) || x.AnimeName.Equals(anime.title));
+                            
                             var summary = anime.synopsis ?? string.Empty;
 
                             foreach (var animePage in animePages)

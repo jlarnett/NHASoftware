@@ -1,6 +1,13 @@
-﻿@{
+﻿@using NHA.Website.Software.Services.RepositoryPatternFoundationals
+@inject IUnitOfWork unitOfWork;
+
+@{
     ViewData["Title"] = "Anime";
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var animePageCount = await unitOfWork.AnimePageRepository.CountAsync(x => x.Id != null);
 }
 
 <head>
@@ -8,7 +15,7 @@
 </head>
 
 <div>
-    <h2>Alphabetical Anime Index</h2>
+    <h2>Alphabetical Anime Index <em class=" h3 text-primary">(@animePageCount)</em></h2>
     
     <a asp-action="CreateAnimePage" asp-controller="Anime">Create Anime Entry</a>
 

@@ -1,4 +1,7 @@
-﻿@{
+﻿@using NHA.Website.Software.Services.RepositoryPatternFoundationals
+@inject IUnitOfWork unitOfWork
+
+@{
     ViewData["Title"] = "Games";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -6,9 +9,11 @@
 <head>
     <link rel="stylesheet" href="css/AnimePages.css">
 </head>
-
+@{
+    var gamePageCount = await unitOfWork.GamePageRepository.CountAsync(x => x.Id != null);
+}
 <div>
-    <h2>Alphabetical Game Index</h2>
+    <h2>Alphabetical Game Index <em class=" h3 text-primary">(@gamePageCount)</em></h2>
     
     <a asp-action="CreateAnimePage" asp-controller="Anime">Create Game Entry</a>
 
@@ -20,7 +25,7 @@
 
         foreach (var letter in alphabet)
         {
-            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters">@letter</a>
+            <a asp-action="LetterDetail" asp-controller="Game" asp-route-id="@letterCounter" class="link-primary index-letters">@letter</a>
             letterCounter++;
         }
     }

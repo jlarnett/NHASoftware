@@ -27,6 +27,14 @@ public class GamePage
     [MaxLength(200)]
     public string? Genres { get; set; } = string.Empty;
 
+    [DisplayName("Platform")]
+    [MaxLength(200)]
+    public string? Platforms { get; set; } = string.Empty;
+
+    [DisplayName("Date Released")] 
+    [MaxLength(50)]
+    public string? Released { get; set; } = string.Empty;
+
     public int UpVotes { get; set; }
     public int DownVotes { get; set; }
 }

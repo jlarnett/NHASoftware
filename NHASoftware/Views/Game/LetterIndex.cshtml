@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model NHA.Website.Software.Views.ViewModels.AnimeVMs.LetterIndexViewModel
+@model NHA.Website.Software.Views.ViewModels.GameVms.LetterGameIndexViewModel
 @{
     ViewData["Title"] = "Anime";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -10,15 +10,15 @@
 </head>
 
 @{
-    var letterAnimeCount = @Model.AnimeList.Count;
+    var letterAnimeCount = @Model.GameList.Count;
 }
 
 <h1>@Model.AlphabetLetter <em class="h3 text-primary">(@letterAnimeCount)</em></h1>
 
 @{
-    foreach (var anime in Model.AnimeList)
+    foreach (var game in Model.GameList)
     {
-        <a asp-action="AnimePage" asp-route-id="@anime.Id" asp-controller="Anime" class="link-primary animepage-links">@anime.AnimeName</a>
+        <a asp-action="GamePage" asp-route-id="@game.Id" asp-controller="Game" class="link-primary animepage-links">@game.Name</a>
         <br/>
     }
 }

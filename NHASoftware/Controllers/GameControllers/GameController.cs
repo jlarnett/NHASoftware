@@ -5,8 +5,9 @@ using NHA.Helpers.AlphabetSimplify;
 using NHA.Helpers.HtmlStringCleaner;
 using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Entities.Anime;
+using NHA.Website.Software.Entities.Game;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
-using NHA.Website.Software.Views.ViewModels.AnimeVMs;
+using NHA.Website.Software.Views.ViewModels.GameVms;
 
 namespace NHA.Website.Software.Controllers.GameControllers;
 
@@ -32,51 +33,46 @@ public class GameController : Controller
     public async Task<IActionResult> LetterDetail(int id)
     {
         char letter = AlphabetDecipher.ConvertNumberToAlphabetLetter(id);
-        var completeAnimeList = await _unitOfWork.AnimePageRepository.GetAllAsync();
+        var allGamePages = await _unitOfWork.GamePageRepository.GetAllAsync();
 
-        List<AnimePage> animeList = new List<AnimePage>();
+        var gameList = new List<GamePage>();
 
         //Getting all anime that starts with specific alphabet letter
-        foreach (var anime in completeAnimeList)
+        foreach (var game in allGamePages)
         {
-            if(anime.AnimeName == null) continue;
-            
-            if (anime.AnimeName.StartsWith(letter))
+            if (game.Name.StartsWith(letter))
             {
-                animeList.Add(anime);
+                gameList.Add(game);
             }
         }
 
         //Sorting the list by alphabetical order.
-        var AlphabeticallySortedAnimesForLetter = animeList.OrderBy(ap => ap.AnimeName).ToList();
+        var alphabeticallySortedGamesForLetter = gameList.OrderBy(ap => ap.Name).ToList();
 
-        var vm = new LetterIndexViewModel()
+        var vm = new LetterGameIndexViewModel()
         {
             AlphabetLetter = letter,
-            AnimeList = AlphabeticallySortedAnimesForLetter
+            GameList = alphabeticallySortedGamesForLetter
         };
 
         return View("LetterIndex", vm);
     }
 
-    public IActionResult AnimePage(int? id)
+    public IActionResult GamePage(int? id)
     {
         if (id == null)
         {
             return NotFound();
         }
 
-        var ap = _context.AnimePages!.Find(id);
+        var ap = _context.GamePages!.Find(id);
 
         if (ap != null)
         {
-            return View("AnimePageDetails", ap);
+            return View("GamePageDetails", ap);
         }
-        else
-        {
-            return NotFound();
-        }
-
+        
+        return NotFound();
     }
 
     [Authorize]
