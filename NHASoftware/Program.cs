@@ -56,7 +56,14 @@ if (builder.Environment.IsProduction())
     {
         options.Connect(builder.Configuration["ConnectionStrings:AppConfigurationConnection"]).UseFeatureFlags();
     });
+
+    builder.Services.AddApplicationInsightsTelemetry(
+        builder.Configuration["ApplicationInsights:ConnectionString"]
+    );
+
 }
+
+
 
 var mapperConfig = new MapperConfiguration(mc =>
 {
