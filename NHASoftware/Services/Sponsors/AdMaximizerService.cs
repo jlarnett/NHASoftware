@@ -33,17 +33,18 @@ namespace NHA.Website.Software.Services.Sponsors
 
         public async Task<IEnumerable<SponsorAd>> GetBestAdsForUserAsync()
         {
+            int numberOfAdsToReturn = 1;
             var ads = await _unitOfWork.SponsorAdRepository.GetAllAsync();
             var bestAdsForUserAsync = ads as SponsorAd[] ?? ads.ToArray();
             var count = bestAdsForUserAsync.Count();
 
             //Get 3 random adds
-            if (count < 3)
+            if (count < numberOfAdsToReturn)
                 return bestAdsForUserAsync;
 
             List<SponsorAd> bestAds = [];
             
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < numberOfAdsToReturn; i++)
             {
                 var randomIndex = new Random((int)DateTime.UtcNow.Ticks).Next(count);
                 bestAds.Add(bestAdsForUserAsync[randomIndex]);
