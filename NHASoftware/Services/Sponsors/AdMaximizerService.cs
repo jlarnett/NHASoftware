@@ -50,6 +50,12 @@ namespace NHA.Website.Software.Services.Sponsors
                 bestAds.Add(bestAdsForUserAsync[randomIndex]);
             }
 
+            foreach (var ad in bestAds)
+            {
+                ad.Views++;
+            }
+
+            await _unitOfWork.CompleteAsync();
             return bestAds;
         }
     }
