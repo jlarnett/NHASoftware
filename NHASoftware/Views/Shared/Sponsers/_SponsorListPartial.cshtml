@@ -1,47 +1,87 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using Microsoft.FeatureManagement.Mvc.TagHelpers
+﻿@using NHA.Website.Software.Entities.Anime
 @using NHA.Website.Software.FeatureManagement
+@using NHA.Website.Software.Services.RepositoryPatternFoundationals
 @using NHA.Website.Software.Services.Sponsors
 @inject IAdMaximizerService AdMaximizerService
+@inject IUnitOfWork UnitOfWork
 
 @{
-        <div id="SponsorListUI" class="col position-fixed bg-light pb-5 mx-auto overflow-scroll w-inherit" style="height: 100%;">
+    var featuredAnime = (await UnitOfWork.AnimePageRepository.FindAsync(a => a.Featured)).FirstOrDefault();
+}
+
+@{
+    <div id="SponsorListUI" class="col position-fixed bg-light pb-5 mx-auto overflow-scroll w-inherit" style="height: 100%;">
+    
+        @if (featuredAnime is not null)
+        {
             <div class="row m-auto pt-2 border-bottom border-black rounded-2">
-                <div class="h3 text-center text-primary">Sponsors</div>
+                <div class="h3 text-center text-primary">Featured Anime</div>
             </div>
-            
-            @{
-                var ads = await AdMaximizerService.GetBestAdsForUserAsync();
-
-                foreach (var ad in ads)
+        
+            <div class="row m-auto pt-1 pb-1 text-center">
+                <a asp-action="AnimePageDetails" class="link-body-emphasis h4 text-decoration-none" asp-controller="Anime" asp-route-id="@featuredAnime.Id">@featuredAnime.AnimeName</a>
+                <div>
+                    <img src="@featuredAnime.AnimeImageUrl"/>
+                </div>
+                <div class="multiline-ellipsis" style="max-width: 300px;">
+                    @featuredAnime.AnimeSummary
+                </div>
+                @if (@featuredAnime.AnimeGenres != null)
                 {
+                    var genres = @featuredAnime.AnimeGenres.Split(';');
 
-                    if (ad.VideoUrl != null)
+                    for (int i = 0; i < genres.Length; i++)
                     {
-                        <feature name="@FeatureFlags.SponsorAdsEnabled">
-                            <div class="row m-auto pt-1 pb-1 text-center">
-                                <iframe src="@ad.VideoUrl"  title="YouTube video player" border="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-                                </iframe>
-                            </div>
-                        </feature>
-                    }
-
-                    if (ad.ImageUrl != null)
-                    {
-                        <div class="row m-auto pt-1 pb-1 text-center">
-                            <iframe src=@ad.ImageUrl
-                                    title="Sponsor Video"
-                                    height="350px"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    allowfullscreen>
-                            </iframe>
-                        </div>
+                        if (i % 2 == 0)
+                        {
+                            <span class="badge text-bg-dark">@genres[i]</span>
+                        }
+                        else
+                        {
+                            <span class="badge text-bg-primary">@genres[i]</span>
+                        }
                     }
                 }
-            }
-            <div class="row m-auto pt-1 pb-1">
-                <p>Huge shoutout to all of our sponsors for supporting the site, it wouldn't be possible without you.</p>
-                <p>if you would like your channel, product, or video promoted or featured click <a class="link-primary">here</a>.</p>
             </div>
+        }
+
+
+        <div class="row m-auto pt-2 border-bottom border-black rounded-2">
+            <div class="h3 text-center text-primary">Sponsors</div>
         </div>
+
+        @{
+            var ads = await AdMaximizerService.GetBestAdsForUserAsync();
+
+            foreach (var ad in ads)
+            {
+
+                if (ad.VideoUrl != null)
+                {
+                    <feature name="@FeatureFlags.SponsorAdsEnabled">
+                        <div class="row m-auto pt-1 pb-1 text-center">
+                            <iframe src="@ad.VideoUrl" title="YouTube video player" border="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+                            </iframe>
+                        </div>
+                    </feature>
+                }
+
+                if (ad.ImageUrl != null)
+                {
+                    <div class="row m-auto pt-1 pb-1 text-center">
+                        <iframe src=@ad.ImageUrl
+                                title="Sponsor Video"
+                                height="350px"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen>
+                        </iframe>
+                    </div>
+                }
+            }
+        }
+        <div class="row m-auto pt-1 pb-1">
+            <p>Huge shoutout to all of our sponsors for supporting the site, it wouldn't be possible without you.</p>
+            <p>if you would like your channel, product, or video promoted or featured click <a class="link-primary">here</a>.</p>
+        </div>
+    </div>
 }

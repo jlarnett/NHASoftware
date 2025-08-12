@@ -57,7 +57,20 @@ public class RegisterModel : PageModel
 
             if (result.Succeeded)
             {
+                if (!await _roleManager.RoleExistsAsync("basic"))
+                {
+                    var createdRole = await _roleManager.CreateAsync(new IdentityRole("basic"));
+                }
+
+                if (!await _roleManager.RoleExistsAsync("admin"))
+                {
+                    var createdRole = await _roleManager.CreateAsync(new IdentityRole("admin"));
+                }
+
                 await _userManager.AddToRoleAsync(user, "basic");
+
+
+
                 _logger.LogInformation("User created a new account with password.");
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -73,7 +86,7 @@ public class RegisterModel : PageModel
                 {
                     await _emailSender.SendEmailAsync(Input.Email, "NHA Software Registration Confirmation",
                         $"Welcome to NHA Industries social media site! " +
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        $"Please confirm your account by <a href='{callbackUrl}'>clicking here</a>.");
                 }
 
 

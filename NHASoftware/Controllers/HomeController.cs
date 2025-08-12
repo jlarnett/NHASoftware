@@ -18,6 +18,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using NHA.Website.Software.Services.Anime;
 using NHA.Website.Software.Services.Game;
+using NHA.Website.Software.Services.Sponsors;
 using NHA.Website.Software.Views.Shared.ChatSystem.ViewModels;
 
 namespace NHA.Website.Software.Controllers;
@@ -55,6 +56,7 @@ public class HomeController : Controller
         CreateProfilePictureHangfireJob();
         CreateAnimeLoadHangfireJob();
         CreateGameLoadHangfireJob();
+        CreateFeaturedAnimeSelectorJob();
         AssignSessionGuidCookie();
         return View();
     }
@@ -190,6 +192,12 @@ public class HomeController : Controller
     /// </summary>
     private void CreateGameLoadHangfireJob() =>
         RecurringJob.AddOrUpdate<IGameLeecher>("GameLeecher", x=> x.LoadExternalGameInformation(), Cron.Weekly);
+
+    /// <summary>
+    /// Make sure the recurring Featured anime job runs every 2 days at midnight
+    /// </summary>
+    private void CreateFeaturedAnimeSelectorJob() =>
+        RecurringJob.AddOrUpdate<IAdMaximizerService>("FeaturedAnimeSelector", x => x.PickFeaturedAnime(), Cron.Hourly);
 
     private void AssignSessionGuidCookie()
     {

@@ -37,4 +37,6 @@ public class GamePage
 
     public int UpVotes { get; set; }
     public int DownVotes { get; set; }
+
+    public bool Featured { get; set; } = false;
 }

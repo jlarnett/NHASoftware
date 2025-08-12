@@ -18,6 +18,7 @@ namespace NHA.Website.Software.Services.Anime
             _unitOfWork = unitOfWork;
         }
 
+
         public async Task LoadExternalAnime()
         {
             HashSet<string> knownAnimeList = [];

@@ -28,6 +28,7 @@ using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Profiles;
 using NHA.Website.Software.Services.ChatSystem;
 using NHA.Website.Software.Services.Game;
+using NHA.Website.Software.Services.Mailgun;
 using NHA.Website.Software.Services.ProfilePicture;
 using NHA.Website.Software.Services.SessionHistory;
 using NHA.Website.Software.Services.Social.PostBuilderService;
@@ -123,7 +124,7 @@ builder.Services.Configure<SendGridEmailSenderOptions>(options =>
 builder.Services.AddAzureAppConfiguration();
 builder.Services.AddFeatureManagement();
 
-builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
+builder.Services.AddTransient<IEmailSender, MailGunSender>();
 builder.Services.AddSingleton<IFileExtensionValidator, FileExtensionValidator>();
 builder.Services.AddTransient<IWarden, AccessWarden>();
 builder.Services.AddTransient<IHtmlStringCleaner, HtmlStringCleaner>();

@@ -34,76 +34,84 @@ namespace NHA.Website.Software.Services.Game
 
             while (hasMore)
             {
-                var url = $"https://api.rawg.io/api/games?page={this.pageNumber}&page_size=40&key={_configuration["Rawg:ApiKey"]}";
-                var response = await http.GetFromJsonAsync<RawgApiResponse>(url);
-
-                if (response?.results.Count > 0)
+                try
                 {
-                    foreach (var game in response.results)
+                    var url = $"https://api.rawg.io/api/games?page={this.pageNumber}&page_size=40&key={_configuration["Rawg:ApiKey"]}";
+                    var response = await http.GetFromJsonAsync<RawgApiResponse>(url);
+
+                    if (response?.results.Count > 0)
                     {
-                        if (string.IsNullOrWhiteSpace(game.name)) continue;
-                        
-                        var rawgGameDetailUrl = $"https://api.rawg.io/api/games/{game.slug}?key={_configuration["Rawg:ApiKey"]}";
-                        var gameDetailResponse = await http.GetFromJsonAsync<GameDetail>(rawgGameDetailUrl);
-
-                        var exists = knownGames.Contains(game.name);
-
-                        if (!exists)
+                        foreach (var game in response.results)
                         {
-                            
-                            var newGame = new GamePage
-                            {
-                                Name = game.name,
-                                ImageUrl = game.background_image ?? "",
-                                Genres = string.Join(';', game.genres.Select(x => x.name)),
-                                GameScore = game.rating
-                            };
+                            if (string.IsNullOrWhiteSpace(game.name)) continue;
 
-                            if (gameDetailResponse is not null)
-                            {
-                                newGame.Summary = gameDetailResponse.description ?? "";
-                                newGame.Released = gameDetailResponse.released ?? "";
-                                newGame.Platforms = string.Join(';', game.platforms.Select(x => x.platform.name));
-                            }
-                                
+                            var rawgGameDetailUrl = $"https://api.rawg.io/api/games/{game.slug}?key={_configuration["Rawg:ApiKey"]}";
+                            var gameDetailResponse = await http.GetFromJsonAsync<GameDetail>(rawgGameDetailUrl);
 
-                            _unitOfWork.GamePageRepository.Add(newGame);
-                            knownGames.Add(game.name);
-                        }
-                        else
-                        {
-                            var gamePages = await _unitOfWork.GamePageRepository.FindAsync(
-                                x => x.Name.Equals(game.name)
-                            );
+                            var exists = knownGames.Contains(game.name);
 
-                            foreach (var gamePage in gamePages)
+                            if (!exists)
                             {
-                                if (gameDetailResponse is not null)
-                                    gamePage.Summary = gameDetailResponse.description ?? "";
-                                gamePage.ImageUrl = game.background_image ?? "";
-                                gamePage.Genres = string.Join(';', game.genres.Select(x => x.name));
-                                gamePage.GameScore = game.rating;
-                                
+
+                                var newGame = new GamePage
+                                {
+                                    Name = game.name,
+                                    ImageUrl = game.background_image ?? "",
+                                    Genres = string.Join(';', game.genres.Select(x => x.name)),
+                                    GameScore = game.rating
+                                };
+
                                 if (gameDetailResponse is not null)
                                 {
-                                    gamePage.Summary = gameDetailResponse.description ?? "";
-                                    gamePage.Released = gameDetailResponse.released ?? "";
-                                    gamePage.Platforms = string.Join(';', game.platforms.Select(x => x.platform.name));
+                                    newGame.Summary = gameDetailResponse.description ?? "";
+                                    newGame.Released = gameDetailResponse.released ?? "";
+                                    newGame.Platforms = string.Join(';', game.platforms.Select(x => x.platform.name));
                                 }
+
+
+                                _unitOfWork.GamePageRepository.Add(newGame);
+                                knownGames.Add(game.name);
                             }
+                            else
+                            {
+                                var gamePages = await _unitOfWork.GamePageRepository.FindAsync(
+                                    x => x.Name.Equals(game.name)
+                                );
 
+                                foreach (var gamePage in gamePages)
+                                {
+                                    if (gameDetailResponse is not null)
+                                        gamePage.Summary = gameDetailResponse.description ?? "";
+                                    gamePage.ImageUrl = game.background_image ?? "";
+                                    gamePage.Genres = string.Join(';', game.genres.Select(x => x.name));
+                                    gamePage.GameScore = game.rating;
+
+                                    if (gameDetailResponse is not null)
+                                    {
+                                        gamePage.Summary = gameDetailResponse.description ?? "";
+                                        gamePage.Released = gameDetailResponse.released ?? "";
+                                        gamePage.Platforms = string.Join(';', game.platforms.Select(x => x.platform.name));
+                                    }
+                                }
+
+                            }
                         }
+
+                        var results = await _unitOfWork.CompleteAsync();
+                        pageNumber++;
                     }
-                    
-                    var results = await _unitOfWork.CompleteAsync();
-                    this.pageNumber++;
+                    else
+                    {
+                        hasMore = false;
+                    }
+
+                    await Task.Delay(2500); // Respect rate limits
                 }
-                else
+                catch (Exception e)
                 {
-                    hasMore = false;
+                    _logger.LogError(e.Message);
                 }
 
-                await Task.Delay(2500); // Respect rate limits
             }
         }
 

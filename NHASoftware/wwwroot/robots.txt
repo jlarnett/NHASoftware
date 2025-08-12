@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://nhaindustries.azurewebsites.net/sitemap.xml
