@@ -146,7 +146,7 @@
             gameResults.forEach(item => {
               const li = document.createElement('li');
               const highlightedName = item.name.replace(searchRegex, '<strong>$1</strong>');
-              li.innerHTML = `<img class='col-1' src='${item.ImageUrl}'></img><strong>Game:</strong> ${highlightedName}`;
+              li.innerHTML = `<img class='col-1' src='${item.imageUrl}'></img><strong>Game:</strong> ${highlightedName}`;
               li.style.padding = '8px';
               li.style.cursor = 'pointer';
 
