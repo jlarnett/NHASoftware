@@ -6,13 +6,15 @@
 
         for (var i = 0; i < arrayLength; i++) {
             if (keys.includes(ForumsKV[i].key)) {
-
+                table.columns.adjust().draw();
             } 
             else {
                 var table = $("#" + ForumsKV[i].key).DataTable();
                 keys.push(ForumsKV[i].key);
                 table.columns.adjust().draw();
             }
+
+            table.columns.adjust().draw();
         }
 
         for (var i = 0; i < arrayLength; i++) {
@@ -21,7 +23,7 @@
             var str = spacetime(ForumsKV[i].value.latestDate);
             var date2 = str.format('{month}-{date-pad}-{year} {time}{am pm}');
 
-            table2.row.add(["<div class='container-fluid bg-gradient bg-secondary shadow modern-forum-post-container mb-2 w-100'> <a role='button' class='text-decoration-none w-100 modern-thread-link' topic-id='" + ForumsKV[i].value.id + "'>" +
+            table2.row.add(["<div class='container-fluid bg-gradient bg-secondary shadow modern-forum-post-container mb-2'> <a role='button' class='text-decoration-none w-100 modern-thread-link' topic-id='" + ForumsKV[i].value.id + "'>" +
                                 "<div class='row w-100'>" +
                                     "<div class='col-auto'>" + "<h3 class='h2 text-dark text-decoration-none'>" + ForumsKV[i].value.title + "</h3>" + "</div>" +
                                 "</div>" +
@@ -48,7 +50,7 @@
                                     "</div>" +
                                 "</div>" +
                 "</a></div>"]).draw();
-                table2.columns.adjust().draw();
+            table2.columns.adjust().draw();
         }
 }
 

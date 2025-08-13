@@ -19,9 +19,8 @@
                     style="
                 position: absolute;
                 top: 100%;
-                left: 78%;
                 background: white;
-                border: 1px solid #ccc;
+                border: 1px solid #fff;
                 border-top: none;
                 max-height: 400px;
                 max-width: 300px;
@@ -63,9 +62,8 @@
                 style="
                 position: absolute;
                 top: 100%;
-                left: 78%;
                 background: white;
-                border: 1px solid #ccc;
+                border: 1px solid #fff;
                 border-top: none;
                 max-height: 400px;
                 max-width: 300px;
@@ -122,10 +120,15 @@
               dropdown.style.display = 'none';
               return;
             }
+
+            // Example:
+            const searchRegex = new RegExp(`(${searchString})`, 'gi'); // 'g' = global, 'i' = case-insensitive
+
             // Create list items for anime results
             animeResults.forEach(item => {
               const li = document.createElement('li');
-              li.textContent = `Anime: ${item.animeName}`;
+              const highlightedName = item.animeName.replace(searchRegex, '<strong>$1</strong>');
+              li.innerHTML = `<img class='col-1 me-2' src='${item.animeImageUrl}'></img><strong>Anime:</strong> ${highlightedName}`;
               li.style.padding = '8px';
               li.style.cursor = 'pointer';
 
@@ -142,7 +145,8 @@
             // Create list items for game results
             gameResults.forEach(item => {
               const li = document.createElement('li');
-              li.textContent = `Game: ${item.name}`;
+              const highlightedName = item.Name.replace(searchRegex, '<strong>$1</strong>');
+              li.innerHTML = `<img class='col-1' src='${item.ImageUrl}'></img><strong>Game:</strong> ${highlightedName}`;
               li.style.padding = '8px';
               li.style.cursor = 'pointer';
 
