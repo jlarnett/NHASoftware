@@ -12,7 +12,28 @@
         {
             string profilePicture = "~/ProfilePictures/" + user.ProfilePicturePath;
             <li class="nav-item align-self-center pt-2 pb-2 me-2">
-                <input type="text" class="form-control" placeholder="Search Anime Social"/>
+                <input type="text" class="form-control" id="searchInput" placeholder="Search Anime Social" />
+                
+                <!-- Dropdown container -->
+                <ul id="searchDropdown" 
+                    style="
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                border: 1px solid #ccc;
+                border-top: none;
+                max-height: 400px;
+                max-width: 200px;
+                overflow-y: auto;
+                z-index: 1000;
+                display: none;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            ">
+                </ul>
             </li>
             <li class="nav-item align-self-center pt-2 pb-2">
                 <img id="ProfilePicture" src="@Url.Content(profilePicture)" class="rounded login-profile-picture"/>
@@ -37,7 +58,26 @@
     else
     {
         <li class="nav-item align-self-center pt-2 pb-2 me-2">
-            <input type="text" class="form-control" placeholder="Search Anime Social"/>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search Anime Social" />
+            <!-- Dropdown container -->
+            <ul id="searchDropdown" 
+                style="
+                position: absolute;
+                top: 100%;
+                left: 78%;
+                background: white;
+                border: 1px solid #ccc;
+                border-top: none;
+                max-height: 400px;
+                max-width: 300px;
+                overflow-y: auto;
+                z-index: 1000;
+                display: none;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            ">
+            </ul>
         </li>
         <li class="nav-item">
             <a class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="Identity" asp-page="/Account/Register">Register</a>
@@ -48,6 +88,93 @@
     }
 </ul>
 
+<script>
+    const input = document.getElementById('searchInput');
+    const dropdown = document.getElementById('searchDropdown');
+    let debounceTimeout;
+
+    input.addEventListener('input', () => {
+      clearTimeout(debounceTimeout);
+
+      debounceTimeout = setTimeout(async () => {
+        const searchString = input.value.trim();
+
+        if (searchString.length > 0) {
+          try {
+            const response = await fetch(`/api/search/${encodeURIComponent(searchString)}`);
+
+            if (!response.ok) {
+              console.error('Search API error:', response.statusText);
+              dropdown.style.display = 'none';
+              return;
+            }
+
+            const data = await response.json();
+
+            // Clear previous results
+            dropdown.innerHTML = '';
+
+            // Combine anime and game results
+            const animeResults = data.animePages || [];
+            const gameResults = data.gamePages || [];
+
+            // If no results, hide dropdown
+            if (animeResults.length === 0 && gameResults.length === 0) {
+              dropdown.style.display = 'none';
+              return;
+            }
+            // Create list items for anime results
+            animeResults.forEach(item => {
+              const li = document.createElement('li');
+              li.textContent = `Anime: ${item.animeName}`;
+              li.style.padding = '8px';
+              li.style.cursor = 'pointer';
+
+              // Build URL dynamically using current origin
+              const animeUrl = `${window.location.origin}/Anime/AnimePage/${item.id || item.animePageId}`;
+
+              li.addEventListener('click', () => {
+                window.location.href = animeUrl;
+              });
+
+              dropdown.appendChild(li);
+            });
+
+            // Create list items for game results
+            gameResults.forEach(item => {
+              const li = document.createElement('li');
+              li.textContent = `Game: ${item.name}`;
+              li.style.padding = '8px';
+              li.style.cursor = 'pointer';
+
+              // Build URL dynamically using current origin
+              const gameUrl = `${window.location.origin}/Game/GamePage/${item.id || item.gamePageId}`;
+
+              li.addEventListener('click', () => {
+                window.location.href = gameUrl;
+              });
+
+              dropdown.appendChild(li);
+            });
+
+            dropdown.style.display = 'block';
+          } catch (error) {
+            console.error('Fetch error:', error);
+            dropdown.style.display = 'none';
+          }
+        } else {
+          dropdown.style.display = 'none';
+        }
+      }, 500);
+    });
+
+    // Optional: hide dropdown if user clicks outside
+    document.addEventListener('click', (e) => {
+      if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
+    });
+</script>
 
 
 
