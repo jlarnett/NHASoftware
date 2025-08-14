@@ -13,8 +13,8 @@ namespace NHA.Website.Software.Migrations
             // Truncate any existing DisplayName longer than 50 characters
             migrationBuilder.Sql(@"
                 UPDATE AspNetUsers
-                SET DisplayName = LEFT(DisplayName, 50)
-                WHERE LEN(DisplayName) > 50
+                SET DisplayName = LEFT(DisplayName, 20)
+                WHERE LEN(DisplayName) > 20
             ");
 
             migrationBuilder.AlterColumn<string>(
