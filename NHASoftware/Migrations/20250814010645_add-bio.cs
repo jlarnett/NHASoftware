@@ -10,6 +10,13 @@ namespace NHA.Website.Software.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Truncate any existing DisplayName longer than 50 characters
+            migrationBuilder.Sql(@"
+                UPDATE AspNetUsers
+                SET DisplayName = LEFT(DisplayName, 50)
+                WHERE LEN(DisplayName) > 50
+            ");
+
             migrationBuilder.AlterColumn<string>(
                 name: "ProfilePicturePath",
                 table: "AspNetUsers",
