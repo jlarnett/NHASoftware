@@ -23,10 +23,10 @@
             <img src="/ProfilePictures/@Model.User!.ProfilePicturePath" class="img-fluid img-thumbnail" alt="@Model.User!.DisplayName Profile Picture"/>
         </div>
         <div class="col-sm-auto border-primary border-start">
-            <a class="h5 text-decoration-none profile-link" role="button" userId="@Model.UserId">@Model.User!.DisplayName</a>
+            <a class="h5 text-decoration-none profile-link fw-semibold" role="button" userId="@Model.UserId">@Model.User!.DisplayName</a>
         </div>
         <div class="col-auto">
-            <a class="h5 text-decoration-none" role="button">-</a>
+            <a class="h1 text-decoration-none" role="button">·</a>
         </div>
         <div class="col-2">
             <a class="h5 text-decoration-none" role="button">@_TimeBender.GetTimeShortHandString(@Model.CreationDate!.Value)</a>
@@ -88,7 +88,7 @@
                             <textarea class="summernote-comments text-black" post-id="@Model.Id" comment-textbox-uuid="@uuid.ToString()" name="Summary">
                             </textarea>
                         </div>
-                        <button class="btn btn-dark rounded-2 col-1" unique-identifier="@uuid.ToString()" parent-post-id="@Model.Id">Reply</button>
+                        <button class="btn btn-dark rounded-2 col-1 comment-send-btn" unique-identifier="@uuid.ToString()" parent-post-id="@Model.Id">Reply</button>
                     </div> 
                     <span unique-error-identifier="@uuid.ToString()" style="display: none;" class="text-primary">Error Submitting Post.....</span>
                 }

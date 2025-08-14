@@ -25,7 +25,7 @@
     <div class="container-fluid">
         <div class="row">
             @Html.AntiForgeryToken()
-            <div class="col border border-2 border-dark rounded-2 p-3">
+            <div class="col border-start border-end border-2 border-dark ps-5 pe-5">
                 <div class="row text-center">
                     <div class="col">
                         <img src="~/Images/icons8-brain-32.png"/>
@@ -43,10 +43,7 @@
                 <div class="row p-2">
                     <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="col btn btn-primary p-auto fs-2">
                         <div class="row align-content-center align-items-center m-auto">
-                            <div class="col-auto">
-                                <img src="~/Images/icons8-upload-50.png" class="img-fluid"/>
-                            </div>
-                            <div class="col-auto text-center m-auto h4">
+                            <div class="col-auto text-center m-auto h5">
                                 Upload
                             </div>
                         </div>
@@ -54,10 +51,7 @@
                     <feature name="@FeatureFlags.CustomizedPostsEnabled">
                         <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col m-auto btn btn-dark p-auto fs-2" data-bs-toggle="modal" data-bs-target="#AddPostPhotosModal">
                             <div class="row align-content-center align-items-center m-auto">
-                                <div class="col-auto">
-                                    <img src="~/Images/icons8-upload-to-cloud-80.png" class="img-fluid col-8"/>
-                                </div>
-                                <div class="col-auto text-center m-auto h4">
+                                <div class="col-auto text-center m-auto h5">
                                     Upload With Photos
                                 </div>
                             </div>
@@ -109,9 +103,9 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="HomeContainer col p-4">
-            <div id="HomeContentFeed" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
-                <div id="ContentFeed">
+        <div class="HomeContainer col p-0">
+            <div id="HomeContentFeed" class="ps-5 pe-5" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
+                <div id="ContentFeed" class="ps-5 pe-5">
                     @{
                         var posts = await _PostBuilder.RetrieveParentPosts();
                         await Html.RenderPartialAsync("Social/_MultiPost", new MultiPostVM(posts));

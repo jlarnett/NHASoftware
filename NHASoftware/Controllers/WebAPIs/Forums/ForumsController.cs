@@ -2,7 +2,7 @@
 using Microsoft.FeatureManagement.Mvc;
 using NHA.Website.Software.Entities.Forums;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
-namespace NHA.Website.Software.Controllers.WebAPIs;
+namespace NHA.Website.Software.Controllers.WebAPIs.Forums;
 [Route("api/[controller]")]
 [ApiController]
 [FeatureGate("ForumsEnabled")]

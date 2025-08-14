@@ -1,9 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using NHA.Website.Software.Entities.Identity
+@using NHA.Website.Software.Services.AccessWarden
 @using NHA.Website.Software.Services.FriendSystem
 @model NHASoftware.Views.ViewModels.SocialVMs.ProfileVM
 @inject UserManager<ApplicationUser> userManager
 @inject IFriendSystem friendSystem
+@inject IWarden AccessWarden
 
 @{
     ViewData["Title"] = @Model.User!.DisplayName;
@@ -28,12 +30,12 @@
     }
 }
 
-<div class="container-fluid">
-    <div class="row border-primary border rounded-2">
-        <div class="border-end border-primary col-4 p-2">
+<div class="container-fluid shadow">
+    <div class="row border-primary ridge border-start border-2 border-end border-top border-bottom rounded-top-2">
+        <div class="border-end border-primary rounded-2 border-2 col-4 p-2">
             <img class="img-fluid rounded-2" src="~/ProfilePictures/@Model.User.ProfilePicturePath" alt="@Model.User.DisplayName's Profile Picture'"/>
         </div>
-        <div class="col border-end border-primary text-center">
+        <div class="col text-center">
 
             <a class="link-primary h5" role="button" href="/Users/FriendsView?userId=@Model.User.Id">@friendCount Friends</a>
             
@@ -72,23 +74,30 @@
             }
 
         </div>
-        <div class="col">
-            <h1 clas s="text-center h1">User Biography</h1>
-            <div>This is a test biography that needs to be modified.This is a test biography that needs to be modified.
-                This is a test biography that needs to be modified.This is a test biography that needs to be modified.</div>
+        <div class="col border-start border-primary border-2 rounded-2">
+            <h1 class="text-center text-primary h4">Biography</h1>
+
             <div class="container-fluid">
+                <div class="row mb-1">
+                    <textarea class="form-control" style="min-height: 200px; max-height: 350px;" type="text" id="UserBiographyInput" userId="@Model.User.Id" name="UserBiographyInput" disabled="true" placeholder="User Biography" value="@Model.User.Biography">@Model.User.Biography</textarea>
+                </div>
                 <div class="row">
                     <div class="col"></div>
-                    <button class="btn-outline-dark rounded-2 m-md-auto col-2">
-                        edit
-                    </button>
+                    <div class="col"></div>
+                    
+                    @if (activeUserId.Equals(Model.User.Id) || AccessWarden.IsAdmin(User))
+                    {
+                        <button class="btn-dark text-light rounded-2 m-auto col" id="ModifyBiography">
+                            Modify
+                        </button>
+                    }
                 </div>
             </div>
         </div>
     </div>
-    <div class="row border-start border-end border-bottom border-primary">
+    <div class="row border-start border-2 rounded-bottom-2 border-end border-bottom border-primary-subtle">
         <div class="p-2 col-4 align-self-center ">
-            <h2 class="text-center display-6 text-break m-auto">@Model.User.DisplayName</h2>
+            <h2 class="text-center h3 text-break m-auto">@Model.User.DisplayName</h2>
         </div>
         
         @{
@@ -111,7 +120,7 @@
 
 <div id="SocialWall" class="container-fluid">
     <div class="row">
-        <p class="text-center h1 mt-3">User's Wall</p>
+        <p class="text-center h4 mt-3 fw-semibold">@Model.User.DisplayName's Wall</p>
     </div>
     
     <div id="ContentFeed" class="row" profile-user-id="@Model.User.Id">
@@ -119,6 +128,55 @@
 </div>
 
 @section Scripts {
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modifyBtn = document.getElementById("ModifyBiography");
+        const bioInput = document.getElementById("UserBiographyInput");
+        const userId = bioInput.getAttribute("userId");
+
+        if(modifyBtn) {
+            modifyBtn.addEventListener("click", function () {
+                if (bioInput.disabled) {
+                    // Enable editing
+                    bioInput.disabled = false;
+                    bioInput.focus();
+                    modifyBtn.textContent = "Save";
+                } else {
+                    // Disable editing and send update
+                    bioInput.disabled = true;
+                    modifyBtn.textContent = "Modify";
+
+                    const newBio = bioInput.value;
+
+                    fetch(`/api/users/edit_bio`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            userId: userId,
+                            biography: newBio
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Failed to update biography.");
+                        }
+                        return response.json().catch(() => ({})); // in case no JSON is returned
+                    })
+                    .then(data => {
+                        console.log("Biography updated successfully", data);
+                    })
+                    .catch(err => {
+                        console.error("Error updating biography:", err);
+                    });
+                }
+            });
+        }
+    });
+</script>
+
+
     <script src="~/Scripts/Social_Feed/Gratitude.js"></script>
     <script src="~/Scripts/Social_Feed/ContentFeedAjaxCalls.js"></script>
     <script src="~/Scripts/Social_Feed/ContentFeedUtility.js"></script>

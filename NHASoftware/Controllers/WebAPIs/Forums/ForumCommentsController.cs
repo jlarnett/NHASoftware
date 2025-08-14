@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement.Mvc;
 using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Entities.Forums;
-namespace NHA.Website.Software.Controllers.WebAPIs;
+namespace NHA.Website.Software.Controllers.WebAPIs.Forums;
 [Route("api/[controller]")]
 [ApiController]
 [FeatureGate("ForumsEnabled")]

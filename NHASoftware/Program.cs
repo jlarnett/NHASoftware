@@ -233,7 +233,15 @@ app.MapRazorPages();
 app.Use(async (context, next) =>
 {
     Thread.CurrentPrincipal = context.User;
-    await next(context);
+
+    try
+    {
+        await next(context);
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+    }
 });
 
 app.Run();

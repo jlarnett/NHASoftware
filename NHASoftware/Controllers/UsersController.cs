@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NHA.Website.Software.Entities.Forums;
 using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Services.FriendSystem;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
@@ -57,4 +58,6 @@ public class UsersController : Controller
         var mutualFriendListVM = new MutualFriendListVM(modelProfileUser!, mutualFriendList);
         return View("MutualFriends", mutualFriendListVM);
     }
+
+
 }
