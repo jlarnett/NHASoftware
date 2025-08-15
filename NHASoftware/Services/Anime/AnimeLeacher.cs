@@ -85,7 +85,7 @@ namespace NHA.Website.Software.Services.Anime
                             foreach (var animePage in animePages)
                             {
                                 animePage.AnimeSummary = summary;
-                                animePage.AnimeImageUrl = anime.images.jpg.image_url;
+                                animePage.AnimeImageUrl = anime.images.jpg.large_image_url;
                                 animePage.AnimeStatus = anime.status;
                                 animePage.AnimeJikanScore = anime.score;
                                 animePage.AnimeGenres = string.Join(';', anime.genres.Select(x => x.name));
