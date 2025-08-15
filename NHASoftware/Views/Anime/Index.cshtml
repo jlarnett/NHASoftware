@@ -8,6 +8,9 @@
 
 @{
     var animePageCount = await unitOfWork.AnimePageRepository.CountAsync(x => x.Id != null);
+
+    var randomAnimeIndex = Random.Shared.Next(0, animePageCount);
+    var animeList = await unitOfWork.AnimePageRepository.GetAllAsync();
 }
 
 <head>
@@ -17,7 +20,8 @@
 <div>
     <h2>Alphabetical Anime Index <em class=" h3 text-primary">(@animePageCount)</em></h2>
     
-    <a asp-action="CreateAnimePage" asp-controller="Anime">Create Anime Entry</a>
+    <a asp-action="CreateAnimePage" asp-controller="Anime">Create Anime Entry</a> |
+    <a asp-action="AnimePageDetails" asp-route-id="@animeList.ElementAt(randomAnimeIndex).Id" asp-controller="Anime">Next &#x2794;</a>
 
     <p>Select one of the letters to be view all animes beginning with that letter. The animes will be listed in alphabetical order. </p>
     

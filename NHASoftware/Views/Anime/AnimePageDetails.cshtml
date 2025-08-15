@@ -1,5 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using NHA.Website.Software.Services.RepositoryPatternFoundationals
 @model NHA.Website.Software.Entities.Anime.AnimePage
+@inject IUnitOfWork UnitOfWork;
+
 @{
     ViewData["Title"] = @Model.AnimeName;
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -47,7 +50,15 @@
         @Html.Raw(@Model.AnimeSummary)
     </div>
 </div>
+
+@{
+    var animePageCount = await UnitOfWork.AnimePageRepository.CountAsync(x => x.Id != null);
+
+    var randomAnimeIndex = Random.Shared.Next(0, animePageCount);
+    var animeList = await UnitOfWork.AnimePageRepository.GetAllAsync();
+}
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="CreateAnimePage" asp-controller="Anime">Edit</a> |
+    <a asp-action="Index">Back to List</a> |
+    <a asp-action="AnimePageDetails" asp-route-id="@animeList.ElementAt(randomAnimeIndex).Id" asp-controller="Anime">Next &#x2794;</a>
 </div>

@@ -1,8 +1,33 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using NHA.Website.Software.Services.RepositoryPatternFoundationals
 @model NHA.Website.Software.Entities.Game.GamePage
+@inject IUnitOfWork UnitOfWork;
+
 @{
     ViewData["Title"] = @Model.Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    string ConvertPlatformToIcon(string platform)
+    {
+        if (platform.Equals("PC", StringComparison.OrdinalIgnoreCase))
+        {
+            return "/Images/pc-computer-with-monitor_icon-icons.com_56249.png";
+        }
+
+        var lowerPlatform = platform.ToLower();
+        if (lowerPlatform.Contains("playstation"))
+        {
+            return "/Images/Playstation_icon-icons.com_67099.png";
+        }
+
+        if (lowerPlatform.Contains("xbox"))
+        {
+            return "/Images/microsoft_xbox_icon_136396.png";
+        }
+
+        return "";
+    }
 }
 
 <div>
@@ -50,6 +75,8 @@
                     }
                 </div>
 
+                
+                
                 <div class="col">
                     @if (@Model.Platforms != null)
                     {
@@ -63,13 +90,13 @@
                             switch (i)
                             {
                                 case 0:
-                                    <span class="badge text-bg-primary col-auto p-2">@platforms[i]</span>
+                                    <span class="badge text-bg-primary col-auto p-2"><img src="@ConvertPlatformToIcon(platforms[i])" class="me-1"/>@platforms[i]</span>
                                     break;
                                 case 1:
-                                    <span class="badge text-bg-warning col-auto p-2">@platforms[i]</span>
+                                    <span class="badge text-bg-warning col-auto p-2"><img src="@ConvertPlatformToIcon(platforms[i])" class="me-1" />@platforms[i]</span>
                                     break;
                                 case 2:
-                                    <span class="badge text-bg-dark col-auto p-2">@platforms[i]</span>
+                                    <span class="badge text-bg-dark col-auto p-2"><img src="@ConvertPlatformToIcon(platforms[i])" class="me-1" />@platforms[i]</span>
                                     colorIndex = 0;
                                     break;
                             }
@@ -88,7 +115,15 @@
         @Html.Raw(@Model.Summary)
     </div>
 </div>
+
+@{
+    var gamePageCount = await UnitOfWork.GamePageRepository.CountAsync(c => !c.Id.Equals(null));
+    var randomGameIndex = Random.Shared.Next(0, gamePageCount);
+    var animeList = await UnitOfWork.GamePageRepository.GetAllAsync();
+}
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Back to List</a> | 
+    <a asp-action="GamePage" asp-route-id="@animeList.ElementAt(randomGameIndex).Id" asp-controller="Game">Next &#x2794;</a>
 </div>

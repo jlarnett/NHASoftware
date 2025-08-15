@@ -11,12 +11,15 @@
 </head>
 @{
     var gamePageCount = await unitOfWork.GamePageRepository.CountAsync(x => x.Id != null);
+    var randomGameIndex = Random.Shared.Next(0, gamePageCount);
+    var gameList = await unitOfWork.GamePageRepository.GetAllAsync();
 }
+
 <div>
     <h2>Alphabetical Game Index <em class=" h3 text-primary">(@gamePageCount)</em></h2>
     
-    <a asp-action="CreateAnimePage" asp-controller="Anime">Create Game Entry</a>
-
+    <a asp-action="CreateAnimePage" asp-controller="Anime">Create Game Entry</a> | 
+    <a asp-action="GamePage" asp-route-id="@gameList.ElementAt(randomGameIndex).Id" asp-controller="Game">Next &#x2794;</a>
     <p>Select one of the letters to be view all games beginning with that letter. The games will be listed in alphabetical order. </p>
     
     @{
