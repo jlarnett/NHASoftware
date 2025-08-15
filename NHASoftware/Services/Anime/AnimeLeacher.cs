@@ -64,10 +64,11 @@ namespace NHA.Website.Software.Services.Anime
                             {
                                 AnimeName = name,
                                 AnimeSummary = summary,
-                                AnimeImageUrl = anime.images.jpg.image_url,
+                                AnimeImageUrl = anime.images.jpg.large_image_url,
                                 AnimeStatus = anime.status,
                                 AnimeJikanScore = anime.score,
                                 AnimeGenres = string.Join(';', anime.genres.Select(x => x.name)),
+                                AnimeBackground = anime.background ?? ""
                             };
 
                             _unitOfWork.AnimePageRepository.Add(animePage);
@@ -88,6 +89,7 @@ namespace NHA.Website.Software.Services.Anime
                                 animePage.AnimeStatus = anime.status;
                                 animePage.AnimeJikanScore = anime.score;
                                 animePage.AnimeGenres = string.Join(';', anime.genres.Select(x => x.name));
+                                animePage.AnimeBackground = anime.background ?? "";
                             }
                         }
                     }
@@ -114,9 +116,11 @@ namespace NHA.Website.Software.Services.Anime
             public int? episodes { get; set; }
             public double? score { get; set; }
             public string? synopsis { get; set; } = "";
+            public string? background { get; set; } = "";
             public List<Genre> genres { get; set; } = [];
             public ImageGroup images { get; set; } = new ImageGroup();
             public string? title_japanese = "";
+            public List<Streaming> streaming { get; set; } = [];
         }
 
         public class Genre
@@ -129,9 +133,18 @@ namespace NHA.Website.Software.Services.Anime
             public ImageType jpg { get; set; } = new ImageType();
         }
 
+        public class Streaming
+        {
+            public string name { get; set; } = "";
+            public string url { get; set; } = "";
+        }
+
         public class ImageType
         {
             public string image_url { get; set; } = "";
+            public string small_image_url { get; set; } = "";
+            public string large_image_url { get; set; } = "";
+
         }
 
         public class ApiResponse

@@ -45,10 +45,29 @@
             }
         }
     }
+    
+    
+    @{
 
-    <div class="AnimeSummary">
-        @Html.Raw(@Model.AnimeSummary)
-    </div>
+        if (!string.IsNullOrEmpty(Model.AnimeSummary))
+        {
+            <h4 class="fw-semibold">Synopsis</h4>
+            <div class="AnimeSummary">
+                @Html.Raw(@Model.AnimeSummary)
+            </div>
+
+            <hr/>
+        }
+
+        if (!string.IsNullOrEmpty(Model.AnimeBackground))
+        {
+            <h4 class="fw-semibold">Background</h4>
+            <div class="">
+                @Html.Raw(@Model.AnimeBackground)
+            </div>
+        }
+    }
+
 </div>
 
 @{

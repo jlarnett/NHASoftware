@@ -12,7 +12,10 @@ public class AnimePage
     
     [DisplayName("Anime Summary")]
     public string AnimeSummary { get; set; } = string.Empty;
-    
+
+    [DisplayName("Anime Background")]
+    public string AnimeBackground { get; set; } = string.Empty;
+
     [DisplayName("Anime External Image Url")] 
     public string? AnimeImageUrl { get; set; } = string.Empty;
     
