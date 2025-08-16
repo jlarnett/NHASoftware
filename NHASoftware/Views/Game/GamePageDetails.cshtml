@@ -26,9 +26,36 @@
             return "/Images/microsoft_xbox_icon_136396.png";
         }
 
+        if (lowerPlatform.Equals("ios") || lowerPlatform.Equals("macos"))
+        {
+            return "/Images/social_apple_mac_65.png";
+        }
+
+        if (lowerPlatform.Equals("wii"))
+        {
+            return "/Images/wii_3515.png";
+        }
+
+        if (lowerPlatform.Contains("nintendo"))
+        {
+            return "/Images/nintendo_icon_146136.png";
+        }
+
+        if (lowerPlatform.Equals("android"))
+        {
+            return "/Images/2333410-android-os-smartphone_85588.png";
+        }
+
+        if (lowerPlatform.Equals("linux"))
+        {
+            return "/Images/linux_penguin_animal_9362.png";
+        }
+
         return "";
     }
 }
+
+<img src="~/Images/linux_penguin_animal_9362.png"/>
 
 <div>
     <h2>@Model.Name</h2>

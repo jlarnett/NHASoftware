@@ -23,12 +23,12 @@
             var str = spacetime(ForumsKV[i].value.latestDate);
             var date2 = str.format('{month}-{date-pad}-{year} {time}{am pm}');
 
-            table2.row.add(["<div class='container-fluid bg-gradient bg-secondary shadow modern-forum-post-container mb-2'> <a role='button' class='text-decoration-none w-100 modern-thread-link' topic-id='" + ForumsKV[i].value.id + "'>" +
+            table2.row.add(["<div class='container-fluid shadow modern-forum-post-container mb-2'> <a role='button' class='text-decoration-none w-100 modern-thread-link' topic-id='" + ForumsKV[i].value.id + "'>" +
                                 "<div class='row w-100'>" +
-                                    "<div class='col-auto'>" + "<h3 class='h2 text-dark text-decoration-none'>" + ForumsKV[i].value.title + "</h3>" + "</div>" +
+                                    "<div class='col-auto'>" + "<h3 class='h2 text-decoration-none'>" + ForumsKV[i].value.title + "</h3>" + "</div>" +
                                 "</div>" +
-                                "<div class='row w-100'>" +
-                                    "<p class='h5'>" + ForumsKV[i].value.description + "</p>" +
+                                "<div class='row w-100 '>" +
+                                    "<p class='h text-secondary 5'>" + ForumsKV[i].value.description + "</p>" +
                                 "</div>" +
                                 "<div class='row w-100'>" +
                                     "<div class='col row align-content-center m-auto'>" +
@@ -46,7 +46,7 @@
                                         "<h3>" + ForumsKV[i].value.postCount + "</h3>" +
                                     "</div>" +
                                     "<div class='col m-auto'>" +
-                                        "<h5 class='text-black h6'>" + "Latest Post: " + date2 + "</h5>" +
+                                        "<h5 class='h6'>" + "Last Modified: <strong class='text-secondary-emphasis'>" + date2 + "</strong></h5>" +
                                     "</div>" +
                                 "</div>" +
                 "</a></div>"]).draw();
@@ -61,12 +61,12 @@ function CheckForAdminButtons(data, adminButtons)
         "<div class='col-auto'>" +
                 "<button class='btn btn-dark js-edit-topic' topic-id='" +
                     data.value.id +
-                "'>Edit Topic</button>" +
+                "'>Edit</button>" +
             "</div>" +
             "<div class='col-auto'>" +
             "<button class='btn btn-primary js-delete-topic' topic-id='" +
             data.value.id +
-            "'>Delete Topic</button>" +
+            "'>Delete</button>" +
             "</div>" + "</div>";
     } 
     else {

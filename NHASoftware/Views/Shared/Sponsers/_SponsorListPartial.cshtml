@@ -10,7 +10,7 @@
 }
 
 @{
-    <div id="SponsorListUI" class="col position-fixed bg-light pb-5 mx-auto overflow-scroll w-inherit" style="height: 100%;">
+    <div id="SponsorListUI" class="col position-fixed pb-5 mx-auto overflow-scroll w-inherit" style="height: 100%;">
     
         @if (featuredAnime is not null)
         {
@@ -19,7 +19,7 @@
             </div>
         
             <div class="row m-auto pt-1 pb-1 text-center">
-                <a asp-action="AnimePageDetails" class="link-body-emphasis h4 text-decoration-none" asp-controller="Anime" asp-route-id="@featuredAnime.Id">@featuredAnime.AnimeName</a>
+                <a asp-action="AnimePageDetails" class="h5 text-body link-underline link-opacity-50-hover" asp-controller="Anime" asp-route-id="@featuredAnime.Id">@featuredAnime.AnimeName</a>
                 <div class="">
                     <a class="row text-center m-auto" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@featuredAnime.Id">
                         <img src="@featuredAnime.AnimeImageUrl"/>
