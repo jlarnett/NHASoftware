@@ -6,7 +6,7 @@ namespace NHA.Testing.AlphabetSimplifyTests
     [TestClass]
     public class AlphabetSimplifyTests
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(0,'A')]
         [DataRow(1,'B')]
         [DataRow(25, 'Z')]

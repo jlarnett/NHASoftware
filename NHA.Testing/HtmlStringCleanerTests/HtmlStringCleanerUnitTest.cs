@@ -31,7 +31,6 @@ namespace NHA.Testing.HtmlStringCleanerTests
 
 
         [TestMethod]
-        [DataTestMethod]
         [DataRow(simpleHtmlTestData, simpleHtmlExpectedResult)]
         [DataRow(htmlWithFontColorAttributes, htmlWithFontColorExpectedResult)]
         [DataRow(htmlWithImageSrc, htmlWithImageSrcExpectedResult)]

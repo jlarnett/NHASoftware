@@ -6,7 +6,7 @@ namespace NHA.Testing.FileExtensionValidatorTests
     [TestClass]
     public class FileExtensionValidatorTests
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("test.jpg", true)]
         [DataRow("test.png", true)]
         [DataRow("test.jpeg", true)]
