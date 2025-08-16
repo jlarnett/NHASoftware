@@ -126,5 +126,22 @@ body {
     color: white;
 }
 
+/*Nav button interaction*/
+.nav-item {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Light theme red glow */
+body[data-bs-theme="light"] .nav-item:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(200, 0, 0, 0.6); /* Darker red for light mode */
+}
+
+/* Dark theme red glow */
+body[data-bs-theme="dark"] .nav-item:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 80, 80, 0.9); /* Brighter red for dark mode */
+}
+
 
 
