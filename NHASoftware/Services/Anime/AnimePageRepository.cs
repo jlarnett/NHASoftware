@@ -9,32 +9,19 @@ public class AnimePageRepository : GenericRepository<AnimePage>, IAnimePageRepos
     {
 
     }
-
+    private List<int>? _cachedIds;
     public async Task<AnimePage?> GetRandomEntityAsync()
     {
-        if (_context.AnimePages != null)
-        {
-            var maxId = await _context.AnimePages.MaxAsync(x => x.Id);
-            var minId = await _context.AnimePages.MinAsync(x => x.Id);
+        if (_context.AnimePages == null)
+            return null;
 
-            var random = new Random();
-            int randomId = random.Next(minId, maxId + 1);
+        if (_cachedIds == null || _cachedIds.Count == 0)
+            _cachedIds = await _context.AnimePages.Select(g => g.Id).ToListAsync();
 
-            // Retrieve the first entity with an ID greater than or equal to the random ID
-            var randomEntity = _context.AnimePages
-                .Where(x => x.Id >= randomId)
-                .OrderBy(x => x.Id)
-                .FirstOrDefault();
+        if (_cachedIds.Count == 0)
+            return null;
 
-            // If no entity found with an ID >= randomId, try picking from the lower range
-            randomEntity ??= _context.AnimePages
-                    .Where(x => x.Id <= randomId)
-                    .OrderByDescending(x => x.Id)
-                    .FirstOrDefault();
-
-            return randomEntity;
-        }
-
-        return null;
+        int randomId = _cachedIds[Random.Shared.Next(_cachedIds.Count)];
+        return await _context.AnimePages.FirstOrDefaultAsync(g => g.Id == randomId);
     }
 }

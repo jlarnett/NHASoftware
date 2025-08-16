@@ -10,32 +10,24 @@ public class GamePageRepository : GenericRepository<GamePage>, IGamePageReposito
     {
 
     }
+    private List<int>? _cachedGameIds;
 
     public async Task<GamePage?> GetRandomEntityAsync()
     {
-        if (_context.GamePages != null)
-        {
-            var maxId = await _context.GamePages.MaxAsync(x => x.Id);
-            var minId = await _context.GamePages.MinAsync(x => x.Id);
+        if (_context.GamePages == null)
+            return null;
 
-            var random = new Random();
-            int randomId = random.Next(minId, maxId + 1);
+        // Load or refresh cached IDs
+        if (_cachedGameIds == null || _cachedGameIds.Count == 0)
+            _cachedGameIds = await _context.GamePages.Select(g => g.Id).ToListAsync();
 
-            // Retrieve the first entity with an ID greater than or equal to the random ID
-            var randomEntity = _context.GamePages
-                .Where(x => x.Id >= randomId)
-                .OrderBy(x => x.Id)
-                .FirstOrDefault();
+        if (_cachedGameIds.Count == 0)
+            return null;
 
-            // If no entity found with an ID >= randomId, try picking from the lower range
-            randomEntity ??= _context.GamePages
-                .Where(x => x.Id <= randomId)
-                .OrderByDescending(x => x.Id)
-                .FirstOrDefault();
+        // Pick a random ID from the cached list
+        int randomId = _cachedGameIds[Random.Shared.Next(_cachedGameIds.Count)];
 
-            return randomEntity;
-        }
-
-        return null;
+        // Fetch the actual GamePage entity
+        return await _context.GamePages.FirstOrDefaultAsync(g => g.Id == randomId);
     }
 }
