@@ -87,7 +87,7 @@ public class ForumTopicsController : Controller
     {
         if (ModelState.IsValid)
         {
-            _unitOfWork.ForumTopicRepository.Add(forumTopic);
+            await _unitOfWork.ForumTopicRepository.AddAsync(forumTopic);
             await _unitOfWork.CompleteAsync();
             return RedirectToAction("Index", "Forum");
         }

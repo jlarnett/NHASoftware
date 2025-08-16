@@ -114,7 +114,7 @@ public class ForumPostsController : Controller
                 topic.LastestPost = DateTime.Now;
             }
 
-            _unitOfWork.ForumPostRepository.Add(forumPost);
+            await _unitOfWork.ForumPostRepository.AddAsync(forumPost);
             await _unitOfWork.CompleteAsync();
 
             return RedirectToAction("Details", "ForumTopics", new { id = forumPost.ForumTopicId });

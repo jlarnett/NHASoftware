@@ -40,7 +40,7 @@ public class ForumSectionsController : Controller
     {
         if (ModelState.IsValid)
         {
-            _unitOfWork.ForumSectionRepository.Add(forumSection);
+            await _unitOfWork.ForumSectionRepository.AddAsync(forumSection);
             await _unitOfWork.CompleteAsync();
             return RedirectToAction("Index", "Forum");
         }

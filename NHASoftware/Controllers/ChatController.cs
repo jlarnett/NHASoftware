@@ -34,7 +34,7 @@ namespace NHA.Website.Software.Controllers
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.ChatMessageRepository.Add(chatMessage);
+                await _unitOfWork.ChatMessageRepository.AddAsync(chatMessage);
                 var result = await _unitOfWork.CompleteAsync();
 
                 if (result > 0)

@@ -51,7 +51,7 @@ public class FriendSystem : IFriendSystem
         if (!await IsFriendRequestSentAsync(friendRequestDto.SenderUserId, friendRequestDto.RecipientUserId) && !await IsFriendsAsync(friendRequestDto.SenderUserId, friendRequestDto.RecipientUserId))
         {
             var friendRequest = _mapper.Map<FriendRequestDTO, FriendRequest>(friendRequestDto);
-            _unitOfWork.FriendRequestRepository.Add(friendRequest);
+            await _unitOfWork.FriendRequestRepository.AddAsync(friendRequest);
             var dbChanges = await _unitOfWork.CompleteAsync();
             return dbChanges > 0;
         }
@@ -80,7 +80,7 @@ public class FriendSystem : IFriendSystem
             {
                 friendRequest.Status = FriendRequestStatuses.Accepted;
 
-                _unitOfWork.FriendRepository.Add(new Friends()
+                await _unitOfWork.FriendRepository.AddAsync(new Friends()
                 {
                     FriendOneId = friendRequest.SenderUserId,
                     FriendTwoId = friendRequest.RecipientUserId

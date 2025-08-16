@@ -97,7 +97,7 @@ public class ForumCommentsController : ControllerBase
     //      {
     //          return Problem("Entity set 'ApplicationDbContext.ForumComments'  is null.");
     //      }
-    //      _context.ForumComments.Add(forumComment);
+    //      _context.ForumComments.AddAsync(forumComment);
     //      await _context.SaveChangesAsync(); 
 
     //      return CreatedAtAction("GetForumComment", new { id = forumComment.Id }, forumComment);

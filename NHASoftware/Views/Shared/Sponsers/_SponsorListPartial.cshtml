@@ -20,11 +20,13 @@
         
             <div class="row m-auto pt-1 pb-1 text-center">
                 <a asp-action="AnimePageDetails" class="link-body-emphasis h4 text-decoration-none" asp-controller="Anime" asp-route-id="@featuredAnime.Id">@featuredAnime.AnimeName</a>
-                <div>
-                    <img src="@featuredAnime.AnimeImageUrl"/>
+                <div class="">
+                    <a class="row text-center m-auto" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@featuredAnime.Id">
+                        <img src="@featuredAnime.AnimeImageUrl"/>
+                    </a>
                 </div>
-                <div class="multiline-ellipsis" style="max-width: 300px;">
-                    @featuredAnime.AnimeSummary
+                <div class="multiline-ellipsis" style="max-width: 350px;">
+                    @featuredAnime.AnimeSummary + @featuredAnime.AnimeBackground
                 </div>
                 @if (@featuredAnime.AnimeGenres != null)
                 {

@@ -71,7 +71,7 @@ namespace NHA.Website.Software.Services.Anime
                                 AnimeBackground = anime.background ?? ""
                             };
 
-                            _unitOfWork.AnimePageRepository.Add(animePage);
+                            await _unitOfWork.AnimePageRepository.AddAsync(animePage);
                             knownAnimeList.Add(name);
                         }
                         else

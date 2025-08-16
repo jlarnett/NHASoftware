@@ -10,11 +10,11 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         _context = context;
     }
-    public async void Add(T entity)
+    public async Task AddAsync(T entity)
     {
         await _context.Set<T>().AddAsync(entity);
     }
-    public async void AddRange(IEnumerable<T> entities)
+    public async Task AddRange(IEnumerable<T> entities)
     {
         await _context.Set<T>().AddRangeAsync(entities);
     }
@@ -53,5 +53,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         return await _context.Set<T>().Where(expression).ToListAsync();
     }
+
 
 }

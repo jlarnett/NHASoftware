@@ -107,7 +107,7 @@ public class PostsController : ControllerBase
     public async Task<IActionResult> CreateBasicPost([FromForm] PostDTO postdto)
     {
         var post = AssignServerSidePostParameters(postdto);
-        _unitOfWork.PostRepository.Add(post);
+        await _unitOfWork.PostRepository.AddAsync(post);
         var result = await _unitOfWork.CompleteAsync();
 
         if (result > 0)
@@ -148,7 +148,7 @@ public class PostsController : ControllerBase
         }
 
         var post = AssignServerSidePostParameters(postdto);
-        _unitOfWork.PostRepository.Add(post);
+        await _unitOfWork.PostRepository.AddAsync(post);
         var result = await _unitOfWork.CompleteAsync();
 
         if (result > 0)
@@ -293,7 +293,7 @@ public class PostsController : ControllerBase
 
         }
 
-        _unitOfWork.PostImageRepository.AddRange(images);
+        await _unitOfWork.PostImageRepository.AddRange(images);
         var savePostImageResult = await _unitOfWork.CompleteAsync();
 
         if (savePostImageResult > 0)

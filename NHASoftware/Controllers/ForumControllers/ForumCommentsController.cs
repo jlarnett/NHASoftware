@@ -101,7 +101,7 @@ public class ForumCommentsController : Controller
                 postTopic.LastestPost = DateTime.Now;
             }
 
-            _unitOfWork.ForumCommentRepository.Add(forumComment);
+            await _unitOfWork.ForumCommentRepository.AddAsync(forumComment);
             await _unitOfWork.CompleteAsync();
 
             return RedirectToAction("Details", "ForumPosts", new { id = forumComment.ForumPostId });

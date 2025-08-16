@@ -26,7 +26,7 @@ namespace NHA.Website.Software.Services.SessionHistory
 
             if (user != null)
             {
-                _unitOfWork.SessionHistoryRepository.Add(new SessionHistoryEvent()
+                await _unitOfWork.SessionHistoryRepository.AddAsync(new SessionHistoryEvent()
                 {
                     LoginEventDescription = SessionEvents.Login,
                     Time = DateTime.UtcNow,
@@ -48,7 +48,7 @@ namespace NHA.Website.Software.Services.SessionHistory
 
             if (user != null)
             {
-                _unitOfWork.SessionHistoryRepository.Add(new SessionHistoryEvent()
+                await _unitOfWork.SessionHistoryRepository.AddAsync(new SessionHistoryEvent()
                 {
                     LoginEventDescription = SessionEvents.Logout,
                     Time = DateTime.UtcNow,
@@ -70,7 +70,7 @@ namespace NHA.Website.Software.Services.SessionHistory
 
             if (user != null)
             {
-                _unitOfWork.SessionHistoryRepository.Add(new SessionHistoryEvent()
+                await _unitOfWork.SessionHistoryRepository.AddAsync(new SessionHistoryEvent()
                 {
                     LoginEventDescription = SessionEvents.RenewActive,
                     Time = DateTime.UtcNow,

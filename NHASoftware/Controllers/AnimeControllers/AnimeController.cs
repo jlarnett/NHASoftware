@@ -93,7 +93,7 @@ public class AnimeController : Controller
 
         if (ModelState.IsValid)
         {
-            _unitOfWork.AnimePageRepository.Add(animePage);
+            await _unitOfWork.AnimePageRepository.AddAsync(animePage);
             await _unitOfWork.CompleteAsync();
             return RedirectToAction("AnimePageDetails", "Anime", new { id = animePage.Id });
         }

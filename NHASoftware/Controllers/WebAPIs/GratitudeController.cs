@@ -23,7 +23,7 @@ public class GratitudeController : ControllerBase
     {
         if (ModelState.IsValid && !UserLikeExists(userlike))
         {
-            _unitOfWork.UserLikeRepository.Add(userlike);
+            await _unitOfWork.UserLikeRepository.AddAsync(userlike);
             var rowsAltered = await _unitOfWork.CompleteAsync();
 
             if (rowsAltered > 0)

@@ -69,7 +69,7 @@ namespace NHA.Website.Software.Services.Game
                                 }
 
 
-                                _unitOfWork.GamePageRepository.Add(newGame);
+                                await _unitOfWork.GamePageRepository.AddAsync(newGame);
                                 knownGames.Add(game.name);
                             }
                             else

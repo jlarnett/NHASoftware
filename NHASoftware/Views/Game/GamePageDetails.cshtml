@@ -117,13 +117,11 @@
 </div>
 
 @{
-    var gamePageCount = await UnitOfWork.GamePageRepository.CountAsync(c => !c.Id.Equals(null));
-    var randomGameIndex = Random.Shared.Next(0, gamePageCount);
-    var animeList = await UnitOfWork.GamePageRepository.GetAllAsync();
+    var randomAnime = await UnitOfWork.GamePageRepository.GetRandomEntityAsync();
 }
 
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a> | 
-    <a asp-action="GamePage" asp-route-id="@animeList.ElementAt(randomGameIndex).Id" asp-controller="Game">Next &#x2794;</a>
+    <a asp-action="GamePage" asp-route-id="@randomAnime!.Id" asp-controller="Game">Next &#x2794;</a>
 </div>
