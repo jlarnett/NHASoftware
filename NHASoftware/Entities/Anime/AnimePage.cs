@@ -34,4 +34,9 @@ public class AnimePage
     public int DownVotes { get; set; }
 
     public bool Featured { get; set; } = false;
+
+
+    [DisplayName("Anime Trailer Url")]
+    [MaxLength(200)]
+    public string? TrailerUrl { get; set; }
 }

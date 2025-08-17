@@ -13,16 +13,28 @@
     <hr />
     
     @{
-        if (@Model.AnimeImageUrl != null)
-        {
-            <div>
-                <img src="@Model.AnimeImageUrl" class="img-fluid"/>
-            </div>
-        }
+
+        <div class="row">
+            @if (!string.IsNullOrEmpty(Model.AnimeImageUrl))
+            {
+                <div class="col-md-4">
+                    <img src="@Model.AnimeImageUrl" class="img-fluid"/>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.TrailerUrl))
+            {
+                <div class="col-md-8">
+                    <div class="ratio ratio-4x3">
+                        <iframe src="@Model.TrailerUrl" allowfullscreen></iframe>
+                    </div>
+                </div>
+            }
+        </div>
 
 
 
-
+        
         if (@Model.AnimeJikanScore != null)
         {
             <div>Jikan Score: <strong>@Model.AnimeJikanScore</strong></div>

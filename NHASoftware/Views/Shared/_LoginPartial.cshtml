@@ -12,7 +12,7 @@
         {
             string profilePicture = "~/ProfilePictures/" + user.ProfilePicturePath;
             <li class="nav-item align-self-center pt-2 pb-2 me-2">
-                <input type="text" class="form-control" id="searchInput" placeholder="Search Anime Social" />
+                <input type="text" class="form-control interactable" id="searchInput" placeholder="Search Anime Social" />
                 
                 <!-- Dropdown container -->
                 <ul id="searchDropdown" class="bg-body-tertiary"
@@ -35,19 +35,19 @@
             <li class="nav-item align-self-center pt-2 pb-2">
                 <img id="ProfilePicture" src="@Url.Content(profilePicture)" class="rounded login-profile-picture"/>
             </li>
-            <li class="nav-item align-self-center">
+            <li class="nav-item align-self-center interactable">
                 <a class="nav-link btn-dark text-light rounded-2 h5 m-0" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @user.DisplayName!</a>
             </li>
 
         }
         else
         {
-            <li class="nav-item align-self-center">
+            <li class="nav-item align-self-center interactable">
                 <a class="nav-link btn-dark text-primary rounded-2 h5 m-0" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello Gangsta!</a>
             </li>
         }
 
-        <li class="nav-item align-self-center">
+        <li class="nav-item align-self-center interactable">
             <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                 <a type="submit" class="nav-link btn-dark text-light rounded-2 h5 m-0" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">Logout</a>
             </form>
@@ -56,7 +56,7 @@
     else
     {
         <li class="nav-item align-self-center pt-2 pb-2 me-2">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search Anime Social" />
+            <input type="text" id="searchInput" class="form-control interactable" placeholder="Search Anime Social" />
             <!-- Dropdown container -->
             <ul id="searchDropdown" class="bg-body-tertiary"
                 style="
@@ -75,10 +75,10 @@
             ">
             </ul>
         </li>
-        <li class="nav-item align-self-center">
+        <li class="nav-item align-self-center interactable">
             <a class="nav-link btn-dark text-light  rounded-2 h5 m-0" asp-area="Identity" asp-page="/Account/Register">Register</a>
         </li>
-        <li class="nav-item align-self-center">
+        <li class="nav-item align-self-center interactable">
             <a class="nav-link btn-dark text-light rounded-2 h5 m-0" asp-area="Identity" asp-page="/Account/Login">Login</a>
         </li>
 

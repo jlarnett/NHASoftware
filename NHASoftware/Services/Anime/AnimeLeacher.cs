@@ -68,7 +68,8 @@ namespace NHA.Website.Software.Services.Anime
                                 AnimeStatus = anime.status,
                                 AnimeJikanScore = anime.score,
                                 AnimeGenres = string.Join(';', anime.genres.Select(x => x.name)),
-                                AnimeBackground = anime.background ?? ""
+                                AnimeBackground = anime.background ?? "",
+                                TrailerUrl = anime.trailer.embed_url ?? ""
                             };
 
                             await _unitOfWork.AnimePageRepository.AddAsync(animePage);
@@ -90,6 +91,7 @@ namespace NHA.Website.Software.Services.Anime
                                 animePage.AnimeJikanScore = anime.score;
                                 animePage.AnimeGenres = string.Join(';', anime.genres.Select(x => x.name));
                                 animePage.AnimeBackground = anime.background ?? "";
+                                animePage.TrailerUrl = anime.trailer.embed_url ?? "";
                             }
                         }
                     }
@@ -120,7 +122,14 @@ namespace NHA.Website.Software.Services.Anime
             public List<Genre> genres { get; set; } = [];
             public ImageGroup images { get; set; } = new ImageGroup();
             public string? title_japanese = "";
-            public List<Streaming> streaming { get; set; } = [];
+            public Trailer trailer { get; set; } = new Trailer();
+        }
+
+        public class Trailer
+        {
+            public string? youtube_id { get; set; }
+            public string? url { get; set; }
+            public string? embed_url { get; set; }
         }
 
         public class Genre
