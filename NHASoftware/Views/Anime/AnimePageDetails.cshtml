@@ -18,15 +18,20 @@
             @if (!string.IsNullOrEmpty(Model.AnimeImageUrl))
             {
                 <div class="col-md-4">
-                    <img src="@Model.AnimeImageUrl" class="img-fluid"/>
+                    <img src="@Model.AnimeImageUrl" class="img-fluid rounded-2"/>
                 </div>
             }
 
             @if (!string.IsNullOrEmpty(Model.TrailerUrl))
             {
+
                 <div class="col-md-8">
-                    <div class="ratio ratio-4x3">
-                        <iframe src="@Model.TrailerUrl" allowfullscreen></iframe>
+                    <div class="ratio ratio-16x9 rounded-2 overflow-hidden">
+                        <iframe src="@Model.TrailerUrl&cc_load_policy=1&cc_lang_pref=en&hl=en"
+                                title="YouTube video"
+                                allowfullscreen
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                        </iframe>
                     </div>
                 </div>
             }
@@ -88,9 +93,9 @@
 
 <div class="mt-3 text-muted small" id="hotkeyHelp">
     💡 Tip:  
-    <strong>Ctrl + →</strong> = Next anime  
+    <strong class="text-primary">Ctrl + →</strong> = Next anime  
     |  
-    <strong>Ctrl + ←</strong> = Back to previous page
+    <strong class="text-primary">Ctrl + ←</strong> = Back to previous page
 </div>
 
 <style>
@@ -153,5 +158,6 @@
         }
       }, { passive: false });
     })();
+
 
 </script>

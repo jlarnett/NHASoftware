@@ -115,6 +115,7 @@
             // Combine anime and game results
             const animeResults = data.animePages || [];
             const gameResults = data.gamePages || [];
+            const userResults = data.users || [];
 
             // If no results, hide dropdown
             if (animeResults.length === 0 && gameResults.length === 0) {
@@ -156,6 +157,24 @@
 
               li.addEventListener('click', () => {
                 window.location.href = gameUrl;
+              });
+
+              dropdown.appendChild(li);
+            });
+
+            // Create list items for game results
+            userResults.forEach(item => {
+              const li = document.createElement('li');
+              const highlightedName = item.displayName.replace(searchRegex, '<strong>$1</strong>');
+              li.innerHTML = `<img class='col-1 me-2' src='/ProfilePictures/${item.profilePicturePath}'></img><strong>User:</strong> ${highlightedName} ${item.email}`;
+              li.style.padding = '8px';
+              li.style.cursor = 'pointer';
+
+              // Build URL dynamically using current origin
+              const profileUrl = `${window.location.origin}/Users/GetProfiles?UserId=${item.id}`;
+
+              li.addEventListener('click', () => {
+                window.location.href = profileUrl;
               });
 
               dropdown.appendChild(li);

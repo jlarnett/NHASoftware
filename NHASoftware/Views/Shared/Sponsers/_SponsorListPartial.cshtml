@@ -21,8 +21,8 @@
             <div class="row m-auto pt-1 pb-1 text-center">
                 <a asp-action="AnimePageDetails" class="h5 text-body link-underline link-opacity-50-hover" asp-controller="Anime" asp-route-id="@featuredAnime.Id">@featuredAnime.AnimeName</a>
                 <div class="">
-                    <a class="row text-center m-auto" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@featuredAnime.Id">
-                        <img src="@featuredAnime.AnimeImageUrl" alt="@featuredAnime.AnimeName's cover photo"/>
+                    <a class="row text-center m-auto rounded-2 interactable" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@featuredAnime.Id">
+                        <img src="@featuredAnime.AnimeImageUrl" class="rounded-3 p-0" alt="@featuredAnime.AnimeName's cover photo" />
                     </a>
                 </div>
                 <div class="multiline-ellipsis" style="max-width: 350px;">
