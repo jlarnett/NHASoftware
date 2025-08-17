@@ -49,7 +49,7 @@
                         </div>
                     </button>
                     <feature name="@FeatureFlags.CustomizedPostsEnabled">
-                        <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col m-auto btn btn-dark p-auto fs-2 interactable" data-bs-toggle="modal" data-bs-target="#AddAsyncPostPhotosModal">
+                        <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col m-auto btn btn-dark p-auto fs-2 interactable" data-bs-toggle="modal" data-bs-target="#AddPostPhotosModal">
                             <div class="row align-content-center align-items-center m-auto">
                                 <div class="col-auto text-center m-auto h5">
                                     Upload With Photos
@@ -66,12 +66,12 @@
 
         <!--AddAsync Post Photos Modal-->
         <feature name="@FeatureFlags.CustomizedPostsEnabled">
-            <div class="modal fade" id="AddPostPhotosModal" tabindex="-1" role="dialog" aria-labelledby="AddAsyncPostPhotosModalLabel" aria-hidden="true">
+            <div class="modal fade" id="AddPostPhotosModal" tabindex="-1" role="dialog" aria-labelledby="AddPostPhotosModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content border border-primary border-2 shadow">
                         <div class="modal-header border-bottom justify-content-between">
                             <h5 class="modal-title text-primary" id="AddPostPhotosModalLabel">Personalize Post</h5>
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <button type="button" class="close interactable" data-bs-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -84,10 +84,10 @@
                                     </div>
                                 </div>
                                 <div class="row mb-2">
-                                    <input type="file" id="CustomPostImageFileInput" class="p-0" multiple="multiple" role="button" name="ImageFiles" />
+                                    <input type="file" id="CustomPostImageFileInput" class="p-0 interactable" multiple="multiple" role="button" name="ImageFiles" />
                                 </div>
                                 <div class="row mb-2">
-                                    <button id="SubmitCustomPostBtn" class="btn btn-dark rounded-2" value="Create" type="Submit">Upload Custom Post</button>
+                                    <button id="SubmitCustomPostBtn" class="btn btn-dark rounded-2 interactable" value="Create" type="Submit">Upload Custom Post</button>
                                 </div>
                                 <div class="row p-0">
                                     <span id="CustomPostValidationMessage" style="display: none;" class="text-primary">Error Submitting Post.....</span>
@@ -120,6 +120,8 @@
 
 
 @section Scripts {
+    
+
     <script src="~/Scripts/Social_Feed/Gratitude.js"></script>
     <script src="~/Scripts/Social_Feed/ContentFeed.Input.js"></script>
     <script src="~/Scripts/Social_Feed/ContentFeedAjaxCalls.js"></script>
@@ -127,4 +129,7 @@
     <script src="~/Scripts/Social_Feed/ContentFeed.js"></script>
     <script src="~/Scripts/Social_Feed/ContentFeedImageLoader.js"></script>
     <script src="~/Scripts/Social_Feed/ContentFeedLoader.js"></script>
+    <script>
+        ImageLoader.ShouldPostLoadImagesFromDB();
+    </script>
 }
