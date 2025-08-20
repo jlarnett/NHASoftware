@@ -23,9 +23,10 @@
 @if (_SignInManager.IsSignedIn(User))
 {
     <div class="container-fluid">
-        <div class="row postEditorPadding">
+        <div class="row">
+            <div class="col"></div>
             @Html.AntiForgeryToken()
-            <div class="col">
+            <div class="col col-12 col-sm-9 col-lg-7">
                 <div class="row text-center">
                     <div class="col">
                         <img src="~/Images/icons8-brain-32.png"/>
@@ -62,6 +63,8 @@
                     <span id="MainPostTextboxValidationMessage" class="text-primary" style="display: none;">Error Submitting Post.....</span>
                 </div>
             </div>
+            <div class="col"></div>
+
         </div>
 
         <!--AddAsync Post Photos Modal-->
@@ -103,7 +106,8 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="HomeContainer col p-0">
+        <div class="col"></div>
+        <div class="HomeContainer col-12 col-sm-9 col-lg-7">
             <div id="HomeContentFeed" class="" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
                 <div id="ContentFeed" class="">
                     @{
@@ -113,6 +117,7 @@
                 </div>
             </div>
         </div>
+        <div class="col"></div>
     </div>
 
 </div>

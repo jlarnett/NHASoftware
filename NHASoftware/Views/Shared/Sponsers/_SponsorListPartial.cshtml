@@ -19,41 +19,45 @@
             </div>
         
             <div class="row m-auto pt-1 pb-1 text-center">
-                <a asp-action="AnimePageDetails" class="h5 text-body link-underline link-opacity-50-hover interactable" asp-controller="Anime" asp-route-id="@featuredAnime.Id">@featuredAnime.AnimeName</a>
+                <a asp-action="AnimePageDetails" class="h5 text-body text-decoration-none interactable fw-semibold" asp-controller="Anime" asp-route-id="@featuredAnime.Id">@featuredAnime.AnimeName</a>
                 <div class="">
                     <a class="row text-center m-auto rounded-2 interactable" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@featuredAnime.Id">
                         <img src="@featuredAnime.AnimeImageUrl" class="rounded-3 p-0" alt="@featuredAnime.AnimeName's cover photo" />
                     </a>
                 </div>
                 <div class="multiline-ellipsis" style="max-width: 350px;">
-                    @featuredAnime.AnimeSummary + @featuredAnime.AnimeBackground
+                    @featuredAnime.AnimeSummary @featuredAnime.AnimeBackground
                 </div>
-                @if (@featuredAnime.AnimeGenres != null)
-                {
-                    var genres = @featuredAnime.AnimeGenres.Split(';');
-
-                    for (int i = 0; i < genres.Length; i++)
+                
+                <div class="align-content-center p-0">
+                    @if (@featuredAnime.AnimeGenres != null)
                     {
-                        switch (i)
+                        var genres = @featuredAnime.AnimeGenres.Split(';');
+
+                        for (int i = 0; i < genres.Length; i++)
                         {
-                            case 1:
-                                <span class="badge text-bg-primary interactable">@genres[i]</span>
-                                break;
-                            case 2:
-                                <span class="badge text-bg-success interactable">@genres[i]</span>
-                                break;
-                            case 3:
-                                <span class="badge text-bg-light interactable">@genres[i]</span>
-                                break;
-                            case 4:
-                                <span class="badge text-bg-primary interactable">@genres[i]</span>
-                                break;
-                            default:
-                                <span class="badge text-bg-light interactable border border-2">@genres[i]</span>
-                                break;
+                            switch (i)
+                            {
+                                case 0:
+                                    <a asp-controller="Home" asp-action="Index" class="col-auto text-decoration-none">
+                                        <span class="badge text-bg-primary border-2 interactable">@genres[i]</span>
+                                    </a>
+                                    break;
+                                case 1:
+                                    <a asp-controller="Home" asp-action="Index" class="col-auto text-decoration-none">
+                                        <span class="badge text-bg-success border-2 interactable">@genres[i]</span>
+                                    </a>
+                                    break;
+                                case 2:
+                                    <a asp-controller="Home" asp-action="Index" class="col-auto text-decoration-none">
+                                        <span class="badge text-bg-dark border-2 interactable">@genres[i]</span>
+                                    </a>
+                                    break;
+                            }
                         }
                     }
-                }
+                </div>
+
             </div>
         }
 

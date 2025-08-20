@@ -24,7 +24,7 @@
                 <img src="/ProfilePictures/@Model.User!.ProfilePicturePath" class="img-thumbnail avatar interactable" alt="@Model.User!.DisplayName Profile Picture"/>
             </a>
         </div>
-        <div class="col-sm-auto">
+        <div class="col-auto">
             <a class="h5 text-decoration-none profile-link fw-semibold interactable" role="button" userId="@Model.UserId">@Model.User!.DisplayName</a>
             <div class="">
                 <a class="text-decoration-none" role="button">@_TimeBender.GetTimeShortHandString(@Model.CreationDate!.Value)</a>
@@ -32,16 +32,18 @@
         </div>
         <div class="col">
         </div>
-        <div class="col-auto">
-            <button type="button" class="close interactable fs-1" data-bs-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
         <!--Post Action dropdown-->
-        <div class="col-auto">
+        <div class="col-auto p-0">
             @{ await Html.RenderPartialAsync("Social/_PostActionButtonSection", @Model); }
         </div>
-
+        <div class="col-auto p-0 me-4">
+            <button type="button" 
+                    class="btn btn-sm border-0 bg-transparent text-muted fs-5 interactable" 
+                    data-bs-dismiss="modal" 
+                    aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
 
     </div>
 @*     <div class="row">
