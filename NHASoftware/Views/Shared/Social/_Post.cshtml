@@ -74,7 +74,7 @@
     </div>
     <!--Posts Likes & Comment Show section-->
     <div class="row align-items-center m-2">
-        <div class="col-2">
+        <div class="col-auto me-2">
             <a class="text-nowrap hide-comments interactable" comment-count="@await _PostBuilder.GetCommentCountForPost(@Model.Id)" unique-post-id="@uuid.ToString()" post-id="@Model.Id" role="button">Show Comments (@await _PostBuilder.GetCommentCountForPost(@Model.Id))</a>
         </div>
         @{ await Html.RenderPartialAsync("Social/_PostLikeSection", @Model); }

@@ -13,19 +13,34 @@
     <hr />
     
     @{
+        int runningCount = Model.UpVotes - Model.DownVotes;
 
-        <div class="row">
+        <div class="row g-3 align-items-start">
             @if (!string.IsNullOrEmpty(Model.AnimeImageUrl))
             {
-                <div class="col-md-4">
-                    <img src="@Model.AnimeImageUrl" class="img-fluid rounded-2"/>
+                <!-- Vote sidebar -->
+                <div class="col-auto d-flex flex-column align-items-center me-2">
+                    <div class="vote-container d-flex flex-column align-items-center">
+                        <button class="vote-btn upvote interactable" data-post-id="@Model.Id">
+                            <i class="bi bi-caret-up-fill fs-4"></i>
+                        </button>
+                        <div class="vote-count fw-bold my-1" id="vote-count-@Model.Id">@runningCount</div>
+                        <button class="vote-btn downvote interactable" data-post-id="@Model.Id">
+                            <i class="bi bi-caret-down-fill fs-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Anime image -->
+                <div class="col-6 col-md-4">
+                    <img src="@Model.AnimeImageUrl" alt="@Model.AnimeName's Art Picture" class="img-fluid rounded-2"/>
                 </div>
             }
 
+            <!-- Trailer -->
             @if (!string.IsNullOrEmpty(Model.TrailerUrl))
             {
-
-                <div class="col-md-8">
+                <div class="col-12 col-md-7 col-sm-2">
                     <div class="ratio ratio-16x9 rounded-2 overflow-hidden">
                         <iframe src="@Model.TrailerUrl&cc_load_policy=1&cc_lang_pref=en&hl=en"
                                 title="YouTube video"
@@ -37,9 +52,8 @@
             }
         </div>
 
-
-
-        
+        <hr/>
+        <h4 class="fw-semibold">Meta Data</h4>
         if (@Model.AnimeJikanScore != null)
         {
             <div>Jikan Score: <strong>@Model.AnimeJikanScore</strong></div>
@@ -159,5 +173,38 @@
       }, { passive: false });
     })();
 
+        document.addEventListener("DOMContentLoaded", () => {
+        // Attach click listeners to all vote buttons
+        document.querySelectorAll(".vote-btn").forEach(button => {
+            button.addEventListener("click", async (e) => {
+                const postId = button.getAttribute("data-post-id");
+                const isUpvote = button.classList.contains("upvote");
 
+                try {
+                    const response = await fetch(`/api/Like/Anime/${postId}?upvote=${isUpvote}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Find the vote count element
+                        const voteCountElem = document.getElementById(`vote-count-${postId}`);
+                        let currentCount = parseInt(voteCountElem.textContent) || 0;
+
+                        // Update locally
+                        currentCount += isUpvote ? 1 : -1;
+                        voteCountElem.textContent = currentCount;
+                    } else {
+                        console.log("Vote failed or already applied");
+                    }
+                } catch (err) {
+                    console.error("Error voting:", err);
+                }
+            });
+        });
+    });
 </script>

@@ -144,4 +144,40 @@ body[data-bs-theme="dark"] .interactable:hover {
 }
 
 
+/*AnimePage + GamePage Vote UI*/
+.vote-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+}
+
+.vote-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: color 0.2s;
+    width: 32px;
+    height: 32px;
+}
+
+.vote-btn.upvote.active {
+    color: orange;
+}
+
+.vote-btn.downvote.active {
+    color: blue;
+}
+
+.vote-count {
+    text-align: center;
+    min-width: 24px;
+    font-weight: bold;
+    margin: 2px 0;
+}
 

@@ -60,14 +60,31 @@
     <hr />
     
     @{
+        int runningCount = Model.UpVotes - Model.DownVotes;
         if (@Model.ImageUrl != null)
         {
             <div class="row mb-4">
+                <!-- Vote sidebar -->
+                <div class="col-auto d-flex flex-column align-items-center me-2">
+                    <div class="vote-container d-flex flex-column align-items-center">
+                        <button class="vote-btn upvote interactable" data-post-id="@Model.Id">
+                            <i class="bi bi-caret-up-fill fs-4"></i>
+                        </button>
+                        <div class="vote-count fw-bold my-1" id="vote-count-@Model.Id">@runningCount</div>
+                        <button class="vote-btn downvote interactable" data-post-id="@Model.Id">
+                            <i class="bi bi-caret-down-fill fs-4"></i>
+                        </button>
+                    </div>
+                </div>
                 <div class="col-6 rounded-2">
+
                     <img src="@Model.ImageUrl" alt="@Model.Name's Box Art" class="img-fluid rounded-2"/>
                 </div>
             </div>
         }
+
+        <hr/>
+        <h4 class="fw-semibold">Metadata</h4>
         if (@Model.GameScore != null)
         {
             <div>RawgScore: <strong>@Model.GameScore</strong></div>
@@ -99,8 +116,6 @@
                         }
                     }
                 </div>
-
-                
                 
                 <div class="col">
                     @if (@Model.Platforms != null)
@@ -210,5 +225,40 @@
         }
       }, { passive: false });
     })();
+
+            document.addEventListener("DOMContentLoaded", () => {
+        // Attach click listeners to all vote buttons
+        document.querySelectorAll(".vote-btn").forEach(button => {
+            button.addEventListener("click", async (e) => {
+                const postId = button.getAttribute("data-post-id");
+                const isUpvote = button.classList.contains("upvote");
+
+                try {
+                    const response = await fetch(`/api/Like/Game/${postId}?upvote=${isUpvote}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Find the vote count element
+                        const voteCountElem = document.getElementById(`vote-count-${postId}`);
+                        let currentCount = parseInt(voteCountElem.textContent) || 0;
+
+                        // Update locally
+                        currentCount += isUpvote ? 1 : -1;
+                        voteCountElem.textContent = currentCount;
+                    } else {
+                        console.log("Vote failed or already applied");
+                    }
+                } catch (err) {
+                    console.error("Error voting:", err);
+                }
+            });
+        });
+    });
 
 </script>

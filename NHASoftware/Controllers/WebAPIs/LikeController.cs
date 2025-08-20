@@ -15,14 +15,24 @@ public class LikeController : ControllerBase
     private readonly ICookieMonster _cookieMonster;
     private readonly ICacheGoblin<CookieTrackingObject> _commentCacheGoblin;
     private readonly ICacheGoblin<CookieTrackingObject> _postCacheGoblin;
+    private readonly ICacheGoblin<CookieTrackingObject> _animeCacheGoblin;
+    private readonly ICacheGoblin<CookieTrackingObject> _gameCacheGoblin;
 
-    public LikeController(ApplicationDbContext context, IUnitOfWork unitOfWork, ICookieMonster cookieMonster, ICacheGoblin<CookieTrackingObject> commentCacheGoblin, ICacheGoblin<CookieTrackingObject> postCacheGoblin)
+    public LikeController(ApplicationDbContext context,
+        IUnitOfWork unitOfWork,
+        ICookieMonster cookieMonster,
+        ICacheGoblin<CookieTrackingObject> commentCacheGoblin,
+        ICacheGoblin<CookieTrackingObject> postCacheGoblin,
+        ICacheGoblin<CookieTrackingObject> animeCacheGoblin,
+        ICacheGoblin<CookieTrackingObject> gameCacheGoblin)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _cookieMonster = cookieMonster;
         _commentCacheGoblin = commentCacheGoblin;
         _postCacheGoblin = postCacheGoblin;
+        _animeCacheGoblin = animeCacheGoblin;
+        _gameCacheGoblin = gameCacheGoblin;
     }
 
 
@@ -55,8 +65,6 @@ public class LikeController : ControllerBase
         else
         {
             _cookieMonster.CreateCookie(CookieKeys.Session, Guid.NewGuid().ToString());
-
-
             _commentCacheGoblin.Add(new CookieTrackingObject(id, _cookieMonster.TryRetrieveCookie(CookieKeys.Session)));
             return await TryIncrementCommentLikes(id);
         }
@@ -96,6 +104,63 @@ public class LikeController : ControllerBase
             return await TryIncrementPostLikes(id);
         }
     }
+
+    [HttpPut("Anime/{id}")]
+    public async Task<IActionResult> TryLikeAnime(int id, [FromQuery] bool upvote)
+    {
+        var currentSessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
+
+        if (!currentSessionId.Equals(string.Empty))
+        {
+            var user = new CookieTrackingObject(id, currentSessionId);
+            var animeLikeExists = _animeCacheGoblin.Exists(user);
+
+            if (animeLikeExists)
+            {
+                return new JsonResult(new { success = false });
+            }
+            else
+            {
+                _animeCacheGoblin.Add(user);
+                return await TryModifyAnimeLikes(id, upvote);
+            }
+        }
+        else
+        {
+            _cookieMonster.CreateCookie(CookieKeys.Session, Guid.NewGuid().ToString());
+            _animeCacheGoblin.Add(new CookieTrackingObject(id, _cookieMonster.TryRetrieveCookie(CookieKeys.Session)));
+            return await TryModifyAnimeLikes(id, upvote);
+        }
+    }
+
+    [HttpPut("Game/{id}")]
+    public async Task<IActionResult> TryLikeGame(int id, [FromQuery] bool upvote)
+    {
+        var currentSessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
+
+        if (!currentSessionId.Equals(string.Empty))
+        {
+            var user = new CookieTrackingObject(id, currentSessionId);
+            var gameLikeExists = _gameCacheGoblin.Exists(user);
+
+            if (gameLikeExists)
+            {
+                return new JsonResult(new { success = false });
+            }
+            else
+            {
+                _gameCacheGoblin.Add(user);
+                return await TryModifyGameLikes(id, upvote);
+            }
+        }
+        else
+        {
+            _cookieMonster.CreateCookie(CookieKeys.Session, Guid.NewGuid().ToString());
+            _gameCacheGoblin.Add(new CookieTrackingObject(id, _cookieMonster.TryRetrieveCookie(CookieKeys.Session)));
+            return await TryModifyGameLikes(id, upvote);
+        }
+    }
+
     private bool ForumCommentExists(int id)
     {
         return _context.ForumComments!.Any(e => e.Id == id);
@@ -104,6 +169,80 @@ public class LikeController : ControllerBase
     private bool ForumPostExists(int id)
     {
         return _context.ForumPosts!.Any(e => e.Id == id);
+    }
+
+    private bool AnimePageExists(int id)
+    {
+        return _context.AnimePages!.Any(e => e.Id == id);
+    }
+
+    private bool GamePageExists(int id)
+    {
+        return _context.GamePages!.Any(e => e.Id == id);
+    }
+
+    private async Task<IActionResult> TryModifyAnimeLikes(int id, bool islike = false)
+    {
+        var animePage = await _unitOfWork.AnimePageRepository.GetByIdAsync(id);
+
+        if (animePage == null)
+           return new JsonResult(new { success = false });
+
+        if (islike)
+            animePage.UpVotes++;
+        else
+            animePage.DownVotes++;
+
+        try
+        {
+            await _unitOfWork.CompleteAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!AnimePageExists(id))
+            {
+                return new JsonResult(new { success = false });
+
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        return new JsonResult(new { success = true });
+    }
+
+    private async Task<IActionResult> TryModifyGameLikes(int id, bool islike = false)
+    {
+        var gamePage = await _unitOfWork.GamePageRepository.GetByIdAsync(id);
+
+        if (gamePage == null)
+            return new JsonResult(new { success = false });
+
+        if (islike)
+            gamePage.UpVotes++;
+        else
+            gamePage.DownVotes++;
+
+        try
+        {
+            await _unitOfWork.CompleteAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!GamePageExists(id))
+            {
+                return new JsonResult(new { success = false });
+
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        return new JsonResult(new { success = true });
     }
 
     private async Task<IActionResult> TryIncrementPostLikes(int id)

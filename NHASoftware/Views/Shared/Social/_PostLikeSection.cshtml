@@ -10,21 +10,31 @@
 
 <div class="col mt-2">
     <div class="row">
+        <!-- Spacer -->
         <div class="col-4"></div>
-        <div class="col-auto">
-            <div class="row">
-                <div class="col-auto me-2" like-counter-post-id="@Model.Id">@Model.LikeCount</div>
-                <div class="col-sm-6">
-                    <img class="post-like img-fluid interactable" role="button" post-id="@Model.Id" src="@likeSrcImage"/>
-                </div>
+
+        <!-- Buttons container -->
+        <div class="col d-flex gap-3 align-items-center flex-wrap">
+            <!-- Like Block -->
+            <div class="d-flex align-items-center gap-1">
+                <div like-counter-post-id="@Model.Id">@Model.LikeCount</div>
+                <img class="post-like interactable img-fluid"
+                     alt="Post/Comment Like Button"
+                     role="button"
+                     post-id="@Model.Id"
+                     src="@likeSrcImage"
+                     style="max-width:24px; height:auto;" />
             </div>
-        </div>
-        <div class="col-auto">
-            <div class="row">
-                <div class="col-auto me-2" dislike-counter-post-id="@Model.Id">@Model.DislikeCount</div>
-                <div class="col-sm-6">
-                    <img class="post-dislike img-fluid interactable" role="button" post-id="@Model.Id" src="@dislikeSrcImage"/>
-                </div>
+
+            <!-- Dislike Block -->
+            <div class="d-flex align-items-center gap-1">
+                <div dislike-counter-post-id="@Model.Id">@Model.DislikeCount</div>
+                <img class="post-dislike interactable img-fluid"
+                     alt="Post/Comment Dislike Button"
+                     role="button"
+                     post-id="@Model.Id"
+                     src="@dislikeSrcImage"
+                     style="max-width:24px; height:auto;" />
             </div>
         </div>
     </div>

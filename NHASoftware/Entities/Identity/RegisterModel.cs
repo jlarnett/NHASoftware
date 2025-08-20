@@ -50,7 +50,7 @@ public class RegisterModel : PageModel
                 UserCash = 0.00,
                 LastLoginDate = DateTime.Today,
                 ProfilePicturePath = "DefaultProfilePicture.png",
-                DisplayName = "Gangsta"
+                DisplayName = "Anonymous Gangsta"
             };
 
             var result = await _userManager.CreateAsync(user, Input.Password);
