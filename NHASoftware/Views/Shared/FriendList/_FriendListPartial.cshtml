@@ -1,9 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using NHA.Website.Software.Entities.Identity
+@using NHA.Website.Software.FeatureManagement
 @using NHA.Website.Software.Services.FriendSystem
 @using NHA.Website.Software.Services.SessionHistory
 @using NHA.Website.Software.Services.Time
 @using NHA.Website.Software.Services.RepositoryPatternFoundationals
+@using NHA.Website.Software.Services.Sponsors
 
 @inject IFriendSystem _FriendSystem
 @inject SignInManager<ApplicationUser> _SignInManager
@@ -11,7 +13,12 @@
 @inject IActiveSessionTracker _SessionTracker
 @inject ITimeBender _TimeBender
 @inject IUnitOfWork _UnitOfWork
+@inject IAdMaximizerService AdMaximizerService
+
+
 @{
+    var featuredGame = (await _UnitOfWork.GamePageRepository.FindAsync(a => a.Featured)).FirstOrDefault();
+
     if (_SignInManager.IsSignedIn(User))
     {
         <div id="FriendListUI" class="col position-fixed overflow-scroll w-inherit" style="height: 100%;">
@@ -43,8 +50,8 @@
                         offlineUsers.Add(friend, "offline");
                     }
                 }
-                
-                <details class="row m-auto" open>
+
+                <details class="row m-auto pt-2 pt-4" open>
                     <summary>Online (@onlineUsers.Count)</summary>
                     @{
                         foreach (var friend in onlineUsers)
@@ -91,7 +98,7 @@
                         }
                     }
                 </details>
-                <details class="row m-auto" open>
+                <details class="row m-auto border-bottom border-primary mb-2 pb-4" open>
                     <summary>Offline (@offlineUsers.Count)</summary>
                     @{
                         foreach (var friend in offlineUsers)
@@ -140,14 +147,157 @@
                     }
                 </details>
             }
+            
+            @if (featuredGame is not null)
+            {
+                <div class="row m-auto pt-2 border-bottom border-black rounded-2">
+                    <div class="h3 text-center text-primary">Featured Game</div>
+                </div>
+        
+                <div class="row m-auto pt-1 pb-1 text-center">
+                    <a asp-action="GamePage" class="h5 text-body link-underline link-opacity-50-hover interactable" asp-controller="Game" asp-route-id="@featuredGame.Id">@featuredGame.Name</a>
+                    <div class="">
+                        <a class="row text-center m-auto rounded-2 interactable" asp-controller="Game" asp-action="GamePage" asp-route-id="@featuredGame.Id">
+                            <img src="@featuredGame.ImageUrl" class="rounded-3 p-0" alt="@featuredGame.Name's cover photo" />
+                        </a>
+                    </div>
+                    <div class="multiline-ellipsis" style="max-width: 350px;">
+                        @featuredGame.Summary
+                    </div>
+                    @if (featuredGame.Genres != null)
+                    {
+                        var genres = featuredGame.Genres.Split(';');
+
+                        for (int i = 0; i < genres.Length; i++)
+                        {
+                            if (i % 2 == 0)
+                            {
+                                <span class="badge text-bg-info interactable">@genres[i]</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-primary interactable">@genres[i]</span>
+                            }
+                        }
+                    }
+                </div>
+            }
+            <div class="row m-auto pt-2 border-bottom border-black rounded-2">
+                <div class="h3 text-center text-primary">Sponsors</div>
+            </div>
+
+            @{
+                var ads = await AdMaximizerService.GetBestAdsForUserAsync();
+
+                foreach (var ad in ads)
+                {
+
+                    if (ad.VideoUrl != null)
+                    {
+                        <feature name="@FeatureFlags.SponsorAdsEnabled">
+                            <div class="row m-auto pt-1 pb-1 text-center">
+                                <div class="col">
+                                    <div class="ratio ratio-16x9 rounded-2 overflow-hidden">
+                                        <iframe src="@ad.VideoUrl"
+                                                title="YouTube video"
+                                                allowfullscreen
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                                        </iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </feature>
+                    }
+
+                    if (ad.ImageUrl != null)
+                    {
+                        <div class="row m-auto pt-1 pb-1 text-center">
+                            <iframe src=@ad.ImageUrl
+                                    title="Sponsor Video"
+                                    height="350px"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
+                    }
+                }
+            }
         </div>
     }
     else
     {
-        <div class="text-primary position-fixed m-auto h5 top-50 align-content-center align-items-center">
-            <p class="text-center mx-5">
-                Login to show friends
-            </p>
+        <div class="text-primary position-fixed m-auto h5 align-content-center align-items-center">
+            @if (featuredGame is not null)
+            {
+                <div class="row m-auto pt-2 border-bottom border-black rounded-2">
+                    <div class="h3 text-center text-primary">Featured Game</div>
+                </div>
+        
+                <div class="row m-auto pt-1 pb-1 text-center">
+                    <a asp-action="GamePage" class="h5 text-body link-underline link-opacity-50-hover interactable" asp-controller="Game" asp-route-id="@featuredGame.Id">@featuredGame.Name</a>
+                    <div class="">
+                        <a class="row text-center m-auto rounded-2 interactable" asp-controller="Game" asp-action="GamePage" asp-route-id="@featuredGame.Id">
+                            <img src="@featuredGame.ImageUrl" class="rounded-3 p-0" alt="@featuredGame.Name's cover photo" />
+                        </a>
+                    </div>
+                    <div class="multiline-ellipsis" style="max-width: 350px;">
+                        @featuredGame.Summary
+                    </div>
+                    @if (featuredGame.Genres != null)
+                    {
+                        var genres = featuredGame.Genres.Split(';');
+
+                        for (int i = 0; i < genres.Length; i++)
+                        {
+                            if (i % 2 == 0)
+                            {
+                                <span class="badge text-bg-info interactable">@genres[i]</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-primary interactable">@genres[i]</span>
+                            }
+                        }
+                    }
+                </div>
+            }
+            
+            @{
+                var ads = await AdMaximizerService.GetBestAdsForUserAsync();
+
+                foreach (var ad in ads)
+                {
+
+                    if (ad.VideoUrl != null)
+                    {
+                        <feature name="@FeatureFlags.SponsorAdsEnabled">
+                            <div class="row m-auto pt-1 pb-1 text-center">
+                                <div class="col">
+                                    <div class="ratio ratio-16x9 rounded-2 overflow-hidden">
+                                        <iframe src="@ad.VideoUrl"
+                                                title="YouTube video"
+                                                allowfullscreen
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                                        </iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </feature>
+                    }
+
+                    if (ad.ImageUrl != null)
+                    {
+                        <div class="row m-auto pt-1 pb-1 text-center">
+                            <iframe src=@ad.ImageUrl
+                                    title="Sponsor Video"
+                                    height="350px"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
+                    }
+                }
+            }
         </div>
     }
 }

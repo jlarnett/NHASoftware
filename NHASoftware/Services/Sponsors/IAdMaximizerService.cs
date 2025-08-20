@@ -7,5 +7,6 @@ namespace NHA.Website.Software.Services.Sponsors
     {
         Task<IEnumerable<SponsorAd>> GetBestAdsForUserAsync();
         Task PickFeaturedAnime();
+        Task PickFeaturedGame();
     }
 }

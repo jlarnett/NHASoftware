@@ -10,13 +10,15 @@
 /*Home Page Content Feed. Main Feed where posts are directly appended*/
 #HomeContentFeed {
     margin: auto;
-    border-right: 2px solid black;
-    border-left: 2px solid black;
     /*width: 75%;*/
 /*    height: 45em;
     position: static;*/
-    padding: .5em;
+    padding: 0em 15em 0em 15em;
     overflow-y: auto;
+}
+
+.postEditorPadding {
+    padding: 0em 15em 0em 15em;
 }
 
 /*Home Page Outer Content Feed. This is where the #HomeContentFeed lives*/
@@ -29,6 +31,14 @@
 .carousel-inner {
     height: 0;
     padding-bottom: 35%; /* this sets carousel aspect ratio (4:1 here) */
+}
+
+.avatar {
+    width: 100%; /* let Bootstrap scale it */
+    max-width: 64px; /* don’t let it get bigger than this */
+    min-width: 40px; /* don’t let it get smaller than this */
+    height: auto; /* keep natural aspect ratio */
+    object-fit: cover; /* makes square crops look good */
 }
 
 .carousel-item {

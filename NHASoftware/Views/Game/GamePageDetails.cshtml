@@ -64,7 +64,7 @@
         {
             <div class="row mb-4">
                 <div class="col-6 rounded-2">
-                    <img src="@Model.ImageUrl" class="img-fluid rounded-2"/>
+                    <img src="@Model.ImageUrl" alt="@Model.Name's Box Art" class="img-fluid rounded-2"/>
                 </div>
             </div>
         }
@@ -91,7 +91,7 @@
                     {
                         if (i % 2 == 0)
                         {
-                            <span class="badge text-bg-dark p-2 mb-2">@genres[i]</span>
+                            <span class="badge text-bg-success p-2 mb-2">@genres[i]</span>
                         }
                         else
                         {
@@ -115,13 +115,13 @@
                             switch (i)
                             {
                                 case 0:
-                                    <span class="badge text-bg-primary col-auto p-2"><img src="@ConvertPlatformToIcon(platforms[i])" class="me-1"/>@platforms[i]</span>
+                                    <span class="badge text-bg-primary col-auto p-2"><img src="@ConvertPlatformToIcon(platforms[i])" alt="@Model.Name's Platform Icon" class="me-1" />@platforms[i]</span>
                                     break;
                                 case 1:
-                                    <span class="badge text-bg-warning col-auto p-2"><img src="@ConvertPlatformToIcon(platforms[i])" class="me-1" />@platforms[i]</span>
+                                    <span class="badge text-bg-light border col-auto p-2"><img src="@ConvertPlatformToIcon(platforms[i])" alt="@Model.Name's Platform Icon" class="me-1" />@platforms[i]</span>
                                     break;
                                 case 2:
-                                    <span class="badge text-bg-dark col-auto p-2"><img src="@ConvertPlatformToIcon(platforms[i])" class="me-1" />@platforms[i]</span>
+                                    <span class="badge text-bg-success col-auto p-2"><img src="@ConvertPlatformToIcon(platforms[i])" alt="@Model.Name's Platform Icon" class="me-1" />@platforms[i]</span>
                                     colorIndex = 0;
                                     break;
                             }
@@ -149,9 +149,9 @@
 
 <div class="mt-3 text-muted small" id="hotkeyHelp">
     💡 Tip:
-    <strong>Ctrl + →</strong> = Next anime
+    <strong class="text-primary">Ctrl + →</strong> = Next Game
     |
-    <strong>Ctrl + ←</strong> = Back to previous page
+    <strong class="text-primary">Ctrl + ←</strong> = Back to previous page
 </div>
 
 <style>

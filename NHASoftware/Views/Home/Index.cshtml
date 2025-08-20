@@ -23,9 +23,9 @@
 @if (_SignInManager.IsSignedIn(User))
 {
     <div class="container-fluid">
-        <div class="row">
+        <div class="row postEditorPadding">
             @Html.AntiForgeryToken()
-            <div class="col border-start border-end border-2 border-dark ps-5 pe-5">
+            <div class="col border-start border-end border-2 border-dark">
                 <div class="row text-center">
                     <div class="col">
                         <img src="~/Images/icons8-brain-32.png"/>
@@ -36,7 +36,7 @@
                     <form id="BasicPostForm" method="post" enctype="multipart/form-data">
                         <div id="MainPostTextboxContainer" class="p-0">
                             @* <textarea id="MainPostTextbox" name="Summary"></textarea> *@
-                            <input asp-for="Summary" id="MainPostTextbox" />
+                            <input asp-for="Summary" id="MainPostTextbox"/>
                         </div>
                     </form>
                 </div>
@@ -104,8 +104,8 @@
 <div class="container-fluid">
     <div class="row">
         <div class="HomeContainer col p-0">
-            <div id="HomeContentFeed" class="ps-5 pe-5" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
-                <div id="ContentFeed" class="ps-5 pe-5">
+            <div id="HomeContentFeed" class="" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
+                <div id="ContentFeed" class="">
                     @{
                         var posts = await _PostBuilder.RetrieveParentPosts();
                         await Html.RenderPartialAsync("Social/_MultiPost", new MultiPostVM(posts));

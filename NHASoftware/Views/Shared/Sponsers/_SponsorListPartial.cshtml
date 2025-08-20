@@ -19,7 +19,7 @@
             </div>
         
             <div class="row m-auto pt-1 pb-1 text-center">
-                <a asp-action="AnimePageDetails" class="h5 text-body link-underline link-opacity-50-hover" asp-controller="Anime" asp-route-id="@featuredAnime.Id">@featuredAnime.AnimeName</a>
+                <a asp-action="AnimePageDetails" class="h5 text-body link-underline link-opacity-50-hover interactable" asp-controller="Anime" asp-route-id="@featuredAnime.Id">@featuredAnime.AnimeName</a>
                 <div class="">
                     <a class="row text-center m-auto rounded-2 interactable" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@featuredAnime.Id">
                         <img src="@featuredAnime.AnimeImageUrl" class="rounded-3 p-0" alt="@featuredAnime.AnimeName's cover photo" />
@@ -34,13 +34,23 @@
 
                     for (int i = 0; i < genres.Length; i++)
                     {
-                        if (i % 2 == 0)
+                        switch (i)
                         {
-                            <span class="badge text-bg-dark">@genres[i]</span>
-                        }
-                        else
-                        {
-                            <span class="badge text-bg-primary">@genres[i]</span>
+                            case 1:
+                                <span class="badge text-bg-primary interactable">@genres[i]</span>
+                                break;
+                            case 2:
+                                <span class="badge text-bg-success interactable">@genres[i]</span>
+                                break;
+                            case 3:
+                                <span class="badge text-bg-light interactable">@genres[i]</span>
+                                break;
+                            case 4:
+                                <span class="badge text-bg-primary interactable">@genres[i]</span>
+                                break;
+                            default:
+                                <span class="badge text-bg-light interactable border border-2">@genres[i]</span>
+                                break;
                         }
                     }
                 }

@@ -19,24 +19,30 @@
 <div class="container-fluid border border-2 shadow border-primary ridge rounded-2 mt-2 post-container" post-id="@Model.Id" images-attached="@Model.HasImagesAttached.ToString()" images-loaded="false" post-uuid="@uuid.ToString()">
     <div class="row align-items-center mt-2">
         <!--User Profile image & display name-->
-        <div class="col-1 px-2">
-            <img src="/ProfilePictures/@Model.User!.ProfilePicturePath" class="img-fluid img-thumbnail" alt="@Model.User!.DisplayName Profile Picture"/>
+        <div class="col-auto px-2">
+            <a asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@Model.User!.Id">
+                <img src="/ProfilePictures/@Model.User!.ProfilePicturePath" class="img-thumbnail avatar interactable" alt="@Model.User!.DisplayName Profile Picture"/>
+            </a>
         </div>
         <div class="col-sm-auto">
             <a class="h5 text-decoration-none profile-link fw-semibold interactable" role="button" userId="@Model.UserId">@Model.User!.DisplayName</a>
-        </div>
-        <div class="col-auto">
-            <a class="h1 text-decoration-none" role="button">·</a>
-        </div>
-        <div class="col-2">
-            <a class="h5 text-decoration-none" role="button">@_TimeBender.GetTimeShortHandString(@Model.CreationDate!.Value)</a>
+            <div class="">
+                <a class="text-decoration-none" role="button">@_TimeBender.GetTimeShortHandString(@Model.CreationDate!.Value)</a>
+            </div>
         </div>
         <div class="col">
+        </div>
+        <div class="col-auto">
+            <button type="button" class="close interactable fs-1" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
         <!--Post Action dropdown-->
         <div class="col-auto">
             @{ await Html.RenderPartialAsync("Social/_PostActionButtonSection", @Model); }
         </div>
+
+
     </div>
 @*     <div class="row">
         <div class="col-sm-1 px-0"></div>
@@ -46,13 +52,11 @@
     </div> *@
     <!--Posts summary section. Text content is posted here-->
     <div class="row text-break mb-2 ">
-        <div class="col-sm-1 px-0 "></div>
-        <div class="col border-top border-primary pt-2">
+        <div class="col pt-2">
             <div class="col">@Model.Summary</div>
         </div>
     </div>
     <div class="row text-break">
-        <div class="col-sm-1 px-0"></div>
         <div unique-image-section="@uuid" class="col">
             <div id="Image-Carousel-@uuid" class="carousel slide border border-white" data-bs-interval="false" style="display: none">
                 <div class="carousel-inner" id="Image-Carousel-Inner-@uuid">
@@ -71,7 +75,7 @@
     <!--Posts Likes & Comment Show section-->
     <div class="row align-items-center m-2">
         <div class="col-2">
-            <a class="text-nowrap hide-comments" comment-count="@await _PostBuilder.GetCommentCountForPost(@Model.Id)" unique-post-id="@uuid.ToString()" post-id="@Model.Id" role="button">Show Comments (@await _PostBuilder.GetCommentCountForPost(@Model.Id))</a>
+            <a class="text-nowrap hide-comments interactable" comment-count="@await _PostBuilder.GetCommentCountForPost(@Model.Id)" unique-post-id="@uuid.ToString()" post-id="@Model.Id" role="button">Show Comments (@await _PostBuilder.GetCommentCountForPost(@Model.Id))</a>
         </div>
         @{ await Html.RenderPartialAsync("Social/_PostLikeSection", @Model); }
     </div>

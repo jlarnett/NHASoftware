@@ -57,6 +57,7 @@ public class HomeController : Controller
         CreateAnimeLoadHangfireJob();
         CreateGameLoadHangfireJob();
         CreateFeaturedAnimeSelectorJob();
+        CreateFeaturedGameSelectorJob();
         AssignSessionGuidCookie();
         return View();
     }
@@ -198,6 +199,12 @@ public class HomeController : Controller
     /// </summary>
     private void CreateFeaturedAnimeSelectorJob() =>
         RecurringJob.AddOrUpdate<IAdMaximizerService>("FeaturedAnimeSelector", x => x.PickFeaturedAnime(), Cron.Hourly);
+
+    /// <summary>
+    /// Make sure the recurring Featured anime job runs every 2 days at midnight
+    /// </summary>
+    private void CreateFeaturedGameSelectorJob() =>
+        RecurringJob.AddOrUpdate<IAdMaximizerService>("FeaturedGameSelector", x => x.PickFeaturedGame(), Cron.Hourly);
 
     private void AssignSessionGuidCookie()
     {
