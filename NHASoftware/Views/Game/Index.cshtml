@@ -33,8 +33,8 @@
 <div>
     <h2>Alphabetical Game Index <em class=" h3 text-primary">(@gamePageCount)</em></h2>
     
-    <a asp-action="CreateAnimePage" asp-controller="Anime">Create Game Entry</a> | 
-    <a asp-action="GamePage" asp-route-id="@randomGame!.Id" asp-controller="Game">Next &#x2794;</a>
+    <a asp-action="CreateAnimePage" asp-controller="Anime" class="interactable">Create Game Entry</a> | 
+    <a asp-action="GamePage" asp-route-id="@randomGame!.Id" asp-controller="Game" class="interactable">Next &#x2794;</a>
     <p>Select one of the letters to be view all games beginning with that letter. The games will be listed in alphabetical order. </p>
     
     @{
@@ -43,7 +43,7 @@
 
         foreach (var letter in alphabet)
         {
-            <a asp-action="LetterDetail" asp-controller="Game" asp-route-id="@letterCounter" class="link-primary index-letters">@letter</a>
+            <a asp-action="LetterDetail" asp-controller="Game" asp-route-id="@letterCounter" class="link-primary index-letters interactable">@letter</a>
             letterCounter++;
         }
         <hr/>
@@ -54,7 +54,7 @@
         foreach (var genres in sorted)
         {
             if (genres.IsNullOrEmpty()) continue;
-            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters fs-3">@genres</a>
+            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters fs-3 interactable">@genres</a>
         }
     }
 </div>

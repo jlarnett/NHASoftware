@@ -35,8 +35,8 @@
 <div>
     <h2>Alphabetical Anime Index <em class=" h3 text-primary">(@animePageCount)</em></h2>
     
-    <a asp-action="CreateAnimePage" asp-controller="Anime">Create Anime Entry</a> |
-    <a asp-action="AnimePageDetails" asp-route-id="@randomAnime!.Id" asp-controller="Anime">Next &#x2794;</a>
+    <a asp-action="CreateAnimePage" asp-controller="Anime" class="interactable">Create Anime Entry</a> |
+    <a asp-action="AnimePageDetails" asp-route-id="@randomAnime!.Id" asp-controller="Anime" class="interactable">Next &#x2794;</a>
 
     <p>Select one of the letters to be view all animes beginning with that letter. The animes will be listed in alphabetical order. </p>
     
@@ -46,7 +46,7 @@
 
         foreach (var letter in alphabet)
         {
-            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters">@letter</a>
+            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters interactable">@letter</a>
             letterCounter++;
         }
 
@@ -59,7 +59,7 @@
         foreach (var animeGenres in sorted)
         {
             if (animeGenres.IsNullOrEmpty()) continue;
-                <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters fs-3">@animeGenres</a>
+                <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters fs-3 interactable">@animeGenres</a>
         }
 
     }

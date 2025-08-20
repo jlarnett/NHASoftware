@@ -17,7 +17,7 @@
 </head>
 
 <div class="d-grid gap-2">
-    <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="@Model.ForumPost.Id" class=" btn btn-dark">Create Comment</a>
+    <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="@Model.ForumPost.Id" class=" btn btn-dark interactable">Create Comment</a>
 </div>
 
 <hr />
@@ -36,7 +36,7 @@
                         <img src="@Url.Content(profilePicture)" class="img-fluid rounded-pill col-12 m-auto"/>
                     </div>
                     <div class="row h4 text-center text-black text-break">
-                         <div class="text-break col text-primary">@Model.ForumPost.User.DisplayName</div>
+                        <a asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@Model.ForumPost.User.Id" class="text-decoration-none interactable"><div class="text-break col text-primary fw-semibold">@Model.ForumPost.User.DisplayName</div></a>
                     </div>
                 </div>
                 <div class="col border-start border-dark">
@@ -51,7 +51,7 @@
                     <h5 id="PostDate"></h5>
                 </div>
                 <div class="col-auto m-auto">
-                <div class="btn btn-primary align-content-center m-auto modern-post-action-like-picture" post-id="@id">
+                <div class="btn btn-primary align-content-center m-auto modern-post-action-like-picture interactable" post-id="@id">
                         <div class="row p-0">
                             <div class="col-auto">
                             <input type="image" src="~/Images/Facebook-Like-Filled.png" class="img-fluid"  />
@@ -65,10 +65,10 @@
                     if (SignInManager.IsSignedIn(User) && user!.Id == Model.ForumPost.UserId || AccessWarden.IsForumAdmin(User))
                     {
                         <div class="col-auto">
-                            <button class="btn btn-dark" id="EditPost" post-id="@id">Edit Post</button>
+                            <button class="btn btn-dark interactable" id="EditPost" post-id="@id">Edit Post</button>
                         </div>
                         <div class="col-auto">
-                            <button class="btn btn-primary" id="DeletePost" post-id="@id">Delete Post</button>
+                            <button class="btn btn-primary interactable" id="DeletePost" post-id="@id">Delete Post</button>
                         </div>
                     }
                 }

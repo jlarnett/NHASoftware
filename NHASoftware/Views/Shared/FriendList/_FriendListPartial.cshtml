@@ -166,7 +166,7 @@
                         </a>
                     </div>
                     <div class="multiline-ellipsis" style="max-width: 350px;">
-                        @featuredGame.Summary
+                        @Html.Raw(@featuredGame.Summary)
                     </div>
                     
                     <div class="align-content-center p-0">
@@ -246,7 +246,7 @@
     }
     else
     {
-        <div class="text-primary position-fixed m-auto h5 align-content-center align-items-center">
+        <div class="position-fixed m-auto align-content-center align-items-center">
             @if (featuredGame is not null)
             {
                 <div class="row">
@@ -263,7 +263,7 @@
                         </a>
                     </div>
                     <div class="multiline-ellipsis" style="max-width: 350px;">
-                        @featuredGame.Summary
+                        @Html.Raw(@featuredGame.Summary)
                     </div>
                     <div class="align-content-center p-0">
                         @if (@featuredGame.Genres != null)

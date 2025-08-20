@@ -11,7 +11,7 @@
 <div>
     <h2>@Model.AnimeName</h2>
     <hr />
-    
+    <h4 class="fw-semibold">Anime Preview:</h4>
     @{
         int runningCount = Model.UpVotes - Model.DownVotes;
 
@@ -68,13 +68,23 @@
 
             for (int i = 0; i < genres.Length; i++)
             {
-                if (i % 2 == 0)
+                switch (i)
                 {
-                    <span class="badge text-bg-info">@genres[i]</span>
-                }
-                else
-                {
-                    <span class="badge text-bg-primary">@genres[i]</span>
+                    case 0:
+                        <a asp-controller="Home" asp-action="Index" class="col-auto text-decoration-none">
+                            <span class="badge text-bg-primary border-2 interactable">@genres[i]</span>
+                        </a>
+                        break;
+                    case 1:
+                        <a asp-controller="Home" asp-action="Index" class="col-auto text-decoration-none">
+                            <span class="badge text-bg-success border-2 interactable">@genres[i]</span>
+                        </a>
+                        break;
+                    case 2:
+                        <a asp-controller="Home" asp-action="Index" class="col-auto text-decoration-none">
+                            <span class="badge text-bg-dark border-2 interactable">@genres[i]</span>
+                        </a>
+                        break;
                 }
             }
         }
@@ -130,9 +140,9 @@
 
 
 <div>
-    <a asp-action="CreateAnimePage" asp-controller="Anime">Edit</a> |
-    <a asp-action="Index">Back to List</a> |
-    <a id="nextLink" asp-action="AnimePageDetails" asp-route-id="@randomAnime!.Id" asp-controller="Anime">Next &#x2794;</a>
+    <a asp-action="CreateAnimePage" asp-controller="Anime" class="interactable">Edit</a> |
+    <a asp-action="Index" class="interactable">Back to List</a> |
+    <a id="nextLink" class="interactable" asp-action="AnimePageDetails" asp-route-id="@randomAnime!.Id" asp-controller="Anime">Next &#x2794;</a>
 </div>
 
 <script>

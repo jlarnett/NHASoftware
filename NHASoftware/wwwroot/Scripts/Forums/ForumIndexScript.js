@@ -23,7 +23,7 @@
             var str = spacetime(ForumsKV[i].value.latestDate);
             var date2 = str.format('{month}-{date-pad}-{year} {time}{am pm}');
 
-            table2.row.add(["<div class='container-fluid shadow modern-forum-post-container mb-2'> <a role='button' class='text-decoration-none w-100 modern-thread-link' topic-id='" + ForumsKV[i].value.id + "'>" +
+            table2.row.add(["<div class='container-fluid shadow modern-forum-post-container mb-2 interactable-small'> <a role='button' class='text-decoration-none w-100 modern-thread-link' topic-id='" + ForumsKV[i].value.id + "'>" +
                                 "<div class='row w-100'>" +
                                     "<div class='col-auto'>" + "<h3 class='h2 text-decoration-none'>" + ForumsKV[i].value.title + "</h3>" + "</div>" +
                                 "</div>" +
@@ -59,12 +59,12 @@ function CheckForAdminButtons(data, adminButtons)
     if (adminButtons === true) {
         return "<div class='col row m-auto'>" +
         "<div class='col-auto'>" +
-                "<button class='btn btn-dark js-edit-topic' topic-id='" +
+                "<button class='btn btn-dark js-edit-topic interactable' topic-id='" +
                     data.value.id +
                 "'>Edit</button>" +
             "</div>" +
             "<div class='col-auto'>" +
-            "<button class='btn btn-primary js-delete-topic' topic-id='" +
+            "<button class='btn btn-primary js-delete-topic interactable' topic-id='" +
             data.value.id +
             "'>Delete</button>" +
             "</div>" + "</div>";
