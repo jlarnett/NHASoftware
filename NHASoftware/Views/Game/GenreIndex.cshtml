@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using NHA.Website.Software.Views.Game.GameVms
-@model LetterGameIndexViewModel
+﻿@model NHA.Website.Software.Views.Game.Vms.GenreIndexViewModel
 @{
     ViewData["Title"] = "Anime";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -11,10 +9,10 @@
 </head>
 
 @{
-    var letterAnimeCount = @Model.GameList.Count;
+    var genreGameCounter = @Model.GameList.Count;
 }
 
-<h1>@Model.AlphabetLetter <em class="h3 text-primary">(@letterAnimeCount)</em></h1>
+<h1>@Model.Genre <em class="h3 text-primary">(@genreGameCounter)</em></h1>
 
 @{
     foreach (var game in Model.GameList)

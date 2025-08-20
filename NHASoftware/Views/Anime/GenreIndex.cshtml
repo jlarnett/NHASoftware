@@ -1,6 +1,5 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using NHA.Website.Software.Views.Anime.Vms
-@model LetterIndexViewModel
+﻿@using NHA.Website.Software.Views.Anime.Vms
+@model GenreIndexViewModel
 @{
     ViewData["Title"] = "Anime";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -11,10 +10,10 @@
 </head>
 
 @{
-    var letterAnimeCount = @Model.AnimeList.Count;
+    var genreAnimeCounter = @Model.AnimeList.Count;
 }
 
-<h1>@Model.AlphabetLetter <em class="h3 text-primary">(@letterAnimeCount)</em></h1>
+<h1>@Model.Genre <em class="h3 text-primary">(@genreAnimeCounter)</em></h1>
 
 @{
     foreach (var anime in Model.AnimeList)

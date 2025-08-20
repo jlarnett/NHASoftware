@@ -51,11 +51,10 @@
         <h2 class="mt-4">Genres <em class=" h3 text-primary">(@allGenres.Count)</em></h2>
         var sorted = allGenres.Order();
 
-        foreach (var genres in sorted)
+        foreach (var genre in sorted)
         {
-            if (genres.IsNullOrEmpty()) continue;
-            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters fs-3 interactable">@genres</a>
+            if (genre.IsNullOrEmpty()) continue;
+            <a asp-controller="Game" asp-action="GenreIndex" asp-route-genre="@genre" class="link-primary index-letters fs-3 interactable">@genre</a>
         }
     }
 </div>
-

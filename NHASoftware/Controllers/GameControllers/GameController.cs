@@ -7,7 +7,8 @@ using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Entities.Anime;
 using NHA.Website.Software.Entities.Game;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
-using NHA.Website.Software.Views.ViewModels.GameVms;
+using NHA.Website.Software.Views.Game.GameVms;
+using NHA.Website.Software.Views.Game.Vms;
 
 namespace NHA.Website.Software.Controllers.GameControllers;
 
@@ -56,6 +57,34 @@ public class GameController : Controller
         };
 
         return View("LetterIndex", vm);
+    }
+    public async Task<IActionResult> GenreIndex(string genre)
+    {
+        var completeGameList = await _unitOfWork.GamePageRepository.GetAllAsync();
+
+        List<GamePage> gameList = [];
+
+        //Getting all anime that starts with specific alphabet letter
+        foreach (var game in completeGameList)
+        {
+            if (game.Genres == null) continue;
+
+            if (game.Genres.Contains(genre))
+            {
+                gameList.Add(game);
+            }
+        }
+
+        //Sorting the list by alphabetical order.
+        var alphabeticallySortedAnimeList = gameList.OrderBy(ap => ap.Name).ToList();
+
+        var vm = new GenreIndexViewModel()
+        {
+            Genre = genre,
+            GameList = alphabeticallySortedAnimeList
+        };
+
+        return View("GenreIndex", vm);
     }
 
     public IActionResult GamePage(int? id)

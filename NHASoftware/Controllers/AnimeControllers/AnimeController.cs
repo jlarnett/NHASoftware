@@ -6,7 +6,7 @@ using NHA.Helpers.HtmlStringCleaner;
 using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Entities.Anime;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
-using NHA.Website.Software.Views.ViewModels.AnimeVMs;
+using NHA.Website.Software.Views.Anime.Vms;
 namespace NHA.Website.Software.Controllers.AnimeControllers;
 [FeatureGate("AnimeEnabled")]
 public class AnimeController : Controller
@@ -57,6 +57,34 @@ public class AnimeController : Controller
         return View("LetterIndex", vm);
     }
 
+    public async Task<IActionResult> GenreIndex(string genre)
+    {
+        var completeAnimeList = await _unitOfWork.AnimePageRepository.GetAllAsync();
+
+        List<AnimePage> animeList = [];
+
+        //Getting all anime that starts with specific alphabet letter
+        foreach (var anime in completeAnimeList)
+        {
+            if(anime.AnimeGenres == null) continue;
+
+            if (anime.AnimeGenres.Contains(genre))
+            {
+                animeList.Add(anime);
+            }
+        }
+
+        //Sorting the list by alphabetical order.
+        var alphabeticallySortedAnimeList = animeList.OrderBy(ap => ap.AnimeName).ToList();
+
+        var vm = new GenreIndexViewModel()
+        {
+            Genre = genre,
+            AnimeList = alphabeticallySortedAnimeList
+        };
+
+        return View("GenreIndex", vm);
+    }
     public IActionResult AnimePage(int? id)
     {
         if (id == null)

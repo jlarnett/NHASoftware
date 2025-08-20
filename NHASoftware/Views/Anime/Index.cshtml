@@ -56,10 +56,10 @@
 
         var sorted = allGenres.Order();
 
-        foreach (var animeGenres in sorted)
+        foreach (var animeGenre in sorted)
         {
-            if (animeGenres.IsNullOrEmpty()) continue;
-                <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters fs-3 interactable">@animeGenres</a>
+            if (animeGenre.IsNullOrEmpty()) continue;
+                <a asp-action="GenreIndex" asp-controller="Anime" asp-route-genre="@animeGenre" class="link-primary index-letters fs-3 interactable">@animeGenre</a>
         }
 
     }
