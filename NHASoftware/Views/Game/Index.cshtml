@@ -1,4 +1,6 @@
-﻿@using NHA.Website.Software.Services.RepositoryPatternFoundationals
+﻿@using Microsoft.IdentityModel.Tokens
+@using NHA.Website.Software.Services.RepositoryPatternFoundationals
+@using NuGet.Packaging
 @inject IUnitOfWork unitOfWork
 
 @{
@@ -10,15 +12,29 @@
     <link rel="stylesheet" href="css/AnimePages.css">
 </head>
 @{
-    var gamePageCount = await unitOfWork.GamePageRepository.CountAsync(x => x.Id != null);
-    var randomAnime = await unitOfWork.GamePageRepository.GetRandomEntityAsync();
+    var allGames = await unitOfWork.GamePageRepository.GetAllAsync();
+    HashSet<string> allGenres = [];
+    var gamePageCount = 0;
+
+    foreach (var game in allGames)
+    {
+
+        if (game.Genres is not null)
+        {
+            var genres = game.Genres.Split(';');
+            allGenres.AddRange(genres);
+        }
+        gamePageCount++;
+    }
+
+    var randomGame = await unitOfWork.GamePageRepository.GetRandomEntityAsync();
 }
 
 <div>
     <h2>Alphabetical Game Index <em class=" h3 text-primary">(@gamePageCount)</em></h2>
     
     <a asp-action="CreateAnimePage" asp-controller="Anime">Create Game Entry</a> | 
-    <a asp-action="GamePage" asp-route-id="@randomAnime!.Id" asp-controller="Game">Next &#x2794;</a>
+    <a asp-action="GamePage" asp-route-id="@randomGame!.Id" asp-controller="Game">Next &#x2794;</a>
     <p>Select one of the letters to be view all games beginning with that letter. The games will be listed in alphabetical order. </p>
     
     @{
@@ -29,6 +45,16 @@
         {
             <a asp-action="LetterDetail" asp-controller="Game" asp-route-id="@letterCounter" class="link-primary index-letters">@letter</a>
             letterCounter++;
+        }
+        <hr/>
+
+        <h2 class="mt-4">Genres <em class=" h3 text-primary">(@allGenres.Count)</em></h2>
+        var sorted = allGenres.Order();
+
+        foreach (var genres in sorted)
+        {
+            if (genres.IsNullOrEmpty()) continue;
+            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters fs-3">@genres</a>
         }
     }
 </div>

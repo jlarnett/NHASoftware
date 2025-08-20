@@ -1,4 +1,4 @@
-html 
+﻿html 
 {
   font-size: 14px;
 }
@@ -181,3 +181,135 @@ body[data-bs-theme="dark"] .interactable:hover {
     margin: 2px 0;
 }
 
+.featured-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem auto;
+    padding: 0.75rem 1.5rem;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    position: relative;
+    background: linear-gradient(90deg, #ff4d6d, #6a5af9, #00c9ff);
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+    /* Shiny “anime aura” glow */
+    .featured-header::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, rgba(255,255,255,0.3), rgba(255,255,255,0));
+        transform: skewX(-20deg) translateX(-100%);
+        animation: shine 3s infinite;
+    }
+
+@keyframes shine {
+    100% {
+        transform: skewX(-20deg) translateX(200%);
+    }
+}
+
+/* Slight pulsing effect for energy */
+.featured-header span {
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 0 6px rgba(255,255,255,0.9), 0 0 12px rgba(255,77,109,0.7), 0 0 20px rgba(106,90,249,0.6);
+    animation: pulse 2.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.07);
+    }
+}
+
+.friends-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem auto;
+    padding: 0.6rem 1.2rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    background: linear-gradient(90deg, #ff6b6b, #ff8787, #ffb3b3);
+    border-radius: 0.75rem;
+    box-shadow: 0 3px 12px rgba(255, 107, 107, 0.4);
+    overflow: hidden;
+}
+
+    /* Subtle shine effect */
+    .friends-header::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, rgba(255,255,255,0.25), rgba(255,255,255,0));
+        transform: skewX(-20deg) translateX(-100%);
+        animation: shine 4s infinite;
+    }
+
+@keyframes shine {
+    100% {
+        transform: skewX(-20deg) translateX(200%);
+    }
+}
+
+/* Gentle pulsing glow */
+.friends-header span {
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 0 6px rgba(255,255,255,0.8), 0 0 12px rgba(255,107,107,0.6), 0 0 18px rgba(255,135,135,0.4);
+    animation: pulse 3s infinite ease-in-out;
+}
+.friends-header::after {
+    content: "✦ ✧ ✦";
+    position: absolute;
+    font-size: 1.2rem;
+    color: rgba(255,255,255,0.4);
+    animation: sparkle 6s infinite linear;
+    top: 10%;
+    left: 20%;
+}
+
+@keyframes sparkle {
+    0%   { transform: translate(0,0) rotate(0deg); opacity: 0.5; }
+    50%  { transform: translate(20px, -10px) rotate(15deg); opacity: 1; }
+    100% { transform: translate(0,0) rotate(0deg); opacity: 0.5; }
+}
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+.friends-header::after {
+    content: "✦ ✧ ✦";
+    position: absolute;
+    font-size: 1.2rem;
+    color: rgba(255,255,255,0.4);
+    animation: sparkle 6s infinite linear;
+    top: 10%;
+    left: 20%;
+}
+
+@keyframes sparkle {
+    0%   { transform: translate(0,0) rotate(0deg); opacity: 0.5; }
+    50%  { transform: translate(20px, -10px) rotate(15deg); opacity: 1; }
+    100% { transform: translate(0,0) rotate(0deg); opacity: 0.5; }
+}

@@ -1,4 +1,7 @@
-﻿@using NHA.Website.Software.Services.RepositoryPatternFoundationals
+﻿@using Microsoft.CodeAnalysis
+@using Microsoft.IdentityModel.Tokens
+@using NHA.Website.Software.Services.RepositoryPatternFoundationals
+@using NuGet.Packaging
 @inject IUnitOfWork unitOfWork;
 
 @{
@@ -7,7 +10,21 @@
 }
 
 @{
-    var animePageCount = await unitOfWork.AnimePageRepository.CountAsync(x => x.Id != null);
+    var allAnime = await unitOfWork.AnimePageRepository.GetAllAsync();
+    var animePageCount = 0;
+    HashSet<string> allGenres = [];
+
+    foreach (var anime in allAnime)
+    {
+
+        if (anime.AnimeGenres is not null)
+        {
+            var genres = anime.AnimeGenres.Split(';');
+            allGenres.AddRange(genres);
+        }
+        animePageCount++;
+    }
+
     var randomAnime = await unitOfWork.AnimePageRepository.GetRandomEntityAsync();
 }
 
@@ -32,6 +49,19 @@
             <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters">@letter</a>
             letterCounter++;
         }
+
+        <hr/>
+
+        <h2 class="mt-4">Genres <em class=" h3 text-primary">(@allGenres.Count)</em></h2>
+
+        var sorted = allGenres.Order();
+
+        foreach (var animeGenres in sorted)
+        {
+            if (animeGenres.IsNullOrEmpty()) continue;
+                <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters fs-3">@animeGenres</a>
+        }
+
     }
 </div>
 

@@ -14,8 +14,10 @@
     
         @if (featuredAnime is not null)
         {
-            <div class="row m-auto pt-2 border-bottom border-black rounded-2">
-                <div class="h3 text-center text-primary">Featured Anime</div>
+            <div class="row">
+                <div class="featured-header">
+                    <span>Featured</span>
+                </div>
             </div>
         
             <div class="row m-auto pt-1 pb-1 text-center">
@@ -61,9 +63,10 @@
             </div>
         }
 
-
-        <div class="row m-auto pt-2 border-bottom border-black rounded-2">
-            <div class="h3 text-center text-primary">Sponsors</div>
+        <div class="row">
+            <div class="featured-header">
+                <span>Sponsors</span>
+            </div>
         </div>
 
         @{
@@ -104,7 +107,7 @@
         }
         <div class="row m-auto pt-1 pb-1">
             <p>Huge shoutout to all of our sponsors for supporting the site, it wouldn't be possible without you.</p>
-            <p>if you would like your channel, product, or video promoted or featured click <a class="link-primary">here</a>.</p>
+            <p>if you would like your channel, product, or video promoted or featured click <a asp-controller="Home" asp-action="Index" class="link-primary">here</a>.</p>
         </div>
     </div>
 }

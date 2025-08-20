@@ -22,8 +22,10 @@
     if (_SignInManager.IsSignedIn(User))
     {
         <div id="FriendListUI" class="col position-fixed overflow-scroll w-inherit" style="height: 100%;">
-            <div class="row m-auto pt-2 border-bottom border-primary">
-                <div class="h3 text-center text-primary">Friends List</div>
+            <div class="row">
+                <div class="friends-header">
+                    <span>Friends List</span>
+                </div>
             </div>
 
             @{
@@ -150,8 +152,10 @@
             
             @if (featuredGame is not null)
             {
-                <div class="row m-auto pt-2 border-bottom border-black rounded-2">
-                    <div class="h3 text-center text-primary">Featured Game</div>
+                <div class="row">
+                    <div class="featured-header">
+                        <span>Featured</span>
+                    </div>
                 </div>
         
                 <div class="row m-auto pt-1 pb-1 text-center">
@@ -196,8 +200,10 @@
 
                 </div>
             }
-            <div class="row m-auto pt-2 border-bottom border-black rounded-2">
-                <div class="h3 text-center text-primary">Sponsors</div>
+            <div class="row">
+                <div class="featured-header">
+                    <span>Sponsors</span>
+                </div>
             </div>
 
             @{
@@ -243,8 +249,10 @@
         <div class="text-primary position-fixed m-auto h5 align-content-center align-items-center">
             @if (featuredGame is not null)
             {
-                <div class="row m-auto pt-2 border-bottom border-black rounded-2">
-                    <div class="h3 text-center text-primary">Featured Game</div>
+                <div class="row">
+                    <div class="featured-header">
+                        <span>Featured</span>
+                    </div>
                 </div>
         
                 <div class="row m-auto pt-1 pb-1 text-center">
