@@ -5,11 +5,10 @@
 }
 
 
-<div class="row">
-    <div class="col"></div>
-    <div class="col border border-primary rounded-2 p-2">
+<div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 rounded-3 shadow border border-primary p-4 bg-body-tertiary">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2 class="text-center">Register Account</h2>
+            <h2 class="text-center h4">Register Account</h2>
             <hr/>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-floating m-2">
@@ -30,7 +29,6 @@
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
     </div>
-    <div class="col"></div>
     @*     <div class="col-md-6 col-md-offset-2">
         <section>
             <h3>Use another service to register.</h3>
