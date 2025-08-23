@@ -93,34 +93,34 @@
             </button>
 
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="navbarSupportedContent">
-                <ul class="navbar-nav flex-grow-1">
+                <ul class="navbar-nav flex-column flex-sm-row w-100 flex-sm-grow-0">
 
-                    <li class="nav-item align-self-center interactable"><a class="nav-link btn-dark text-light rounded-2 h5 m-0" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
 
                     <feature name="@FeatureFlags.AnimeEnabled">
-                            <li class="nav-item align-self-center interactable"><a class="nav-link btn-dark text-light rounded-2 h5 m-0" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
+                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
                     </feature>
                     <feature name="@FeatureFlags.GameWikiEnabled">
-                        <li class="nav-item align-self-center interactable"><a class="nav-link btn-dark text-light rounded-2 h5 m-0" asp-area="" asp-controller="Game" asp-action="Index">Game Wiki</a></li>
+                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Game" asp-action="Index">Game Wiki</a></li>
                     </feature>
 
                     <feature name="@FeatureFlags.ForumsEnabled">
-                            <li class="nav-item align-self-center interactable"><a class="nav-link btn-dark text-light rounded-2 h5 m-0" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
+                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
                     </feature>
                     
                     <feature name="@FeatureFlags.CryptoEnabled">
-                        <li class="nav-item align-self-center interactable"><a class="nav-link btn-dark text-light rounded-2 h5 m-0" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
+                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
                     </feature>
 
                     @if (Warden.IsAdmin(User))
                     {
-                        <li class="nav-item align-self-center interactable">
-                            <a class="nav-link btn-dark text-light rounded-2 h5 m-0" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a>
+                            <li class="nav-item align-self-center interactable w-100 w-sm-auto">
+                                <a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a>
                         </li>
                     }
-                    
-                    <li class="nav-item dropdown align-self-center interactable">
-                        <a class="nav-link dropdown-toggle btn-dark text-light rounded-2 h5 m-0" id="themeDropdown"
+
+                    <li class="nav-item dropdown align-self-center interactable w-100 w-sm-auto">
+                            <a class="nav-link dropdown-toggle btn-dark text-light rounded-2 h5 m-0 d-block text-center" id="themeDropdown"
                                href="#" 
                            role="button" 
                            data-bs-toggle="dropdown" 
@@ -144,7 +144,7 @@
 
                         if (SignInManager.IsSignedIn(User))
                         {
-                            <li class="align-self-center nav-item interactable">
+                            <li class="align-self-center nav-item interactable w-100 w-sm-auto ">
                                 <button type="button" class="rounded btn btn-dark m-0" data-bs-toggle="modal" data-bs-target="#friendRequestModal">
                                     <div class="col p-0 position-relative">
                                         <span id="FriendRequestCounter" class="text-danger bg-primary position-absolute top-50 start-50 rounded-circle h5 text-white ps-2 pe-2">@requests.Count()</span>

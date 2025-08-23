@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Hangfire.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NHA.Website.Software.Entities.Forums;
 using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Services.FriendSystem;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+using NHA.Website.Software.Services.SessionHistory;
 using NHA.Website.Software.Views.ViewModels.FriendVMs;
 using NHASoftware.Views.ViewModels.SocialVMs;
 namespace NHA.Website.Software.Controllers;
@@ -14,13 +16,26 @@ public class UsersController : Controller
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly IFriendSystem _friendSystem;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IActiveSessionTracker _sessionTracker;
+    private readonly ILogger<UsersController> _logger;
 
-    public UsersController(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IMapper mapper, IFriendSystem friendSystem)
+
+    public UsersController(UserManager<ApplicationUser> userManager,
+        IUnitOfWork unitOfWork,
+        IMapper mapper,
+        IFriendSystem friendSystem,
+        SignInManager<ApplicationUser> signInManager,
+        IActiveSessionTracker sessionTracker,
+        ILogger<UsersController> logger)
     {
         _userManager = userManager;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _friendSystem = friendSystem;
+        _sessionTracker = sessionTracker;
+        _signInManager = signInManager;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -59,5 +74,30 @@ public class UsersController : Controller
         return View("MutualFriends", mutualFriendListVM);
     }
 
+    public async Task<IActionResult> Logout(string? returnUrl = null)
+    {
+        var currentPrinciple = _signInManager.Context.User;
+        var user = await _signInManager.UserManager.GetUserAsync(currentPrinciple);
+
+        if (user != null)
+        {
+            await _sessionTracker.CreateLogoutEvent(user.Email!);
+        }
+
+        await _signInManager.SignOutAsync();
+        _logger.LogInformation("User logged out.");
+
+
+        if (returnUrl != null)
+        {
+            return LocalRedirect(returnUrl);
+        }
+        else
+        {
+            // This needs to be a redirect so that the browser performs a new
+            // request and the identity for the user gets updated.
+            return RedirectToPage("/");
+        }
+    }
 
 }
