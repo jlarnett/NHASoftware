@@ -170,10 +170,40 @@
 
         $('#MainPostTextbox').summernote({
             toolbar: [
-                //['misc', ['emoji']]
             ],
             disableResizeEditor: true,
-            placeholder: 'Type Post Summary Here.......'
+            placeholder: 'Type Post Summary Here.......',
+            height: 200,
+
+            hint: {
+                match: /\B@(\w*)$/,
+                search: function (keyword, callback) {
+                    if (!keyword || keyword.trim().length === 0) {
+                        callback([]); // nothing to show
+                        return;
+                    }
+                    $.ajax({
+                        url: '/api/users/search',
+                        data: { q: keyword },
+                        success: function (data) {
+                            // data should be an array of user objects [{ id, username }]
+                            callback(data);
+                        },
+                        error: function () {
+                            callback([]); // fallback on error
+                        }
+                    });
+                },
+                template: function (item) {
+                    return '@' + item.username;
+                },
+                content: function (item) {
+                    return $('<span>')
+                        .addClass('user-mention')
+                        .attr('data-user-id', item.id)
+                        .text('@' + item.username)[0];
+                }
+            }
         });
 
         $('#CustomPostTextbox').summernote({

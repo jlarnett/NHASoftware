@@ -18,6 +18,18 @@ namespace NHA.Website.Software.Controllers.WebAPIs.Users
             _userManager = userManager;
         }
 
+        [HttpGet("search")]
+        public IActionResult SearchUsers(string q)
+        {
+            var users = _userManager.Users
+                .Where(u => u.DisplayName!.StartsWith(q) || u.Email!.StartsWith(q))
+                .Select(u => new { id = u.Id, username = u.UserName })
+                .Take(10)
+                .ToList();
+
+            return Ok(users);
+        }
+
         [HttpPost("edit_bio")]
         public async Task<IActionResult> Edit([FromBody] EditBiographyRequest request)
         {

@@ -73,3 +73,13 @@
 .note-editor .note-dropzone {
     opacity: 0 !important;
 }
+
+
+
+.user-mention {
+    background: #e3f2fd;
+    color: #1976d2;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-weight: bold;
+}

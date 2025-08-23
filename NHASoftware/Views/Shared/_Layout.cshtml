@@ -83,15 +83,16 @@
 <body>
 <header>
     <!--Navigation Bar-->
-    <nav class="navbar navbar-expand-sm border-bottom bg-body-tertiary box-shadow fixed-top p-0">
+    <nav class="navbar navbar-expand-sm border-bottom bg-body-tertiary box-shadow fixed-top p-0" >
         <div class="container-fluid m-0 p-0" style="width: 100%; height: auto;">
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+                <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" style="font-size:2rem; padding:1rem; min-width: 100px;">
+                <!-- replace default icon -->
+                <i class="bi bi-layout-text-sidebar-reverse"></i> <!-- sidebar look -->
             </button>
 
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between ">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="navbarSupportedContent">
                 <ul class="navbar-nav flex-grow-1">
 
                     <li class="nav-item align-self-center interactable"><a class="nav-link btn-dark text-light rounded-2 h5 m-0" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
@@ -147,7 +148,7 @@
                                 <button type="button" class="rounded btn btn-dark m-0" data-bs-toggle="modal" data-bs-target="#friendRequestModal">
                                     <div class="col p-0 position-relative">
                                         <span id="FriendRequestCounter" class="text-danger bg-primary position-absolute top-50 start-50 rounded-circle h5 text-white ps-2 pe-2">@requests.Count()</span>
-                                        <span><img src="~/Images/Bell_Icon.png" class="img-fluid"/></span>
+                                        <span><img src="~/Images/Bell_Icon.png" alt="notification icon image" class="img-fluid"/></span>
                                     </div>
                                 </button>
                             </li>

@@ -2,6 +2,7 @@
 @using NHA.Website.Software.FeatureManagement
 @using NHA.Website.Software.Services.RepositoryPatternFoundationals
 @using NHA.Website.Software.Services.Sponsors
+@using NHA.Website.Software.Views.Shared.Sponsers.ViewModel
 @inject IAdMaximizerService AdMaximizerService
 @inject IUnitOfWork UnitOfWork
 
@@ -31,34 +32,7 @@
                     @featuredAnime.AnimeSummary @featuredAnime.AnimeBackground
                 </div>
                 
-                <div class="align-content-center p-0">
-                    @if (@featuredAnime.AnimeGenres != null)
-                    {
-                        var genres = @featuredAnime.AnimeGenres.Split(';');
-
-                        for (int i = 0; i < genres.Length; i++)
-                        {
-                            switch (i)
-                            {
-                                case 0:
-                                    <a asp-controller="Home" asp-action="Index" class="col-auto text-decoration-none">
-                                        <span class="badge text-bg-primary border-2 interactable">@genres[i]</span>
-                                    </a>
-                                    break;
-                                case 1:
-                                    <a asp-controller="Home" asp-action="Index" class="col-auto text-decoration-none">
-                                        <span class="badge text-bg-success border-2 interactable">@genres[i]</span>
-                                    </a>
-                                    break;
-                                case 2:
-                                    <a asp-controller="Home" asp-action="Index" class="col-auto text-decoration-none">
-                                        <span class="badge text-bg-dark border-2 interactable">@genres[i]</span>
-                                    </a>
-                                    break;
-                            }
-                        }
-                    }
-                </div>
+                @{ await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@featuredAnime.AnimeGenres ?? string.Empty, GenreListType.Anime)); }
 
             </div>
         }

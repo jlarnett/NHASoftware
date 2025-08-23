@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using NHA.Website.Software.Services.RepositoryPatternFoundationals
+@using NHA.Website.Software.Views.Shared.Sponsers.ViewModel
 @model NHA.Website.Software.Entities.Anime.AnimePage
 @inject IUnitOfWork UnitOfWork;
 
@@ -8,10 +9,19 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@{
+    var randomAnime = await UnitOfWork.AnimePageRepository.GetRandomEntityAsync();
+}
 <div>
     <h2>@Model.AnimeName</h2>
     <hr />
-    <h4 class="fw-semibold">Anime Preview:</h4>
+
+
+    <div class="row my-auto">
+        <h4 class="fw-semibold col-auto my-auto">Anime Preview:</h4>
+        <a id="nextLink" class="interactable my-auto col-auto" asp-action="AnimePageDetails" asp-route-id="@randomAnime!.Id" asp-controller="Anime">Next &#x2794;</a>
+    </div>
+
     @{
         int runningCount = Model.UpVotes - Model.DownVotes;
 
@@ -64,29 +74,7 @@
         }
         if (@Model.AnimeGenres != null)
         {
-            var genres = @Model.AnimeGenres.Split(';');
-
-            for (int i = 0; i < genres.Length; i++)
-            {
-                switch (i)
-                {
-                    case 0:
-                        <a asp-controller="Home" asp-action="Index" class="col-auto text-decoration-none">
-                            <span class="badge text-bg-primary border-2 interactable">@genres[i]</span>
-                        </a>
-                        break;
-                    case 1:
-                        <a asp-controller="Home" asp-action="Index" class="col-auto text-decoration-none">
-                            <span class="badge text-bg-success border-2 interactable">@genres[i]</span>
-                        </a>
-                        break;
-                    case 2:
-                        <a asp-controller="Home" asp-action="Index" class="col-auto text-decoration-none">
-                            <span class="badge text-bg-dark border-2 interactable">@genres[i]</span>
-                        </a>
-                        break;
-                }
-            }
+            { await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@Model.AnimeGenres ?? string.Empty, GenreListType.Anime)); }
         }
     }
     
@@ -134,9 +122,6 @@
 
 <hr/>
 
-@{
-    var randomAnime = await UnitOfWork.AnimePageRepository.GetRandomEntityAsync();
-}
 
 
 <div>

@@ -90,11 +90,11 @@
                 {
                     <div class="row mb-2">
                         <div class="col-2"></div>
-                        <div class="col-5">
+                        <div class="col-6">
                             <textarea class="summernote-comments text-black" post-id="@Model.Id" comment-textbox-uuid="@uuid.ToString()" name="Summary">
                             </textarea>
                         </div>
-                        <button class="btn btn-dark rounded-2 col-1 comment-send-btn interactable" unique-identifier="@uuid.ToString()" parent-post-id="@Model.Id">Reply</button>
+                        <button class="btn btn-dark rounded-2 col-auto comment-send-btn interactable" unique-identifier="@uuid.ToString()" parent-post-id="@Model.Id">Reply</button>
                     </div> 
                     <span unique-error-identifier="@uuid.ToString()" style="display: none;" class="text-primary">Error Submitting Post.....</span>
                 }
