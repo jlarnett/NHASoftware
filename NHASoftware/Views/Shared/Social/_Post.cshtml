@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using System.Text.RegularExpressions
+@using Microsoft.AspNetCore.Identity
 @using NHA.Website.Software.Entities.Identity
 @using NHA.Website.Software.Services.Social.PostBuilderService
 @using NHA.Website.Software.Services.Time
@@ -34,19 +35,21 @@
         </div>
         <!--Post Action dropdown-->
         <div class="col-auto p-0">
-            @{ await Html.RenderPartialAsync("Social/_PostActionButtonSection", @Model); }
+            @{
+                await Html.RenderPartialAsync("Social/_PostActionButtonSection", @Model);
+            }
         </div>
         <div class="col-auto p-0 me-4">
             <button type="button" 
-                    class="btn btn-sm border-0 bg-transparent text-muted fs-5 interactable" 
-                    data-bs-dismiss="modal" 
-                    aria-label="Close">
+            class="btn btn-sm border-0 bg-transparent text-muted fs-5 interactable" 
+            data-bs-dismiss="modal" 
+            aria-label="Close">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
 
     </div>
-@*     <div class="row">
+    @*     <div class="row">
         <div class="col-sm-1 px-0"></div>
         <div class="col">
             <div class="h4 text-primary">Summary</div>
@@ -56,7 +59,43 @@
     <div class="row text-break mb-2 ">
         <div class="col pt-2">
             <div class="col">
-                @Html.Raw(Model.Summary)
+                @{
+                    List<Capture> urls = [];
+                    string urlLink = "";
+                    if (Model.Summary.Contains("image-url"))
+                    {
+                        const string pattern = @"https?://[^\s""']+";
+                        var match = Regex.Match(Model.Summary, pattern);
+                        if (match.Success)
+                        {
+                            urls = match.Captures.ToList();
+                        }
+
+                        string pattern2 = "href\\s*=\\s*\"([^\"]+)\"";
+                        var match2 = Regex.Match(Model.Summary, pattern);
+                        if (match2.Success)
+                        {
+                            urlLink = match2.Value;
+                        }
+                    }
+
+                    <div class="row">
+                        @Html.Raw(Model.Summary)
+                    </div>
+                    <div class="row rounded-2">
+                        @foreach (var imageUrl in urls)
+                        {
+                            <div class="">
+                                <a class="row text-center m-auto rounded-2 interactable" href="@urlLink">
+                                    <img src="@imageUrl" class="rounded-3 p-0" alt="Post Tag ImageUrl" />
+                                </a>
+                            </div>
+                        }
+                    </div>
+
+
+                }
+
             </div>
         </div>
     </div>

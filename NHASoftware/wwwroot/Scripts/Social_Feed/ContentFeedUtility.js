@@ -189,20 +189,20 @@
 
                             if (data.animePages) {
                                data.animePages.forEach(page => {
-                                    results.push({type: "anime", id: page.id, title: page.animeName, url: `/Anime/AnimePageDetails/${page.id}` });
+                                    results.push({type: "anime", id: page.id, title: page.animeName, url: `/Anime/AnimePageDetails/${page.id}`, img: page.animeImageUrl });
                                }); 
                             }
                             
                             if (data.gamePages) {
                                data.gamePages.forEach(page => {
-                                    results.push({type: "game", id: page.id, title: page.name, url: `/Game/GamePage/${page.id}` });
+                                    results.push({type: "game", id: page.id, title: page.name, url: `/Game/GamePage/${page.id}`, img: page.imageUrl});
                                }); 
 
                             }
 
                             if (data.users) {
                                data.users.forEach(user => {
-                                    results.push({type: "user", id: user.id, title: user.displayName, url: `/Users/GetProfiles?userId=${user.id}` });
+                                    results.push({type: "user", id: user.id, title: user.displayName, url: `/Users/GetProfiles?userId=${user.id}`, img: "" });
                                }); 
 
                             }
@@ -220,7 +220,8 @@
                 },
                 content: function (item) {
                     // What gets inserted into the editor
-                    return $(`<a href="${item.url}">`)
+                    return $(`<a image-url="${item.img}" href="${item.url}" >`)
+                        .addClass('link-primary')
                         .text('@' + item.title)[0];
                 }
             }
