@@ -179,15 +179,36 @@
                 match: /\B@(\w*)$/,
                 search: function (keyword, callback) {
                     if (!keyword || keyword.trim().length === 0) {
-                        callback([]); // nothing to show
+                        callback([]);
                         return;
                     }
                     $.ajax({
-                        url: '/api/users/search',
-                        data: { q: keyword },
+                        url: `/api/search/${keyword}`,
                         success: function (data) {
-                            // data should be an array of user objects [{ id, username }]
-                            callback(data);
+                            const results = [];
+
+                            if (data.animePages) {
+                               data.animePages.forEach(page => {
+                                    results.push({type: "anime", id: page.id, title: page.animeName, url: `/Anime/AnimePageDetails/${page.id}` });
+                               }); 
+                            }
+                            
+                            if (data.gamePages) {
+                               data.gamePages.forEach(page => {
+                                    results.push({type: "game", id: page.id, title: page.name, url: `/Game/GamePage/${page.id}` });
+                               }); 
+
+                            }
+
+                            if (data.users) {
+                               data.users.forEach(user => {
+                                    results.push({type: "user", id: user.id, title: user.displayName, url: `/Users/GetProfiles?userId=${user.id}` });
+                               }); 
+
+                            }
+
+
+                            callback(results);
                         },
                         error: function () {
                             callback([]); // fallback on error
@@ -195,13 +216,12 @@
                     });
                 },
                 template: function (item) {
-                    return '@' + item.username;
+                    return '@' + item.title;
                 },
                 content: function (item) {
-                    return $('<span>')
-                        .addClass('user-mention')
-                        .attr('data-user-id', item.id)
-                        .text('@' + item.username)[0];
+                    // What gets inserted into the editor
+                    return $(`<a href="${item.url}">`)
+                        .text('@' + item.title)[0];
                 }
             }
         });

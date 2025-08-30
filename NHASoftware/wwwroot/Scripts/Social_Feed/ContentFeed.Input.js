@@ -5,7 +5,7 @@
         if (inputType === "basic") {
             let form = document.getElementById("BasicPostForm");
             let formData = new FormData(form);
-            formData.set("Summary", $($("#MainPostTextbox").summernote("code")).text())
+            formData.set("Summary", $("#MainPostTextbox").summernote("code"))
             return formData;
         }
 

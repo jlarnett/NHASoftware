@@ -55,7 +55,9 @@
     <!--Posts summary section. Text content is posted here-->
     <div class="row text-break mb-2 ">
         <div class="col pt-2">
-            <div class="col">@Model.Summary</div>
+            <div class="col">
+                @Html.Raw(Model.Summary)
+            </div>
         </div>
     </div>
     <div class="row text-break">
