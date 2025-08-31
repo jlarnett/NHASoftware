@@ -13,4 +13,5 @@ public interface IGenericRepository<T> where T : class
     public EntityEntry<T> Update(T entity);
     public Task<int> CountAsync(Expression<Func<T, bool>> expression);
     public Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> expression);
+    public Task<IEnumerable<T>> GetResultPageAsync(int pageNumber = 1, int pageSize = 25);
 }

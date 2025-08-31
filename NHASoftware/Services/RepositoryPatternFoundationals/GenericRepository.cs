@@ -55,5 +55,14 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await _context.Set<T>().Where(expression).ToListAsync();
     }
 
+    public async Task<IEnumerable<T>> GetResultPageAsync(int pageNumber = 1, int pageSize = 25)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
 
+        return await _context.Set<T>()
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
 }

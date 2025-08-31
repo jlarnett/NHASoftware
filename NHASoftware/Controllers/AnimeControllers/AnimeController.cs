@@ -29,23 +29,28 @@ public class AnimeController : Controller
         return View();
     }
 
-    public async Task<IActionResult> Roll()
+    public async Task<IActionResult> Roll(int pageNumber)
     {
         var vm = new RollViewModel();
-        var pages = await _unitOfWork.AnimePageRepository.GetAllAsync();
 
-        var counter = 0;
+        int totalItems = await _unitOfWork.AnimePageRepository.CountAsync(c => c.Id != null);
+        int pageSize = 25;
+        int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+        // Fix invalid page numbers
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageNumber > totalPages) pageNumber = 1;
+
+        // Get the valid page results
+        var pages = await _unitOfWork.AnimePageRepository.GetResultPageAsync(pageNumber);
+
         foreach (var page in pages)
         {
             if (!page.TrailerUrl.IsNullOrEmpty())
                 vm.RollAnime.Add(page);
-
-            if (counter > 100)
-                break;
-
-            counter++;
         }
 
+        vm.Page = pageNumber;
         return View(vm);
     }
 

@@ -1,9 +1,12 @@
 ﻿.feed {
-    height: 100vh;
+    height: 85vh;
     overflow-y: scroll;
     scroll-snap-type: y mandatory;
 }
 
+.animeRollVh {
+    height: 65vh;
+}
 .feed::-webkit-scrollbar {
     display: none; /* Hides the scrollbar */
 }

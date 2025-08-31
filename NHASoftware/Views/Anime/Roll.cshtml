@@ -13,10 +13,11 @@
 <div class="feed">
     @foreach (var anime in Model.RollAnime)
     {
-        <div class="row mb-5 mt-5 vh-100">
-            <div class="col-1"></div>
+        <div class="row vh-100 d-flex justify-content-center align-items-center">
+            <!-- Side spacing columns only on md and up -->
+            <div class="d-none d-md-block col-md-1"></div>
 
-            <div class="col">
+            <div class="col vh-100 align-content-center">
                 <!-- Trailer -->
                 <div class="video-container ratio ratio-16x9 rounded-2 overflow-hidden">
                     <iframe src="@anime.TrailerUrl?enablejsapi=1&mute=1"
@@ -39,13 +40,25 @@
                 </div>
             </div>
 
-            <div class="col-1"></div>
+            <!-- Side spacing columns only on md and up -->
+            <div class="d-none d-md-block col-md-1"></div>
         </div>
 
         <hr>
     }
+
 </div>
 
+@{
+    var newPageNumber = Model.Page + 1;
+}
+<div class="row">
+    <!-- Side spacing columns only on md and up -->
+    <div class="d-none d-md-block col-md-1"></div>
+    <a class="btn btn-outline-primary" class="btn btn-primary col" asp-controller="Anime" asp-action="Roll" asp-route-pageNumber="@newPageNumber">Load more</a>
+    <!-- Side spacing columns only on md and up -->
+    <div class="d-none d-md-block col-md-1"></div>
+</div>
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
