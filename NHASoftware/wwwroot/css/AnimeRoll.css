@@ -1,0 +1,30 @@
+﻿.feed {
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+}
+
+.feed::-webkit-scrollbar {
+    display: none; /* Hides the scrollbar */
+}
+
+.video-container {
+    justify-content: center;
+    align-items: center;
+    scroll-snap-align: start;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    object-fit: cover;
+}
+
+.caption {
+    position: absolute;
+    bottom: 40px;
+    left: 20px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+}

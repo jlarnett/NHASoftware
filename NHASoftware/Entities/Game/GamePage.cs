@@ -39,4 +39,8 @@ public class GamePage
     public int DownVotes { get; set; }
 
     public bool Featured { get; set; } = false;
+
+    [DisplayName("Game Trailer Url")]
+    [MaxLength(200)]
+    public string? TrailerUrl { get; set; }
 }

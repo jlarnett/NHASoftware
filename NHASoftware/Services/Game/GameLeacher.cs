@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using NHA.Website.Software.Entities.Game;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using System.Net.Http.Json;
+using System.Text.Json.Serialization;
 
 namespace NHA.Website.Software.Services.Game
 {
@@ -46,13 +47,15 @@ namespace NHA.Website.Software.Services.Game
                             if (string.IsNullOrWhiteSpace(game.name)) continue;
 
                             var rawgGameDetailUrl = $"https://api.rawg.io/api/games/{game.slug}?key={_configuration["Rawg:ApiKey"]}";
+                            var rawgGameTrailerUrl = $"https://api.rawg.io/api/games/{game.slug}/movies?key={_configuration["Rawg:ApiKey"]}";
+
                             var gameDetailResponse = await http.GetFromJsonAsync<GameDetail>(rawgGameDetailUrl);
+                            var gameTrailerResponse = await http.GetFromJsonAsync<TrailerResponse>(rawgGameTrailerUrl);
 
                             var exists = knownGames.Contains(game.name);
 
                             if (!exists)
                             {
-
                                 var newGame = new GamePage
                                 {
                                     Name = game.name,
@@ -68,6 +71,10 @@ namespace NHA.Website.Software.Services.Game
                                     newGame.Platforms = string.Join(';', game.platforms.Select(x => x.platform.name));
                                 }
 
+                                if (gameTrailerResponse is not null)
+                                {
+                                    newGame.TrailerUrl = gameTrailerResponse.preview;
+                                }
 
                                 await _unitOfWork.GamePageRepository.AddAsync(newGame);
                                 knownGames.Add(game.name);
@@ -91,6 +98,11 @@ namespace NHA.Website.Software.Services.Game
                                         gamePage.Summary = gameDetailResponse.description ?? "";
                                         gamePage.Released = gameDetailResponse.released ?? "";
                                         gamePage.Platforms = string.Join(';', game.platforms.Select(x => x.platform.name));
+                                    }
+
+                                    if (gameTrailerResponse is not null)
+                                    {
+                                        gamePage.TrailerUrl = gameTrailerResponse.preview;
                                     }
                                 }
 
@@ -241,6 +253,17 @@ namespace NHA.Website.Software.Services.Game
             public string title { get; set; } = string.Empty;
             public int count { get; set; }
             public double percent { get; set; }
+        }
+
+        public class TrailerResponse
+        {
+            public int id { get; set; }
+
+            public string name { get; set; } = "";
+
+            public string preview { get; set; } = "";
+
+            public Dictionary<string, object> data { get; set; } = new Dictionary<string, object>();
         }
 
     }

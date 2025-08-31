@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using NHA.Helpers.AlphabetSimplify;
 using NHA.Helpers.HtmlStringCleaner;
 using NHA.Website.Software.DBContext;
@@ -8,6 +9,7 @@ using NHA.Website.Software.Entities.Anime;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHA.Website.Software.Views.Anime.Vms;
 namespace NHA.Website.Software.Controllers.AnimeControllers;
+
 [FeatureGate("AnimeEnabled")]
 public class AnimeController : Controller
 {
@@ -25,6 +27,26 @@ public class AnimeController : Controller
     public IActionResult Index()
     {
         return View();
+    }
+
+    public async Task<IActionResult> Roll()
+    {
+        var vm = new RollViewModel();
+        var pages = await _unitOfWork.AnimePageRepository.GetAllAsync();
+
+        var counter = 0;
+        foreach (var page in pages)
+        {
+            if (!page.TrailerUrl.IsNullOrEmpty())
+                vm.RollAnime.Add(page);
+
+            if (counter > 100)
+                break;
+
+            counter++;
+        }
+
+        return View(vm);
     }
 
     public async Task<IActionResult> LetterDetail(int id)

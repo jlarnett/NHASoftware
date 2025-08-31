@@ -207,7 +207,6 @@
 
                             }
 
-
                             callback(results);
                         },
                         error: function () {
@@ -220,6 +219,13 @@
                 },
                 content: function (item) {
                     // What gets inserted into the editor
+
+                    if(item.type === 'user') {
+                        return $(`<a href="${item.url}" >`)
+                            .addClass('link-primary')
+                            .text('@' + item.title)[0];
+                    }
+
                     return $(`<a image-url="${item.img}" href="${item.url}" >`)
                         .addClass('link-primary')
                         .text('@' + item.title)[0];

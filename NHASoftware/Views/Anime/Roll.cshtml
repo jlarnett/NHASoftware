@@ -1,0 +1,107 @@
+﻿@using NHA.Website.Software.Views.Anime.Vms
+@model RollViewModel
+@{
+    ViewData["Title"] = "Anime";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/AnimePages.css">
+    <link rel="stylesheet" href="~/css/AnimeRoll.css"/>
+</head>
+
+<div class="feed">
+    @foreach (var anime in Model.RollAnime)
+    {
+        <div class="row mb-5 mt-5">
+            <div class="col-1"></div>
+
+            <div class="col">
+                <!-- Trailer -->
+                <div class="video-container ratio ratio-16x9 rounded-2 overflow-hidden">
+                    <iframe src="@anime.TrailerUrl?enablejsapi=1&mute=1"
+                            id="anime-@anime.Id"
+                            class="anime-video"
+                            title="@anime.AnimeName Trailer"
+                            loading="lazy"
+                            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            referrerpolicy="strict-origin-when-cross-origin">
+                    </iframe>
+                </div>
+
+                <!-- Anime name below -->
+                <div class="mt-2">
+                    <a class="text-primary interactable" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@anime.Id">@anime.AnimeName</a>
+                </div>
+                <div class="mt-1 multiline-ellipsis">
+                    <h5 class="text-body">@anime.AnimeSummary</h5>
+                </div>
+            </div>
+
+            <div class="col-1"></div>
+        </div>
+
+        <hr>
+    }
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let players = [];
+
+        window.onYouTubeIframeAPIReady = function() {
+            const iframes = document.querySelectorAll('.anime-video');
+
+            // Create YT.Player instances
+            iframes.forEach(iframe => {
+                const player = new YT.Player(iframe.id, {
+                    events: {
+                        'onReady': event => {
+                            event.target.mute(); // initially muted
+                        }
+                    }
+                });
+                players.push(player);
+            });
+
+            // Scroll observer
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    const idx = Array.from(iframes).indexOf(entry.target);
+                    const player = players[idx];
+                    if (!player || !player.playVideo) return;
+
+                    if (entry.isIntersecting) {
+                        // Unmute the new video
+                        player.setVolume(50);
+                        player.unMute();
+                        player.playVideo();
+
+                        // Mute all other videos
+                        players.forEach((p, i) => {
+                            if (i !== idx && p.pauseVideo) {
+                                p.mute();
+                                p.pauseVideo(); // optional, pause others
+                            }
+                        });
+                    } else {
+                        // Mute videos when scrolled out
+                        player.mute();
+                        player.pauseVideo(); // optional
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            iframes.forEach(iframe => observer.observe(iframe));
+        };
+    });
+</script>
+
+
+
+
+
+

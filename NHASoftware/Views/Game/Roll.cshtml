@@ -1,0 +1,45 @@
+﻿@using NHA.Website.Software.Views.Game.Vms
+@model RollViewModel
+@{
+    ViewData["Title"] = "Anime";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/AnimePages.css">
+    <link rel="stylesheet" href="~/css/AnimeRoll.css"/>
+</head>
+
+<div class="feed">
+    @foreach (var game in Model.RollGames)
+    {
+        <div class="row mb-5 mt-5">
+            <div class="col-1"></div>
+
+            <div class="col">
+                <!-- Trailer -->
+                <div class="video-container ratio ratio-16x9 rounded-2 overflow-hidden">
+                    <iframe src=""
+                            title="@game.Name Trailer"
+                            loading="lazy"
+                            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            referrerpolicy="strict-origin-when-cross-origin">
+                    </iframe>
+                </div>
+
+                <!-- Anime name below -->
+                <div class="mt-2">
+                    <a class="text-primary interactable" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@game.Id">game.Name</a>
+                </div>
+                <div class="mt-1 multiline-ellipsis">
+                    <h5 class="text-body">@game.Summary</h5>
+                </div>
+            </div>
+
+            <div class="col-1"></div>
+        </div>
+
+        <hr>
+    }
+</div>
