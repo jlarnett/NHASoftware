@@ -10,10 +10,10 @@
     <link rel="stylesheet" href="~/css/AnimeRoll.css"/>
 </head>
 
-<div class="feed">
+<div id="AnimeRollFeed" class="feed" tabindex="0">
     @foreach (var anime in Model.RollAnime)
     {
-        <div class="row vh-100 d-flex justify-content-center align-items-center">
+        <div class="row vh-100 d-flex justify-content-center align-items-center" >
             <!-- Side spacing columns only on md and up -->
             <div class="d-none d-md-block col-md-1"></div>
 
@@ -38,6 +38,17 @@
                 <div class="mt-1 multiline-ellipsis">
                     <h5 class="text-body">@anime.AnimeSummary</h5>
                 </div>
+                
+                @{
+                    if (!Model.RollAnime.Last().Equals(anime))
+                    {
+                        <div class="text-center">
+                            <a class="scroll-down link-primary">
+                                <i class="bi bi-arrow-down interactable" style="font-size: 2rem;"></i>
+                            </a>
+                        </div>
+                    }
+                }
             </div>
 
             <!-- Side spacing columns only on md and up -->
@@ -55,7 +66,7 @@
 <div class="row">
     <!-- Side spacing columns only on md and up -->
     <div class="d-none d-md-block col-md-1"></div>
-    <a class="btn btn-outline-primary" class="btn btn-primary col" asp-controller="Anime" asp-action="Roll" asp-route-pageNumber="@newPageNumber">Load more</a>
+    <a class="btn btn-outline-primary" style="display: none;" class="btn btn-primary col" asp-controller="Anime" asp-action="Roll" asp-route-pageNumber="@newPageNumber">Load more</a>
     <!-- Side spacing columns only on md and up -->
     <div class="d-none d-md-block col-md-1"></div>
 </div>
@@ -113,8 +124,53 @@
     });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const feed = document.querySelector('.feed');
+    const nextPageUrl = "@Url.Action("Roll", "Anime", new { pageNumber = newPageNumber })";
+
+    feed.addEventListener('scroll', () => {
+        // how close to the bottom we trigger (px)
+        const threshold = 5;
+
+        if (feed.scrollTop + feed.clientHeight >= feed.scrollHeight - threshold) {
+            window.location.href = nextPageUrl;
+        }
+    });
+
+    // Arrow down key event
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown') {
+
+            // Check if we reached the bottom
+            if (feed.scrollTop + feed.clientHeight >= feed.scrollHeight - threshold) {
+                window.location.href = nextPageUrl;
+            }
+
+            // Prevent the default arrow behavior if needed
+            e.preventDefault();
+        }
+    });
+    const scrollStep = 100; // pixels to scroll per click
+    const links = document.querySelectorAll('.scroll-down');
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Scroll the feed down
+            feed.scrollTop += scrollStep;
+        });
+    });
+});
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const element = document.getElementById('AnimeRollFeed');
+        if (element) {
+            element.focus();
+        }
+    });
 
 
 
-
+</script>
 

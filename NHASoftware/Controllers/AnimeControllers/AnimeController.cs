@@ -31,18 +31,17 @@ public class AnimeController : Controller
 
     public async Task<IActionResult> Roll(int pageNumber)
     {
+        const int pageSize = 50;
         var vm = new RollViewModel();
-
-        int totalItems = await _unitOfWork.AnimePageRepository.CountAsync(c => c.Id != null);
-        int pageSize = 25;
-        int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+        var totalItems = await _unitOfWork.AnimePageRepository.CountAsync(c => c.Id != null);
+        var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
         // Fix invalid page numbers
         if (pageNumber < 1) pageNumber = 1;
         if (pageNumber > totalPages) pageNumber = 1;
 
         // Get the valid page results
-        var pages = await _unitOfWork.AnimePageRepository.GetResultPageAsync(pageNumber);
+        var pages = await _unitOfWork.AnimePageRepository.GetResultPageAsync(pageNumber, 50);
 
         foreach (var page in pages)
         {

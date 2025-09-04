@@ -18,5 +18,6 @@ namespace NHA.Website.Software.Views.Shared.Sponsers.ViewModel
     {
         Anime,
         Game,
+        StreamingPlatform,
     }
 }

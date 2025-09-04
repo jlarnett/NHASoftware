@@ -1,28 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NHA.Website.Software.DBContext;
-using NHA.Website.Software.Entities.Anime;
+﻿using NHA.Website.Software.Entities.Anime;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 
 namespace NHA.Website.Software.Services.Anime
 {
-    public class AnimeLeecher : IAnimeLeecher
+    public class AnimeLeecher(IUnitOfWork unitOfWork, ILogger<AnimeLeecher> logger) : IAnimeLeecher
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<AnimeLeecher> _logger;
-
-        private int pageNumber = 1;
-
-        public AnimeLeecher(IUnitOfWork unitOfWork, ILogger<AnimeLeecher> logger)
-        {
-            _logger = logger;
-            _unitOfWork = unitOfWork;
-        }
+        private int _pageNumber = 1;
 
 
         public async Task LoadExternalAnime()
         {
             HashSet<string> knownAnimeList = [];
-            var currentAnime = await _unitOfWork.AnimePageRepository.GetAllAsync();
+            var currentAnime = await unitOfWork.AnimePageRepository.GetAllAsync();
 
             foreach (var anime in currentAnime)
             {
@@ -34,7 +23,7 @@ namespace NHA.Website.Software.Services.Anime
 
             while (hasMore)
             {
-                var url = $"https://api.jikan.moe/v4/anime?page={this.pageNumber}&limit=25";
+                var url = $"https://api.jikan.moe/v4/anime?page={this._pageNumber}&limit=25";
                 var response = await http.GetFromJsonAsync<ApiResponse>(url);
 
                 if (response?.data.Count > 0)
@@ -42,7 +31,19 @@ namespace NHA.Website.Software.Services.Anime
                     foreach (var anime in response.data)
                     {
                         if (anime is not { title_english: not null, title: not null, title_japanese: not null }) continue;
-                        
+
+                        var streamingUrl = $"https://api.jikan.moe/v4/anime/{anime.mal_id}/streaming";
+                        StreamingResponse? streamingResponse = null;
+
+                        try
+                        {
+                            streamingResponse = await http.GetFromJsonAsync<StreamingResponse>(streamingUrl);
+                        }
+                        catch (Exception e)
+                        {
+                            logger.LogError(e.Message);
+                        }
+
                         var exists = knownAnimeList.Contains(anime.title_english) ||
                                      knownAnimeList.Contains(anime.title) || knownAnimeList.Contains(anime.title_japanese);
                             
@@ -69,16 +70,22 @@ namespace NHA.Website.Software.Services.Anime
                                 AnimeJikanScore = anime.score,
                                 AnimeGenres = string.Join(';', anime.genres.Select(x => x.name)),
                                 AnimeBackground = anime.background ?? "",
-                                TrailerUrl = anime.trailer.embed_url ?? ""
+                                TrailerUrl = anime.trailer.embed_url ?? "",
+                                EpisodeCount = anime.episodes ?? 1,
                             };
 
-                            await _unitOfWork.AnimePageRepository.AddAsync(animePage);
+                            if (streamingResponse != null)
+                            {
+                                animePage.Platforms = string.Join(';', streamingResponse.data.Select(x => x.name));
+                            }
+
+                            await unitOfWork.AnimePageRepository.AddAsync(animePage);
                             knownAnimeList.Add(name);
                         }
                         else
                         {
                             //Exists we just want ot handle certain updates
-                            var animePages = await _unitOfWork.AnimePageRepository.
+                            var animePages = await unitOfWork.AnimePageRepository.
                                 FindAsync(x => x.AnimeName.Equals(anime.title_english) || x.AnimeName.Equals(anime.title_japanese) || x.AnimeName.Equals(anime.title));
                             
                             var summary = anime.synopsis ?? string.Empty;
@@ -92,12 +99,20 @@ namespace NHA.Website.Software.Services.Anime
                                 animePage.AnimeGenres = string.Join(';', anime.genres.Select(x => x.name));
                                 animePage.AnimeBackground = anime.background ?? "";
                                 animePage.TrailerUrl = anime.trailer.embed_url ?? "";
+                                animePage.EpisodeCount = anime.episodes ?? 1;
+
+                                if (streamingResponse != null)
+                                {
+                                    animePage.Platforms = string.Join(';', streamingResponse.data.Select(x => x.name));
+                                }
                             }
                         }
+
+                        await Task.Delay(1500);
                     }
 
-                    var affectedRows = await _unitOfWork.CompleteAsync();
-                    this.pageNumber++;
+                    var affectedRows = await unitOfWork.CompleteAsync();
+                    this._pageNumber++;
                 }
                 else
                 {
@@ -142,7 +157,12 @@ namespace NHA.Website.Software.Services.Anime
             public ImageType jpg { get; set; } = new ImageType();
         }
 
-        public class Streaming
+        public class StreamingResponse
+        {
+            public List<StreamingService> data { get; set; } = [];
+        }
+
+        public class StreamingService
         {
             public string name { get; set; } = "";
             public string url { get; set; } = "";

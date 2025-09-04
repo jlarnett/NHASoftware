@@ -63,19 +63,40 @@
         </div>
 
         <hr/>
-        <h4 class="fw-semibold">Meta Data</h4>
-        if (@Model.AnimeJikanScore != null)
-        {
-            <div>Jikan Score: <strong>@Model.AnimeJikanScore</strong></div>
-        }
-        if (@Model.AnimeStatus != null)
-        {
-            <div>Airing Status: <strong>@Model.AnimeStatus</strong></div>
-        }
-        if (@Model.AnimeGenres != null)
-        {
-            { await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@Model.AnimeGenres ?? string.Empty, GenreListType.Anime)); }
-        }
+
+        <div class="row">
+            <div class="col">
+                <h4 class="fw-semibold">Meta Data</h4>
+                @{
+                    if (@Model.AnimeJikanScore != null)
+                    {
+                        <div>Jikan Score: <strong>@Model.AnimeJikanScore</strong></div>
+                    }
+                    if (@Model.AnimeStatus != null)
+                    {
+                        <div>Airing Status: <strong>@Model.AnimeStatus</strong></div>
+                    }
+                    if (@Model.AnimeGenres != null)
+                    {
+                        { await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@Model.AnimeGenres ?? string.Empty, GenreListType.Anime)); }
+                    }
+                }
+            </div>
+            <div class="col">
+                <h4 class="fw-semibold">Streaming Platforms</h4>
+                @{
+                    if (@Model.Platforms != null)
+                    {
+                        { await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@Model.Platforms ?? string.Empty, GenreListType.StreamingPlatform)); }
+                    }
+                }
+
+            </div>
+        </div>
+
+
+
+
     }
     
     <hr/>

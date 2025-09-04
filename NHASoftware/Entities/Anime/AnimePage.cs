@@ -39,4 +39,13 @@ public class AnimePage
     [DisplayName("Anime Trailer Url")]
     [MaxLength(200)]
     public string? TrailerUrl { get; set; }
+
+    [DisplayName("Episode Count")]
+    public int EpisodeCount { get; set; } = 1;
+
+    [DisplayName("Platforms")]
+    [MaxLength(200)]
+    public string? Platforms { get; set; } = string.Empty;
+
+
 }

@@ -50,6 +50,46 @@
                             break;
                     }
                 }
+                else if (Model.Type.Equals(GenreListType.StreamingPlatform))
+                {
+                    string ConvertPlatformToIcon(string platform)
+                    {
+                        if (platform.Equals("Netflix"))
+                        {
+                            return "/Images/netflix_logo_icon_170919.png";
+                        }
+
+                        if (platform.Equals("Crunchyroll"))
+                        {
+                            return "/Images/crunchyroll_social_network_network_connection_communication_icon_192251.png";
+                        }
+
+                        if (platform.Equals("Tubi TV"))
+                        {
+                            return "/Images/tubi_logo_icon_249346.png";
+                        }
+                        return "";
+                    }
+
+                    switch (i)
+                    {
+                        case 0:
+                            <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                                <img src="@ConvertPlatformToIcon(genres[i])" alt="@genres[i] Platform Icon" class="me-1 interactable"/>
+                            </a>
+                            break;
+                        case 1:
+                            <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                                <img src="@ConvertPlatformToIcon(genres[i])" alt="@genres[i] Platform Icon" class="me-1 interactable" />
+                            </a>
+                            break;
+                        case 2:
+                            <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                                <img src="@ConvertPlatformToIcon(genres[i])" alt="@genres[i] Platform Icon" class="me-1 interactable" />
+                            </a>
+                            break;
+                    }
+                }
 
             }
         }
