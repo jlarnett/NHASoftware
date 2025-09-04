@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.IdentityModel.Tokens
 @using NHA.Website.Software.Services.RepositoryPatternFoundationals
 @using NHA.Website.Software.Views.Shared.Sponsers.ViewModel
 @model NHA.Website.Software.Entities.Anime.AnimePage
@@ -83,10 +84,10 @@
                 }
             </div>
             <div class="col">
-                <h4 class="fw-semibold">Streaming Platforms</h4>
                 @{
-                    if (@Model.Platforms != null)
+                    if (!Model.Platforms.IsNullOrEmpty())
                     {
+                        <h4 class="fw-semibold">Streaming Platforms</h4>
                         { await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@Model.Platforms ?? string.Empty, GenreListType.StreamingPlatform)); }
                     }
                 }

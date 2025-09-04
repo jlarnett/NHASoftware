@@ -64,11 +64,7 @@
                             return "/Images/crunchyroll_social_network_network_connection_communication_icon_192251.png";
                         }
 
-                        if (platform.Equals("Tubi TV"))
-                        {
-                            return "/Images/tubi_logo_icon_249346.png";
-                        }
-                        return "";
+                        return platform.Equals("Tubi TV") ? "/Images/tubi_logo_icon_249346.png" : "";
                     }
 
                     switch (i)

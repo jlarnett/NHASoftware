@@ -1,4 +1,5 @@
 ﻿@using NHA.Website.Software.Views.Anime.Vms
+@using NHA.Website.Software.Views.Shared.Sponsers.ViewModel
 @model RollViewModel
 @{
     ViewData["Title"] = "Anime";
@@ -33,7 +34,12 @@
 
                 <!-- Anime name below -->
                 <div class="mt-2">
-                    <a class="text-primary interactable" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@anime.Id">@anime.AnimeName</a>
+                    <div class="row">
+                        <a class="text-primary interactable col-6" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@anime.Id">@anime.AnimeName</a>
+                        <div class="col-auto">
+                            @{ await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@anime.Platforms ?? string.Empty, GenreListType.StreamingPlatform)); }
+                        </div>
+                    </div>
                 </div>
                 <div class="mt-1 multiline-ellipsis">
                     <h5 class="text-body">@anime.AnimeSummary</h5>
