@@ -62,14 +62,11 @@
                 </div>
 
                 @{
-                    if (!Model.RollAnime.Last().Equals(anime))
-                    {
                         <div class="text-center">
                             <a class="scroll-down link-primary">
                                 <i class="bi bi-arrow-down interactable" style="font-size: 2rem;"></i>
                             </a>
                         </div>
-                    }
                 }
             </div>
 
@@ -173,15 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
         }
     });
-    const scrollStep = 100; // pixels to scroll per click
-    const links = document.querySelectorAll('.scroll-down');
-    links.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Scroll the feed down
-            feed.scrollTop += scrollStep;
-        });
-    });
 });
 </script>
 <script>
@@ -192,6 +180,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+        document.addEventListener('DOMContentLoaded', () => {
+        const feed = document.getElementById('AnimeRollFeed');
+        const links = document.querySelectorAll('.scroll-down');
+
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (!feed) return;
+
+                // Find the current topmost visible row
+                const rows = feed.querySelectorAll('.row');
+                let nextRowTop = feed.scrollTop; // default fallback
+
+                for (let row of rows) {
+                    const rowTop = row.offsetTop;
+                    if (rowTop > feed.scrollTop) {
+                        nextRowTop = rowTop;
+                        break;
+                    }
+                }
+
+                // Scroll smoothly to the top of the next row
+                feed.scrollTo({
+                    top: nextRowTop,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    });
 
 
 </script>
