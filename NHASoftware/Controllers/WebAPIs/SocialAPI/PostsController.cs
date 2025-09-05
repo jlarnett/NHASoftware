@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HtmlAgilityPack;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,7 @@ using NHA.Website.Software.Services.CacheLoadingManager;
 using NHA.Website.Software.Services.FileExtensionValidator;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHA.Website.Software.Services.Social.PostBuilderService;
+using System.Text.RegularExpressions;
 
 namespace NHA.Website.Software.Controllers.WebAPIs.SocialAPI;
 [Route("api/[controller]")]
@@ -106,6 +108,14 @@ public class PostsController : ControllerBase
     [Authorize]
     public async Task<IActionResult> CreateBasicPost([FromForm] PostDTO postdto)
     {
+        string textOnly = Regex.Replace(postdto.Summary, "<.*?>", string.Empty);
+
+        if (textOnly.Length < 10)
+        {
+            return BadRequest(new
+                { success = false, message = "Post summary must be at least 10 characters long" });
+        }
+
         var post = AssignServerSidePostParameters(postdto);
         await _unitOfWork.PostRepository.AddAsync(post);
         var result = await _unitOfWork.CompleteAsync();
@@ -135,6 +145,14 @@ public class PostsController : ControllerBase
     [FeatureGate("CustomizedPostsEnabled")]
     public async Task<IActionResult> CreateCustomizedPost([FromForm] PostDTO postdto)
     {
+        string textOnly = Regex.Replace(postdto.Summary, "<.*?>", string.Empty);
+
+        if (textOnly.Length < 10)
+        {
+            return BadRequest(new
+                { success = false, message = "Post summary must be at least 10 characters long" });
+        }
+
         var imageFilesIncluded = postdto.ImageFiles != null && postdto.ImageFiles.Count > 0;
 
         if (imageFilesIncluded)

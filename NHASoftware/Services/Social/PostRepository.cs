@@ -18,6 +18,7 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
             .Include(p => p.ParentPost)
             .Where(p => p.IsDeletedFlag.Equals(false))
             .OrderByDescending(p => p.CreationDate)
+            .AsNoTracking()
             .ToListAsync();
 
     public async Task<Post?> GetPostByIDWithIncludesAsync(int postId)
@@ -38,6 +39,7 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
             .Include(p => p.ParentPost)
             .Where(u => u.UserId!.Equals(userId) && u.IsDeletedFlag.Equals(false) && u.IsHiddenFromUserProfile.Equals(false))
             .OrderByDescending(p => p.CreationDate)
+            .AsNoTracking()
             .ToListAsync();
     }
 }

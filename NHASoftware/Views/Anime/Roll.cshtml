@@ -20,7 +20,7 @@
 
             <div class="col vh-100 align-content-center">
                 <!-- Trailer -->
-                <div class="video-container ratio ratio-16x9 rounded-2 overflow-hidden">
+                <div class="video-container ratio ratio-21x9 rounded-2 overflow-hidden">
                     <iframe src="@anime.TrailerUrl?enablejsapi=1&mute=1"
                             id="anime-@anime.Id"
                             class="anime-video"
@@ -35,7 +35,7 @@
                 <!-- Anime name below -->
                 <div class="mt-2">
                     <div class="row">
-                        <a class="text-primary interactable col-6" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@anime.Id">@anime.AnimeName</a>
+                        <a class="text-primary interactable col" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@anime.Id">@anime.AnimeName</a>
                         <div class="col-auto">
                             @{ await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@anime.Platforms ?? string.Empty, GenreListType.StreamingPlatform)); }
                         </div>
@@ -44,7 +44,23 @@
                 <div class="mt-1 multiline-ellipsis">
                     <h5 class="text-body">@anime.AnimeSummary</h5>
                 </div>
-                
+
+                @{
+                    await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@anime.AnimeGenres ?? string.Empty, GenreListType.Anime));
+                }
+                <div class="mt-1">
+                    <h5 class="text-body"><strong>
+                            Episodes:
+                        </strong> 
+                        @anime.EpisodeCount</h5>
+                </div>
+                <div class="mt-1">
+                    <h5 class="text-body"><strong>
+                            Jikan Score:
+                        </strong> 
+                        @anime.AnimeJikanScore</h5>
+                </div>
+
                 @{
                     if (!Model.RollAnime.Last().Equals(anime))
                     {

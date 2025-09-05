@@ -13,8 +13,6 @@ using Microsoft.AspNetCore.Authorization;
 using NHA.Website.Software.Entities.ChatSystem;
 using NHA.Website.Software.Services.ProfilePicture;
 using NHA.Website.Software.Views.Shared.Social.ViewModels;
-using NHA.Website.Software.Entities.Social_Entities;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using NHA.Website.Software.Services.Anime;
 using NHA.Website.Software.Services.Game;

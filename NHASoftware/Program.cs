@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.FeatureManagement;
 using NHA.Helpers.ImageDataSourceTranslator;
 using NHA.Website.Software.HangfireFilters;
@@ -164,6 +165,18 @@ builder.Services.AddSingleton<ICacheLoadingManager, CacheLoadingManager>();
 
 builder.Services.AddHangfireServer();
 builder.Services.AddMemoryCache();
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = context =>
+    {
+        context.ProblemDetails.Instance =
+            $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
+
+        context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+        var activity = context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
+        context.ProblemDetails.Extensions.TryAdd("traceId", activity?.Id);
+    };
+});
 
 #endregion
 
@@ -208,9 +221,10 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
+//Enable Custom Session Tracker Middleware -> used in friend system for last active
 app.UseSessionTrackerMiddleware();
 
-
+//Force DB Migration
 using (var scope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
 {
     scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();

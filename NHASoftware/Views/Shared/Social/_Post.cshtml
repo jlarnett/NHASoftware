@@ -1,6 +1,8 @@
 ﻿@using System.Text.RegularExpressions
 @using HtmlAgilityPack
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Manage.Internal
+@using Microsoft.IdentityModel.Tokens
 @using NHA.Website.Software.Entities.Identity
 @using NHA.Website.Software.Services.Social.PostBuilderService
 @using NHA.Website.Software.Services.Time
@@ -90,6 +92,7 @@
                                 var counter = 0;
                                 foreach (var imageUrl in objectImages)
                                 {
+                                    if(imageUrl.IsNullOrEmpty()) continue;
                                     <div class="col">
                                         <a class="row text-center m-auto rounded-2 interactable" href="@objectHref[counter]">
                                             <img src="@imageUrl" class="rounded-3 p-0" alt="Post Tag ImageUrl" />
