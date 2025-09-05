@@ -47,12 +47,24 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
     public async Task<int> CountAsync(Expression<Func<T, bool>> expression)
     {
-        return await _context.Set<T>().Where(expression).CountAsync();
+        return await _context.Set<T>()
+            .Where(expression)
+            .CountAsync();
     }
 
     public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> expression)
     {
-        return await _context.Set<T>().Where(expression).ToListAsync();
+        return await _context.Set<T>()
+            .Where(expression)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<T>> FindWithoutTrackingAsync(Expression<Func<T, bool>> expression)
+    {
+        return await _context.Set<T>()
+            .Where(expression)
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<T>> GetResultPageAsync(int pageNumber = 1, int pageSize = 25)
