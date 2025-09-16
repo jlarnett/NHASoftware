@@ -1,6 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using Microsoft.FeatureManagement.Mvc.TagHelpers
 @using NHA.Website.Software.Entities.Identity
 @using NHA.Website.Software.FeatureManagement
 @using NHA.Website.Software.Services.AccessWarden
@@ -100,7 +98,7 @@
                 </button>
 
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="navbarSupportedContent">
-                <ul class="navbar-nav flex-column flex-sm-row w-100 flex-sm-grow-0">
+                <ul class="navbar-nav flex-column flex-sm-row w-75 flex-sm-grow-0">
 
                     <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Anime" asp-action="Roll">Anime Roll</a></li>
@@ -116,7 +114,7 @@
                     </feature>
                     
                     <feature name="@FeatureFlags.CryptoEnabled">
-                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto Stats</a></li>
+                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto</a></li>
                     </feature>
 
                     @if (Warden.IsAdmin(User))
@@ -143,6 +141,7 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="nav-item align-self-center w-100 w-sm-auto"></li>
 
 
                     @{
@@ -171,7 +170,6 @@
 
 
 <!--Secondary Action Bar -->
-
 @if (User.Identity!.IsAuthenticated)
 {
     <div class="container-fluid ">

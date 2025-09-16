@@ -24,4 +24,16 @@ public class AnimePageRepository : GenericRepository<AnimePage>, IAnimePageRepos
         int randomId = _cachedIds[Random.Shared.Next(_cachedIds.Count)];
         return await _context.AnimePages.FirstOrDefaultAsync(g => g.Id == randomId);
     }
+
+    public async Task<IEnumerable<AnimePage>> GetResultPageAsync(int pageNumber = 1, int pageSize = 25)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        return await _context.Set<AnimePage>()
+            .OrderByDescending(t => t.AnimeJikanScore)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
 }

@@ -16,8 +16,8 @@
         @if(user != null)
         {
             string profilePicture = "~/ProfilePictures/" + user.ProfilePicturePath;
-            <li class="nav-item align-self-center pt-2 pb-2 me-2 w-100 w-sm-auto">
-                <input type="text" class="form-control interactable d-block text-center" id="searchInput" placeholder="Search Anime Social" />
+            <li class="nav-item align-self-center pt-2 pb-2 me-2">
+                <input type="text" class="form-control interactable d-block text-center" id="searchInput" placeholder="Search Anime Social" style="min-width: 250px;"/>
                 
                 <!-- Dropdown container -->
                 <ul id="searchDropdown" class="bg-body-tertiary"
@@ -45,7 +45,7 @@
         }
         else
         {
-            <li class="nav-item align-self-center interactable w-100 w-sm-auto">
+            <li class="nav-item align-self-center interactable">
                 <a class="nav-link btn-dark text-primary rounded-2 h5 m-0  d-block text-center" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello Gangsta!</a>
             </li>
         }
@@ -57,8 +57,8 @@
     }
     else
     {
-        <li class="nav-item align-self-center pt-2 pb-2 me-2  w-100 w-sm-auto">
-            <input type="text" id="searchInput" class="form-control interactable d-block text-center" placeholder="Search Anime Social" />
+        <li class="nav-item align-self-center pt-2 pb-2 me-2">
+            <input type="text" id="searchInput" class="form-control interactable d-block text-center" placeholder="Search Anime Social" style="min-width: 250px;" />
             <!-- Dropdown container -->
             <ul id="searchDropdown" class="bg-body-tertiary"
                 style="
