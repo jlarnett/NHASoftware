@@ -100,27 +100,27 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="navbarSupportedContent">
                 <ul class="navbar-nav flex-column flex-sm-row w-75 flex-sm-grow-0">
 
-                    <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Anime" asp-action="Roll">Anime Roll</a></li>
+                    <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap" asp-area="" asp-controller="Anime" asp-action="Roll">Anime Roll</a></li>
                     <feature name="@FeatureFlags.AnimeEnabled">
-                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
+                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap" asp-area="" asp-controller="Anime" asp-action="Index">Anime Wiki</a></li>
                     </feature>
                     <feature name="@FeatureFlags.GameWikiEnabled">
-                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Game" asp-action="Index">Game Wiki</a></li>
+                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap" asp-area="" asp-controller="Game" asp-action="Index">Game Wiki</a></li>
                     </feature>
 
                     <feature name="@FeatureFlags.ForumsEnabled">
-                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
+                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap" asp-area="" asp-controller="Forum" asp-action="Index">Forums</a></li>
                     </feature>
                     
                     <feature name="@FeatureFlags.CryptoEnabled">
-                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto</a></li>
+                            <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap" asp-area="" asp-controller="Crypto" asp-action="Index">Crypto</a></li>
                     </feature>
 
                     @if (Warden.IsAdmin(User))
                     {
-                            <li class="nav-item align-self-center interactable w-100 w-sm-auto">
-                                <a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a>
+                        <li class="nav-item align-self-center interactable w-100 w-sm-auto">
+                            <a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap" asp-area="" asp-controller="Administration" asp-action="CreateRole">Create Role</a>
                         </li>
                     }
 
@@ -141,8 +141,6 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="nav-item align-self-center w-100 w-sm-auto"></li>
-
 
                     @{
                         //Returns IEnumerable list of all pending FriendRequestDTOs
@@ -160,6 +158,7 @@
                             </li>
                         }
                     }
+                    <li class="nav-item align-self-center w-100 w-sm-auto"></li>
 
                 </ul>
                 <partial name="_LoginPartial"/>

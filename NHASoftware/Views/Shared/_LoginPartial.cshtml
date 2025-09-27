@@ -1,5 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using NHA.Website.Software.Entities.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
@@ -8,7 +7,7 @@
     var returnUrl = HtmlEncoder.Encode(ViewContext.HttpContext.Request.Path + ViewContext.HttpContext.Request.QueryString);
 }
 
-<ul class="navbar-nav">
+<ul class="navbar-nav ">
     @if (SignInManager.IsSignedIn(User))
     {
         var user = await UserManager.GetUserAsync(User);
@@ -46,19 +45,19 @@
         else
         {
             <li class="nav-item align-self-center interactable">
-                <a class="nav-link btn-dark text-primary rounded-2 h5 m-0  d-block text-center" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello Gangsta!</a>
+                <a class="nav-link btn-dark text-primary rounded-2 h5 m-0  d-block text-center text-nowrap" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello Gangsta!</a>
             </li>
         }
 
 
         <li class="nav-item align-self-center interactable w-100 w-sm-auto">
-            <a type="submit" class="nav-link btn-dark text-light rounded-2 h5 m-0  d-block text-center" asp-controller="Users" asp-action="Logout" asp-route-returnUrl="@returnUrl">Logout</a>
+            <a type="submit" class="nav-link btn-dark text-light rounded-2 h5 m-0  d-block text-center text-nowrap" asp-controller="Users" asp-action="Logout" asp-route-returnUrl="@returnUrl">Logout</a>
         </li>
     }
     else
     {
         <li class="nav-item align-self-center pt-2 pb-2 me-2">
-            <input type="text" id="searchInput" class="form-control interactable d-block text-center" placeholder="Search Anime Social" style="min-width: 250px;" />
+            <input type="text" id="searchInput" class="form-control interactable d-block text-center " placeholder="Search Anime Social" style="min-width: 250px;" />
             <!-- Dropdown container -->
             <ul id="searchDropdown" class="bg-body-tertiary"
                 style="
@@ -78,10 +77,10 @@
             </ul>
         </li>
         <li class="nav-item align-self-center interactable w-100 w-sm-auto">
-            <a class="nav-link btn-dark text-light  rounded-2 h5 m-0  d-block text-center" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="nav-link btn-dark text-light  rounded-2 h5 m-0  d-block text-center text-nowrap" asp-area="Identity" asp-page="/Account/Register">Register</a>
         </li>
         <li class="nav-item align-self-center interactable w-100 w-sm-auto">
-            <a class="nav-link btn-dark text-light rounded-2 h5 m-0  d-block text-center" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            <a class="nav-link btn-dark text-light rounded-2 h5 m-0  d-block text-center text-nowrap" asp-area="Identity" asp-page="/Account/Login">Login</a>
         </li>
 
 

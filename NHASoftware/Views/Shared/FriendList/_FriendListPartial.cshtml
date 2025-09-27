@@ -54,7 +54,7 @@
                     }
                 }
 
-                <details class="row m-auto pt-2 pt-4" open>
+                <details class="row m-auto" open>
                     <summary>Online (@onlineUsers.Count)</summary>
                     @{
                         foreach (var friend in onlineUsers)
@@ -237,7 +237,6 @@
                     <div class="multiline-ellipsis" style="max-width: 350px;">
                         @Html.Raw(@featuredGame.Summary)
                     </div>
-                    
                     @{ await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@featuredGame.Genres ?? string.Empty, GenreListType.Game)); }
                 </div>
             }

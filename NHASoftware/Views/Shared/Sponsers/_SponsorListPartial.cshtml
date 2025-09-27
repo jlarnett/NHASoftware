@@ -29,7 +29,8 @@
                     </a>
                 </div>
                 <div class="multiline-ellipsis" style="max-width: 350px;">
-                    @featuredAnime.AnimeSummary @featuredAnime.AnimeBackground
+                    @Html.Raw(@featuredAnime.AnimeSummary)
+                    @Html.Raw(@featuredAnime.AnimeBackground)
                 </div>
                 
                 @{ await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@featuredAnime.AnimeGenres ?? string.Empty, GenreListType.Anime)); }
