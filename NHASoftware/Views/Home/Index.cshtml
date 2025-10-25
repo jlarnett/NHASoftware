@@ -42,7 +42,7 @@
                     </form>
                 </div>
                 <div class="row p-2">
-                    <button id="SubmitBtn" user="@_UserManager.GetUserId(User)" class="col btn btn-primary p-auto fs-2 interactable">
+                    <button id="SubmitBtn" type="submit" user="@_UserManager.GetUserId(User)" class="col btn btn-primary p-auto fs-2 interactable">
                         <div class="row align-content-center align-items-center m-auto">
                             <div class="col-auto text-center m-auto h5">
                                 Upload
@@ -50,7 +50,7 @@
                         </div>
                     </button>
                     <feature name="@FeatureFlags.CustomizedPostsEnabled">
-                        <button id="AddPhotos" user="@_UserManager.GetUserId(User)" class="col m-auto btn btn-dark p-auto fs-2 interactable" data-bs-toggle="modal" data-bs-target="#AddPostPhotosModal">
+                        <button id="AddPhotos" type="submit" user="@_UserManager.GetUserId(User)" class="col m-auto btn btn-dark p-auto fs-2 interactable" data-bs-toggle="modal" data-bs-target="#AddPostPhotosModal">
                             <div class="row align-content-center align-items-center m-auto">
                                 <div class="col-auto text-center m-auto h5">
                                     Upload With Photos

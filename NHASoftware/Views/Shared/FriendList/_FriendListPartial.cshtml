@@ -28,7 +28,7 @@
                     <span>Friends List</span>
                 </div>
             </div>
-
+            @Html.AntiForgeryToken()
             @{
                 var friends = await _FriendSystem.GetUsersFriendListAsync(_UserManager.GetUserId(User)!);
                 Dictionary<ApplicationUser, string> onlineUsers = new Dictionary<ApplicationUser, string>();
