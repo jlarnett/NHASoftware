@@ -68,7 +68,7 @@ public class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> ReturnSocialPosts()
     {
-        var postDTOs = await _postBuilder.RetrieveParentPosts();
+        var postDTOs = await _postBuilder.RetrieveParentPosts(_userManager.GetUserId(User) ?? "");
         return PartialView("Social/_MultiPost", new MultiPostVM(postDTOs));
     }
 

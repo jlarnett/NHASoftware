@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
 using NHA.Website.Software.Caching;
@@ -8,6 +7,8 @@ using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Entities.Social_Entities;
 using NHA.Website.Software.Services.CacheLoadingManager;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+using System.Security.Claims;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace NHA.Website.Software.Services.Social.PostBuilderService;
 
@@ -32,11 +33,12 @@ public class PostBuilder : IPostBuilder
     /// Retrieves a list of all parent posts in DB. Fully populates the PostDTOs & handles caching 
     /// </summary>
     /// <returns>a list of all parent posts in DB in PostDTO format</returns>
-    public async Task<List<PostDTO>> RetrieveParentPosts()
+    public async Task<List<PostDTO>> RetrieveParentPosts(string currentUserId)
     {
         var shouldReloadCache = _cacheLoadingManager.ShouldCacheReload(CachingKeys.Posts);
+        var cacheKey = $"{CachingKeys.PopulatedPostDTOs}_{currentUserId}";
 
-        if (!_memoryCache.TryGetValue(CachingKeys.PopulatedPostDTOs, out List<PostDTO>? populatedPostDTOs) || shouldReloadCache)
+        if (!_memoryCache.TryGetValue(cacheKey, out List<PostDTO>? populatedPostDTOs) || shouldReloadCache)
         {
             populatedPostDTOs = await GeneratePostDTOList(await RetrieveParentPostFromRepository());
             var cacheEntryOptions = new MemoryCacheEntryOptions()

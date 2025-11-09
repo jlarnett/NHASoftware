@@ -24,7 +24,7 @@ namespace NHA.Website.Software.Services.Social.PostBuilderService
         /// Retrieves a list of all parent posts in DB. Fully populates the PostDTOs & handles caching 
         /// </summary>
         /// <returns>a list of all parent posts in DB in PostDTO format</returns>
-        Task<List<PostDTO>> RetrieveParentPosts();
+        Task<List<PostDTO>> RetrieveParentPosts(string userId);
 
 
         /// <summary>
