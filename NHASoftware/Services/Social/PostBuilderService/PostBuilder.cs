@@ -96,7 +96,7 @@ public class PostBuilder : IPostBuilder
         if (newPost != null)
         {
             var newPostWithIncludes = await _unitOfWork.PostRepository.GetPostByIDWithIncludesAsync(newPost.Id.GetValueOrDefault());
-            var postDto = await PopulatePostDTO(_mapper.Map<Post, PostDTO>(newPostWithIncludes!));
+            var postDto = await PopulatePostDto(_mapper.Map<Post, PostDTO>(newPostWithIncludes!), []);
             return postDto;
         }
 
@@ -122,10 +122,11 @@ public class PostBuilder : IPostBuilder
     private async Task<List<PostDTO>> PopulatePostDTODetails(List<PostDTO> postDTOs)
     {
         List<PostDTO> posts = new List<PostDTO>();
+        var userLikes = (await _unitOfWork.UserLikeRepository.GetAllAsync()).ToList();
 
         foreach (var dto in postDTOs)
         {
-            posts.Add(await PopulatePostDTO(dto));
+            posts.Add(await PopulatePostDto(dto, userLikes));
         }
         return posts;
     }
@@ -136,12 +137,12 @@ public class PostBuilder : IPostBuilder
     /// </summary>
     /// <param name="dto">The postDTO to finish populating</param>
     /// <returns>Fully populated postDTO</returns>
-    public async Task<PostDTO> PopulatePostDTO(PostDTO dto)
+    public async Task<PostDTO> PopulatePostDto(PostDTO dto, List<UserLikes> userLikes)
     {
         dto.LikeCount = (await _unitOfWork.UserLikeRepository.FindAsync(p => p.PostId == dto.Id && !p.IsDislike)).Count();
         dto.DislikeCount = (await _unitOfWork.UserLikeRepository.FindAsync(p => p.PostId == dto.Id && p.IsDislike)).Count();
-        dto.UserLikedPost = await UserLikedPost(dto.Id);
-        dto.UserDislikedPost = await UserDislikedPost(dto.Id);
+        dto.UserLikedPost = UserLikedPost(dto.Id, userLikes);
+        dto.UserDislikedPost = UserDislikedPost(dto.Id, userLikes);
         dto.HasImagesAttached = await _unitOfWork.PostImageRepository.HasImagesAttachedAsync(dto.Id);
 
         return dto;
@@ -152,12 +153,11 @@ public class PostBuilder : IPostBuilder
     /// </summary>
     /// <param name="id">Post Id</param>
     /// <returns>Returns boolean condition if user liked post id</returns>
-    private async Task<bool> UserLikedPost(int? id)
+    private bool UserLikedPost(int? id, List<UserLikes> userLikes)
     {
         if (ClaimsPrincipal.Current != null)
         {
-            return (await _unitOfWork.UserLikeRepository.FindAsync(ul =>
-                ul.PostId == id && ul.IsDislike == false && ul.UserId == _userManager.GetUserId(ClaimsPrincipal.Current))).Any();
+            return userLikes.Any(ul => ul.PostId == id && ul.IsDislike == false && ul.UserId == _userManager.GetUserId(ClaimsPrincipal.Current));
         }
 
         return false;
@@ -168,12 +168,12 @@ public class PostBuilder : IPostBuilder
     /// </summary>
     /// <param name="id">Post Id</param>
     /// <returns>Returns boolean condition if user Disliked post id</returns>
-    private async Task<bool> UserDislikedPost(int? id)
+    private bool UserDislikedPost(int? id, List<UserLikes> userLikes)
     {
         if (ClaimsPrincipal.Current != null)
         {
-            return (await _unitOfWork.UserLikeRepository.FindAsync(ul =>
-                ul.PostId == id && ul.IsDislike == true && ul.UserId == _userManager.GetUserId(ClaimsPrincipal.Current))).Any();
+            return userLikes.Any(ul =>
+                ul.PostId == id && ul.IsDislike == true && ul.UserId == _userManager.GetUserId(ClaimsPrincipal.Current));
         }
 
         return false;

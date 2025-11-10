@@ -33,7 +33,7 @@ namespace NHA.Website.Software.Services.Social.PostBuilderService
         /// </summary>
         /// <param name="dto">The postDTO to finish populating</param>
         /// <returns>Fully populated postDTO</returns>
-        Task<PostDTO> PopulatePostDTO(PostDTO postDTO);
+        Task<PostDTO> PopulatePostDto(PostDTO postDTO, List<UserLikes> userLikes);
 
         /// <summary>
         /// Gets the total number of comments for supplied postId.
