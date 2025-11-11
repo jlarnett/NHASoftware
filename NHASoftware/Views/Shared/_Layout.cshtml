@@ -98,7 +98,7 @@
                 </button>
 
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="navbarSupportedContent">
-                <ul class="navbar-nav flex-column flex-sm-row w-75 flex-sm-grow-0">
+                <ul class="navbar-nav">
 
                     <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li class="nav-item align-self-center interactable w-100 w-sm-auto"><a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap" asp-area="" asp-controller="Anime" asp-action="Roll">Anime Roll</a></li>
@@ -148,12 +148,13 @@
 
                         if (SignInManager.IsSignedIn(User))
                         {
-                            <li class="align-self-center nav-item interactable w-100 w-sm-auto ">
-                                <button type="button" class="rounded btn btn-dark m-0" data-bs-toggle="modal" data-bs-target="#friendRequestModal">
-                                    <div class="col p-0 position-relative">
-                                        <span id="FriendRequestCounter" class="text-danger bg-primary position-absolute top-50 start-50 rounded-circle h5 text-white ps-2 pe-2">@requests.Count()</span>
-                                        <span><img src="~/Images/Bell_Icon.png" alt="notification icon image" class="img-fluid"/></span>
-                                    </div>
+
+                            <li class="align-self-center nav-item interactable">
+                                <button type="button" class="btn btn-dark position-relative d-flex align-items-center justify-content-center p-2 rounded" data-bs-toggle="modal" data-bs-target="#friendRequestModal" style="min-width:50px; min-height:50px;">
+                                    <img src="~/Images/Bell_Icon.png" alt="notification icon image" class="img-fluid bg-dark-subtle rounded-2" style="width:32px; height:32px;">
+                                    <span id="FriendRequestCounter" class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-primary">
+                                        @requests.Count()
+                                    </span>
                                 </button>
                             </li>
                         }

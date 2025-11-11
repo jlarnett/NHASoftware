@@ -201,7 +201,8 @@
                             }
 
                             if (data.users) {
-                               data.users.forEach(user => {
+                                data.users.forEach(user => {
+
                                     results.push({type: "user", id: user.id, title: user.displayName, url: `/Users/GetProfiles?userId=${user.id}`, img: "" });
                                }); 
 

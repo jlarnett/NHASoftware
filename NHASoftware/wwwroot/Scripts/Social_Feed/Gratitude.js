@@ -5,11 +5,16 @@
         var EventBtn = $(e.target);
         var currentBtnImageSrc = EventBtn.attr("src");
         var postId = EventBtn.attr("post-id");
+        var uuid = EventBtn.attr("uuid");
 
         var userSessionActive = CheckUserSessionIsActive();
 
         if (userSessionActive === "False") {
             console.log("User Login required to like social media posts & comments");
+            let validationMessageElement = $("span[unique-error-identifier$=" + uuid + "]");
+            validationMessageElement.text("Login required to like social media posts & comments");
+            validationMessageElement.show(100);
+            return;
         }
 
         var userId = RetrieveCurrentUserId();
@@ -51,6 +56,15 @@
         var postId = EventBtn.attr("post-id");
         var userSessionActive = CheckUserSessionIsActive();
         var userId = RetrieveCurrentUserId();
+        var uuid = EventBtn.attr("uuid");
+
+        if (userSessionActive === "False") {
+            console.log("User Login required to like social media posts & comments");
+            let validationMessageElement = $("span[unique-error-identifier$=" + uuid + "]");
+            validationMessageElement.text("Login required to dislike social media posts & comments");
+            validationMessageElement.show(100);
+            return;
+        }
 
         if (userSessionActive) {
 

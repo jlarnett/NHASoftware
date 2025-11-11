@@ -128,6 +128,19 @@ body {
     color: white;
 }
 
+/* Desktop: keep current width */
+#searchInput {
+    min-width: 250px;
+}
+
+/* Mobile: shrink width */
+@media (max-width: 576px) {
+    #searchInput {
+        min-width: 130px !important;
+        max-width: 150px !important;
+    }
+}
+
 
 .interactable {
     transition: transform 0.2s ease, box-shadow 0.2s ease;

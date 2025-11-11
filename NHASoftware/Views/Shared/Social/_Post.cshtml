@@ -1,7 +1,5 @@
-﻿@using System.Text.RegularExpressions
-@using HtmlAgilityPack
+﻿@using HtmlAgilityPack
 @using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Manage.Internal
 @using Microsoft.IdentityModel.Tokens
 @using NHA.Website.Software.Entities.Identity
 @using NHA.Website.Software.Services.Social.PostBuilderService
@@ -16,8 +14,8 @@
 *@
 
 @{
-    string uuid = Guid.NewGuid().ToString();
-
+    Model.UUID = Guid.NewGuid();
+    string uuid = Model.UUID.Value.ToString();
 }
 
 <div class="container-fluid border border-2 shadow border-primary ridge rounded-2 mt-2 post-container" post-id="@Model.Id" images-attached="@Model.HasImagesAttached.ToString()" images-loaded="false" post-uuid="@uuid.ToString()">
@@ -147,9 +145,9 @@
                         </div>
                         <button class="btn btn-dark rounded-2 col-auto comment-send-btn interactable" unique-identifier="@uuid.ToString()" parent-post-id="@Model.Id">Reply</button>
                     </div> 
-                    <span unique-error-identifier="@uuid.ToString()" style="display: none;" class="text-primary">Error Submitting Post.....</span>
                 }
             }
         </form>
     </div>
+    <span unique-error-identifier="@uuid.ToString()" style="display: none;" class="text-primary">Error Submitting Post.....</span>
 </div>
