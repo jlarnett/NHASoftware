@@ -15,15 +15,22 @@
     var allGames = await unitOfWork.GamePageRepository.GetAllAsync();
     HashSet<string> allGenres = [];
     var gamePageCount = 0;
+    HashSet<string> allPlatforms = [];
 
     foreach (var game in allGames)
     {
-
         if (game.Genres is not null)
         {
             var genres = game.Genres.Split(';');
             allGenres.AddRange(genres);
         }
+
+        if (game.Platforms is not null)
+        {
+            var platform = game.Platforms.Split(';');
+            allPlatforms.AddRange(platform);
+        }
+
         gamePageCount++;
     }
 
@@ -55,6 +62,17 @@
         {
             if (genre.IsNullOrEmpty()) continue;
             <a asp-controller="Game" asp-action="GenreIndex" asp-route-genre="@genre" class="link-primary index-letters fs-3 interactable">@genre</a>
+        }
+
+        <hr/>
+
+        <h2 class="mt-4">Console Platforms <em class=" h3 text-primary">(@allPlatforms.Count)</em></h2>
+        var sortedPlatforms = allPlatforms.Order();
+
+        foreach (var platform in sortedPlatforms)
+        {
+            if (platform.IsNullOrEmpty()) continue;
+            <a asp-action="PlatformIndex" asp-controller="Game" asp-route-platform="@platform" class="link-primary index-letters fs-3 interactable">@platform</a>
         }
     }
 </div>

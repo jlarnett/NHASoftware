@@ -8,7 +8,6 @@ using NHA.Website.Software.Entities.Anime;
 using NHA.Website.Software.Entities.Game;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHA.Website.Software.Views.Game.GameVms;
-using NHA.Website.Software.Views.Game.Vms;
 
 namespace NHA.Website.Software.Controllers.GameControllers;
 
@@ -76,15 +75,44 @@ public class GameController : Controller
         }
 
         //Sorting the list by alphabetical order.
-        var alphabeticallySortedAnimeList = gameList.OrderBy(ap => ap.Name).ToList();
+        var alphabeticallySortedGameList = gameList.OrderBy(ap => ap.Name).ToList();
 
-        var vm = new GenreIndexViewModel()
+        var vm = new Views.Game.Vms.GenreIndexViewModel()
         {
             Genre = genre,
-            GameList = alphabeticallySortedAnimeList
+            GameList = alphabeticallySortedGameList
         };
 
         return View("GenreIndex", vm);
+    }
+
+    public async Task<IActionResult> PlatformIndex(string platform)
+    {
+        var completeGameList = await _unitOfWork.GamePageRepository.GetAllAsync();
+
+        List<GamePage> gameList = [];
+
+        //Getting all anime that starts with specific alphabet letter
+        foreach (var game in completeGameList)
+        {
+            if (game.Platforms == null) continue;
+
+            if (game.Platforms.Contains(platform))
+            {
+                gameList.Add(game);
+            }
+        }
+
+        //Sorting the list by alphabetical order.
+        var alphabeticallySortedGameList = gameList.OrderBy(ap => ap.Name).ToList();
+
+        var vm = new Views.Game.Vms.PlatformIndexViewModel()
+        {
+            Platform = platform,
+            GameList = alphabeticallySortedGameList
+        };
+
+        return View("PlatformIndex", vm);
     }
 
     public IActionResult GamePage(int? id)

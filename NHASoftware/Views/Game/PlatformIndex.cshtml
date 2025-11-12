@@ -1,0 +1,24 @@
+﻿@using NHA.Website.Software.Views.Game.Vms
+@model PlatformIndexViewModel
+@{
+    ViewData["Title"] = "Anime";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/AnimePages.css">
+</head>
+
+@{
+    var genreAnimeCounter = @Model.GameList.Count;
+}
+
+<h1>@Model.Platform <em class="h3 text-primary">(@genreAnimeCounter)</em></h1>
+
+@{
+    foreach (var game in Model.GameList)
+    {
+        <a asp-action="GamePage" asp-route-id="@game.Id" asp-controller="Game" class="link-primary animepage-links">@game.Name</a>
+        <br/>
+    }
+}

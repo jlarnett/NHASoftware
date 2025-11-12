@@ -11,6 +11,8 @@
 @{
     var allAnime = await unitOfWork.AnimePageRepository.GetAllAsync();
     var animePageCount = 0;
+
+    HashSet<string> allPlatforms = [];
     HashSet<string> allGenres = [];
 
     foreach (var anime in allAnime)
@@ -20,18 +22,14 @@
             var genres = anime.AnimeGenres.Split(';');
             allGenres.AddRange(genres);
         }
-        animePageCount++;
-    }
 
-
-    HashSet<string> allPlatforms = [];
-    foreach (var anime in allAnime)
-    {
         if (!string.IsNullOrEmpty(anime.Platforms))
         {
             var platforms = anime.Platforms.Split(';');
             allPlatforms.AddRange(platforms);
         }
+
+        animePageCount++;
     }
 
     var randomAnime = await unitOfWork.AnimePageRepository.GetRandomEntityAsync();

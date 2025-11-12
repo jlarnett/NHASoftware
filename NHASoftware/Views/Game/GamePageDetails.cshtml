@@ -124,17 +124,17 @@
                             switch (i)
                             {
                                 case 0:
-                                    <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                                    <a asp-controller="Game" asp-action="PlatformIndex" asp-route-platform="@platforms[i]" class="text-decoration-none">
                                         <span class="badge text-bg-primary col-auto p-2 interactable"><img src="@ConvertPlatformToIcon(platforms[i])" alt="@Model.Name's Platform Icon" class="me-1"/>@platforms[i]</span>
                                     </a>
                                     break;
                                 case 1:
-                                    <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                                    <a asp-controller="Game" asp-action="PlatformIndex" asp-route-platform="@platforms[i]" class="text-decoration-none">
                                         <span class="badge text-bg-light border col-auto p-2 interactable"><img src="@ConvertPlatformToIcon(platforms[i])" alt="@Model.Name's Platform Icon" class="me-1"/>@platforms[i]</span>
                                     </a>
                                     break;
                                 case 2:
-                                    <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                                    <a asp-controller="Game" asp-action="PlatformIndex" asp-route-platform="@platforms[i]" class="text-decoration-none">
                                         <span class="badge text-bg-success col-auto p-2 interactable"><img src="@ConvertPlatformToIcon(platforms[i])" alt="@Model.Name's Platform Icon" class="me-1"/>@platforms[i]</span>
                                     </a>
                                     colorIndex = 0;
