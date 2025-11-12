@@ -111,6 +111,36 @@ public class AnimeController : Controller
 
         return View("GenreIndex", vm);
     }
+
+    public async Task<IActionResult> PlatformIndex(string platform)
+    {
+        var completeAnimeList = await _unitOfWork.AnimePageRepository.GetAllAsync();
+
+        List<AnimePage> animeList = [];
+
+        //Getting all anime that starts with specific alphabet letter
+        foreach (var anime in completeAnimeList)
+        {
+            if (anime.Platforms == null) continue;
+
+            if (anime.Platforms.Contains(platform))
+            {
+                animeList.Add(anime);
+            }
+        }
+
+        //Sorting the list by alphabetical order.
+        var alphabeticallySortedAnimeList = animeList.OrderBy(ap => ap.AnimeName).ToList();
+
+        var vm = new PlatformIndexViewModel()
+        {
+            Platform = platform,
+            AnimeList = alphabeticallySortedAnimeList
+        };
+
+        return View("PlatformIndex", vm);
+    }
+
     public IActionResult AnimePage(int? id)
     {
         if (id == null)

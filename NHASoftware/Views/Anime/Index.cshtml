@@ -1,5 +1,4 @@
-﻿@using Microsoft.CodeAnalysis
-@using Microsoft.IdentityModel.Tokens
+﻿@using Microsoft.IdentityModel.Tokens
 @using NHA.Website.Software.Services.RepositoryPatternFoundationals
 @using NuGet.Packaging
 @inject IUnitOfWork unitOfWork;
@@ -16,13 +15,23 @@
 
     foreach (var anime in allAnime)
     {
-
         if (anime.AnimeGenres is not null)
         {
             var genres = anime.AnimeGenres.Split(';');
             allGenres.AddRange(genres);
         }
         animePageCount++;
+    }
+
+
+    HashSet<string> allPlatforms = [];
+    foreach (var anime in allAnime)
+    {
+        if (!string.IsNullOrEmpty(anime.Platforms))
+        {
+            var platforms = anime.Platforms.Split(';');
+            allPlatforms.AddRange(platforms);
+        }
     }
 
     var randomAnime = await unitOfWork.AnimePageRepository.GetRandomEntityAsync();
@@ -60,6 +69,17 @@
         {
             if (animeGenre.IsNullOrEmpty()) continue;
                 <a asp-action="GenreIndex" asp-controller="Anime" asp-route-genre="@animeGenre" class="link-primary index-letters fs-3 interactable">@animeGenre</a>
+        }
+
+        <hr/>
+
+        <h2 class="mt-4">Streaming Platforms <em class=" h3 text-primary">(@allPlatforms.Count)</em></h2>
+        var sortedPlatforms = allPlatforms.Order();
+
+        foreach (var platform in sortedPlatforms)
+        {
+            if (platform.IsNullOrEmpty()) continue;
+            <a asp-action="PlatformIndex" asp-controller="Anime" asp-route-platform="@platform" class="link-primary index-letters fs-3 interactable">@platform</a>
         }
 
     }
