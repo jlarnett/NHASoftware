@@ -49,7 +49,7 @@ public class PostsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<Post>>> GetPosts()
     {
-        var posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
+        var posts = (await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync()).Where(p => p.ParentPostId == null);
         return Ok(posts);
     }
 

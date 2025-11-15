@@ -92,11 +92,14 @@ var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
-        builder =>
+        corsPolicyBuilder =>
         {
-            builder.WithOrigins("https://api.binance.com/");
-            builder.WithHeaders("Access-Control-Allow-Headers");
-            builder.WithHeaders("Access-Control-Allow-Origin");
+            corsPolicyBuilder.WithOrigins(
+                "https://api.binance.com/",
+                "http://localhost:8081"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
         });
 });
 
