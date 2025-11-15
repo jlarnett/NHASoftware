@@ -184,13 +184,13 @@ public class HomeController : Controller
     /// Make sure the recurring anime load hangfire job is scheduled weekly
     /// </summary>
     private void CreateAnimeLoadHangfireJob() =>
-        RecurringJob.AddOrUpdate<IAnimeLeecher>("AnimeLeecher", x=> x.LoadExternalAnime(), Cron.Weekly);
+        RecurringJob.AddOrUpdate<IAnimeLeecher>("AnimeLeecher", x=> x.LoadExternalAnime(), Cron.Yearly);
 
     /// <summary>
     /// Make sure the recurring game load hangfire job is scheduled weekly
     /// </summary>
     private void CreateGameLoadHangfireJob() =>
-        RecurringJob.AddOrUpdate<IGameLeecher>("GameLeecher", x=> x.LoadExternalGameInformation(), Cron.Weekly);
+        RecurringJob.AddOrUpdate<IGameLeecher>("GameLeecher", x=> x.LoadExternalGameInformation(), Cron.Yearly);
 
     /// <summary>
     /// Make sure the recurring Featured anime job runs every 2 days at midnight

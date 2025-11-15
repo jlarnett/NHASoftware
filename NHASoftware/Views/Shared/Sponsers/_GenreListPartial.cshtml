@@ -108,7 +108,7 @@
                     {
                         default:
                             <a asp-controller="Anime" asp-action="PlatformIndex" asp-route-platform="@genres[i]" class="text-decoration-none">
-                                <img src="@ConvertPlatformToIcon(genres[i])" alt="@genres[i]" class="me-1 interactable" />
+                                <img src="@ConvertPlatformToIcon(genres[i])" alt="@genres[i]" class="me-1 interactable" title="@genres[i]">
                             </a>
                             break;
 

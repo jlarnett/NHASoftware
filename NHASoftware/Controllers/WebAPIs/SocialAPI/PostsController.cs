@@ -46,6 +46,13 @@ public class PostsController : ControllerBase
         _postBuilder = postBuilder;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<List<Post>>> GetPosts()
+    {
+        var posts = await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync();
+        return Ok(posts);
+    }
+
     [HttpGet("GetPostImages/{id}")]
     public async Task<ActionResult<List<string>>> GetPostImages(int? id)
     {
