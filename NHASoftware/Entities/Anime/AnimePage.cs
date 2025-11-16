@@ -46,6 +46,4 @@ public class AnimePage
     [DisplayName("Platforms")]
     [MaxLength(200)]
     public string? Platforms { get; set; } = string.Empty;
-
-
 }
