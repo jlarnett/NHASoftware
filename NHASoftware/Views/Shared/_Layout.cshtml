@@ -43,6 +43,9 @@
 
             // Update dropdown text
             updateThemeLabel(mode);
+
+            // Update bell icon
+            updateBellIcon(mode);
         };
 
         // Function to update the dropdown label
@@ -50,6 +53,14 @@
             const dropdown = document.getElementById("themeDropdown");
             if (dropdown) {
                 dropdown.textContent = `Theme: ${mode.charAt(0).toUpperCase() + mode.slice(1)}`;
+            }
+        }
+
+        function updateBellIcon(mode) {
+            const bellImg = document.querySelector('#notificationBellIcon');
+            if (bellImg) {
+                // Set image source based on theme
+                bellImg.src = mode === 'dark' ? '/Images/bell.png' : '/Images/Bell_Icon.png';
             }
         }
 
@@ -64,6 +75,8 @@
                 // Update dropdown text
                 updateThemeLabel('light');
             }
+            // Update bell icon
+            updateBellIcon(mode);
         });
     </script>
     
