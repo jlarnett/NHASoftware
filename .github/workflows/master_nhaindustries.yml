@@ -58,3 +58,17 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FCD9B13EA7C1429AB2F6866C10252682 }}
           package: .
+
+      - name: Run Selenium Cucumber Tests
+        run: |
+          echo "Running automated Cucumber Selenium UI tests..."
+
+          git clone https://github.com/jlarnett/JavaTestFramework.git
+          cd JavaTestFramework
+
+          choco install maven -y
+          refreshenv
+          
+          mvn -v
+          mvn clean test
+
