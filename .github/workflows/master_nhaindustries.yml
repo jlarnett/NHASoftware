@@ -83,5 +83,5 @@ jobs:
 
       - name: Run Cucumber Selenium Tests
         run: |
-          cd YOUR_SELENIUM_REPO
+          cd JavaTestFramework
           mvn clean test
