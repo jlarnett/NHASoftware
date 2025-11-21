@@ -59,16 +59,29 @@ jobs:
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FCD9B13EA7C1429AB2F6866C10252682 }}
           package: .
 
-      - name: Run Selenium Cucumber Tests
+  post-deployment-testing:
+    runs-on: windows-latest
+    needs: deploy
+    steps:
+      - name: Clone Test Repository
+        run: git clone https://github.com/jlarnett/JavaTestFramework.git
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+        
+      - name: Setup Maven
+        run: choco install maven -y
+
+      - name: Create .env file
         run: |
-          echo "Running automated Cucumber Selenium UI tests..."
-
-          git clone https://github.com/jlarnett/JavaTestFramework.git
           cd JavaTestFramework
+          echo "APP_USERNAME=${{ secrets.APP_USERNAME }}" >> .env
+          echo "APP_PASSWORD=${{ secrets.APP_PASSWORD }}" >> .env
 
-          choco install maven -y
-          refreshenv
-          
-          mvn -v
+      - name: Run Cucumber Selenium Tests
+        run: |
+          cd YOUR_SELENIUM_REPO
           mvn clean test
-
