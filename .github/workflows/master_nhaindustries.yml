@@ -80,6 +80,7 @@ jobs:
           cd JavaTestFramework
           echo "APP_USERNAME=${{ secrets.APP_USERNAME }}" >> .env
           echo "APP_PASSWORD=${{ secrets.APP_PASSWORD }}" >> .env
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
 
       - name: Run Cucumber Selenium Tests
         run: |
