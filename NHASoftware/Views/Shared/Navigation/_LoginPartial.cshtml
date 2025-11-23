@@ -11,79 +11,95 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
+        <li class="nav-item align-self-center pt-2 pb-2 me-2 order-2 order-sm-1">
+            <input type="text" class="form-control align-self-center interactable w-100 w-sm-auto" id="searchInput" placeholder="Search Anime Social" style="min-width: 250px;" />
+
+            <!-- Dropdown container -->
+            <ul id="searchDropdown" class="bg-body-tertiary"
+                style="
+                    position: absolute;
+                    top: 100%;
+                    border: 1px solid #fff;
+                    border-top: none;
+                    max-height: 400px;
+                    max-width: 300px;
+                    overflow-y: auto;
+                    z-index: 1000;
+                    display: none;
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                ">
+            </ul>
+        </li>
         var user = await UserManager.GetUserAsync(User);
 
         @if(user != null)
         {
             string profilePicture = "~/ProfilePictures/" + user.ProfilePicturePath;
 
-            <li class="nav-item align-self-center pt-2 pb-2">
-                <a asp-area="Identity" asp-page="/Account/Manage/Index">
-                    <img id="ProfilePicture" src="@Url.Content(profilePicture)" alt="Current User's Profile Picture" class="rounded login-profile-picture  interactable" />
+            <li class="nav-item dropdown align-self-center pt-2 pb-2 pe-2 order-1 order-sm-2">
+
+                <!-- Profile Picture Dropdown Toggle -->
+                <a class="nav-link dropdown-toggle p-0 interactable" href="#" id="profileDropdown" role="button"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    <img id="ProfilePicture"
+                         src="@Url.Content(profilePicture)"
+                         alt="Current User's Profile Picture"
+                         class="rounded login-profile-picture" />
                 </a>
-            </li>
-        }
-        else
-        {
-            <li class="nav-item align-self-center interactable">
-                <a class="nav-link btn-dark text-primary rounded-2 h5 m-0  d-block text-center text-nowrap" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello Gangsta!</a>
+
+                <!-- Dropdown Menu -->
+                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="profileDropdown">
+                    <li>
+                        <a class="dropdown-item" asp-controller="Users" asp-action="Logout" asp-route-returnUrl="@returnUrl">
+                            Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
+                            Manage
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" asp-controller="Users" asp-action="Logout" asp-route-returnUrl="@returnUrl">
+                            Logout
+                        </a>
+                    </li>
+                </ul>
             </li>
         }
 
-        <li class="nav-item align-self-center interactable w-100 w-sm-auto">
-            <a type="submit" class="nav-link btn-dark text-light rounded-2 h5 m-0  d-block text-center text-nowrap" asp-controller="Users" asp-action="Logout" asp-route-returnUrl="@returnUrl">Logout</a>
-        </li>
-        <li class="nav-item align-self-center pt-2 pb-2 me-2">
-            <input type="text" class="form-control align-self-center interactable w-100 w-sm-auto" id="searchInput" placeholder="Search Anime Social" style="min-width: 250px;" />
-                
-            <!-- Dropdown container -->
-            <ul id="searchDropdown" class="bg-body-tertiary"
-                style="
-                position: absolute;
-                top: 100%;
-                border: 1px solid #fff;
-                border-top: none;
-                max-height: 400px;
-                max-width: 300px;
-                overflow-y: auto;
-                z-index: 1000;
-                display: none;
-                list-style: none;
-                margin: 0;
-                padding: 0;
-            ">
-            </ul>
-        </li>
+
     }
     else
     {
-        <li class="nav-item align-self-center interactable w-100 w-sm-auto">
-            <a class="nav-link btn-dark text-light  rounded-2 h5 m-0  d-block text-center text-nowrap" asp-area="Identity" asp-page="/Account/Register">Register</a>
-        </li>
-        <li class="nav-item align-self-center interactable w-100 w-sm-auto">
-            <a class="nav-link btn-dark text-light rounded-2 h5 m-0  d-block text-center text-nowrap" asp-area="Identity" asp-page="/Account/Login">Login</a>
-        </li>
-        <li class="nav-item align-self-center pt-2 pb-2 me-2">
+        <li class="nav-item align-self-center pt-2 pb-2 me-2 order-3 order-sm-1">
             <input type="text" id="searchInput" class="form-control interactable d-block text-center " placeholder="Search Anime Social" />
             <!-- Dropdown container -->
             <ul id="searchDropdown" class="bg-body-tertiary"
                 style="
-                position: absolute;
-                top: 100%;
-                border: 1px solid #fff;
-                border-top: none;
-                max-height: 400px;
-                max-width: 300px;
-                overflow-y: auto;
-                z-index: 1000;
-                display: none;
-                list-style: none;
-                margin: 0;
-                padding: 0;
-            ">
+                    position: absolute;
+                    top: 100%;
+                    border: 1px solid #fff;
+                    border-top: none;
+                    max-height: 400px;
+                    max-width: 300px;
+                    overflow-y: auto;
+                    z-index: 1000;
+                    display: none;
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                ">
             </ul>
         </li>
-
+        <li class="nav-item align-self-center interactable w-100 w-sm-auto order-1 order-sm-2">
+            <a class="nav-link btn-dark text-light  rounded-2 h5 m-0  d-block text-center text-nowrap" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item align-self-center interactable w-100 w-sm-auto order-2 order-sm-3">
+            <a class="nav-link btn-dark text-light rounded-2 h5 m-0  d-block text-center text-nowrap" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
     }
 </ul>
 <script src="~/Scripts/Shared/searchbar.js"></script>
