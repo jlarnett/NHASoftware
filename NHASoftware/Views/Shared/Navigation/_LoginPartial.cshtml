@@ -52,7 +52,7 @@
                 <!-- Dropdown Menu -->
                 <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="profileDropdown">
                     <li>
-                        <a class="dropdown-item" asp-controller="Users" asp-action="Logout" asp-route-returnUrl="@returnUrl">
+                        <a class="dropdown-item" asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@user.Id">
                             Profile
                         </a>
                     </li>

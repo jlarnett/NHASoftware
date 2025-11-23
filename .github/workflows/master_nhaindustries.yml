@@ -88,6 +88,7 @@ jobs:
           mvn clean test
 
       - name: Upload Test Reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: selenium-test-reports

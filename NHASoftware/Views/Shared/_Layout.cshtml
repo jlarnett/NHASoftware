@@ -70,13 +70,15 @@
                 document.body.dataset.bsTheme = savedTheme;
                 // Update dropdown text
                 updateThemeLabel(savedTheme);
+                // Update bell icon
+                updateBellIcon(savedTheme);
             } else {
                 document.body.dataset.bsTheme = 'light';
                 // Update dropdown text
                 updateThemeLabel('light');
+                updateBellIcon('light');
             }
-            // Update bell icon
-            updateBellIcon(mode);
+
         });
     </script>
     
