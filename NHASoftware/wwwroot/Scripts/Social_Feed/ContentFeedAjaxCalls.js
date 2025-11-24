@@ -86,12 +86,6 @@
             processData: false,
             data: postForm,
             headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
-            success: function(data) {
-                if (data.success) {
-                }
-            },
-            error: function (data) {
-            }
         });
     }
 }

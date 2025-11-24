@@ -23,8 +23,7 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
 
     public async Task<Post?> GetPostByIDWithIncludesAsync(int postId)
     {
-        return await _context.Posts!.Include(p => p.User).Include(p => p.ParentPost)
-            .FirstOrDefaultAsync(p => p.Id.Equals(postId));
+        return await _context.Posts!.Include(p => p.User).FirstOrDefaultAsync(p => p.Id.Equals(postId));
     }
 
     /// <summary>
