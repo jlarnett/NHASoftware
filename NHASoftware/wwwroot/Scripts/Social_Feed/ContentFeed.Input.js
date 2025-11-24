@@ -12,7 +12,7 @@
         if (inputType === "custom") {
             let form = document.getElementById("CustomPostForm");
             let formData = new FormData(form);
-            formData.set("Summary", $($("#CustomPostTextbox").summernote("code")).text())
+            formData.set("Summary", $("#CustomPostTextbox").summernote("code"))
             return formData;
         }
 
@@ -20,12 +20,8 @@
             let form = document.querySelector('[comment-form-uuid="' + uuid + '"]');
             let formData = new FormData(form);
 
-            let commentTextboxJqueryLocator = '[comment-textbox-uuid="' + uuid + '"]'
-            let commentText  = $(commentTextboxJqueryLocator).summernote('code').replace(/<\/p>/gi, "\n")
-                    .replace(/<br\/?>/gi, "\n")
-                    .replace(/<\/?[^>]+(>|$)/g, "")
-                    .replace(/&nbsp;|<br>/g, ' ');
-
+            let commentTextboxJqueryLocator = '[comment-textbox-uuid="' + uuid + '"]';
+            let commentText = $(commentTextboxJqueryLocator).summernote('code');
             formData.set("ParentPostId", parentPostId);
             formData.set("Summary", commentText);
             return formData;

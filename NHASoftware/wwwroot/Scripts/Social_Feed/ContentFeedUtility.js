@@ -165,7 +165,64 @@
             // [groupName, [list of button]]
             ],
             disableResizeEditor: true,
-            placeholder: 'Type Comment Summary Here......'
+            placeholder: 'Type Comment Summary Here......',
+            hint: {
+                match: /\B@(\w*)$/,
+                search: function (keyword, callback) {
+                    if (!keyword || keyword.trim().length === 0) {
+                        callback([]);
+                        return;
+                    }
+                    $.ajax({
+                        url: `/api/search/${keyword}`,
+                        success: function (data) {
+                            const results = [];
+
+                            if (data.animePages) {
+                                data.animePages.forEach(page => {
+                                    results.push({ type: "anime", id: page.id, title: page.animeName, url: `/Anime/AnimePageDetails/${page.id}`, img: page.animeImageUrl });
+                                });
+                            }
+
+                            if (data.gamePages) {
+                                data.gamePages.forEach(page => {
+                                    results.push({ type: "game", id: page.id, title: page.name, url: `/Game/GamePage/${page.id}`, img: page.imageUrl });
+                                });
+
+                            }
+
+                            if (data.users) {
+                                data.users.forEach(user => {
+
+                                    results.push({ type: "user", id: user.id, title: user.displayName, url: `/Users/GetProfiles?userId=${user.id}`, img: "" });
+                                });
+
+                            }
+
+                            callback(results);
+                        },
+                        error: function () {
+                            callback([]); // fallback on error
+                        }
+                    });
+                },
+                template: function (item) {
+                    return '@' + item.title;
+                },
+                content: function (item) {
+                    // What gets inserted into the editor
+
+                    if (item.type === 'user') {
+                        return $(`<a href="${item.url}" >`)
+                            .addClass('link-primary')
+                            .text('@' + item.title)[0];
+                    }
+
+                    return $(`<a image-url="${item.img}" href="${item.url}" >`)
+                        .addClass('link-primary')
+                        .text('@' + item.title)[0];
+                }
+            }
         });
 
         $('#MainPostTextbox').summernote({
@@ -239,7 +296,64 @@
             // [groupName, [list of button]]
             ],
             disableResizeEditor: true,
-            placeholder: 'Type Custom Post Summary Here.....'
+            placeholder: 'Type Custom Post Summary Here.....',
+            hint: {
+                match: /\B@(\w*)$/,
+                search: function (keyword, callback) {
+                    if (!keyword || keyword.trim().length === 0) {
+                        callback([]);
+                        return;
+                    }
+                    $.ajax({
+                        url: `/api/search/${keyword}`,
+                        success: function (data) {
+                            const results = [];
+
+                            if (data.animePages) {
+                                data.animePages.forEach(page => {
+                                    results.push({ type: "anime", id: page.id, title: page.animeName, url: `/Anime/AnimePageDetails/${page.id}`, img: page.animeImageUrl });
+                                });
+                            }
+
+                            if (data.gamePages) {
+                                data.gamePages.forEach(page => {
+                                    results.push({ type: "game", id: page.id, title: page.name, url: `/Game/GamePage/${page.id}`, img: page.imageUrl });
+                                });
+
+                            }
+
+                            if (data.users) {
+                                data.users.forEach(user => {
+
+                                    results.push({ type: "user", id: user.id, title: user.displayName, url: `/Users/GetProfiles?userId=${user.id}`, img: "" });
+                                });
+
+                            }
+
+                            callback(results);
+                        },
+                        error: function () {
+                            callback([]); // fallback on error
+                        }
+                    });
+                },
+                template: function (item) {
+                    return '@' + item.title;
+                },
+                content: function (item) {
+                    // What gets inserted into the editor
+
+                    if (item.type === 'user') {
+                        return $(`<a href="${item.url}" >`)
+                            .addClass('link-primary')
+                            .text('@' + item.title)[0];
+                    }
+
+                    return $(`<a image-url="${item.img}" href="${item.url}" >`)
+                        .addClass('link-primary')
+                        .text('@' + item.title)[0];
+                }
+            }
         });
     }
 

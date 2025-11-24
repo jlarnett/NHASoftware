@@ -56,12 +56,12 @@
             <div class="h4 text-primary">Summary</div>
         </div>
     </div> *@
+
     <!--Posts summary section. Text content is posted here-->
     <div class="row text-break mb-2 ">
         <div class="col pt-2">
             <div class="col">
                 @{
-
                     var doc = new HtmlDocument();
                     doc.LoadHtml(@Model.Summary);
 
@@ -103,7 +103,6 @@
                         </div>
                     }
                 }
-
             </div>
         </div>
     </div>
@@ -126,11 +125,25 @@
     <!--Posts Likes & Comment Show section-->
     <div class="row align-items-center m-2">
         <div class="col-auto me-2">
-            <a class="text-nowrap hide-comments interactable" comment-count="@await _PostBuilder.GetCommentCountForPost(@Model.Id)" unique-post-id="@uuid.ToString()" post-id="@Model.Id" role="button">Show Comments (@await _PostBuilder.GetCommentCountForPost(@Model.Id))</a>
+            @{
+                var commentCount = await _PostBuilder.GetCommentCountForPost(@Model.Id);
+            }
+
+            <a class="text-nowrap hide-comments interactable" comment-count="@commentCount" unique-post-id="@uuid.ToString()" post-id="@Model.Id" role="button">Show Comments (@await _PostBuilder.GetCommentCountForPost(@Model.Id))</a>
         </div>
         @{ await Html.RenderPartialAsync("Social/_PostLikeSection", @Model); }
     </div>
+
+    <hr />
+
+
     <div unique-comment-section="@uuid.ToString()" style="display: none">
+
+        @if(commentCount > 0)
+        {
+            <h2 class="text-primary h5 text-center">Comments</h2>
+        }
+
         <ul unique-comment-list="@uuid.ToString()" class="list-unstyled">
         </ul>
         <form method="post" enctype="multipart/form-data" comment-form-uuid="@uuid.ToString()">
