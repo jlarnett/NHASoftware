@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement.Mvc;
 using NHA.Helpers.HtmlStringCleaner;
+using NHA.Website.Software.ConsumableEntities.DTOs;
 using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Entities.Forums;
 using NHA.Website.Software.Entities.Identity;
@@ -56,15 +57,38 @@ public class ForumPostsController : Controller
         forumPost.ForumText = _htmlbuilder.Clean(forumPost.ForumText);
         var comments = await _unitOfWork.ForumCommentRepository.GetForumPostCommentsAsync(id);
 
+        var commentsWithUserDetails = new List<ForumCommentWithUserDetails>();
+
         foreach (var comment in comments)
         {
             comment.CommentText = _htmlbuilder.Clean(comment.CommentText);
+
+            var posts = await _unitOfWork.ForumPostRepository.FindWithoutTrackingAsync(fp => fp.UserId!.Equals(comment.UserId));
+            var allComments = await _unitOfWork.ForumCommentRepository.FindWithoutTrackingAsync(fp => fp.UserId!.Equals(comment.UserId));
+            var likeCounter = 0;
+
+            foreach (var post in posts)
+            {
+                likeCounter += post.LikeCount;
+            }
+
+            foreach (var userComment in allComments)
+            {
+                likeCounter += userComment.LikeCount;
+            }
+
+            commentsWithUserDetails.Add(new ForumCommentWithUserDetails()
+            {
+                Comment = comment,
+                totalUserLikes = likeCounter,
+                totalUserMessages = posts.Count()
+            });
         }
 
         var detailVm = new ForumPostDetailModel()
         {
             ForumPost = forumPost,
-            ForumComments = comments
+            ForumComments = commentsWithUserDetails
         };
 
         return View(detailVm);

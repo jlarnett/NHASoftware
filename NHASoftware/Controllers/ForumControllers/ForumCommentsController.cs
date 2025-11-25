@@ -162,6 +162,7 @@ public class ForumCommentsController : Controller
             {
                 try
                 {
+                    forumComment.LastModifiedDate = DateTime.UtcNow;
                     _unitOfWork.ForumCommentRepository.Update(forumComment);
                     await _unitOfWork.CompleteAsync();
                 }

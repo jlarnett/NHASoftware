@@ -12,4 +12,6 @@ public class ForumComment
     public int ForumPostId { get; set; }
     public int LikeCount { get; set; }
     public int DislikeCount { get; set; }
+
+    public DateTime LastModifiedDate { get; set; } = DateTime.UtcNow;
 }
