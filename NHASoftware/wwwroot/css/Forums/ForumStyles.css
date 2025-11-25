@@ -5,7 +5,7 @@
 
 .modern-forum-post-container {
     /*background-color: #00701e;*/
-    border-radius: 15px;
+
     border: 2px ridge red;
 }
 
@@ -30,5 +30,20 @@ summary {
     cursor: pointer;
 }
 
+.night-gradient {
+    /* Slightly darker red at top fading to gray #373a3c */
+    background: linear-gradient( to bottom, #8b0000, /* dark red at the top */
+    #6b1a1a, /* deep muted red in the middle */
+    #4a1a1a, /* darker mid-red */
+    #373a3c /* same gray at the bottom */
+    );
+    color: #ffffff; /* text stays white for contrast */
+}
+
+
+.text-glow-red {
+    color: #ff4d4d; /* base text color */
+    text-shadow: 0 0 0px #ff4d4d, 0 0 5px #ff1a1a, 0 0 15px #ff0000;
+}
 
 

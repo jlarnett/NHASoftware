@@ -3,10 +3,12 @@
 @using NHA.Website.Software.Entities.Forums
 @using NHA.Website.Software.Entities.Identity
 @using NHA.Website.Software.Services.AccessWarden
+@using NHA.Website.Software.Services.RepositoryPatternFoundationals
 @model NHA.Website.Software.Views.ViewModels.ForumVMs.ForumPostDetailModel
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject IWarden AccessWarden
+@inject IUnitOfWork unitOfWork
 @{
     ViewData["Title"] = @Model.ForumPost.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -20,6 +22,34 @@
     <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="@Model.ForumPost.Id" class=" btn btn-dark interactable">Create Comment</a>
 </div>
 
+<div class="row align-items-center">
+    <a class="col-auto text-decoration-none ps-1 pe-0 pt-1 fs-2" asp-controller="ForumTopics" asp-action="Details" asp-route-id="@Model.ForumPost.ForumTopicId">
+        <span class="badge text-bg-light border-2 interactable m-auto">
+            @Model.ForumPost.ForumTopic!.Title
+        </span>
+    </a>
+    <a class="col-auto p-0 pt-1 fs-1" asp-controller="ForumPosts" asp-action="Details" asp-route-id="@Model.ForumPost.Id">
+        <span class="badge interactable text-primary">
+            @Model.ForumPost.Title
+        </span>
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-auto text-decoration-none p-0 me-2 align-self-baseline small">
+        <i class="bi bi-person-fill" title="Post Owner"></i>
+    </div>
+    <a class="col-auto p-0 text-decoration-none interactable me-2 text-primary align-self-baseline small" asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@Model.ForumPost.User!.Id">
+        @Model.ForumPost.User!.DisplayName
+    </a>
+    <div class="col-auto text-decoration-none p-0 me-2 align-self-baseline small">
+        <i class="bi bi-clock" title="Date Joined"></i>
+    </div>
+    <div class="col-auto text-decoration-none p-0 me-2 align-self-baseline small">
+        @Model.ForumPost.User.DateJoined.ToString("MMM dd, yyyy")
+    </div>
+</div>
+
 <hr />
 
 <div class="main">
@@ -29,51 +59,94 @@
             string forumPostText = Model.ForumPost.ForumText;
         }
         
-        <div class="container-fluid modern-forum-post-container p-4 shadow">
-            <div class="row align-items-center border-bottom border-dark mb-2 p-2">
-                <div class="col-3 align-self-start border border-dark border-2 rounded-pill p-4 me-4 shadow">
+        <div class="container-fluid modern-forum-post-container shadow bg-dark">
+            <div class="row align-items-xl-stretch">
+                <div class="col-2 align-self-start p-4 night-gradient">
+                    <div class="row h5 text-center text-black text-break">
+                        <a asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@Model.ForumPost.User.Id" class="text-decoration-none interactable"><div class="text-break col text-black fw-semibold text-glow-red">@Model.ForumPost.User.DisplayName</div></a>
+                    </div>
                     <div class="row col m-auto">
                         <img src="@Url.Content(profilePicture)" class="img-fluid rounded-pill col-12 m-auto"/>
                     </div>
-                    <div class="row h4 text-center text-black text-break">
-                        <a asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@Model.ForumPost.User.Id" class="text-decoration-none interactable"><div class="text-break col text-primary fw-semibold">@Model.ForumPost.User.DisplayName</div></a>
+                    <div class="row align-items-center">
+                        <div class="col-12 d-flex justify-content-between align-items-center p-2 me-4 text-center">
+                        <i class="bi bi-clock" title="Date Joined"></i>
+                            @Model.ForumPost.User.DateJoined.ToString("MMM dd, yyyy")
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-12 d-flex justify-content-between align-items-center p-2 me-4 text-center">
+                            <i class="bi bi-chat-fill" title="Messages"></i>
+                            @await unitOfWork.ForumPostRepository.CountAsync(f => f.UserId!.Equals(Model.ForumPost.UserId))
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-12 d-flex justify-content-between align-items-center p-2 me-4 text-center">
+                        <i class="bi bi-hand-thumbs-up-fill" title="Likes"></i>
+                        @{
+                            var posts = await unitOfWork.ForumPostRepository.FindWithoutTrackingAsync(fp => fp.UserId!.Equals(Model.ForumPost.UserId));
+                            var comments = await unitOfWork.ForumCommentRepository.FindWithoutTrackingAsync(fp => fp.UserId!.Equals(Model.ForumPost.UserId));
+                            var likeCounter = 0;
+
+                            foreach(var post in posts)
+                            {
+                                likeCounter += post.LikeCount;
+                            }
+
+                            foreach(var userComment in comments)
+                            {
+                                likeCounter += userComment.LikeCount;
+                            }
+                        }
+                        @likeCounter
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center">
+                        <div class="col-12 d-flex justify-content-between align-items-center p-2 me-4 text-center">
+                        <i class="bi bi-cash" title="Trophies"></i>
+                            @Model.ForumPost.User.UserCash
+                        </div>
                     </div>
                 </div>
-                <div class="col border-start border-dark">
-                    <div class="row align-content-center">
-                        <div class="h3 text-center text-primary">@Model.ForumPost.Title</div>
+                <div class="col bg-body-tertiary ps-5 pe-5 pt-2 pb-2 d-flex flex-column">
+                    <div class="row">
+                        <h5 id="PostDate" class="text-body fs-6">@Model.ForumPost.CreationDate.ToString("MMM dd, yyyy")</h5>
                     </div>
                     <div class="row h5 text-center">@Html.Raw(forumPostText)</div>
-                </div>
-            </div>
-            <div class="row m-auto">
-                <div class="col m-auto">
-                    <h5 id="PostDate"></h5>
-                </div>
-                <div class="col-auto m-auto">
-                <div class="btn btn-primary align-content-center m-auto modern-post-action-like-picture interactable" post-id="@id">
-                        <div class="row p-0">
-                            <div class="col-auto">
-                            <input type="image" src="~/Images/Facebook-Like-Filled.png" class="img-fluid"  />
+                    <div class="row align-self-end mt-auto">
+                        Last Edited: @Model.ForumPost.LastModifiedDate.ToString("MMM dd, yyyy")
+                    </div>
+                    <hr />
+                    <div class="row align-self-end">
+                        <div class="col m-auto">
+                        </div>
+
+                        @{
+                            var user = await UserManager.GetUserAsync(User);
+                            if (SignInManager.IsSignedIn(User) && user!.Id == Model.ForumPost.UserId || AccessWarden.IsForumAdmin(User))
+                            {
+                                <div class="col-auto">
+                                    <button class="btn btn-link interactable" id="EditPost" post-id="@id">Edit Post</button>
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn btn-link interactable" id="DeletePost" post-id="@id">Delete Post</button>
+                                </div>
+                            }
+                        }
+                        <div class="col-auto m-auto">
+                            <div class="btn btn-link modern-post-action-like-picture interactable" post-id="@id">
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="fs-6 mb-0">@Model.ForumPost.LikeCount</span>
+                                    <input type="image" src="~/Images/Facebook-Like-Filled.png" class="img-fluid" style="height:1.5rem;" />
+                                </div>
                             </div>
-                            <h3 class="col-auto">@Model.ForumPost.LikeCount</h3>
                         </div>
                     </div>
                 </div>
-                @{
-                    var user = await UserManager.GetUserAsync(User);
-                    if (SignInManager.IsSignedIn(User) && user!.Id == Model.ForumPost.UserId || AccessWarden.IsForumAdmin(User))
-                    {
-                        <div class="col-auto">
-                            <button class="btn btn-dark interactable" id="EditPost" post-id="@id">Edit Post</button>
-                        </div>
-                        <div class="col-auto">
-                            <button class="btn btn-primary interactable" id="DeletePost" post-id="@id">Delete Post</button>
-                        </div>
-                    }
-                }
-
             </div>
+
+
         </div>
 
     <br />
@@ -107,12 +180,7 @@
 
         $(document).ready(function() {
 
-
             var post = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumPost))');
-            var str2 = spacetime(post.creationDate);
-            var date2 = str2.format('{month} {date-pad} {year} {time}{am pm}');
-
-            $("#PostDate").text(date2);
 
             var comments = JSON.parse('@Html.Raw(Json.Serialize(Model.ForumComments))');
 

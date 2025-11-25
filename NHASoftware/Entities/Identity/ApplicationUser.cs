@@ -25,4 +25,7 @@ public class ApplicationUser : IdentityUser
     [AllowNull]
     [MaxLength(1000)]
     public string Biography { get; set; } = "";
+
+    [NotNull]
+    public DateTime DateJoined { get; set; } = DateTime.UtcNow;
 }

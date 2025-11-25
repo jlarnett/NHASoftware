@@ -183,6 +183,7 @@ public class ForumPostsController : Controller
             {
                 try
                 {
+                    forumPost.LastModifiedDate = DateTime.UtcNow;
                     _unitOfWork.ForumPostRepository.Update(forumPost);
                     await _unitOfWork.CompleteAsync();
                 }
