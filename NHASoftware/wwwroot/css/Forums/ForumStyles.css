@@ -46,4 +46,14 @@ summary {
     text-shadow: 0 0 0px #ff4d4d, 0 0 5px #ff1a1a, 0 0 15px #ff0000;
 }
 
+.text-truncate-multi-line {
+    display: -webkit-box; /* required for multiline ellipsis */
+    -webkit-line-clamp: 5; /* number of lines to show */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1em;
+    max-height: 5.5em; /* line-height * number of lines */
+}
+
 

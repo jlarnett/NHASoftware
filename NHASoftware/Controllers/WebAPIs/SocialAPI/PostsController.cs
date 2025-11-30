@@ -12,6 +12,7 @@ using NHA.Website.Software.ConsumableEntities.DTOs;
 using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Entities.Social_Entities;
 using NHA.Website.Software.Services.CacheLoadingManager;
+using NHA.Website.Software.Services.CookieMonster;
 using NHA.Website.Software.Services.FileExtensionValidator;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHA.Website.Software.Services.Social.PostBuilderService;
@@ -31,9 +32,13 @@ public class PostsController : ControllerBase
     private readonly IMemoryCache _memoryCache;
     private readonly ICacheLoadingManager _cacheLoadingManager;
     private readonly IPostBuilder _postBuilder;
+    private readonly ICookieMonster _cookieMonster;
 
     public PostsController(IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager,
-        ILogger<PostDTO> logger, IFileExtensionValidator validator, IImageDataSourceTranslator imageTranslator, IMemoryCache memoryCache, ICacheLoadingManager cacheLoadingManager, IPostBuilder postBuilder)
+        ILogger<PostDTO> logger, IFileExtensionValidator validator,
+        IImageDataSourceTranslator imageTranslator, IMemoryCache memoryCache,
+        ICacheLoadingManager cacheLoadingManager, IPostBuilder postBuilder,
+        ICookieMonster cookieMonster)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
@@ -44,6 +49,7 @@ public class PostsController : ControllerBase
         _memoryCache = memoryCache;
         _cacheLoadingManager = cacheLoadingManager;
         _postBuilder = postBuilder;
+        _cookieMonster = cookieMonster;
     }
 
     [HttpGet]
@@ -133,7 +139,12 @@ public class PostsController : ControllerBase
             _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
 
             _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", newlyCreatedPost);
-            return Ok(new { success = true, post = newlyCreatedPost, message = "Post successfully submitted to DB."});
+            return Created($"/api/posts/{newlyCreatedPost.Id}", new
+            {
+                success = true,
+                post = newlyCreatedPost,
+                message = "Post successfully submitted to DB."
+            });
         } 
 
         _logger.Log(LogLevel.Debug, "system was unable to add postDto to DB.");
@@ -191,7 +202,13 @@ public class PostsController : ControllerBase
             _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
 
             _logger.Log(LogLevel.Information, "Post API successfully added new post to DB {post}", newPost);
-            return Ok(new { success = true, post = newPost, message = "Post successfully submitted to DB."});
+
+            return Created($"/api/posts/{newPost.Id}", new
+            {
+                success = true,
+                post = newPost,
+                message = "Post successfully submitted to DB."
+            });
         }
 
         _logger.Log(LogLevel.Debug, "system was unable to add postDto to DB.");
@@ -247,14 +264,14 @@ public class PostsController : ControllerBase
             return NotFound();
         }
 
+        var sessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
+
         post.IsHiddenFromUserProfile = true;
         _unitOfWork.PostRepository.Update(post);
         var result = await _unitOfWork.CompleteAsync();
 
         return result > 0 ? Ok(new { success = true }) : BadRequest(new { success = false });
     }
-
-
 
     /// <summary>
     /// Reactivates social media post. Changes the isDeletedFlag of object in db. 

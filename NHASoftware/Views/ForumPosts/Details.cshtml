@@ -23,13 +23,13 @@
 </div>
 
 <div class="row align-items-center">
-    <a class="col-auto text-decoration-none ps-1 pe-0 pt-1 fs-2" asp-controller="ForumTopics" asp-action="Details" asp-route-id="@Model.ForumPost.ForumTopicId">
-        <span class="badge text-bg-light border-2 interactable m-auto">
+    <a class="col-auto text-decoration-none p-0 pt-1 fs-2 me-1" asp-controller="ForumTopics" asp-action="Details" asp-route-id="@Model.ForumPost.ForumTopicId">
+        <span class="badge text-bg-primary border-2 interactable m-auto">
             @Model.ForumPost.ForumTopic!.Title
         </span>
     </a>
     <a class="col-auto p-0 pt-1 fs-1" asp-controller="ForumPosts" asp-action="Details" asp-route-id="@Model.ForumPost.Id">
-        <span class="badge interactable text-primary">
+        <span class="badge interactable text-primary p-0">
             @Model.ForumPost.Title
         </span>
     </a>

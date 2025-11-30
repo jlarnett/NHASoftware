@@ -52,7 +52,7 @@ namespace NHA.Website.Software.Services.Sponsors
 
         public async Task<IEnumerable<SponsorAd>> GetBestAdsForUserAsync()
         {
-            int numberOfAdsToReturn = 2;
+            int numberOfAdsToReturn = 1;
             var ads = await _unitOfWork.SponsorAdRepository.GetAllAsync();
             var bestAdsForUserAsync = ads as SponsorAd[] ?? ads.ToArray();
             var count = bestAdsForUserAsync.Count();

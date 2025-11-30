@@ -105,7 +105,7 @@
             string friendRequestSent = (await friendSystem.IsFriendRequestSentAsync(@userManager.GetUserId(User)!, @Model.User.Id)).ToString();
         }
 
-        <div class="dropdown col-md-4 p-4 align-self-center" id="FriendRequestButton" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)" isFriends="@isFriends" friendRequestSent="@friendRequestSent">
+        <div class="col-md-4 p-4 align-self-center" id="FriendRequestButton" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)" isFriends="@isFriends" friendRequestSent="@friendRequestSent">
             @Html.AntiForgeryToken()
 
             <a class="btn btn-outline-primary dropdown-toggle my-auto" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">

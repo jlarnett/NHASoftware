@@ -135,7 +135,7 @@ public class ForumPostsController : Controller
             {
                 topic.PostCount += 1;
                 topic.ThreadCount += 1;
-                topic.LastestPost = DateTime.Now;
+                topic.lastModifiedDate = DateTime.Now;
             }
 
             await _unitOfWork.ForumPostRepository.AddAsync(forumPost);
@@ -283,7 +283,7 @@ public class ForumPostsController : Controller
                 {
                     topic.PostCount -= postCommentsNumber + 1;
                     topic.ThreadCount -= 1;
-                    topic.LastestPost = DateTime.Now;
+                    topic.lastModifiedDate = DateTime.Now;
                 }
 
                 var oldPostTopicId = forumPost.ForumTopicId;

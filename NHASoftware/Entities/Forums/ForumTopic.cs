@@ -6,7 +6,9 @@ public class ForumTopic
     public string Description { get; set; } = string.Empty;
     public int ThreadCount { get; set; }
     public int PostCount { get; set; }
-    public DateTime LastestPost { get; set; }
+    
+    //Typo here
+    public DateTime lastModifiedDate { get; set; } = DateTime.UtcNow;
     public ForumSection? ForumSection { get; set; }
     public int ForumSectionId { get; set; }
 }

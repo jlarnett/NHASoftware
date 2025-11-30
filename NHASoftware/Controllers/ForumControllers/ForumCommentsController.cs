@@ -98,7 +98,7 @@ public class ForumCommentsController : Controller
             if (postTopic != null)
             {
                 postTopic.PostCount++;
-                postTopic.LastestPost = DateTime.Now;
+                postTopic.lastModifiedDate = DateTime.Now;
             }
 
             await _unitOfWork.ForumCommentRepository.AddAsync(forumComment);

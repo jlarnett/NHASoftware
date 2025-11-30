@@ -7,11 +7,12 @@
     }
 
     static createNotification(message) {
-        //this.playNotificationAudio();
-        $.jGrowl(message, 
-            {position: "bottom-left"},
-            {life: 30000}
-        );
+        // this.playNotificationAudio();
+        $.jGrowl(message, {
+            position: "bottom-left",
+            life: 30000,
+            theme: "large-notification"
+        });
     }
 
 }

@@ -64,7 +64,7 @@
                             var newMessages = await _UnitOfWork.ChatMessageRepository.GetNewMessageBetweenUsersAsync(friend.Key.Id, _UserManager.GetUserId(User)!);
 
 
-                            <div class="row m-auto rounded-1 p-1 border-top border-bottom border-dark dropdown">
+                            <div class="row m-auto rounded-1 p-1 border-top border-bottom border-dark dropdown no-hover">
                                 <button id="friend-dropdown-@friendButtonIdNumber" class="col btn btn-dark border-primary border bg-opacity-50 rounded-pill p-0" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
                                     <div class="col row bg-transparent m-auto text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
                                         <div class="col-2 m-auto p-0">
@@ -74,7 +74,7 @@
                                         <div class="col-auto m-auto bg-success rounded-pill" friend-id="@friend.Key.Id">@friend.Value</div>
                                     </div>
                                 </button>
-                                <ul class="dropdown-menu" aria-labelledby="friend-dropdown-@friendButtonIdNumber" style="z-index: 1002342442;">
+                                <ul class="dropdown-menu no-hover" aria-labelledby="friend-dropdown-@friendButtonIdNumber" style="z-index: 1002342442;">
                                     <li>
                                         <button id="OpenChat" class="dropdown-item open-chat" type="button" friend-id="@friend.Key.Id" )>
                                             <div class="row" friend-id="@friend.Key.Id">
@@ -111,7 +111,7 @@
                             var newMessages = await _UnitOfWork.ChatMessageRepository.GetNewMessageBetweenUsersAsync(friend.Key.Id, _UserManager.GetUserId(User)!);
 
 
-                            <div class="row m-auto rounded-1 p-1 border-top border-bottom border-dark dropdown">
+                            <div class="row m-auto rounded-1 p-1 border-top border-bottom border-dark dropdown no-hover">
                                 <button id="friend-dropdown-@friendButtonIdNumber" class="col btn btn-dark border-primary border bg-opacity-50 rounded-pill p-0" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
                                     <div class="col row bg-transparent m-auto text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
                                         <div class="col-2 m-auto p-0">
@@ -121,7 +121,7 @@
                                         <div class="col-auto m-auto bg-primary rounded-pill" friend-id="@friend.Key.Id">@friend.Value</div>
                                     </div>
                                 </button>
-                                <ul class="dropdown-menu" aria-labelledby="friend-dropdown-@friendButtonIdNumber" style="z-index: 1002342442;">
+                                <ul class="dropdown-menu no-hover" aria-labelledby="friend-dropdown-@friendButtonIdNumber" style="z-index: 1002342442;">
                                     <li>
                                         <button id="OpenChat" class="dropdown-item open-chat" type="button" friend-id="@friend.Key.Id")>
                                             <div class="row" friend-id="@friend.Key.Id">

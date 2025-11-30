@@ -212,95 +212,118 @@ body[data-bs-theme="dark"] .interactable-small:hover {
     margin: 2px 0;
 }
 
-@keyframes gradientShift {
+/* Icon animations for headers */
+.featured-header::before {
+    content: "✦"; /* spark/star symbol */
+    margin-right: 0.6rem;
+    font-size: 1.5rem;
+    color: #ff3333; /* bright red */
+    text-shadow: 0 0 5px #ff3333, 0 0 10px #ff0000, 0 0 20px #ff4444;
+    animation: iconGlow 2s ease-in-out infinite alternate;
+}
+
+.friends-header::before {
+    content: "★"; /* star symbol */
+    margin-right: 0.5rem;
+    font-size: 1.4rem;
+    color: #ff4444;
+    text-shadow: 0 0 5px #ff4444, 0 0 10px #ff2222, 0 0 15px #ff5555;
+    animation: iconGlow 2.5s ease-in-out infinite alternate;
+}
+
+/* Icon glowing animation */
+@keyframes iconGlow {
     0% {
-        background-position: 0% 50%;
+        transform: scale(1);
+        text-shadow: 0 0 5px rgba(255, 50, 50, 0.5), 0 0 10px rgba(255, 0, 0, 0.3), 0 0 15px rgba(255, 100, 100, 0.2);
     }
 
     50% {
-        background-position: 100% 50%;
+        transform: scale(1.2);
+        text-shadow: 0 0 10px rgba(255, 50, 50, 0.8), 0 0 20px rgba(255, 0, 0, 0.5), 0 0 30px rgba(255, 100, 100, 0.4);
     }
 
     100% {
-        background-position: 0% 50%;
+        transform: scale(1);
+        text-shadow: 0 0 5px rgba(255, 50, 50, 0.5), 0 0 10px rgba(255, 0, 0, 0.3), 0 0 15px rgba(255, 100, 100, 0.2);
     }
 }
 
-@keyframes glowPulse {
-    0%, 100% {
-        text-shadow: 0 0 5px rgba(255, 255, 255, 0.4), 0 0 10px rgba(255, 100, 150, 0.2);
-    }
-
-    50% {
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.6), 0 0 20px rgba(255, 100, 150, 0.4);
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(5px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Featured Header – anime-inspired gradient & glow */
+/* Featured Header – dark red / black gradient */
 .featured-header {
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 1.25rem auto;
-    padding: 0.6rem 1.2rem;
-    font-size: 1.6rem;
-    font-weight: 600;
+    padding: 0.8rem 1.6rem;
+    font-size: 1.7rem;
+    font-weight: 700;
     color: #fff;
     text-transform: uppercase;
     letter-spacing: 1px;
-    background: linear-gradient(90deg, #ff6ec7, #ff3cac, #ff1a1a, #ff8c42);
-    background-size: 400% 400%;
-    border-radius: 0.6rem;
-    box-shadow: 0 4px 15px rgba(255, 100, 150, 0.2);
-    animation: gradientShift 18s ease infinite;
+    background: linear-gradient(270deg, #330000, #660000, #990000, #330000);
+    background-size: 600% 600%;
+    border-radius: 0.8rem;
+    box-shadow: 0 6px 20px rgba(255, 0, 0, 0.5), 0 0 25px rgba(150, 0, 0, 0.3);
+    animation: gradientShift 15s ease infinite;
 }
 
     .featured-header span {
         position: relative;
         z-index: 1;
-        animation: fadeIn 1.2s ease, glowPulse 3s ease-in-out infinite alternate;
+        animation: fadeIn 1s ease, glowPulseDark 2.5s ease-in-out infinite alternate;
     }
 
-/* Friends Header – softer anime gradient & glow */
+/* Friends Header – softer dark red gradient */
 .friends-header {
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 1.25rem auto;
-    padding: 0.5rem 1rem;
-    font-size: 1.4rem;
-    font-weight: 500;
+    padding: 0.6rem 1.2rem;
+    font-size: 1.5rem;
+    font-weight: 600;
     color: #fff;
     text-transform: uppercase;
     letter-spacing: 0.8px;
-    background: linear-gradient(90deg, #ff99cc, #ff66aa, #ff4488, #ff2255);
-    background-size: 400% 400%;
-    border-radius: 0.5rem;
-    box-shadow: 0 3px 12px rgba(255, 80, 130, 0.15);
+    background: linear-gradient(270deg, #220000, #440000, #660000, #220000);
+    background-size: 600% 600%;
+    border-radius: 0.6rem;
+    box-shadow: 0 4px 16px rgba(150, 0, 0, 0.3), 0 0 20px rgba(200, 0, 0, 0.2);
     animation: gradientShift 20s ease infinite;
 }
 
     .friends-header span {
         position: relative;
         z-index: 1;
-        animation: fadeIn 1.2s ease, glowPulse 3s ease-in-out infinite alternate;
+        animation: fadeIn 1s ease, glowPulseDark 2.5s ease-in-out infinite alternate;
     }
 
-    /* Remove default flashy pseudo-elements */
-    .featured-header::before,
-    .friends-header::before,
-    .friends-header::after {
-        content: none;
+/* Glow animation for dark red theme */
+@keyframes glowPulseDark {
+    0%, 100% {
+        text-shadow: 0 0 5px rgba(255, 0, 0, 0.3), 0 0 10px rgba(200, 0, 0, 0.2);
     }
+
+    50% {
+        text-shadow: 0 0 10px rgba(255, 0, 0, 0.5), 0 0 20px rgba(200, 0, 0, 0.3);
+    }
+}
+
+
+
+
+/* Custom jGrowl theme */
+.jGrowl-notification.large-notification {
+    width: 20em; /* change width */
+    height: auto; /* or fixed height */
+    font-size: 20px; /* larger text */
+    padding: 15px; /* more padding */
+    border-radius: 8px; /* optional rounded corners */
+}
+
+/* Apply hover only to dropdowns that do NOT have .no-hover */
+.dropdown:not(.no-hover):hover .dropdown-menu {
+    display: block;
+    margin-top: 0; /* remove the gap so it doesn't close */
+}

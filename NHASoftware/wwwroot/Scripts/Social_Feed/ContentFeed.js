@@ -12,13 +12,16 @@
                 if (isComment === "True") {
                     ContentFeedUtility.RemoveCommentFromContentFeedUI(postId);
                     ContentFeedUtility.DecrementPostCommentCounter(uuid);
+                    SystemNotification.createNotification("Comment successfully removed");
                 }
                 else {
                     ContentFeedUtility.RemovePostFromContentFeedUI(postId);
+                    SystemNotification.createNotification("Post successfully removed");
                 }                    
             }
         }).catch(function (response) {
-            console.log("Failed to delete post from Server.");
+            console.warn("Failed to delete post from Server.");
+            SystemNotification.createNotification("Failed to remove post");
         });
     });
 

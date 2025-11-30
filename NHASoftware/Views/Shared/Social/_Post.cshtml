@@ -38,15 +38,15 @@
         <div class="col-auto p-0">
             @{
                 await Html.RenderPartialAsync("Social/_PostActionButtonSection", @Model);
+                bool isCommentBool = Model.ParentPostId != null;
             }
         </div>
         <div class="col-auto p-0 me-4">
-            <button type="button" 
-            class="btn btn-sm border-0 bg-transparent text-muted fs-5 interactable" 
-            data-bs-dismiss="modal" 
-            aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
+            <a class="btn btn-sm border-0 bg-transparent text-muted fs-5 interactable hide-post-link">
+                <i class="bi bi-x-lg " post-id="@Model.Id"
+                   is-comment="@isCommentBool.ToString()"
+                   uuid="@Model.UUID"></i>
+            </a>
         </div>
 
     </div>
