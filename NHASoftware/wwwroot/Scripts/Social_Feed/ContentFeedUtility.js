@@ -25,23 +25,25 @@
     static postHtmlMap = new Map();
     static RemovePostFromContentFeedUI(postId, isHidden = false) {
         //Removes the post from the content feed'Ss HTML. This doesn't affect the BD just HTML. 
-        var postContainer = $('[post-id=' + postId + ']');
+        var postContainer = $('[post-container-id=' + postId + ']');
         postContainer.fadeOut(200, function () {
             if (isHidden) {
-                ContentFeedUtility.postHtmlMap.set(postId, postContainer)
+                var originalHtml = postContainer.first().clone();           // clone to avoid affecting DOM
+                originalHtml.find('[unhidden-post-id]').remove();
+                ContentFeedUtility.postHtmlMap.set(postId, originalHtml);
                 // Build your replacement HTML
                 const newHtml =
                     `
-                <div class="container-fluid border border-2 shadow border-primary ridge rounded-2 mt-2 post-container">
+                <div class="container-fluid border border-2 shadow border-primary ridge rounded-2 mt-2 post-container" unhidden-post-id="${postId}">
                     <div class="row align-items-center" p-1>
                         <div class="col-auto">
                             <i class="bi bi-eye-slash-fill"></i>
                         </div>
                         <div class="col">
-                            <div class="h5 text-bold mb-0">Post Hidden</div>
+                            <div class="h5 fw-semibold mb-0">Post Hidden</div>
                             <div>Hiding posts helps Anime Social personalize feed</div>
                         </div>
-                        <button class="col-2 btn btn-primary">Undo</button>
+                        <button class="col-2 btn btn-primary unhide-post-link" post-id="${postId}" is-comment="False">Undo</button>
                     </div>
                 </div>
             `;
@@ -58,37 +60,22 @@
     }
 
     static UnhidePostFromContentFeedUI(postId) {
-        //Removes the post from the content feed'Ss HTML. This doesn't affect the BD just HTML. 
-        var postContainer = $('[post-id=' + postId + ']');
-        postContainer.fadeOut(200, function () {
-            if (isHidden) {
-                ContentFeedUtility.postHtmlMap.set(postId, postContainer)
-                // Build your replacement HTML
-                const newHtml =
-                    `
-                <div class="container-fluid border border-2 shadow border-primary ridge rounded-2 mt-2 post-container">
-                    <div class="row align-items-center" p-1>
-                        <div class="col-auto">
-                            <i class="bi bi-eye-slash-fill"></i>
-                        </div>
-                        <div class="col">
-                            <div class="h5 text-bold mb-0">Post Hidden</div>
-                            <div>Hiding posts helps Anime Social personalize feed</div>
-                        </div>
-                        <button class="col-2 btn btn-primary">Undo</button>
-                    </div>
-                </div>
-            `;
+        var html = ContentFeedUtility.postHtmlMap.get(postId);
 
-                const newElement = $(newHtml).hide(); // Hide so we can fade it in
-                $(this).replaceWith(newElement);
-
+        //Removes the post from the content feed's HTML. This doesn't affect the BD just HTML.
+        if (html) {
+            var postContainer = $('[unhidden-post-id=' + postId + ']');
+            postContainer.fadeOut(200, function () {
+                // Create a jQuery object from stored HTML string
+                const newElement = $(html).hide();
+                postContainer.replaceWith(newElement);
                 newElement.fadeIn(200);
-            }
-            else {
-                $(this).remove();
-            }
-        });
+
+                // Remove from map after restoring
+                ContentFeedUtility.postHtmlMap.delete(postId);
+            });
+        }
+
     }
 
     static RemoveCommentFromContentFeedUI(postId) {

@@ -10,7 +10,7 @@
         // this.playNotificationAudio();
         $.jGrowl(message, {
             position: "bottom-left",
-            life: 30000,
+            life: 10000,
             theme: "large-notification"
         });
     }

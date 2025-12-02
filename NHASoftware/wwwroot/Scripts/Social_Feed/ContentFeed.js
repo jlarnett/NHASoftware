@@ -55,19 +55,10 @@
         var EventBtn = $(e.target);
         var postId = EventBtn.attr("post-id");
         var isComment = EventBtn.attr("is-comment");
-        let uuid = EventBtn.attr("uuid");
 
         ContentFeedAjaxCalls.UnhidePostFromProfile(postId).then(function (data) {
             if (data.success === true) {
-
-                if (isComment === "True") {
-                    ContentFeedUtility.RemoveCommentFromContentFeedUI(postId);
-                    ContentFeedUtility.DecrementPostCommentCounter(uuid);
-                }
-                else {
-                    ContentFeedUtility.RemovePostFromContentFeedUI(postId);
-                }
-
+                ContentFeedUtility.UnhidePostFromContentFeedUI(postId);
                 SystemNotification.createNotification("Post was successfully unhidden");
             }
         }).catch(function (response) {

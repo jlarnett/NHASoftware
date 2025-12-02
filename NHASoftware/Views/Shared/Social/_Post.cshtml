@@ -18,7 +18,7 @@
     string uuid = Model.UUID.Value.ToString();
 }
 
-<div class="container-fluid border border-2 shadow border-primary ridge rounded-2 mt-2 post-container" post-id="@Model.Id" images-attached="@Model.HasImagesAttached.ToString()" images-loaded="false" post-uuid="@uuid.ToString()">
+<div class="container-fluid border border-2 shadow border-primary ridge rounded-2 mt-2 post-container" post-id="@Model.Id" images-attached="@Model.HasImagesAttached.ToString()" images-loaded="false" post-uuid="@uuid.ToString()" post-container-id="@Model.Id">
     <div class="row align-items-center mt-2">
         <!--User Profile image & display name-->
         <div class="col-auto px-2">
@@ -43,7 +43,7 @@
         </div>
         <div class="col-auto p-0 me-4">
             <a class="btn btn-sm border-0 bg-transparent text-muted fs-5 interactable hide-post-link">
-                <i class="bi bi-x-lg " post-id="@Model.Id"
+                <i class="bi bi-x-lg " post-id="@Model.Id" title="Hide"
                    is-comment="@isCommentBool.ToString()"
                    uuid="@Model.UUID"></i>
             </a>
