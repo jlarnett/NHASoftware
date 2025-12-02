@@ -22,16 +22,81 @@
         });
     }
 
-    static RemovePostFromContentFeedUI(postId) {
+    static postHtmlMap = new Map();
+    static RemovePostFromContentFeedUI(postId, isHidden = false) {
         //Removes the post from the content feed'Ss HTML. This doesn't affect the BD just HTML. 
         var postContainer = $('[post-id=' + postId + ']');
-        postContainer.remove();
+        postContainer.fadeOut(200, function () {
+            if (isHidden) {
+                ContentFeedUtility.postHtmlMap.set(postId, postContainer)
+                // Build your replacement HTML
+                const newHtml =
+                    `
+                <div class="container-fluid border border-2 shadow border-primary ridge rounded-2 mt-2 post-container">
+                    <div class="row align-items-center" p-1>
+                        <div class="col-auto">
+                            <i class="bi bi-eye-slash-fill"></i>
+                        </div>
+                        <div class="col">
+                            <div class="h5 text-bold mb-0">Post Hidden</div>
+                            <div>Hiding posts helps Anime Social personalize feed</div>
+                        </div>
+                        <button class="col-2 btn btn-primary">Undo</button>
+                    </div>
+                </div>
+            `;
+
+                const newElement = $(newHtml).hide(); // Hide so we can fade it in
+                $(this).replaceWith(newElement);
+
+                newElement.fadeIn(200);
+            }
+            else {
+                $(this).remove();
+            }
+        });
+    }
+
+    static UnhidePostFromContentFeedUI(postId) {
+        //Removes the post from the content feed'Ss HTML. This doesn't affect the BD just HTML. 
+        var postContainer = $('[post-id=' + postId + ']');
+        postContainer.fadeOut(200, function () {
+            if (isHidden) {
+                ContentFeedUtility.postHtmlMap.set(postId, postContainer)
+                // Build your replacement HTML
+                const newHtml =
+                    `
+                <div class="container-fluid border border-2 shadow border-primary ridge rounded-2 mt-2 post-container">
+                    <div class="row align-items-center" p-1>
+                        <div class="col-auto">
+                            <i class="bi bi-eye-slash-fill"></i>
+                        </div>
+                        <div class="col">
+                            <div class="h5 text-bold mb-0">Post Hidden</div>
+                            <div>Hiding posts helps Anime Social personalize feed</div>
+                        </div>
+                        <button class="col-2 btn btn-primary">Undo</button>
+                    </div>
+                </div>
+            `;
+
+                const newElement = $(newHtml).hide(); // Hide so we can fade it in
+                $(this).replaceWith(newElement);
+
+                newElement.fadeIn(200);
+            }
+            else {
+                $(this).remove();
+            }
+        });
     }
 
     static RemoveCommentFromContentFeedUI(postId) {
         //Removes comment from the content feed's HTML. This doesn't affect the DB just HTML.
         var commentContainer = $('[comment-delete-id=' + postId + ']');
-        commentContainer.remove();
+        commentContainer.fadeOut(200, function () {
+            $(this).remove();
+        });
     }
 
     static LoadUserProfilePosts() {

@@ -24,5 +24,6 @@ public interface IUnitOfWork
     IChatMessageRepository ChatMessageRepository { get; }
     ISponsorAdRepository SponsorAdRepository { get; }
     IGamePageRepository GamePageRepository { get; }
+    IHiddenPostRepository HiddenPostRepository { get; }
     Task<int> CompleteAsync();
 }

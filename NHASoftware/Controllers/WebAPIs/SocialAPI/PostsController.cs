@@ -250,11 +250,11 @@ public class PostsController : ControllerBase
     }
 
     /// <summary>
-    /// Used to set the isHiddenFromUserProfile on post object. Flag is being used to avoid hassles with EF self referencing table. 
+    /// Adds entry into HiddenPost table. Causes PostBuilder to remove posts from user session when loading
     /// </summary>
     /// <param name="id">Id of the post to hide</param>
     /// <returns>IActionResult with success indicator whether post was successfully hidden or not. </returns>
-    [HttpDelete("Hide/{id}")]
+    [HttpPost("Hide/{id}")]
     public async Task<IActionResult> HidePost(int? id)
     {
         var post = await _unitOfWork.PostRepository.GetByIdAsync(id);
@@ -266,11 +266,56 @@ public class PostsController : ControllerBase
 
         var sessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
 
-        post.IsHiddenFromUserProfile = true;
-        _unitOfWork.PostRepository.Update(post);
-        var result = await _unitOfWork.CompleteAsync();
+        if(sessionId != null && id != null)
+        {
+            await _unitOfWork.HiddenPostRepository.AddAsync(new HiddenPost
+            {
+                SessionId = sessionId,
+                PostId = id.Value
+            });
+            var result = await _unitOfWork.CompleteAsync();
+            _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
+            return result > 0 ? Ok(new { success = true, message = "Post was successfully hidden" }) : BadRequest(new { success = false, message = "Failed to add hidden post record to DB." });
+        }
+        else
+        {
+            return BadRequest(new { success = false, message = "Unable to hide post. Either sessionId or postId is null" });
+        }
+    }
 
-        return result > 0 ? Ok(new { success = true }) : BadRequest(new { success = false });
+    /// <summary>
+    /// Removes entry from HiddenPost table. Causes PostBuilder to show hidden posts again for user session
+    /// </summary>
+    /// <param name="id">Id of the post to hide</param>
+    /// <returns>IActionResult with success indicator whether post was successfully hidden or not. </returns>
+    [HttpDelete("Unhide/{id}")]
+    public async Task<IActionResult> UnhidePost(int? id)
+    {
+        var post = await _unitOfWork.PostRepository.GetByIdAsync(id);
+
+        if (post == null)
+        {
+            return NotFound();
+        }
+
+        var sessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
+        var hiddenPostRecords = await _unitOfWork.HiddenPostRepository.FindAsync(hp => hp.SessionId.Equals(sessionId) && hp.PostId.Equals(id));
+
+        if (hiddenPostRecords.Count() > 0)
+        {
+            foreach(var record in hiddenPostRecords)
+            {
+                _unitOfWork.HiddenPostRepository.Remove(record);
+            }
+
+            var result = await _unitOfWork.CompleteAsync();
+            _cacheLoadingManager.IncrementCacheChangeCounter(CachingKeys.Posts);
+            return result > 0 ? Ok(new { success = true, message = "Post was successfully unhidden" }) : BadRequest(new { success = false, message = "Failed to remove hidden post record from DB." });
+        }
+        else
+        {
+            return BadRequest(new { success = false, message = "Unable to unhide post. Either sessionId or postId is null" });
+        }
     }
 
     /// <summary>

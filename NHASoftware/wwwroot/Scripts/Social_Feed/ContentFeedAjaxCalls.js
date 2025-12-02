@@ -60,6 +60,19 @@
 
         return $.ajax({
             url: apiURL,
+            method: 'POST',
+            contentType: "application/json; charset=utf-8",
+            datatype: 'json',
+            headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() }
+        });
+    }
+
+    static UnhidePostFromProfile(postId) {
+        //sends DELETE request to post API. Sets the isHiddenFromUserProfile flag in DB to true. 
+        var apiURL = '/api/posts/unhide/' + postId;
+
+        return $.ajax({
+            url: apiURL,
             method: 'DELETE',
             contentType: "application/json; charset=utf-8",
             datatype: 'json',

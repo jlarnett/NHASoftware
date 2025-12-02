@@ -27,6 +27,7 @@ public class UnitOfWork : IUnitOfWork
     public IChatMessageRepository ChatMessageRepository { get; set; }
     public ISponsorAdRepository SponsorAdRepository { get; set; }
     public IGamePageRepository GamePageRepository { get; set; }
+    public IHiddenPostRepository HiddenPostRepository { get; set; }
 
 
     private readonly ILogger<UnitOfWork> _logger;
@@ -48,6 +49,7 @@ public class UnitOfWork : IUnitOfWork
         ChatMessageRepository = new ChatMessageRepository(_context);
         SponsorAdRepository = new SponsorAdRepository(_context);
         GamePageRepository = new GamePageRepository(_context);
+        HiddenPostRepository = new HiddenPostRepository(_context);
         
         _logger = logger;
     }

@@ -6,6 +6,7 @@ using NHA.Website.Software.ConsumableEntities.DTOs;
 using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Entities.Social_Entities;
 using NHA.Website.Software.Services.CacheLoadingManager;
+using NHA.Website.Software.Services.CookieMonster;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using System.Security.Claims;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
@@ -19,14 +20,21 @@ public class PostBuilder : IPostBuilder
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ICookieMonster _cookieMonster;
 
-    public PostBuilder(ICacheLoadingManager cacheLoadingManager, IMemoryCache memoryCache, IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager)
+    public PostBuilder(ICacheLoadingManager cacheLoadingManager,
+        IMemoryCache memoryCache,
+        IUnitOfWork unitOfWork,
+        IMapper mapper,
+        UserManager<ApplicationUser> userManager,
+        ICookieMonster cookieMonster)
     {
         _cacheLoadingManager = cacheLoadingManager;
         _memoryCache = memoryCache;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _userManager = userManager;
+        _cookieMonster = cookieMonster;
     }
 
     /// <summary>
@@ -186,6 +194,21 @@ public class PostBuilder : IPostBuilder
     /// <returns>IEnumerable of posts retrieved from DB. </returns>
     private async Task<IEnumerable<Post>> RetrieveParentPostFromRepository()
     {
-        return (await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync()).Where(p => p.ParentPostId == null);
+        //Locate ALL hidden post for session Id
+        var sessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
+        HashSet<int> hiddenPosts = [];
+        
+        if(sessionId != null)
+        {
+            var hiddenPostIds = (await _unitOfWork.HiddenPostRepository
+                .FindAsync(hp => hp.SessionId.Equals(sessionId)))
+                .Select(c => c.PostId);
+            hiddenPosts = [.. hiddenPostIds];
+        }
+
+        var parentPosts = (await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync())
+            .Where(p => p.ParentPostId == null && !hiddenPosts.Contains(p.Id!.Value));
+
+        return parentPosts;
     }
 }

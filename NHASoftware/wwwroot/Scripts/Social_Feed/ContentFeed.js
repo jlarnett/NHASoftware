@@ -40,11 +40,38 @@
                     ContentFeedUtility.DecrementPostCommentCounter(uuid);
                 }
                 else {
-                    ContentFeedUtility.RemovePostFromContentFeedUI(postId);
+                    ContentFeedUtility.RemovePostFromContentFeedUI(postId, true);
                 }  
+
+                SystemNotification.createNotification("Post was successfully hidden");
             }
         }).catch(function (response) {
             console.log("Failed to send hide post request to Server.");
+        });
+    });
+
+    $('#ContentFeed').on('click', '.unhide-post-link', function (e) {
+
+        var EventBtn = $(e.target);
+        var postId = EventBtn.attr("post-id");
+        var isComment = EventBtn.attr("is-comment");
+        let uuid = EventBtn.attr("uuid");
+
+        ContentFeedAjaxCalls.UnhidePostFromProfile(postId).then(function (data) {
+            if (data.success === true) {
+
+                if (isComment === "True") {
+                    ContentFeedUtility.RemoveCommentFromContentFeedUI(postId);
+                    ContentFeedUtility.DecrementPostCommentCounter(uuid);
+                }
+                else {
+                    ContentFeedUtility.RemovePostFromContentFeedUI(postId);
+                }
+
+                SystemNotification.createNotification("Post was successfully unhidden");
+            }
+        }).catch(function (response) {
+            console.log("Failed to send unhide post request to Server.");
         });
     });
 

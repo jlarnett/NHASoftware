@@ -41,6 +41,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<RemovedProfilePicturePath>? RemovedProfilePicturePaths { get; set; }
     public DbSet<SponsorAd>? Ads { get; set; }
     public DbSet<GamePage>? GamePages { get; set; }
-    
+    public DbSet <HiddenPost> HiddenPosts { get; set; }
+
 
 }
