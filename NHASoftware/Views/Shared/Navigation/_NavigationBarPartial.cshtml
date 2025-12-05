@@ -155,3 +155,57 @@
         <div class="col"></div>
     </div>
 }
+
+<!--Report Post Modal-->
+@if (User.Identity!.IsAuthenticated)
+{
+    <div class="container-fluid ">
+        <div class="row align-items-center bg-primary">
+            <!--Friend Requests Modal-->
+            <div class="modal fade" id="reportPostModal" tabindex="-1" role="dialog" aria-labelledby="reportPostLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header border-bottom justify-content-between">
+                            <h5 class="modal-title" id="reportPostLabel">Report Post</h5>
+                            <button type="button" class="close text-primary-emphasis" data-bs-dismiss="modal" aria-label="Close" style="font-size: 2rem;">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="ReportPostForm" method="post" enctype="multipart/form-data">
+                                <div class="row mb-2">
+                                    <p>
+                                        Please let us know why you’re reporting this post. Your feedback helps us review issues more accurately and keep the community safe.
+                                    </p>
+                                </div>
+                                <div class="row mb-2">
+                                    <select class="form-select" aria-label="Default select example" name="ReasonForReport">
+                                        <option value="Illegal Activities">Illegal Activities</option>
+                                        <option value="Child Exploitation">Child Exploitation</option>
+                                        <option value="Violence or Threats">Violence or Threats</option>
+                                        <option value="Spam or Scams">Spam or Scams</option>
+                                        <option value="Fraud or Deceptive Behavior">Fraud or Deceptive Behavior</option>
+                                        <option value="Other (Please Specify)">Other (Please Specify)</option>
+                                    </select>
+                                </div>
+                                <div class="row mb-2">
+                                    <div id="ReportPostTextboxContainer" class="p-0">
+                                        <textarea id="ReportPostTextbox" name="ExtraInformation"></textarea>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="PostId" id="PostId"/>
+                                <div class="row mb-2">
+                                    <button id="ReportPostButton" class="btn btn-dark rounded-2 interactable" value="Create" type="Submit">Report Post</button>
+                                </div>
+                                <div class="row p-0">
+                                    <span id="ReportPostValidationMessage" style="display: none;" class="text-primary">Error Reporting Post.....</span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col"></div>
+    </div>
+}

@@ -26,11 +26,23 @@
             formData.set("Summary", commentText);
             return formData;
         }
+
+        if(inputType === "report") {
+            let form = document.getElementById("ReportPostForm");
+            let formData = new FormData(form);
+            formData.set("ExtraInformation", $($("#ReportPostTextbox").summernote("code")).text())
+            return formData;
+        }
     }
 
     static ClearCustomPostForm() {
         $("#CustomPostTextbox").summernote('reset');
         $("#CustomPostImageFileInput").val(null);
+        $("#CustomPostValidationMessage").hide("slow");
+    }
+
+    static ClearReportPostForm() {
+        $("#ReportPostTextbox").summernote('reset');
         $("#CustomPostValidationMessage").hide("slow");
     }
 

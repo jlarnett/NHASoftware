@@ -216,6 +216,52 @@ public class PostsController : ControllerBase
     }
 
     /// <summary>
+    /// POST: api/Posts/Report
+    /// API Endpoint for reporting social media posts
+    /// </summary>
+    /// <param name="postdto"></param>
+    /// <returns>Returns IActionResult with new post. </returns>
+    [HttpPost("Report")]
+    [ValidateAntiForgeryToken]
+    [Authorize]
+    public async Task<IActionResult> ReportPost([FromForm] ReportedPost reportedPostDto)
+    {
+        var userId = _userManager.GetUserId(User);
+
+        if (userId == null)
+            return BadRequest(new { success = false, message = "Failed to report post. UserId/Login is required to report" }); 
+        if(reportedPostDto.PostId == null)
+            return BadRequest(new { success = false, message = "Failed to report post. PostId is required" });
+
+        var exists = await _unitOfWork.ReportedPostRepository.FindWithoutTrackingAsync(p =>
+            p.PostId.Equals(reportedPostDto.PostId) && p.UserId!.Equals(userId));
+
+        if (exists.Any())
+        {
+            return BadRequest(new { success = false, message = "Error: You can only report a post one time" });
+        }
+
+        await _unitOfWork.ReportedPostRepository.AddAsync(new ReportedPost()
+        {
+            UserId = userId,
+            PostId = reportedPostDto.PostId,
+            ReasonForReport = reportedPostDto.ReasonForReport,
+            ExtraInformation = reportedPostDto.ExtraInformation,
+
+        });
+
+        var result = await _unitOfWork.CompleteAsync();
+
+        if (result > 0)
+        {
+            return Ok(new { success = true, message = "Report successfully submitted" });
+        }
+
+        return BadRequest(new { success = false, message = "Failed to submit report for unknown reason" });
+
+    }
+
+    /// <summary>
     /// Used to set the isDeletedFlag on post object. Flag is being used to avoid hassles with EF self referencing table. 
     /// </summary>
     /// <param name="id">Id of the post to delete</param>

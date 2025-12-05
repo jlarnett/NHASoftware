@@ -137,6 +137,11 @@
         $('#AddPostPhotosModal').modal('hide');
     }
 
+    static HideReportPostModal() {
+        //Hides the Custom post modal
+        $('#reportPostModal').modal('hide');
+    }
+
     static ShowPostImageCarousel(uuid) {
         //Makes the image carousel on posts visible for specified uuid.
         $("#Image-Carousel-" + uuid).show();
@@ -169,6 +174,13 @@
         $('#SubmitCustomPostBtn').prepend("<span id='CustomPostLoadingSpinner' class='spinner-border spinner-border' role='status' aria-hidden='true'></span>");
     }
 
+    static AddSpinnerReportPostBtn() {
+        //Adds loading spinner to submit custom post btn. 
+        this.postUploadButtonText = $('#ReportPostButton').text();
+        $('#ReportPostButton').text("");
+        $('#ReportPostButton').prepend("<span id='ReportPostLoadingSpinner' class='spinner-border spinner-border' role='status' aria-hidden='true'></span>");
+    }
+
     static AddSpinnerSubmitPostBtn() {
         //Add loading spinner to basic post submit button. 
         this.postUploadButtonText = $('#SubmitBtn').text();
@@ -186,6 +198,12 @@
         //Remove loading spinner from basic post submit button. 
         $('#BasicPostLoadingSpinner').remove();
         $('#SubmitBtn').text(this.postUploadButtonText);
+    }
+
+    static RemoveSpinnerReportPostBtn() {
+        //Remove loading spinner from basic post submit button. 
+        $('#ReportPostLoadingSpinner').remove();
+        $('#ReportPostButton').text(this.postUploadButtonText);
     }
 
     static IncrementPostCommentCounter(uuid) {
@@ -406,6 +424,14 @@
                         .text('@' + item.title)[0];
                 }
             }
+        });
+
+        $('#ReportPostTextbox').summernote({
+            toolbar: [
+            // [groupName, [list of button]]
+            ],
+            disableResizeEditor: true,
+            placeholder: 'Enter extra information regarding reason for reporting post',
         });
     }
 

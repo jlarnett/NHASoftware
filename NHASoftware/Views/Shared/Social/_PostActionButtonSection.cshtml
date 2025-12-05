@@ -12,10 +12,9 @@
 
     if (User.Identity!.IsAuthenticated)
     {
-        <div class="dropstart">
-            <button class="btn btn-link p-0 border-0 interactable" type="button" id="postMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="btn btn-sm border-0 bg-transparent text-muted fs-5 dropstart interactable" title="Options" type="button" id="postMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-three-dots-vertical fs-5 text-muted"></i>
-            </button>
+            </a>
             <ul class="dropdown-menu dropdown-menu-sm shadow-sm border-0" aria-labelledby="postMenuButton">
                 @if (isLoggedInUsersPost || _Warden.IsAdmin(User))
                 {
@@ -30,13 +29,11 @@
                 }
                 <li>
                     <a class="dropdown-item report-post-link"
-                       post-id="@Model.Id"
-                       is-comment="@isCommentBool"
+                       data-bs-toggle="modal" data-bs-target="#reportPostModal" data-postid="@Model.Id"
                        uuid="@Model.UUID">
                         Report
                     </a>
                 </li>
             </ul>
-        </div>
     }
 }

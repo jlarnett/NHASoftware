@@ -1,4 +1,13 @@
 ﻿$(window).on("load", function () {
+    //triggered when modal is about to be shown
+    $('#reportPostModal').on('show.bs.modal', function(e) {
+
+        //get data-id attribute of the clicked element
+        var postId = $(e.relatedTarget).data('postid');
+
+        //populate the textbox
+        $(e.currentTarget).find('input[name="PostId"]').val(postId);
+    });
 
     $('#ContentFeed').on('click', '.delete-post-link' ,function (e) {
 
@@ -153,6 +162,32 @@
                 $("#CustomPostValidationMessage").text(response.responseJSON.errors.Summary);
             }
             $("#CustomPostValidationMessage").show(100);
+        });
+    });
+
+    $("#ReportPostButton").on("click", function(e) {
+        e.preventDefault();
+        ContentFeedUtility.AddSpinnerReportPostBtn();
+        let formData = ContentFeedInput.GetInputForm("report");
+
+        ContentFeedAjaxCalls.CreatePost('/api/Posts/Report', formData).then(function (response) {
+
+            if (response.success) {
+                ContentFeedUtility.RemoveSpinnerReportPostBtn();
+                ContentFeedInput.ClearReportPostForm();
+                ContentFeedUtility.HideReportPostModal();
+                SystemNotification.createNotification("Post successfully reported");
+            }
+        }).catch(function (response) {
+            ContentFeedUtility.RemoveSpinnerReportPostBtn();
+            if (response.responseJSON.message !== undefined) {
+                $("#ReportPostValidationMessage").text(response.responseJSON.message);
+            }
+            else {
+                $("#ReportPostValidationMessage").text(response.responseJSON.errors.Summary);
+            }
+            $("#ReportPostValidationMessage").show(100);
+            SystemNotification.createNotification("Failed to report post");
         });
     });
 

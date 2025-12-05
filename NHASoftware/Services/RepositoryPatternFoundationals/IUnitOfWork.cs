@@ -25,5 +25,6 @@ public interface IUnitOfWork
     ISponsorAdRepository SponsorAdRepository { get; }
     IGamePageRepository GamePageRepository { get; }
     IHiddenPostRepository HiddenPostRepository { get; }
+    IReportedPostRepository ReportedPostRepository { get; }
     Task<int> CompleteAsync();
 }

@@ -28,6 +28,7 @@ public class UnitOfWork : IUnitOfWork
     public ISponsorAdRepository SponsorAdRepository { get; set; }
     public IGamePageRepository GamePageRepository { get; set; }
     public IHiddenPostRepository HiddenPostRepository { get; set; }
+    public IReportedPostRepository ReportedPostRepository { get; set; }
 
 
     private readonly ILogger<UnitOfWork> _logger;
@@ -50,7 +51,7 @@ public class UnitOfWork : IUnitOfWork
         SponsorAdRepository = new SponsorAdRepository(_context);
         GamePageRepository = new GamePageRepository(_context);
         HiddenPostRepository = new HiddenPostRepository(_context);
-        
+        ReportedPostRepository = new ReportedPostRepository(_context);
         _logger = logger;
     }
 
@@ -74,7 +75,7 @@ public class UnitOfWork : IUnitOfWork
     /// <summary>
     /// Dispose of the ApplicationDBContext
     /// </summary>
-    public async void Dispose()
+    public async Task Dispose()
     {
         await _context.DisposeAsync();
     }
