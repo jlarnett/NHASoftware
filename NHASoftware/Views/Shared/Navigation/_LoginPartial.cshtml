@@ -38,15 +38,15 @@
         {
             string profilePicture = "~/ProfilePictures/" + user.ProfilePicturePath;
 
-            <li class="nav-item dropdown align-self-center order-1 order-sm-2">
+            <li class="nav-item dropdown w-100 align-content-center order-1 order-sm-2">
 
                 <!-- Profile Picture Dropdown Toggle -->
-                <a class="nav-link dropdown-toggle p-0 pe-2 interactable" href="#" id="profileDropdown" role="button"
+                <a class="nav-link dropdown-toggle p-0 pe-2 interactable text-center" href="#" id="profileDropdown" role="button"
                    data-bs-toggle="dropdown" aria-expanded="false">
                     <img id="ProfilePicture"
                          src="@Url.Content(profilePicture)"
                          alt="Current User's Profile Picture"
-                         class="rounded login-profile-picture" />
+                         class="rounded login-profile-picture " />
                 </a>
 
                 <!-- Dropdown Menu -->
