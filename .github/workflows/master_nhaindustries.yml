@@ -75,11 +75,6 @@ jobs:
       - name: Setup Maven
         run: choco install maven -y
 
-      - name: Install Microsoft Edge
-        uses: browser-actions/setup-edge@v1
-        with:
-          edge-version: 'stable'
-
       - name: Create .env file
         run: |
           cd JavaTestFramework
