@@ -25,7 +25,7 @@
                 <a asp-action="AnimePageDetails" class="h5 text-body text-decoration-none interactable fw-semibold" asp-controller="Anime" asp-route-id="@featuredAnime.Id">@featuredAnime.AnimeName</a>
                 <div class="">
                     <a class="row text-center m-auto rounded-2 interactable" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@featuredAnime.Id">
-                        <img src="@featuredAnime.AnimeImageUrl" class="rounded-3 p-0" alt="@featuredAnime.AnimeName's cover photo" />
+                        <img src="@featuredAnime.AnimeImageUrl" class="rounded-3 p-0" title="@featuredAnime.AnimeName" alt="@featuredAnime.AnimeName's cover photo" />
                     </a>
                 </div>
                 <div class="multiline-ellipsis" style="max-width: 350px;">

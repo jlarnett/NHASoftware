@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.FeatureManagement.Mvc;
 using NHA.Helpers.AlphabetSimplify;
-using NHA.Helpers.HtmlStringCleaner;
+using NHA.Website.Software.Caching;
 using NHA.Website.Software.DBContext;
-using NHA.Website.Software.Entities.Anime;
 using NHA.Website.Software.Entities.Game;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHA.Website.Software.Views.Game.GameVms;
+using NHA.Website.Software.Views.Game.Vms;
 
 namespace NHA.Website.Software.Controllers.GameControllers;
 
@@ -16,29 +16,51 @@ public class GameController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IHtmlStringCleaner _htmlCleaner;
+    private readonly IMemoryCache _memoryCache;
 
-    public GameController(ApplicationDbContext context, IUnitOfWork unitOfWork, IHtmlStringCleaner htmlCleaner)
+    public GameController(ApplicationDbContext context, IUnitOfWork unitOfWork, IMemoryCache memoryCache)
     {
         _context = context;
         _unitOfWork = unitOfWork;
-        _htmlCleaner = htmlCleaner;
+        _memoryCache = memoryCache;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        //Try to get game pages from local cache
+        if (!_memoryCache.TryGetValue(CachingKeys.Games, out IEnumerable<GamePage>? gamePages))
+        {
+            gamePages = await _unitOfWork.GamePageRepository.GetAllAsync();
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromHours(12));
+
+            _memoryCache.Set(CachingKeys.Games, gamePages, cacheEntryOptions);
+        }
+
+        return View(new IndexViewModel()
+        {
+            GameList = gamePages ?? []
+        });
     }
 
     public async Task<IActionResult> LetterDetail(int id)
     {
-        char letter = AlphabetDecipher.ConvertNumberToAlphabetLetter(id);
-        var allGamePages = await _unitOfWork.GamePageRepository.GetAllAsync();
+        var letter = AlphabetDecipher.ConvertNumberToAlphabetLetter(id);
+
+        //Try to get game pages from local cache
+        if (!_memoryCache.TryGetValue(CachingKeys.Games, out IEnumerable<GamePage>? gamePages))
+        {
+            gamePages = await _unitOfWork.GamePageRepository.GetAllAsync();
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromHours(12));
+
+            _memoryCache.Set(CachingKeys.Games, gamePages, cacheEntryOptions);
+        }
 
         var gameList = new List<GamePage>();
 
         //Getting all anime that starts with specific alphabet letter
-        foreach (var game in allGamePages)
+        foreach (var game in gamePages ?? [])
         {
             if (game.Name.StartsWith(letter))
             {
@@ -59,12 +81,20 @@ public class GameController : Controller
     }
     public async Task<IActionResult> GenreIndex(string genre)
     {
-        var completeGameList = await _unitOfWork.GamePageRepository.GetAllAsync();
+        //Try to get game pages from local cache
+        if (!_memoryCache.TryGetValue(CachingKeys.Games, out IEnumerable<GamePage>? gamePages))
+        {
+            gamePages = await _unitOfWork.GamePageRepository.GetAllAsync();
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromHours(12));
+
+            _memoryCache.Set(CachingKeys.Games, gamePages, cacheEntryOptions);
+        }
 
         List<GamePage> gameList = [];
 
         //Getting all anime that starts with specific alphabet letter
-        foreach (var game in completeGameList)
+        foreach (var game in gamePages ?? [])
         {
             if (game.Genres == null) continue;
 
@@ -77,7 +107,7 @@ public class GameController : Controller
         //Sorting the list by alphabetical order.
         var alphabeticallySortedGameList = gameList.OrderBy(ap => ap.Name).ToList();
 
-        var vm = new Views.Game.Vms.GenreIndexViewModel()
+        var vm = new GenreIndexViewModel()
         {
             Genre = genre,
             GameList = alphabeticallySortedGameList
@@ -88,12 +118,20 @@ public class GameController : Controller
 
     public async Task<IActionResult> PlatformIndex(string platform)
     {
-        var completeGameList = await _unitOfWork.GamePageRepository.GetAllAsync();
+        //Try to get game pages from local cache
+        if (!_memoryCache.TryGetValue(CachingKeys.Games, out IEnumerable<GamePage>? gamePages))
+        {
+            gamePages = await _unitOfWork.GamePageRepository.GetAllAsync();
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromHours(12));
+
+            _memoryCache.Set(CachingKeys.Games, gamePages, cacheEntryOptions);
+        }
 
         List<GamePage> gameList = [];
 
         //Getting all anime that starts with specific alphabet letter
-        foreach (var game in completeGameList)
+        foreach (var game in gamePages ?? [])
         {
             if (game.Platforms == null) continue;
 
@@ -106,7 +144,7 @@ public class GameController : Controller
         //Sorting the list by alphabetical order.
         var alphabeticallySortedGameList = gameList.OrderBy(ap => ap.Name).ToList();
 
-        var vm = new Views.Game.Vms.PlatformIndexViewModel()
+        var vm = new PlatformIndexViewModel()
         {
             Platform = platform,
             GameList = alphabeticallySortedGameList
@@ -132,44 +170,4 @@ public class GameController : Controller
         return NotFound();
     }
 
-    [Authorize]
-    public IActionResult CreateAnimePage()
-    {
-        ViewData["reffer"] = Request.Headers["Referer"].ToString();
-        return View("AnimePageCreate");
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateAnimePage([Bind("AnimeName,AnimeSummary")] AnimePage animePage)
-    {
-        animePage.DownVotes = 0;
-        animePage.UpVotes = 0;
-
-        if (ModelState.IsValid)
-        {
-            await _unitOfWork.AnimePageRepository.AddAsync(animePage);
-            await _unitOfWork.CompleteAsync();
-            return RedirectToAction("AnimePageDetails", "Anime", new { id = animePage.Id });
-        }
-        return View("AnimePageCreate", animePage);
-    }
-
-    public async Task<IActionResult> AnimePageDetails(int? id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var animePage = await _unitOfWork.AnimePageRepository.GetByIdAsync(id);
-
-        if (animePage == null)
-        {
-            return NotFound();
-        }
-
-        animePage.AnimeSummary = _htmlCleaner.Clean(animePage.AnimeSummary);
-        return View("AnimePageDetails", animePage);
-    }
 }

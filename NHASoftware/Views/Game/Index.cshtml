@@ -1,6 +1,7 @@
 ﻿@using Microsoft.IdentityModel.Tokens
 @using NHA.Website.Software.Services.RepositoryPatternFoundationals
 @using NuGet.Packaging
+@model NHA.Website.Software.Views.Game.Vms.IndexViewModel
 @inject IUnitOfWork unitOfWork
 
 @{
@@ -11,13 +12,13 @@
 <head>
     <link rel="stylesheet" href="css/AnimePages.css">
 </head>
+
 @{
-    var allGames = await unitOfWork.GamePageRepository.GetAllAsync();
     HashSet<string> allGenres = [];
     var gamePageCount = 0;
     HashSet<string> allPlatforms = [];
 
-    foreach (var game in allGames)
+    foreach (var game in Model.GameList)
     {
         if (game.Genres is not null)
         {

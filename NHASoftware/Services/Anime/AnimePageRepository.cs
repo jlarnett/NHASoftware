@@ -10,6 +10,7 @@ public class AnimePageRepository : GenericRepository<AnimePage>, IAnimePageRepos
 
     }
     private List<int>? _cachedIds;
+
     public async Task<AnimePage?> GetRandomEntityAsync()
     {
         if (_context.AnimePages == null)

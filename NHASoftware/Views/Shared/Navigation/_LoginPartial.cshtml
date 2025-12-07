@@ -11,7 +11,7 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item align-self-center pt-2 pb-2 me-2 order-2 order-sm-1">
+        <li class="nav-item align-self-center me-2 order-2 order-sm-1">
             <input type="text" class="form-control align-self-center interactable w-100 w-sm-auto" id="searchInput" placeholder="Search Anime Social" style="min-width: 250px;" />
 
             <!-- Dropdown container -->
@@ -38,10 +38,10 @@
         {
             string profilePicture = "~/ProfilePictures/" + user.ProfilePicturePath;
 
-            <li class="nav-item dropdown align-self-center pt-2 pb-2 pe-2 order-1 order-sm-2">
+            <li class="nav-item dropdown align-self-center order-1 order-sm-2">
 
                 <!-- Profile Picture Dropdown Toggle -->
-                <a class="nav-link dropdown-toggle p-0 interactable" href="#" id="profileDropdown" role="button"
+                <a class="nav-link dropdown-toggle p-0 pe-2 interactable" href="#" id="profileDropdown" role="button"
                    data-bs-toggle="dropdown" aria-expanded="false">
                     <img id="ProfilePicture"
                          src="@Url.Content(profilePicture)"
@@ -50,7 +50,7 @@
                 </a>
 
                 <!-- Dropdown Menu -->
-                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="profileDropdown">
+                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-center" aria-labelledby="profileDropdown">
                     <li>
                         <a class="dropdown-item" asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@user.Id">
                             Profile
@@ -74,7 +74,7 @@
     }
     else
     {
-        <li class="nav-item align-self-center pt-2 pb-2 me-2 order-3 order-sm-1">
+        <li class="nav-item align-self-center me-2 order-3 order-sm-1">
             <input type="text" id="searchInput" class="form-control interactable d-block text-center " placeholder="Search Anime Social" />
             <!-- Dropdown container -->
             <ul id="searchDropdown" class="bg-body-tertiary"

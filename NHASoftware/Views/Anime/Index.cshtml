@@ -2,6 +2,7 @@
 @using NHA.Website.Software.Services.RepositoryPatternFoundationals
 @using NuGet.Packaging
 @inject IUnitOfWork unitOfWork;
+@model NHA.Website.Software.Views.Anime.Vms.IndexViewModel;
 
 @{
     ViewData["Title"] = "Anime";
@@ -9,13 +10,12 @@
 }
 
 @{
-    var allAnime = await unitOfWork.AnimePageRepository.GetAllAsync();
     var animePageCount = 0;
 
     HashSet<string> allPlatforms = [];
     HashSet<string> allGenres = [];
 
-    foreach (var anime in allAnime)
+    foreach (var anime in Model.AnimeList)
     {
         if (anime.AnimeGenres is not null)
         {

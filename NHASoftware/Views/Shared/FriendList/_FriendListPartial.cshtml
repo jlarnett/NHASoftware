@@ -163,7 +163,7 @@
                     <a asp-action="GamePage" class="h5 text-body text-decoration-none interactable fw-semibold" asp-controller="Game" asp-route-id="@featuredGame.Id">@featuredGame.Name</a>
                     <div class="">
                         <a class="row text-center m-auto rounded-2 interactable" asp-controller="Game" asp-action="GamePage" asp-route-id="@featuredGame.Id">
-                            <img src="@featuredGame.ImageUrl" class="rounded-3 p-0" alt="@featuredGame.Name's cover photo" />
+                            <img src="@featuredGame.ImageUrl" title="@featuredGame.Name" class="rounded-3 p-0" alt="@featuredGame.Name's cover photo" />
                         </a>
                     </div>
                     <div class="multiline-ellipsis" style="max-width: 350px;">
@@ -231,7 +231,7 @@
                     <a asp-action="GamePage" class="h5 text-body text-decoration-none interactable fw-semibold" asp-controller="Game" asp-route-id="@featuredGame.Id">@featuredGame.Name</a>
                     <div class="">
                         <a class="row text-center m-auto rounded-2 interactable" asp-controller="Game" asp-action="GamePage" asp-route-id="@featuredGame.Id">
-                            <img src="@featuredGame.ImageUrl" class="rounded-3 p-0" alt="@featuredGame.Name's cover photo" />
+                            <img src="@featuredGame.ImageUrl" title="@featuredGame.Name" class="rounded-3 p-0" alt="@featuredGame.Name's cover photo" />
                         </a>
                     </div>
                     <div class="multiline-ellipsis" style="max-width: 350px;">

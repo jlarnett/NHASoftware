@@ -11,4 +11,3 @@ document.addEventListener('DOMContentLoaded', () => {
     else {
         document.body.dataset.bsTheme = 'light';
     }
-

@@ -323,7 +323,11 @@ body[data-bs-theme="dark"] .interactable-small:hover {
 }
 
 /* Apply hover only to dropdowns that do NOT have .no-hover */
-.dropdown:not(.no-hover):hover .dropdown-menu {
+/*.dropdown:not(.no-hover):hover .dropdown-menu {
     display: block;
-    margin-top: 0; /* remove the gap so it doesn't close */
+    margin-top: 0;*/ /* remove the gap so it doesn't close */
+/*}*/
+
+.nav-item.dropdown .dropdown-menu {
+    margin-top: 0;
 }

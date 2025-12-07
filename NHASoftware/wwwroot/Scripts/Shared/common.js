@@ -95,3 +95,20 @@ Utils.prototype = {
 };
 
 var Utils = new Utils();
+
+//Used to make dropdowns work on hover, but keep bootstrap styling
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll('.dropdown:not(.no-hover)').forEach(dd => {
+
+        dd.addEventListener('mouseenter', () => {
+            const toggle = dd.querySelector('[data-bs-toggle="dropdown"]');
+            bootstrap.Dropdown.getOrCreateInstance(toggle).show();
+        });
+
+        dd.addEventListener('mouseleave', () => {
+            const toggle = dd.querySelector('[data-bs-toggle="dropdown"]');
+            bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
+        });
+
+    });
+});

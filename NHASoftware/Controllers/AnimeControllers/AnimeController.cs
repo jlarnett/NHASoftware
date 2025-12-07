@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.FeatureManagement.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using NHA.Helpers.AlphabetSimplify;
 using NHA.Helpers.HtmlStringCleaner;
+using NHA.Website.Software.Caching;
 using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Entities.Anime;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
@@ -16,17 +18,35 @@ public class AnimeController : Controller
     private readonly ApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHtmlStringCleaner _htmlCleaner;
+    private readonly IMemoryCache _memoryCache;
 
-    public AnimeController(ApplicationDbContext context, IUnitOfWork unitOfWork, IHtmlStringCleaner htmlCleaner)
+    public AnimeController(ApplicationDbContext context,
+        IUnitOfWork unitOfWork,
+        IHtmlStringCleaner htmlCleaner,
+        IMemoryCache memoryCache)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _htmlCleaner = htmlCleaner;
+        _memoryCache = memoryCache;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        //Try to get anime pages from local cache
+        if (!_memoryCache.TryGetValue(CachingKeys.Anime, out IEnumerable<AnimePage>? animePages))
+        {
+            animePages = await _unitOfWork.AnimePageRepository.GetAllAsync();
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromHours(12));
+
+            _memoryCache.Set(CachingKeys.Anime, animePages, cacheEntryOptions);
+        }
+
+        return View(new IndexViewModel()
+        {
+            AnimeList = animePages ?? []
+        });
     }
 
     public async Task<IActionResult> Roll(int pageNumber)
@@ -54,17 +74,24 @@ public class AnimeController : Controller
     }
 
     public async Task<IActionResult> LetterDetail(int id)
-    {
-        char letter = AlphabetDecipher.ConvertNumberToAlphabetLetter(id);
-        var completeAnimeList = await _unitOfWork.AnimePageRepository.GetAllAsync();
+    { 
+        var letter = AlphabetDecipher.ConvertNumberToAlphabetLetter(id);
 
-        List<AnimePage> animeList = new List<AnimePage>();
+        //Try to get anime pages from local cache
+        if (!_memoryCache.TryGetValue(CachingKeys.Anime, out IEnumerable<AnimePage>? animePages))
+        {
+            animePages = await _unitOfWork.AnimePageRepository.GetAllAsync();
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromHours(12));
+
+            _memoryCache.Set(CachingKeys.Anime, animePages, cacheEntryOptions);
+        }
+
+        var animeList = new List<AnimePage>();
 
         //Getting all anime that starts with specific alphabet letter
-        foreach (var anime in completeAnimeList)
+        foreach (var anime in animePages ?? [])
         {
-            if(anime.AnimeName == null) continue;
-            
             if (anime.AnimeName.StartsWith(letter))
             {
                 animeList.Add(anime);
@@ -72,12 +99,12 @@ public class AnimeController : Controller
         }
 
         //Sorting the list by alphabetical order.
-        var AlphabeticallySortedAnimesForLetter = animeList.OrderBy(ap => ap.AnimeName).ToList();
+        var alphabeticallySortedAnimeForLetter = animeList.OrderBy(ap => ap.AnimeName).ToList();
 
         var vm = new LetterIndexViewModel()
         {
             AlphabetLetter = letter,
-            AnimeList = AlphabeticallySortedAnimesForLetter
+            AnimeList = alphabeticallySortedAnimeForLetter
         };
 
         return View("LetterIndex", vm);
@@ -85,12 +112,20 @@ public class AnimeController : Controller
 
     public async Task<IActionResult> GenreIndex(string genre)
     {
-        var completeAnimeList = await _unitOfWork.AnimePageRepository.GetAllAsync();
+        //Try to get anime pages from local cache
+        if (!_memoryCache.TryGetValue(CachingKeys.Anime, out IEnumerable<AnimePage>? animePages))
+        {
+            animePages = await _unitOfWork.AnimePageRepository.GetAllAsync();
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromHours(12));
+
+            _memoryCache.Set(CachingKeys.Anime, animePages, cacheEntryOptions);
+        }
 
         List<AnimePage> animeList = [];
 
         //Getting all anime that starts with specific alphabet letter
-        foreach (var anime in completeAnimeList)
+        foreach (var anime in animePages ?? [])
         {
             if(anime.AnimeGenres == null) continue;
 
@@ -114,12 +149,20 @@ public class AnimeController : Controller
 
     public async Task<IActionResult> PlatformIndex(string platform)
     {
-        var completeAnimeList = await _unitOfWork.AnimePageRepository.GetAllAsync();
+        //Try to get anime pages from local cache
+        if (!_memoryCache.TryGetValue(CachingKeys.Anime, out IEnumerable<AnimePage>? animePages))
+        {
+            animePages = await _unitOfWork.AnimePageRepository.GetAllAsync();
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromHours(12));
+
+            _memoryCache.Set(CachingKeys.Anime, animePages, cacheEntryOptions);
+        }
 
         List<AnimePage> animeList = [];
 
         //Getting all anime that starts with specific alphabet letter
-        foreach (var anime in completeAnimeList)
+        foreach (var anime in animePages ?? [])
         {
             if (anime.Platforms == null) continue;
 
