@@ -17,7 +17,7 @@
                         <div class="text-body-tertiary">@Model.Summary</div>
                     </div>
                     <div class="col-4 m-auto">
-                        <img class="img-fluid col-10 rounded-pill bg-danger m-auto" src="~/ProfilePictures/@Model.SenderUser!.ProfilePicturePath"/>
+                        <img class="img-fluid col-10 rounded-pill m-auto" alt="@Model.SenderUser!.DisplayName's profile picture" src="~/ProfilePictures/@Model.SenderUser!.ProfilePicturePath"/>
                     </div>
                 </div>
                 <div class="row p-0 m-auto">
@@ -30,7 +30,7 @@
             <div class="row m-auto border-top border-primary p-1">
                 <div class="row p-0">
                     <div class="col-4">
-                        <img class="img-fluid col-10 rounded-pill bg-secondary" src="~/ProfilePictures/@Model.SenderUser!.ProfilePicturePath" />
+                        <img class="img-fluid col-10 rounded-pill " src="~/ProfilePictures/@Model.SenderUser!.ProfilePicturePath" />
                     </div>
                     <div class="col text-body-tertiary">
                         @Model.Summary

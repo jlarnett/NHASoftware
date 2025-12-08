@@ -11,24 +11,48 @@
 }
 
 
-<div class="col-3 border-start border-end border-top border-2 rounded-2 border-black pe-auto bg-body-tertiary p-0 ms-2 h-50" id="chs-@chatUUID" chs-container="@chatUUID" chs-recipient="@Model.Friend!.Id">
-    <div class="row m-auto p-1 bg-dark bg-opacity-100 border-bottom border-3 border-black mb-3">
-        <div class="col-3 p-0 m-auto">
-            <img class="img-fluid rounded-circle col-8 m-auto bg-black o-fit" src="~/ProfilePictures/@Model.Friend!.ProfilePicturePath"/>
+<div class="col-3 border-start border-end border-top border-2 rounded-2 border-black pe-auto bg-body-tertiary p-0 ms-2 h-50 align-self-end" id="chs-@chatUUID" chs-container="@chatUUID" chs-recipient="@Model.Friend!.Id">
+    <div class="row m-auto p-1 bg-dark bg-opacity-100 border-bottom border-1 border-black chat-header interactable-small" role="button">
+        <div class="col-auto p-0 m-auto">
+            <img class="img-fluid rounded-circle col-8 m-auto o-fit" alt="@Model.Friend.DisplayName's profile picture" src="~/ProfilePictures/@Model.Friend!.ProfilePicturePath"/>
+            <a class="h6 text-center text-primary m-auto profile-link text-truncate col " role="button" userId="@Model.Friend.Id">@Model.Friend.DisplayName</a>
         </div>
-        <div class="col p-0 text-wrap m-auto text-center text-truncate">
-            <a class="h6 text-center text-white m-auto profile-link text-truncate col" role="button" userId="@Model.Friend.Id">@Model.Friend.DisplayName</a>
+        <div class="col p-0 text-wrap text-start text-truncate " >
+            &nbsp;
         </div>
-        <div class="col-auto m-auto">
+        <div class="col-auto m-auto dropdown">
             <button type="button" class="close close-chat" chs-uuid="@chatUUID" recipientId="@Model.Friend.Id">
-                <span aria-hidden="true" chs-uuid="@chatUUID" class="h2 text-white" recipientId="@Model.Friend.Id">&#8942;</span>
+                <span aria-hidden="true" chs-uuid="@chatUUID" class="h2 p-2 text-primary" recipientId="@Model.Friend.Id">&times;</span>
             </button>
-            <button type="button" class="close close-chat" chs-uuid="@chatUUID" recipientId="@Model.Friend.Id">
-                <span aria-hidden="true" chs-uuid="@chatUUID" class="h2 p-2 text-white" recipientId="@Model.Friend.Id">&times;</span>
-            </button>
+            @{
+                var dropdownId = $"chat-dropdown-{Guid.NewGuid()}-btn";
+            }
+            <a type="button" class="text-decoration-none interactable " id="@dropdownId" chs-uuid="@chatUUID" recipientId="@Model.Friend.Id" data-bs-toggle="dropdown"
+               aria-expanded="false" onclick="event.stopPropagation();">
+                <span aria-hidden="true" chs-uuid="@chatUUID" class="h2 p-2 dropdown" recipientId="@Model.Friend.Id">&#8943;</span>
+
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark dropdown-end text-center rounded-2" aria-labelledby="@dropdownId">
+                <li>
+                    <a class="dropdown-item" asp-area="" asp-controller="Anime" asp-action="Roll">Mute</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="" asp-controller="Anime" asp-action="Roll">View Profile</a>
+                </li>
+                <hr class="m-0"/>
+                <li>
+                    <a class="dropdown-item" asp-area="" asp-controller="Anime" asp-action="Roll">Delete Chat</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="" asp-controller="Anime" asp-action="Roll">Report/Block</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="" asp-controller="Anime" asp-action="Index">Manage Settings</a>
+                </li>
+            </ul>
         </div>
     </div>
-    <div class="row col m-auto p-3 justify-content-center" chs-body-uuid="@chatUUID">
+    <div class="row col m-auto p-3 justify-content-center mt-2" chs-body-uuid="@chatUUID">
         <div class="row mb-3 p-0 h-25 border-bottom border-primary border-2" >
             <div class="col text-wrap text-break p-2 chat-scroll-y" style="max-height: 20em; min-height: 20em" id="chs-messages-@chatUUID">
                 

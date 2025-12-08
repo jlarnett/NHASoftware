@@ -65,5 +65,15 @@ function SendChat(ApiUrl, postForm) {
         error: function (data) {
         }
     });
+
+
 }
 
+$(document).on('click', '.chat-header', function () {
+    const container = $(this).closest('[chs-container]');
+    const uuid = container.attr('chs-container');
+
+    const body = container.find('[chs-body-uuid="' + uuid + '"]');
+
+    body.slideToggle(200);
+});

@@ -1,6 +1,7 @@
 ﻿$(window).on("load", function () {
 
     $("#ChsContainer").on('click', '.profile-link', function (e) {
+        e.stopPropagation();
         var SendButton = $(e.target);
         var userId = SendButton.attr("userId");
         var profileUrl = "/Users/GetProfiles?userId=" + userId;
@@ -80,12 +81,12 @@ function LoadStoredChats() {
 
 function CheckForNewMessages() {
     let delay = 10000
-    let maxDelay = 600000
+    let maxDelay = 60000
 
-    setInterval(function () {
+    function poll() {
 
         //SystemNotification.createNotification("Polling DB for new chat messages. <a type='button'>Profile</a>");
-        GetNewMessagesFromChatController().then(function (response) {
+        GetNewMessagesFromChatController().done(function (response) {
 
             let senderUserIds = [];
 
@@ -123,8 +124,14 @@ function CheckForNewMessages() {
                 //let friendListChatCounter = $("#Friend-chat-notification-counter-" + cm.senderUserId).children().first().text(newFriendListChatCounter);
                 //$("#Friend-chat-notification-counter-" + cm.senderUserId).show();
             });
+        }).always(function () {
+            // Schedule next poll
+            setTimeout(poll, delay);
         });
-    }, delay);
+    }
+
+    // Start polling
+    poll();
 }
 
 function GetNewMessagesFromChatController() {
