@@ -52,7 +52,10 @@
         function updateThemeLabel(mode) {
             const dropdown = document.getElementById("themeDropdown");
             if (dropdown) {
-                dropdown.textContent = `Theme: ${mode.charAt(0).toUpperCase() + mode.slice(1)}`;
+                dropdown.innerHTML = `
+                    <i class="bi bi-palette-fill"></i>
+                    Theme: ${mode.charAt(0).toUpperCase() + mode.slice(1)}
+                `;
             }
         }
 
