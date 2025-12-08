@@ -96,8 +96,9 @@ Utils.prototype = {
 
 var Utils = new Utils();
 
-//Used to make dropdowns work on hover, but keep bootstrap styling
 document.addEventListener("DOMContentLoaded", function () {
+
+    //Used to make dropdowns work on hover, but keep bootstrap styling
     document.querySelectorAll('.dropdown:not(.no-hover)').forEach(dd => {
 
         dd.addEventListener('mouseenter', () => {
@@ -110,5 +111,23 @@ document.addEventListener("DOMContentLoaded", function () {
             bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
         });
 
+    });
+
+    //Back to top button
+    const backToTopButton = document.getElementById("backToTop");
+
+    window.onscroll = function () {
+        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+            backToTopButton.style.display = "block";
+        } else {
+            backToTopButton.style.display = "none";
+        }
+    };
+
+    backToTopButton.addEventListener("click", () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
     });
 });

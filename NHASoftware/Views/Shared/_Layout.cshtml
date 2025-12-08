@@ -119,6 +119,9 @@
         </div>
         <main role="main" class="col p-4 pt-2 mt-12">
             @RenderBody()
+            <button id="backToTop" title="Go to top" class="btn btn-outline-dark">
+                <i class="bi bi-arrow-up"></i>
+            </button>
         </main>
             <div class="col-2 mt-12 d-none d-md-block border-start border-primary bg-transparent p-1" style="min-height: 75.5em;">
             @{ await Html.RenderPartialAsync("FriendList/_FriendListPartial");}

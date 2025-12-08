@@ -331,3 +331,14 @@ body[data-bs-theme="dark"] .interactable-small:hover {
 .nav-item.dropdown .dropdown-menu {
     margin-top: 0;
 }
+
+#backToTop {
+    display: none; /* Hidden by default */
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 100;
+    cursor: pointer;
+    font-size: 24px;
+    transition: opacity 0.3s;
+}
