@@ -29,23 +29,35 @@ public class ForumTopicsController : Controller
     /// <returns>Returns the Forum Topics Details</returns>
     public async Task<IActionResult> Details(int? id)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
+        if (id == null) return NotFound();
 
+        //Validate the forum topic exists
         var forumTopic = await _unitOfWork.ForumTopicRepository.GetByIdAsync(id);
+        if (forumTopic == null) return NotFound();
 
-        if (forumTopic == null)
-        {
-            return NotFound();
-        }
-
+        //Get a list of all forum topic posts for specified id
         var topicPosts = await _unitOfWork.ForumTopicRepository.GetForumTopicPostsAsync(id);
 
+        //Get full list of comments
+        var allComments = await _unitOfWork.ForumCommentRepository.GetAllAsync();
+
+        //Create a dictionary for quick lookup / adding 
+        Dictionary<int, int> commentMap = [];
+
+        foreach (var comment in allComments)
+        {
+            if (!commentMap.TryAdd(comment.ForumPostId, 1))
+            {
+                commentMap[comment.ForumPostId] += 1;
+            }
+        }
+
+        //Populate the correct values in posts
         foreach (var post in topicPosts)
         {
             post.ForumText = _htmlCleaner.Clean(post.ForumText);
+            var valueExists = commentMap.TryGetValue(post.Id, out var count);
+            post.CommentCount = valueExists ? count : 0;
         }
 
         var vm = new ForumTopicDetailsView()

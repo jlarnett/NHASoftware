@@ -36,15 +36,14 @@
                                 "</div>" +
                                 "<div class='row w-100'>" +
                                     "<div class='col row align-content-center m-auto'>" +
-                                    CheckForAdminButtons(ForumsKV[i], adminButtons) +
-                                        "<div class='col-1 m-auto'>" +
-                                            "<input type='image' title='Threads' src='/Images/ThreadIcon.png' class=' img-fluid js-thread-comment col-8' comment-id='" + "commentid" + "'/>" +
+                                        "<div class='col-auto m-auto'>" +
+                                            "<input type='image' title='Threads' style='max-height: 40px; max-width:40px;' src='/Images/ThreadIcon.png' class='img-fluid js-thread-comment' comment-id='" + "commentid" + "'/>" +
                                         "</div>" +
                                         "<div class='col-auto m-auto'>" +
                                             "<h3>" + ForumsKV[i].value.threadCount + "</h3>" +
                                         "</div>" +
-                                        "<div class='col-1 m-auto'>" +
-                                            "<input type='image' title='Posts' src='/Images/PostIcon.png' class='img-fluid js-thread-comment col-8' comment-id='" + "commentid" + "'/>" +
+                                        "<div class='col-auto m-auto'>" +
+                                            "<input type='image' title='Posts' src='/Images/PostIcon.png' style='max-height: 40px; max-width:40px;' class='img-fluid js-thread-comment' comment-id='" + "commentid" + "'/>" +
                                         "</div>" +
                                         "<div class='col-auto m-auto'>" + 
                                         "<h3>" + ForumsKV[i].value.postCount + "</h3>" +
@@ -52,6 +51,9 @@
                                     "<div class='col m-auto'>" +
                                         "<h5 class='h6'>" + "Last Modified: <strong class='text-secondary-emphasis'>" + formattedLastModifiedDate + "</strong></h5>" +
                                     "</div>" +
+                                "</div>" +
+                                "<div class='row w-100'>" +
+                                    CheckForAdminButtons(ForumsKV[i], adminButtons) +
                                 "</div>" +
                 "</a></div>"]).draw();
             table2.columns.adjust().draw();
@@ -61,14 +63,15 @@
 function CheckForAdminButtons(data, adminButtons) 
 {
     if (adminButtons === true) {
-        return "<div class='col row m-auto'>" +
+        return "<div class='col row m-auto justify-content-end'>" +
+        "<div class='col'></div>" +
         "<div class='col-auto'>" +
-                "<button class='btn btn-dark js-edit-topic interactable' topic-id='" +
+                "<button class='btn btn-link js-edit-topic interactable' topic-id='" +
                     data.value.id +
                 "'>Edit</button>" +
             "</div>" +
             "<div class='col-auto'>" +
-            "<button class='btn btn-primary js-delete-topic interactable' topic-id='" +
+            "<button class='btn btn-link js-delete-topic interactable' topic-id='" +
             data.value.id +
             "'>Delete</button>" +
             "</div>" + "</div>";

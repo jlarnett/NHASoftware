@@ -26,23 +26,24 @@
                                             "<h3 class='text-dark text-truncate-multi-line'>" + post.forumText + "</h3>" +
                                         "</div>" +
                                     "</div>" +
-                                    "<div class='row align-content-center m-auto'>" +
-                                        "<div class='col-2 row align-items-center'>" +
-                                            "<div class='col-5 m-auto'>" +
-                                                "<input type='image' title='Likes' src='/Images/Facebook-Like-Filled.png' class='img-fluid js-thread-comment' comment-id='" + "commentid" + "'/>" +
-                                            "</div>"+
-                                            "<div class='h3 col'>" + post.likeCount + "</div>" +
+                                    "<div class='row w-100'>" +
+                                        "<div class='col row align-content-center m-auto'>" +
+                                            "<div class='col-auto m-auto'>" +
+                                                "<input type='image' title='Likes' style='max-height: 40px; max-width:40px;' src='/Images/Facebook-Like-Filled.png' class='img-fluid js-thread-comment' comment-id='" + "commentid" + "'/>" +
+                                            "</div>" +
+                                            "<div class='col-auto m-auto'>" +
+                                                "<h3>" + post.likeCount + "</h3>" +
+                                            "</div>" +
+                                            "<div class='col-auto m-auto'>" +
+                                                "<input type='image' title='Comments' src='/Images/PostIcon.png' style='max-height: 40px; max-width:40px;' class='img-fluid js-thread-comment' comment-id='" + "commentid" + "'/>" +
+                                            "</div>" +
+                                            "<div class='col-auto m-auto'>" +
+                                                "<h3>" + post.commentCount + "</h3>" +
+                                            "</div>" +
+                                            "<div class='col m-auto'>" +
+                                                "<h5 class='h6'>" + "Last Modified: <strong class='text-secondary-emphasis'>" + formattedLastModifiedDate + "</strong></h5>" +
+                                            "</div>" +
                                         "</div>" +
-                                        "<div class='col-2 row align-items-center'>" +
-                                            "<div class='col-5 m-auto'>" +
-                                                "<input type='image' title='Comments' src='/Images/PostIcon.png' class='img-fluid js-thread-comment' comment-id='" + "commentid" + "'/>" +
-                                             "</div>" +
-                                            "<div class='h3 col'>" + post.commentCount + "</div>" +
-                                        "</div>" +
-                                        "<div class='col-auto row align-items-center'>" +
-                                           "<h5 class='h6'>" + "Last Modified: <strong class='text-secondary-emphasis'>" + formattedLastModifiedDate + "</strong></h5>" +
-                                        "</div>" +
-                                    "</div>" +
                                 "</a>" +
                             "</div>";
                 }
