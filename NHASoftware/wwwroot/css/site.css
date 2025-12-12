@@ -342,3 +342,8 @@ body[data-bs-theme="dark"] .interactable-small:hover {
     font-size: 24px;
     transition: opacity 0.3s;
 }
+
+#searchInput {
+    flex: 1 1 auto !important;
+    width: 100%;
+}

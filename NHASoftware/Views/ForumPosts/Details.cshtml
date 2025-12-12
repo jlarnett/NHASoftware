@@ -45,7 +45,7 @@
         <i class="bi bi-clock" title="Date Joined"></i>
     </div>
     <div class="col-auto text-decoration-none p-0 me-2 align-self-baseline small">
-        @Model.ForumPost.User.DateJoined.ToString("MMM dd, yyyy")
+        @Model.ForumPost.User!.DateJoined.ToString("MMM dd, yyyy")
     </div>
 </div>
 
@@ -84,7 +84,7 @@
                         <i class="bi bi-hand-thumbs-up-fill" title="Likes"></i>
                         @{
                             var posts = await unitOfWork.ForumPostRepository.FindWithoutTrackingAsync(fp => fp.UserId!.Equals(Model.ForumPost.UserId));
-                            var comments = await unitOfWork.ForumCommentRepository.FindWithoutTrackingAsync(fp => fp.UserId!.Equals(Model.ForumPost.UserId));
+                            var comments = await unitOfWork.ForumCommentRepository.FindWithoutTrackingAsync(fp => fp.UserId.Equals(Model.ForumPost.UserId));
                             var likeCounter = 0;
 
                             foreach(var post in posts)

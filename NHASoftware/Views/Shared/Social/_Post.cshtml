@@ -22,8 +22,8 @@
     <div class="row align-items-center mt-2">
         <!--User Profile image & display name-->
         <div class="col-auto px-2">
-            <a asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@Model.User!.Id">
-                <img src="/ProfilePictures/@Model.User!.ProfilePicturePath" class="img-thumbnail avatar interactable" alt="@Model.User!.DisplayName Profile Picture"/>
+            <a asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@Model.User!.Id" class="shadow">
+                <img src="/ProfilePictures/@Model.User!.ProfilePicturePath" class="avatar interactable shadow" alt="@Model.User!.DisplayName Profile Picture"/>
             </a>
         </div>
         <div class="col-auto">

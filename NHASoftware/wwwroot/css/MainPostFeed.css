@@ -35,10 +35,12 @@
 
 .avatar {
     width: 100%; /* let Bootstrap scale it */
-    max-width: 64px; /* don’t let it get bigger than this */
-    min-width: 40px; /* don’t let it get smaller than this */
-    height: auto; /* keep natural aspect ratio */
+    max-width: 50px; /* don’t let it get bigger than this */
+    min-width: 30px; /* don’t let it get smaller than this */
+    height: 50px; /* keep natural aspect ratio */
+    min-height: 30px;
     object-fit: cover; /* makes square crops look good */
+    border-radius: 50%; /* <-- makes it circular */
 }
 
 .carousel-item {
