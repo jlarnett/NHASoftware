@@ -69,7 +69,6 @@ public class HomeController : Controller
     public async Task<IActionResult> ReturnSocialPosts()
     {
         var postDTOs = await _postBuilder.RetrieveParentPosts(_userManager.GetUserId(User) ?? "");
-        if (pageNumber > totalPages) pageNumber = 1;
         return PartialView("Social/_MultiPost", new MultiPostVM(postDTOs));
     }
 
