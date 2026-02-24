@@ -84,10 +84,22 @@ namespace NHA.Website.Software.Services.Anime
                         }
                         else
                         {
+                            var episodeUrl = $"https://api.jikan.moe/v4/anime/{anime.mal_id}/episodes";
+                            EpisodeResponse? episodeResponse = null;
+
+                            try
+                            {
+                                episodeResponse = await http.GetFromJsonAsync<EpisodeResponse>(episodeUrl);
+                            }
+                            catch (Exception e)
+                            {
+                                logger.LogError(e.Message);
+                            }
+
                             //Exists we just want ot handle certain updates
                             var animePages = await unitOfWork.AnimePageRepository.
                                 FindAsync(x => x.AnimeName.Equals(anime.title_english) || x.AnimeName.Equals(anime.title_japanese) || x.AnimeName.Equals(anime.title));
-                            
+
                             var summary = anime.synopsis ?? string.Empty;
 
                             foreach (var animePage in animePages)
@@ -105,10 +117,27 @@ namespace NHA.Website.Software.Services.Anime
                                 {
                                     animePage.Platforms = string.Join(';', streamingResponse.data.Select(x => x.name));
                                 }
+
+                                if (episodeResponse != null)
+                                {
+                                    foreach (var episode in episodeResponse.data)
+                                    {
+                                        await unitOfWork.AnimeEpisodeRepository.AddAsync(new AnimeEpisode()
+                                        {
+                                            AnimePageId = animePage.Id,
+                                            EpisodeName = episode.Title,
+                                            EpisodeSummary = "",
+                                            EpisodeNumber = episode.mal_id,
+                                            UpVotes = 0,
+                                            DownVotes = 0,
+                                            EpisodeContainsFiller = episode.Filler,
+                                        });
+                                    }
+                                }
                             }
                         }
 
-                        await Task.Delay(1500);
+                        await Task.Delay(2000);
                     }
 
                     var affectedRows = await unitOfWork.CompleteAsync();
@@ -160,6 +189,23 @@ namespace NHA.Website.Software.Services.Anime
         public class StreamingResponse
         {
             public List<StreamingService> data { get; set; } = [];
+        }
+
+        public class EpisodeResponse
+        {
+            public List<Episode> data { get; set; } = [];
+        }
+
+        public class Episode
+        {
+            public int mal_id { get; set; }
+            public string Title { get; set; } = "";
+            public string TitleJapanese { get; set; } = "";
+            public string TitleRomanji { get; set; } = "";
+            public DateTime Aired { get; set; }
+            public double Score { get; set; }
+            public bool Filler { get; set; }
+            public bool Recap { get; set; }
         }
 
         public class StreamingService

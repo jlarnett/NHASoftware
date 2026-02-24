@@ -15,6 +15,7 @@ public interface IUnitOfWork
     IForumPostRepository ForumPostRepository { get; }
     IForumCommentRepository ForumCommentRepository { get; }
     IAnimePageRepository AnimePageRepository { get; }
+    IAnimeEpisodeRepository AnimeEpisodeRepository { get; }
     IPostRepository PostRepository { get; }
     IUserLikeRepository UserLikeRepository { get; }
     IFriendRequestRepository FriendRequestRepository { get; }

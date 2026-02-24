@@ -18,6 +18,7 @@ public class UnitOfWork : IUnitOfWork
     public IForumPostRepository ForumPostRepository { get; private set; }
     public IForumCommentRepository ForumCommentRepository { get; private set; }
     public IAnimePageRepository AnimePageRepository { get; private set; }
+    public IAnimeEpisodeRepository AnimeEpisodeRepository { get; private set; }
     public IPostRepository PostRepository { get; private set; }
     public IUserLikeRepository UserLikeRepository { get; private set; }
     public IFriendRequestRepository FriendRequestRepository { get; set; }
@@ -52,6 +53,7 @@ public class UnitOfWork : IUnitOfWork
         GamePageRepository = new GamePageRepository(_context);
         HiddenPostRepository = new HiddenPostRepository(_context);
         ReportedPostRepository = new ReportedPostRepository(_context);
+        AnimeEpisodeRepository = new AnimeEpisodeRepository(_context);
         _logger = logger;
     }
 

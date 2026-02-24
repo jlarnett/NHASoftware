@@ -142,6 +142,7 @@ builder.Services.AddTransient<IForumCommentRepository, ForumCommentRepository>()
 builder.Services.AddTransient<IForumTopicRepository, ForumTopicRepository>();
 builder.Services.AddTransient<IForumSectionRepository, ForumSectionRepository>();
 builder.Services.AddTransient<IAnimePageRepository, AnimePageRepository>();
+builder.Services.AddTransient<IAnimeEpisodeRepository, AnimeEpisodeRepository>();
 builder.Services.AddTransient<IPostRepository, PostRepository>();
 builder.Services.AddTransient<IUserLikeRepository, UserLikeRepository>();
 builder.Services.AddTransient<IFriendRepository, FriendRepository>();
