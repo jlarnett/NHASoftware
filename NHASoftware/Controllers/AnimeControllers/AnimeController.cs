@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.FeatureManagement.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +9,8 @@ using NHA.Helpers.HtmlStringCleaner;
 using NHA.Website.Software.Caching;
 using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Entities.Anime;
+using NHA.Website.Software.Entities.Forums;
+using NHA.Website.Software.Services.Anime;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHA.Website.Software.Views.Anime.Vms;
 namespace NHA.Website.Software.Controllers.AnimeControllers;
@@ -19,16 +22,19 @@ public class AnimeController : Controller
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHtmlStringCleaner _htmlCleaner;
     private readonly IMemoryCache _memoryCache;
+    private readonly ILogger<AnimeController> _logger;
+
 
     public AnimeController(ApplicationDbContext context,
         IUnitOfWork unitOfWork,
         IHtmlStringCleaner htmlCleaner,
-        IMemoryCache memoryCache)
+        IMemoryCache memoryCache, ILogger<AnimeController> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _htmlCleaner = htmlCleaner;
         _memoryCache = memoryCache;
+        _logger = logger;
     }
 
     public async Task<IActionResult> Index()
@@ -202,6 +208,109 @@ public class AnimeController : Controller
             return NotFound();
         }
 
+    }
+
+    [Authorize]
+    public IActionResult CreateEpisode(int animePageId)
+    {
+        ViewData["reffer"] = Request.Headers["Referer"].ToString();
+        return View("AnimeEpisodeCreate", new AnimeEpisode()
+        {
+            AnimePageId = animePageId
+        });
+    }
+
+    [Authorize]
+    public async Task<IActionResult> ModifyEpisode(int animeEpisodeId)
+    {
+        ViewData["reffer"] = Request.Headers["Referer"].ToString();
+        var episode = await _unitOfWork.AnimeEpisodeRepository.GetByIdAsync(animeEpisodeId);
+
+        if (episode == null) 
+            return NotFound();
+
+        return View("AnimeEpisodeEdit", episode);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ModifyEpisode(int id, [Bind("Id,EpisodeNumber,EpisodeName,EpisodeSummary,EpisodeContainsFiller,AnimePageId")] AnimeEpisode animeEpisode)
+    {
+        if (id != animeEpisode.Id)
+        {
+            return NotFound();
+        }
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                _unitOfWork.AnimeEpisodeRepository.Update(animeEpisode);
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+            }
+            return RedirectToAction("AnimePageDetails", "Anime", new { id = animeEpisode.AnimePageId });
+        }
+        return View("AnimeEpisodeEdit", animeEpisode);
+    }
+
+    /// <summary>
+    /// GET: Anime/DeleteEpisode/5
+    /// </summary>
+    /// <param name="id">ID of the episode you want deleted. </param>
+    /// <returns></returns>
+    public async Task<IActionResult> DeleteEpisode(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        var episode = await _unitOfWork.AnimeEpisodeRepository.GetByIdAsync(id);
+
+        if (episode == null)
+        {
+            return NotFound();
+        }
+
+        ViewData["reffer"] = Request.Headers["Referer"].ToString();
+        return View("AnimeEpisodeDelete", episode);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteEpisodeConfirmed(int id)
+    {
+        var episode = await _unitOfWork.AnimeEpisodeRepository.GetByIdAsync(id);
+
+        if (episode == null)
+        {
+            return NotFound();
+        }
+
+        var parentAnimeId = episode.AnimePageId;
+        _unitOfWork.AnimeEpisodeRepository.Remove(episode);
+        await _unitOfWork.CompleteAsync();
+
+        return RedirectToAction("AnimePageDetails", new { id = parentAnimeId });
+    }
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create([Bind("Id,EpisodeNumber,EpisodeName,EpisodeSummary,EpisodeContainsFiller,AnimePageId")] AnimeEpisode animeEpisode)
+    {
+        if (ModelState.IsValid)
+        {
+            await _unitOfWork.AnimeEpisodeRepository.AddAsync(animeEpisode);
+            await _unitOfWork.CompleteAsync();
+            return RedirectToAction("AnimePage", "Anime", new { id = animeEpisode.AnimePageId });
+        }
+
+        return View("AnimeEpisodeCreate", animeEpisode);
     }
 
     [Authorize]

@@ -101,6 +101,16 @@
                             return "/Images/icons8-disney-plus-32.png";
                         }
 
+                        if (platform.Equals("Adult Swim"))
+                        {
+                            return "/Images/adult_swim_32x32.png";
+                        }
+
+                        if (platform.Contains("Aniplus"))
+                        {
+                            return "/Images/aniplus_32x32.png";
+                        }
+
                         return platform.Equals("Tubi TV") ? "/Images/tubi_logo_icon_249346.png" : "";
                     }
 

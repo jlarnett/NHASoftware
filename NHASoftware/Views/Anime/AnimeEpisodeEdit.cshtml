@@ -1,0 +1,57 @@
+﻿@model NHA.Website.Software.Entities.Anime.AnimeEpisode
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>Modify Episode</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ModifyEpisode">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="EpisodeNumber" class="control-label"></label>
+                <input asp-for="EpisodeNumber" class="form-control" />
+                <span asp-validation-for="EpisodeNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EpisodeName" class="control-label"></label>
+                <input asp-for="EpisodeName" class="form-control" />
+                <span asp-validation-for="EpisodeName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EpisodeSummary" class="control-label"></label>
+                <input asp-for="EpisodeSummary" class="form-control" />
+                <span asp-validation-for="EpisodeSummary" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EpisodeContainsFiller" class="control-label"></label>
+                <select asp-for="EpisodeContainsFiller" class="form-control">
+                    <option value="">~None Selected~</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+                <span asp-validation-for="EpisodeContainsFiller" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Html.HiddenFor(c => c.AnimePageId)
+                @Html.HiddenFor(c => c.Id)
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    @if (!string.IsNullOrWhiteSpace(ViewData["Reffer"]!.ToString()))
+    {
+        <a href="@ViewData["reffer"]">Return to Anime</a>
+    }
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
