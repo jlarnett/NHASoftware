@@ -10,7 +10,7 @@ public class AnimeEpisode
     public int EpisodeNumber { get; set; }
 
     [DisplayName("Title")]
-    [MaxLength(100)]
+    [MaxLength(500)]
     public string EpisodeName { get; set; } = string.Empty;
 
     [DisplayName("Summary")]
