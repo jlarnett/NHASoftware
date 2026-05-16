@@ -12,6 +12,7 @@ namespace NHA.Website.Software.Services.Anime
         {
             HashSet<string> knownAnimeList = [];
             var currentAnime = await unitOfWork.AnimePageRepository.GetAllAsync();
+            var currentAnimeEpisodes = (await unitOfWork.AnimeEpisodeRepository.GetAllAsync()).ToList();
 
             foreach (var anime in currentAnime)
             {
@@ -122,6 +123,11 @@ namespace NHA.Website.Software.Services.Anime
                                 {
                                     foreach (var episode in episodeResponse.data)
                                     {
+                                        //If we already have a matching anime episode break
+                                        if (currentAnimeEpisodes.Any(x => x.AnimePageId.Equals(animePage.Id) && x.EpisodeName.Equals(episode.Title) &&
+                                                                            x.EpisodeNumber.Equals(episode.mal_id)))
+                                            continue;
+
                                         await unitOfWork.AnimeEpisodeRepository.AddAsync(new AnimeEpisode()
                                         {
                                             AnimePageId = animePage.Id,
