@@ -25,6 +25,27 @@ body {
     text-overflow: ellipsis;
 }
 
+.expandable-ellipsis {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.expandable-ellipsis:hover,
+.expandable-ellipsis:focus-visible {
+    opacity: 0.85;
+}
+
+.expandable-ellipsis:focus-visible {
+    outline: 2px solid rgba(13, 110, 253, 0.45);
+    outline-offset: 4px;
+}
+
+.expandable-ellipsis.expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+}
+
 .container {
     margin-left: 20px;
     margin-top: 40px;
@@ -93,6 +114,12 @@ body {
 
 #LeftMenu, .right-sidebar {
     min-height: auto;
+}
+
+#SponsorListUI,
+#FriendListUI {
+    overflow-x: hidden !important;
+    overflow-y: auto;
 }
 /***********************************************************************************
 ****************SCROLLBAR STYLING***************************************************************/
@@ -215,46 +242,55 @@ body[data-bs-theme="dark"] .interactable-small:hover {
 /* Icon animations for headers */
 .featured-header::before {
     content: "✦"; /* spark/star symbol */
+    position: relative;
+    z-index: 1;
     margin-right: 0.6rem;
     font-size: 1.5rem;
     color: #ff3333; /* bright red */
     text-shadow: 0 0 5px #ff3333, 0 0 10px #ff0000, 0 0 20px #ff4444;
-    animation: iconGlow 2s ease-in-out infinite alternate;
+    animation: iconGlow 2.8s ease-in-out infinite;
 }
 
 .friends-header::before {
     content: "★"; /* star symbol */
+    position: relative;
+    z-index: 1;
     margin-right: 0.5rem;
     font-size: 1.4rem;
     color: #ff4444;
     text-shadow: 0 0 5px #ff4444, 0 0 10px #ff2222, 0 0 15px #ff5555;
-    animation: iconGlow 2.5s ease-in-out infinite alternate;
+    animation: iconGlow 3.2s ease-in-out infinite;
 }
 
 /* Icon glowing animation */
 @keyframes iconGlow {
     0% {
-        transform: scale(1);
-        text-shadow: 0 0 5px rgba(255, 50, 50, 0.5), 0 0 10px rgba(255, 0, 0, 0.3), 0 0 15px rgba(255, 100, 100, 0.2);
+        transform: translateY(0) scale(1) rotate(0deg);
+        text-shadow: 0 0 5px rgba(255, 50, 50, 0.45), 0 0 10px rgba(255, 0, 0, 0.25), 0 0 15px rgba(255, 100, 100, 0.18);
     }
 
     50% {
-        transform: scale(1.2);
-        text-shadow: 0 0 10px rgba(255, 50, 50, 0.8), 0 0 20px rgba(255, 0, 0, 0.5), 0 0 30px rgba(255, 100, 100, 0.4);
+        transform: translateY(-1px) scale(1.16) rotate(-4deg);
+        text-shadow: 0 0 10px rgba(255, 50, 50, 0.75), 0 0 20px rgba(255, 0, 0, 0.45), 0 0 28px rgba(255, 100, 100, 0.35);
     }
 
     100% {
-        transform: scale(1);
-        text-shadow: 0 0 5px rgba(255, 50, 50, 0.5), 0 0 10px rgba(255, 0, 0, 0.3), 0 0 15px rgba(255, 100, 100, 0.2);
+        transform: translateY(0) scale(1) rotate(0deg);
+        text-shadow: 0 0 5px rgba(255, 50, 50, 0.45), 0 0 10px rgba(255, 0, 0, 0.25), 0 0 15px rgba(255, 100, 100, 0.18);
     }
 }
 
 /* Featured Header – dark red / black gradient */
 .featured-header {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    isolation: isolate;
     margin: 1.25rem auto;
+    width: 92%;
+    min-width: min(100%, 15rem);
+    max-width: calc(100% - 1rem);
     padding: 0.8rem 1.6rem;
     font-size: 1.7rem;
     font-weight: 700;
@@ -263,23 +299,44 @@ body[data-bs-theme="dark"] .interactable-small:hover {
     letter-spacing: 1px;
     background: linear-gradient(270deg, #330000, #660000, #990000, #330000);
     background-size: 600% 600%;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 120, 120, 0.18);
     border-radius: 0.8rem;
     box-shadow: 0 6px 20px rgba(255, 0, 0, 0.5), 0 0 25px rgba(150, 0, 0, 0.3);
-    animation: gradientShift 15s ease infinite;
+    overflow: hidden;
+    animation: gradientShift 12s ease-in-out infinite;
 }
+
+    .featured-header::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.18) 45%, transparent 70%);
+        transform: translateX(-140%);
+        animation: headerSheen 6.5s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 0;
+    }
 
     .featured-header span {
         position: relative;
         z-index: 1;
-        animation: fadeIn 1s ease, glowPulseDark 2.5s ease-in-out infinite alternate;
+        white-space: nowrap;
+        text-align: center;
+        animation: fadeIn 0.8s ease-out, glowPulseDark 3.4s ease-in-out infinite;
     }
 
 /* Friends Header – softer dark red gradient */
 .friends-header {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    isolation: isolate;
     margin: 1.25rem auto;
+    width: 92%;
+    min-width: min(100%, 14rem);
+    max-width: calc(100% - 1rem);
     padding: 0.6rem 1.2rem;
     font-size: 1.5rem;
     font-weight: 600;
@@ -288,15 +345,31 @@ body[data-bs-theme="dark"] .interactable-small:hover {
     letter-spacing: 0.8px;
     background: linear-gradient(270deg, #220000, #440000, #660000, #220000);
     background-size: 600% 600%;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 120, 120, 0.14);
     border-radius: 0.6rem;
     box-shadow: 0 4px 16px rgba(150, 0, 0, 0.3), 0 0 20px rgba(200, 0, 0, 0.2);
-    animation: gradientShift 20s ease infinite;
+    overflow: hidden;
+    animation: gradientShift 15s ease-in-out infinite;
 }
+
+    .friends-header::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(115deg, transparent 22%, rgba(255, 255, 255, 0.14) 46%, transparent 72%);
+        transform: translateX(-140%);
+        animation: headerSheen 7.5s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 0;
+    }
 
     .friends-header span {
         position: relative;
         z-index: 1;
-        animation: fadeIn 1s ease, glowPulseDark 2.5s ease-in-out infinite alternate;
+        white-space: nowrap;
+        text-align: center;
+        animation: fadeIn 0.8s ease-out, glowPulseDark 3.8s ease-in-out infinite;
     }
 
 /* Glow animation for dark red theme */
@@ -307,6 +380,52 @@ body[data-bs-theme="dark"] .interactable-small:hover {
 
     50% {
         text-shadow: 0 0 10px rgba(255, 0, 0, 0.5), 0 0 20px rgba(200, 0, 0, 0.3);
+    }
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes headerSheen {
+    0%, 100% {
+        transform: translateX(-140%);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 0;
+    }
+
+    35% {
+        opacity: 1;
+    }
+
+    55% {
+        transform: translateX(140%);
+        opacity: 0;
     }
 }
 

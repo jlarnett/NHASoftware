@@ -16,7 +16,7 @@ namespace NHA.Website.Software.Services.Sponsors
 
         public async Task PickFeaturedAnime()
         {
-            var popularAnime = await _unitOfWork.AnimePageRepository.FindAsync(a => a.AnimeJikanScore >= 3.8 && !a.Featured);
+            var popularAnime = await _unitOfWork.AnimePageRepository.FindAsync(a => a.AnimeJikanScore >= 7 && !a.Featured);
             var currentlyFeaturedAnime = await _unitOfWork.AnimePageRepository.FindAsync(ap => ap.Featured);
 
             foreach (var page in currentlyFeaturedAnime)

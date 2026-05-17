@@ -1,10 +1,13 @@
-﻿@using NHA.Website.Software.Entities.Anime
-@using NHA.Website.Software.FeatureManagement
+﻿@using NHA.Website.Software.FeatureManagement
 @using NHA.Website.Software.Services.RepositoryPatternFoundationals
 @using NHA.Website.Software.Services.Sponsors
 @using NHA.Website.Software.Views.Shared.Sponsers.ViewModel
 @inject IAdMaximizerService AdMaximizerService
 @inject IUnitOfWork UnitOfWork
+
+@{
+    var randomAnime = await UnitOfWork.AnimePageRepository.GetRandomEntityAsync();
+}
 
 @{
     var featuredAnime = (await UnitOfWork.AnimePageRepository.FindAsync(a => a.Featured)).FirstOrDefault();
@@ -16,33 +19,53 @@
         @if (featuredAnime is not null)
         {
             <div class="row">
-                <div class="featured-header">
-                    <span>Featured</span>
+                <div class="mb-3 pb-2 border-bottom border-1 border-light-subtle">
+                    <span class="text-uppercase small fw-bold tracking-wider text-primary">Editor's Choice</span>
                 </div>
             </div>
         
             <div class="row m-auto pt-1 pb-1 text-center">
-                <a asp-action="AnimePageDetails" class="h5 text-body text-decoration-none interactable fw-semibold" asp-controller="Anime" asp-route-id="@featuredAnime.Id">@featuredAnime.AnimeName</a>
                 <div class="">
-                    <a class="row text-center m-auto rounded-2 interactable" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@featuredAnime.Id">
+                    <a class="row text-center m-auto rounded-2 interactable w-100" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@featuredAnime.Id">
                         <img src="@featuredAnime.AnimeImageUrl" class="rounded-3 p-0" title="@featuredAnime.AnimeName" alt="@featuredAnime.AnimeName's cover photo" />
                     </a>
                 </div>
-                <div class="multiline-ellipsis" style="max-width: 350px;">
+                <a asp-action="AnimePageDetails" class="h5 text-body text-decoration-none interactable fw-semibold" asp-controller="Anime" asp-route-id="@featuredAnime.Id">@featuredAnime.AnimeName</a>
+                <div class="multiline-ellipsis expandable-ellipsis interactable-small"
+                     style="max-width: 350px;"
+                     role="button"
+                     tabindex="0"
+                     aria-expanded="false"
+                     title="Click to expand or collapse">
                     @Html.Raw(@featuredAnime.AnimeSummary)
                     @Html.Raw(@featuredAnime.AnimeBackground)
                 </div>
-                
                 @{ await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@featuredAnime.AnimeGenres ?? string.Empty, GenreListType.Anime)); }
                 <div class="row mt-2 me-2"></div>
                 @{ await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@featuredAnime.Platforms ?? string.Empty, GenreListType.StreamingPlatform)); }
+                <div><strong>Score:</strong> @featuredAnime.AnimeJikanScore/10</div>
 
             </div>
         }
+        
+        <a class="btn btn-outline-dark w-100 mb-2"
+           asp-area="" asp-controller="Anime" asp-action="Index" asp-route-pageNumber="1">
+            <i class="bi bi-card-text"></i> Wiki
+        </a>
+
+        <a class="btn btn-outline-dark w-100 mb-2"
+           asp-area="" asp-controller="Anime" asp-action="Roll" asp-route-pageNumber="1">
+            <i class="bi bi-youtube"></i> Feed
+        </a>
+        
+        <a class="btn btn-outline-dark w-100 mb-2"
+           asp-area="" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@randomAnime!.Id">
+            <i class="bi bi-shuffle"></i> Random
+        </a>
 
         <div class="row">
-            <div class="featured-header">
-                <span>Sponsors</span>
+            <div class="mb-3 pb-2 border-bottom border-1 border-light-subtle">
+                <span class="text-uppercase small fw-bold tracking-wider text-primary">Partnerships</span>
             </div>
         </div>
 

@@ -16,6 +16,9 @@
 @inject IUnitOfWork _UnitOfWork
 @inject IAdMaximizerService AdMaximizerService
 
+@{
+    var randomGame = await _UnitOfWork.GamePageRepository.GetRandomEntityAsync();
+}
 
 @{
     var featuredGame = (await _UnitOfWork.GamePageRepository.FindAsync(a => a.Featured)).FirstOrDefault();
@@ -24,8 +27,8 @@
     {
         <div id="FriendListUI" class="col position-fixed overflow-scroll w-inherit" style="height: 100%;">
             <div class="row">
-                <div class="friends-header">
-                    <span>Friends List</span>
+                <div class="mb-3 pb-2 border-bottom border-1 border-light-subtle">
+                    <span class="text-uppercase small fw-bold tracking-wider text-primary">Friends List</span>
                 </div>
             </div>
             @Html.AntiForgeryToken()
@@ -101,7 +104,7 @@
                         }
                     }
                 </details>
-                <details class="row m-auto border-bottom border-primary mb-2 pb-4" open>
+                <details class="row m-auto mb-2 pb-4" open>
                     <summary>Offline (@offlineUsers.Count)</summary>
                     @{
                         foreach (var friend in offlineUsers)
@@ -154,8 +157,8 @@
             @if (featuredGame is not null)
             {
                 <div class="row">
-                    <div class="featured-header">
-                        <span>Featured</span>
+                    <div class="mb-3 pb-2 border-bottom border-1 border-light-subtle">
+                        <span class="text-uppercase small fw-bold tracking-wider text-primary">Editor's Choice</span>
                     </div>
                 </div>
         
@@ -166,15 +169,32 @@
                             <img src="@featuredGame.ImageUrl" title="@featuredGame.Name" class="rounded-3 p-0" alt="@featuredGame.Name's cover photo" />
                         </a>
                     </div>
-                    <div class="multiline-ellipsis" style="max-width: 350px;">
+                    <div class="multiline-ellipsis expandable-ellipsis interactable-small"
+                         style="max-width: 350px;"
+                         role="button"
+                         tabindex="0"
+                         aria-expanded="false"
+                         title="Click to expand or collapse">
                         @Html.Raw(@featuredGame.Summary)
                     </div> 
                     @{ await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@featuredGame.Genres ?? string.Empty, GenreListType.Game)); }
+                    <div><strong>Score:</strong> @featuredGame.GameScore/5</div>
                 </div>
             }
+
+            <a class="btn btn-outline-dark w-100 mb-2"
+               asp-area="" asp-controller="Game" asp-action="Index" asp-route-pageNumber="1">
+                <i class="bi bi-card-text"></i> Wiki
+            </a>
+
+            <a class="btn btn-outline-dark w-100 mb-2"
+               asp-area="" asp-controller="Game" asp-action="GamePage" asp-route-id="@randomGame!.Id">
+                <i class="bi bi-shuffle"></i> Random
+            </a>
+
             <div class="row">
-                <div class="featured-header">
-                    <span>Sponsors</span>
+                <div class="mb-3 pb-2 border-bottom border-1 border-light-subtle">
+                    <span class="text-uppercase small fw-bold tracking-wider text-primary">Partnerships</span>
                 </div>
             </div>
 
@@ -218,12 +238,12 @@
     }
     else
     {
-        <div class="position-fixed m-auto align-content-center align-items-center">
+        <div class="col position-fixed overflow-scroll w-inherit" style="height: 100%;">
             @if (featuredGame is not null)
             {
                 <div class="row">
-                    <div class="featured-header">
-                        <span>Featured</span>
+                    <div class="mb-3 pb-2 border-bottom border-1 border-light-subtle">
+                        <span class="text-uppercase small fw-bold tracking-wider text-primary">Editor's Choice</span>
                     </div>
                 </div>
         
@@ -234,16 +254,32 @@
                             <img src="@featuredGame.ImageUrl" title="@featuredGame.Name" class="rounded-3 p-0" alt="@featuredGame.Name's cover photo" />
                         </a>
                     </div>
-                    <div class="multiline-ellipsis" style="max-width: 350px;">
+                    <div class="multiline-ellipsis expandable-ellipsis interactable-small"
+                         style="max-width: 350px;"
+                         role="button"
+                         tabindex="0"
+                         aria-expanded="false"
+                         title="Click to expand or collapse">
                         @Html.Raw(@featuredGame.Summary)
                     </div>
                     @{ await Html.RenderPartialAsync("Sponsers/_GenreListPartial", new GenreListVm(@featuredGame.Genres ?? string.Empty, GenreListType.Game)); }
+                    <div><strong>Score:</strong> @featuredGame.GameScore/5</div>
                 </div>
             }
             
+            <a class="btn btn-outline-dark w-100 mb-2"
+               asp-area="" asp-controller="Game" asp-action="Index" asp-route-pageNumber="1">
+                <i class="bi bi-card-text"></i> Wiki
+            </a>
+
+            <a class="btn btn-outline-dark w-100 mb-2"
+               asp-area="" asp-controller="Game" asp-action="GamePage" asp-route-id="@randomGame!.Id">
+                <i class="bi bi-shuffle"></i> Random
+            </a>
+            
             <div class="row">
-                <div class="featured-header">
-                    <span>Sponsors</span>
+                <div class="mb-3 pb-2 border-bottom border-1 border-light-subtle">
+                    <span class="text-uppercase small fw-bold tracking-wider text-primary">Partnerships</span>
                 </div>
             </div>
             
