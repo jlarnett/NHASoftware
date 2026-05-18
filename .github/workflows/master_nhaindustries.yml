@@ -86,7 +86,7 @@ jobs:
 
       - name: Install Chrome 136
         run: |
-          choco install googlechrome --version=136.0.7103.114 -y
+          choco install googlechrome --version=136.0.7103.114 --ignore-checksums -y
 
       - name: Verify Chrome Version
         run: |
