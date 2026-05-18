@@ -83,6 +83,14 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '25'
+
+      - name: Install Chrome 136
+        run: |
+          choco install googlechrome --version=136.0.7103.114 -y
+
+      - name: Verify Chrome Version
+        run: |
+          chrome --version
         
       - name: Setup Maven
         run: choco install maven -y
