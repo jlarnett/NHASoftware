@@ -84,9 +84,10 @@ jobs:
           distribution: 'temurin'
           java-version: '25'
 
-      - name: Install Chrome 136
+      - name: Install Edge 136
+        shell: powershell
         run: |
-          choco install googlechrome --version=136.0.7103.114 --ignore-checksums -y
+          choco install microsoft-edge --version=136.0.3240.92 --ignore-checksums -y
 
       - name: Setup Maven
         run: choco install maven -y
