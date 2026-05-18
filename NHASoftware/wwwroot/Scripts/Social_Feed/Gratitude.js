@@ -12,8 +12,7 @@
         if (userSessionActive === "False") {
             console.log("User Login required to like social media posts & comments");
             let validationMessageElement = $("span[unique-error-identifier$=" + uuid + "]");
-            validationMessageElement.text("Login required to like social media posts & comments");
-            validationMessageElement.show(100);
+            ShowValidationMessage(validationMessageElement, "Please Login to interact with posts & comments");
             return;
         }
 
@@ -61,8 +60,7 @@
         if (userSessionActive === "False") {
             console.log("User Login required to like social media posts & comments");
             let validationMessageElement = $("span[unique-error-identifier$=" + uuid + "]");
-            validationMessageElement.text("Login required to dislike social media posts & comments");
-            validationMessageElement.show(100);
+            ShowValidationMessage(validationMessageElement, "Please Login to interact with posts & comments");
             return;
         }
 
@@ -128,6 +126,13 @@
             data: JSON.stringify(userLikeObject),
             headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() }
         });
+    }
+
+    function ShowValidationMessage(validationMessageElement, message) {
+        validationMessageElement
+            .stop(true, true)
+            .text(message)
+            .fadeIn(200);
     }
 
     function IncrementLikeCounter(EventBtn) {

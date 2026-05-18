@@ -90,20 +90,23 @@
 
     //Testing Profile Hide Comments
     $("#ContentFeed").on("click", ".hide-comments", function(e) {
-        var EventBtn = $(e.target);
+        e.preventDefault();
+
+        var EventBtn = $(e.currentTarget);
         var postId = EventBtn.attr("post-id");
         var uniquePostId = EventBtn.attr("unique-post-id");
         var commentCount = EventBtn.attr("comment-count");
+        var animationDuration = 250;
 
-        var commentSectionElement = $("div[unique-comment-section$="+ uniquePostId +"]");
+        var commentSectionElement = $("div[unique-comment-section='" + uniquePostId + "']");
 
         if (commentSectionElement.is(":visible")) {
-            commentSectionElement.hide(250);
+            commentSectionElement.stop(true, true).slideUp(animationDuration);
             EventBtn.text("Show Comments (" + commentCount + ")")
         }
         else {
             //Fired whenever user clicks on Show Comment link && comment section is not yet visible
-            commentSectionElement.show(250);
+            commentSectionElement.stop(true, true).hide().slideDown(animationDuration);
             EventBtn.text("Hide Comments (" + commentCount + ")")
 
             if (!Utils.containsObject(uniquePostId, loadedPostsComments)) {

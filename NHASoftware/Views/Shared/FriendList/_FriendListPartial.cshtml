@@ -57,8 +57,14 @@
                     }
                 }
 
-                <details class="row m-auto" open>
-                    <summary>Online (@onlineUsers.Count)</summary>
+                <details class="row m-auto mb-3 rounded-3 border border-success border-opacity-25 bg-dark bg-opacity-25 p-2 shadow-sm" open>
+                    <summary class="d-flex align-items-center justify-content-between px-2 py-1 text-light" style="cursor: pointer; list-style: none;">
+                        <span class="d-flex align-items-center gap-2 fw-semibold">
+                            <span class="rounded-circle bg-success d-inline-block" style="width: 10px; height: 10px;"></span>
+                            <span>Online Friends</span>
+                        </span>
+                        <span class="badge rounded-pill bg-success-subtle text-success-emphasis">@onlineUsers.Count</span>
+                    </summary>
                     @{
                         foreach (var friend in onlineUsers)
                         {
@@ -67,45 +73,64 @@
                             var newMessages = await _UnitOfWork.ChatMessageRepository.GetNewMessageBetweenUsersAsync(friend.Key.Id, _UserManager.GetUserId(User)!);
 
 
-                            <div class="row m-auto rounded-1 p-1 border-top border-bottom border-dark dropdown no-hover">
-                                <button id="friend-dropdown-@friendButtonIdNumber" class="col btn btn-dark border-primary border bg-opacity-50 rounded-pill p-0" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
-                                    <div class="col row bg-transparent m-auto text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
-                                        <div class="col-2 m-auto p-0">
-                                            <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid col-12 rounded-start-pill bg-primary" />
+                            <div class="row m-auto mb-2 rounded-4 border border-success border-opacity-25 bg-black bg-opacity-25 p-1 shadow-sm dropdown no-hover">
+                                <button id="friend-dropdown-@friendButtonIdNumber" class="col btn btn-dark border-0 bg-transparent rounded-4 p-0 overflow-hidden" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
+                                    <div class="d-flex align-items-center flex-nowrap bg-transparent m-auto px-2 py-2 text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
+                                        <div class="flex-shrink-0 position-relative me-2" friend-id="@friend.Key.Id">
+                                            <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid rounded-circle bg-primary border border-2 border-success-subtle" style="width: 46px; height: 46px; object-fit: cover;" />
+                                            <span class="position-absolute bottom-0 end-0 rounded-circle bg-success border border-dark" style="width: 12px; height: 12px;" friend-id="@friend.Key.Id"></span>
                                         </div>
-                                        <div class="col m-auto text-wrap text-truncate" friend-id="@friend.Key.Id">@friend.Key.DisplayName</div>
-                                        <div class="col-auto m-auto bg-success rounded-pill" friend-id="@friend.Key.Id">@friend.Value</div>
+                                        <div class="flex-grow-1 min-w-0 text-start" friend-id="@friend.Key.Id">
+                                            <div class="fw-semibold text-truncate" friend-id="@friend.Key.Id">@friend.Key.DisplayName</div>
+                                            <div class="small text-white-50 text-truncate" friend-id="@friend.Key.Id">Active @friend.Value</div>
+                                        </div>
+                                        <div class="flex-shrink-0 d-flex align-items-center gap-2 ms-2" friend-id="@friend.Key.Id">
+                                            @if (newMessages.Count > 0)
+                                            {
+                                                <span class="badge rounded-pill bg-danger" friend-id="@friend.Key.Id">@newMessages.Count</span>
+                                            }
+                                            <div class="px-2 py-1 bg-success-subtle text-success-emphasis rounded-pill small fw-semibold" friend-id="@friend.Key.Id">Online</div>
+                                        </div>
                                     </div>
                                 </button>
-                                <ul class="dropdown-menu no-hover" aria-labelledby="friend-dropdown-@friendButtonIdNumber" style="z-index: 1002342442;">
+                                <ul class="dropdown-menu dropdown-menu-dark shadow no-hover" aria-labelledby="friend-dropdown-@friendButtonIdNumber" style="z-index: 1002342442;">
                                     <li>
-                                        <button id="OpenChat" class="dropdown-item open-chat" type="button" friend-id="@friend.Key.Id" )>
-                                            <div class="row" friend-id="@friend.Key.Id">
-                                                <div class="col" friend-id="@friend.Key.Id">Chat</div>
+                                        <button id="OpenChat" class="dropdown-item open-chat d-flex align-items-center justify-content-between" type="button" friend-id="@friend.Key.Id">
+                                            <div class="row w-100 align-items-center" friend-id="@friend.Key.Id">
+                                                <div class="col d-flex align-items-center gap-2" friend-id="@friend.Key.Id">
+                                                    <i class="bi bi-chat-dots-fill" friend-id="@friend.Key.Id"></i>
+                                                    <span friend-id="@friend.Key.Id">Chat</span>
+                                                </div>
 
                                                 @if (newMessages.Count > 0)
                                                 {
-                                                    <div id="Friend-chat-notification-counter-@friend.Key.Id" class="bg-danger rounded-circle col-2 m-auto p-1" friend-id="@friend.Key.Id">
-                                                        <div class="text-center m-auto h5 text-white" friend-id="@friend.Key.Id">@newMessages.Count</div>
+                                                    <div id="Friend-chat-notification-counter-@friend.Key.Id" class="bg-danger rounded-circle col-auto m-auto px-2 py-1" friend-id="@friend.Key.Id">
+                                                        <div class="text-center m-auto text-white small fw-bold" friend-id="@friend.Key.Id">@newMessages.Count</div>
                                                     </div>
                                                 }
                                                 else
                                                 {
-                                                    <div id="Friend-chat-notification-counter-@friend.Key.Id" class="bg-danger rounded-circle col-2 m-auto p-1" friend-id="@friend.Key.Id" style="display: none;">
-                                                        <div class="text-center m-auto h5 text-white" friend-id="@friend.Key.Id">@newMessages.Count</div>
+                                                    <div id="Friend-chat-notification-counter-@friend.Key.Id" class="bg-danger rounded-circle col-auto m-auto px-2 py-1" friend-id="@friend.Key.Id" style="display: none;">
+                                                        <div class="text-center m-auto text-white small fw-bold" friend-id="@friend.Key.Id">@newMessages.Count</div>
                                                     </div>
                                                 }
                                             </div>
                                         </button>
                                     </li>
-                                    <li><a class="dropdown-item" type="button" asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@friend.Key.Id">Profile</a></li>
+                                    <li><a class="dropdown-item d-flex align-items-center gap-2" type="button" asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@friend.Key.Id"><i class="bi bi-person-badge"></i><span>Profile</span></a></li>
                                 </ul>
                             </div>
                         }
                     }
                 </details>
-                <details class="row m-auto mb-2 pb-4" open>
-                    <summary>Offline (@offlineUsers.Count)</summary>
+                <details class="row m-auto mb-2 pb-4 rounded-3 border border-light border-opacity-10 bg-dark bg-opacity-25 p-2 shadow-sm" open>
+                    <summary class="d-flex align-items-center justify-content-between px-2 py-1 text-light" style="cursor: pointer; list-style: none;">
+                        <span class="d-flex align-items-center gap-2 fw-semibold">
+                            <span class="rounded-circle bg-secondary d-inline-block" style="width: 10px; height: 10px;"></span>
+                            <span>Offline Friends</span>
+                        </span>
+                        <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis">@offlineUsers.Count</span>
+                    </summary>
                     @{
                         foreach (var friend in offlineUsers)
                         {
@@ -114,39 +139,52 @@
                             var newMessages = await _UnitOfWork.ChatMessageRepository.GetNewMessageBetweenUsersAsync(friend.Key.Id, _UserManager.GetUserId(User)!);
 
 
-                            <div class="row m-auto rounded-1 p-1 border-top border-bottom border-dark dropdown no-hover">
-                                <button id="friend-dropdown-@friendButtonIdNumber" class="col btn btn-dark border-primary border bg-opacity-50 rounded-pill p-0" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
-                                    <div class="col row bg-transparent m-auto text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
-                                        <div class="col-2 m-auto p-0">
-                                            <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid col-12 rounded-start-pill bg-primary" />
+                            <div class="row m-auto mb-2 rounded-4 border border-light border-opacity-10 bg-black bg-opacity-25 p-1 shadow-sm dropdown no-hover">
+                                <button id="friend-dropdown-@friendButtonIdNumber" class="col btn btn-dark border-0 bg-transparent rounded-4 p-0 overflow-hidden" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
+                                    <div class="d-flex align-items-center flex-nowrap bg-transparent m-auto px-2 py-2 text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
+                                        <div class="flex-shrink-0 position-relative me-2" friend-id="@friend.Key.Id">
+                                            <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid rounded-circle bg-primary border border-2 border-secondary-subtle" style="width: 46px; height: 46px; object-fit: cover;" />
+                                            <span class="position-absolute bottom-0 end-0 rounded-circle bg-secondary border border-dark" style="width: 12px; height: 12px;" friend-id="@friend.Key.Id"></span>
                                         </div>
-                                        <div class="col m-auto text-wrap text-truncate" friend-id="@friend.Key.Id">@friend.Key.DisplayName</div>
-                                        <div class="col-auto m-auto bg-primary rounded-pill" friend-id="@friend.Key.Id">@friend.Value</div>
+                                        <div class="flex-grow-1 min-w-0 text-start" friend-id="@friend.Key.Id">
+                                            <div class="fw-semibold text-truncate" friend-id="@friend.Key.Id">@friend.Key.DisplayName</div>
+                                            <div class="small text-white-50 text-truncate" friend-id="@friend.Key.Id">Last seen @friend.Value</div>
+                                        </div>
+                                        <div class="flex-shrink-0 d-flex align-items-center gap-2 ms-2" friend-id="@friend.Key.Id">
+                                            @if (newMessages.Count > 0)
+                                            {
+                                                <span class="badge rounded-pill bg-danger" friend-id="@friend.Key.Id">@newMessages.Count</span>
+                                            }
+                                            <div class="px-2 py-1 bg-secondary-subtle text-secondary-emphasis rounded-pill small fw-semibold" friend-id="@friend.Key.Id">Offline</div>
+                                        </div>
                                     </div>
                                 </button>
-                                <ul class="dropdown-menu no-hover" aria-labelledby="friend-dropdown-@friendButtonIdNumber" style="z-index: 1002342442;">
+                                <ul class="dropdown-menu dropdown-menu-dark shadow no-hover" aria-labelledby="friend-dropdown-@friendButtonIdNumber" style="z-index: 1002342442;">
                                     <li>
-                                        <button id="OpenChat" class="dropdown-item open-chat" type="button" friend-id="@friend.Key.Id")>
-                                            <div class="row" friend-id="@friend.Key.Id">
-                                                <div class="col" friend-id="@friend.Key.Id">Chat</div>
+                                        <button id="OpenChat" class="dropdown-item open-chat d-flex align-items-center justify-content-between" type="button" friend-id="@friend.Key.Id">
+                                            <div class="row w-100 align-items-center" friend-id="@friend.Key.Id">
+                                                <div class="col d-flex align-items-center gap-2" friend-id="@friend.Key.Id">
+                                                    <i class="bi bi-chat-dots-fill" friend-id="@friend.Key.Id"></i>
+                                                    <span friend-id="@friend.Key.Id">Chat</span>
+                                                </div>
                                                 
                                                 @if (newMessages.Count > 0)
                                                 {
-                                                    <div id="Friend-chat-notification-counter-@friend.Key.Id" class="bg-danger rounded-circle col-2 m-auto p-1" friend-id="@friend.Key.Id">
-                                                        <div class="text-center m-auto h5 text-white" friend-id="@friend.Key.Id">@newMessages.Count</div>
+                                                    <div id="Friend-chat-notification-counter-@friend.Key.Id" class="bg-danger rounded-circle col-auto m-auto px-2 py-1" friend-id="@friend.Key.Id">
+                                                        <div class="text-center m-auto text-white small fw-bold" friend-id="@friend.Key.Id">@newMessages.Count</div>
                                                     </div>
                                                 }
                                                 else
                                                 {
-                                                    <div id="Friend-chat-notification-counter-@friend.Key.Id" class="bg-danger rounded-circle col-2 m-auto p-1" friend-id="@friend.Key.Id" style="display: none;">
-                                                        <div class="text-center m-auto h5 text-white" friend-id="@friend.Key.Id">@newMessages.Count</div>
+                                                    <div id="Friend-chat-notification-counter-@friend.Key.Id" class="bg-danger rounded-circle col-auto m-auto px-2 py-1" friend-id="@friend.Key.Id" style="display: none;">
+                                                        <div class="text-center m-auto text-white small fw-bold" friend-id="@friend.Key.Id">@newMessages.Count</div>
                                                     </div>
                                                 }
 
                                             </div>
                                         </button>
                                     </li>
-                                    <li><a class="dropdown-item" type="button" asp-controller="Users"  asp-action="GetProfiles" asp-route-userId="@friend.Key.Id">Profile</a></li>
+                                    <li><a class="dropdown-item d-flex align-items-center gap-2" type="button" asp-controller="Users"  asp-action="GetProfiles" asp-route-userId="@friend.Key.Id"><i class="bi bi-person-badge"></i><span>Profile</span></a></li>
                                 </ul>
                             </div>
                         }

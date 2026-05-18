@@ -126,7 +126,7 @@ public class PostsController : ControllerBase
         if (textOnly.Length < 10)
         {
             return BadRequest(new
-                { success = false, message = "Post summary must be at least 10 characters long" });
+                { success = false, message = "Post must be more than 10 characters long." });
         }
 
         var post = AssignServerSidePostParameters(postdto);
@@ -168,7 +168,7 @@ public class PostsController : ControllerBase
         if (textOnly.Length < 10)
         {
             return BadRequest(new
-                { success = false, message = "Post summary must be at least 10 characters long" });
+                { success = false, message = "Post must be more than 10 characters long." });
         }
 
         var imageFilesIncluded = postdto.ImageFiles != null && postdto.ImageFiles.Count > 0;

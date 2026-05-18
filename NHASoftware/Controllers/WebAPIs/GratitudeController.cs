@@ -53,8 +53,8 @@ public class GratitudeController : ControllerBase
     {
         if (UserLikeExists(userlike))
         {
-            var like = _unitOfWork.UserLikeRepository.Find(ul =>
-                ul.PostId == userlike.PostId && ul.UserId == userlike.UserId && ul.IsDislike == userlike.IsDislike).FirstOrDefault();
+            var like = (await _unitOfWork.UserLikeRepository.FindAsync(ul =>
+                ul.PostId == userlike.PostId && ul.UserId == userlike.UserId && ul.IsDislike == userlike.IsDislike)).FirstOrDefault();
 
             if (like != null)
             {
