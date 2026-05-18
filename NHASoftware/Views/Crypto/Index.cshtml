@@ -1,57 +1,165 @@
 ﻿@{
-    ViewData["title"] = "Crypto Index";
+    ViewData["Title"] = "Crypto";
+
+    var cryptoOptions = new[]
+    {
+        new { Id = "90", Symbol = "BTC", Name = "Bitcoin", Description = "The largest and most recognized crypto asset.", IsDefault = true },
+        new { Id = "80", Symbol = "ETH", Name = "Ethereum", Description = "Smart contracts, DeFi, and a huge app ecosystem.", IsDefault = false },
+        new { Id = "58", Symbol = "XRP", Name = "XRP", Description = "Focused on speed and low-cost cross-border transfers.", IsDefault = false },
+        new { Id = "2710", Symbol = "BNB", Name = "Binance Coin", Description = "A major utility coin used across a large exchange ecosystem.", IsDefault = false },
+        new { Id = "48543", Symbol = "SOL", Name = "Solana", Description = "Known for fast transaction throughput and active builders.", IsDefault = false },
+        new { Id = "257", Symbol = "ADA", Name = "Cardano", Description = "A research-driven network with a steady development approach.", IsDefault = false },
+        new { Id = "2", Symbol = "DOGE", Name = "Dogecoin", Description = "A classic meme coin that still moves fast with the market.", IsDefault = false },
+        new { Id = "1", Symbol = "LTC", Name = "Litecoin", Description = "One of the oldest cryptocurrencies still actively traded.", IsDefault = false },
+        new { Id = "2713", Symbol = "TRX", Name = "TRON", Description = "A long-running chain with a large circulation supply.", IsDefault = false },
+        new { Id = "2751", Symbol = "LINK", Name = "Chainlink", Description = "Popular oracle infrastructure connecting smart contracts to real data.", IsDefault = false }
+    };
 }
-<head>
-    <link rel="stylesheet" href="~/css/Crypto.css">
-</head>
 
-<h2>Crypto Prices</h2>
+<link rel="stylesheet" href="~/css/Crypto.css" asp-append-version="true" />
 
-<div class="container-fluid">
-    <div class="row mb-auto">
-        <div class="col img-cover">
-            <div class="row">
-                <h3 class="text-primary">Bitcoin</h3>
+<div class="crypto-page">
+    <section class="card border-0 crypto-hero shadow-sm mb-4">
+        <div class="card-body p-4 p-xl-5">
+            <div class="row g-4 align-items-center">
+                <div class="col-xl-7">
+                    <span class="badge rounded-pill text-bg-primary crypto-badge mb-3">Live Crypto Dashboard</span>
+                    <h1 class="display-6 fw-bold mb-3">Track live prices with a cleaner, faster experience.</h1>
+                    <p class="lead text-body-secondary mb-4">
+                        This page still uses the same Coinlore API, but now it includes more quick-pick coins,
+                        better visual hierarchy, live status feedback, and a custom Coinlore id option for extra flexibility.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2 crypto-chip-list">
+                        <span class="badge crypto-chip">Same API endpoint</span>
+                        <span class="badge crypto-chip">10 quick picks</span>
+                        <span class="badge crypto-chip">Custom coin id support</span>
+                        <span class="badge crypto-chip">Auto-refresh on selection</span>
+                    </div>
+                </div>
+                <div class="col-xl-5">
+                    <div class="crypto-focus-card">
+                        <p class="text-uppercase small fw-semibold mb-2 text-body-secondary">Current selection</p>
+                        <h2 id="SelectedCryptoName" class="mb-1">Bitcoin</h2>
+                        <p id="SelectedCryptoSymbol" class="text-body-secondary mb-4">BTC · Coinlore id 90</p>
+                        <div class="d-grid gap-2 d-sm-flex">
+                            <button type="button" class="btn btn-primary px-4" id="Submit">Refresh price</button>
+                            <button type="button" class="btn btn-outline-secondary px-4" id="ResetSelection">Reset to Bitcoin</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="row">
-                <img id="BitcoinPicture" src="Images/Bitcoin.png" alt="bitcoin image" class="img-fluid rounded selected" role="button"/>
-            </div>
+
+            <section class="row g-3 mt-1 crypto-stats-row">
+                <div class="col-sm-6 col-xl">
+                    <div class="card border-0 crypto-metric shadow-sm h-100">
+                        <div class="card-body">
+                            <p class="text-uppercase small fw-semibold text-body-secondary mb-2">Coin</p>
+                            <h3 id="CryptoLabel" class="h4 mb-1">Bitcoin</h3>
+                            <p id="CryptoTicker" class="mb-0 text-body-secondary">BTC</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl">
+                    <div class="card border-0 crypto-metric shadow-sm h-100">
+                        <div class="card-body">
+                            <p class="text-uppercase small fw-semibold text-body-secondary mb-2">USD Price</p>
+                            <h3 id="CryptoPrice" class="h4 mb-0">Loading...</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl">
+                    <div class="card border-0 crypto-metric shadow-sm h-100">
+                        <div class="card-body">
+                            <p class="text-uppercase small fw-semibold text-body-secondary mb-2">24h Change</p>
+                            <h3 id="CryptoChange24h" class="h4 mb-0">--</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl">
+                    <div class="card border-0 crypto-metric shadow-sm h-100">
+                        <div class="card-body">
+                            <p class="text-uppercase small fw-semibold text-body-secondary mb-2">Market Cap</p>
+                            <h3 id="CryptoMarketCap" class="h4 mb-0">--</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl">
+                    <div class="card border-0 crypto-metric shadow-sm h-100">
+                        <div class="card-body">
+                            <p class="text-uppercase small fw-semibold text-body-secondary mb-2">Rank</p>
+                            <h3 id="CryptoRank" class="h4 mb-0">--</h3>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
-        <div class="col img-cover">
-            <div class="row">
-                <h3 class="text-primary">Ethereum</h3>
-            </div>
-            <div class="row">
-                <img id="EthereumPicture" src="Images/EthereumPhoto.jpeg" alt="ethereum image" class="img-fluid img-cover rounded" role="button"/>
-            </div>
+    </section>
+
+    <div class="row g-4 mb-4">
+        <div class="col-xxl-8">
+            <section class="card border-0 crypto-surface h-100 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-2 mb-4">
+                        <div>
+                            <h2 class="h4 mb-1">Popular crypto picks</h2>
+                            <p class="text-body-secondary mb-0">Choose a coin card to load the latest market data.</p>
+                        </div>
+                        <span class="badge rounded-pill crypto-chip crypto-pill">Quick picks powered by Coinlore ids</span>
+                    </div>
+
+                    <div class="crypto-grid" id="CryptoOptionGrid">
+                        @foreach (var coin in cryptoOptions)
+                        {
+                            <button type="button"
+                                    class="crypto-option @(coin.IsDefault ? "selected" : string.Empty)"
+                                    data-crypto-id="@coin.Id"
+                                    data-crypto-name="@coin.Name"
+                                    data-crypto-symbol="@coin.Symbol"
+                                    aria-pressed="@(coin.IsDefault ? "true" : "false")">
+                                <span class="crypto-option-symbol">@coin.Symbol</span>
+                                <span class="crypto-option-name">@coin.Name</span>
+                                <span class="crypto-option-description">@coin.Description</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </section>
         </div>
-        <div class="col img-cover">
-            <div class="row">
-                <h3 class="text-primary">Doge Coin</h3>
-            </div>
-            <div class="row">
-                <img id="dogePicture" src="Images/dogecoin.jpg" alt="dogecoin image" class="img-fluid rounded" role="button"/>
-            </div>
-        </div>
-        <div class="col img-cover">
-            <div class="row">
-                <h3 class="text-primary">lite Coin</h3>
-            </div>
-            <div class="row">
-                <img id="litecoinPicture" src="Images/litecoin.png" alt="litecoin image" class="img-fluid rounded" role="button"/>
-            </div>
+
+        <div class="col-xxl-4">
+            <section class="card border-0 crypto-surface h-100 shadow-sm">
+                <div class="card-body p-4 d-flex flex-column gap-4">
+                    <div>
+                        <h2 class="h4 mb-2">Load a custom coin</h2>
+                        <p class="text-body-secondary mb-0">
+                            Want more options? Enter any Coinlore id and this page will fetch it using the same API flow.
+                        </p>
+                    </div>
+
+                    <div>
+                        <label for="CustomCryptoId" class="form-label fw-semibold">Coinlore id</label>
+                        <div class="input-group">
+                            <input type="number" min="1" class="form-control" id="CustomCryptoId" placeholder="Example: 90" />
+                            <button type="button" class="btn btn-outline-primary" id="UseCustomCrypto">Load</button>
+                        </div>
+                    </div>
+
+                    <div class="crypto-helper-list small text-body-secondary">
+                        <div><strong>Try:</strong> 90 BTC, 80 ETH, 58 XRP, 2710 BNB, 48543 SOL</div>
+                        <div>The selected card refreshes automatically when you click a quick-pick.</div>
+                    </div>
+
+                    <div id="CryptoStatus" class="alert alert-secondary mb-0" role="status">
+                        Ready to load live market data.
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
-    <div class="row">
-        <div id="CryptoLabel" class="text-primary">Coin Symbol: </div>
-        <div id="CryptoPrice" class="text-secondary">USD Price: </div>
-    </div>
-    <div class="row mt-2">
-        <input type="button" class="btn btn-dark interactable" id="Submit" value="Get Crypto" data-bs-theme="light" />
-    </div>
+
 </div>
 
 @section Scripts
 {
-    <script src="~/Scripts/Crypto/GetCryptoPrice.js" type="text/javascript"></script>
+    <script src="~/Scripts/Crypto/GetCryptoPrice.js" asp-append-version="true" type="text/javascript"></script>
 }
