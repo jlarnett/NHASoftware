@@ -75,5 +75,10 @@
             if (platform.IsNullOrEmpty()) continue;
             <a asp-action="PlatformIndex" asp-controller="Game" asp-route-platform="@platform" class="link-primary index-letters fs-3 interactable">@platform</a>
         }
+
+        <hr/>
+
+        <h2 class="mt-4">Rankings<em class=" h3 text-primary"></em></h2>
+        <a asp-action="Rankings" asp-controller="Game" asp-route-platform="" class="link-primary index-letters fs-3 interactable">All-Time</a>
     }
 </div>

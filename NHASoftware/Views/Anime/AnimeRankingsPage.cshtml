@@ -1,0 +1,823 @@
+@using System.Globalization
+@using System.Text.RegularExpressions
+@using System.Text.Json
+@using NHA.Website.Software.Entities.Anime
+@using NHA.Website.Software.Services.RepositoryPatternFoundationals
+@inject IUnitOfWork UnitOfWork
+
+@{
+    ViewData["Title"] = "Rankings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var anime = (await UnitOfWork.AnimePageRepository.FindWithoutTrackingAsync(static animePage => true)).ToList();
+    static IEnumerable<string> ParseSegments(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? Enumerable.Empty<string>()
+            : value.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Where(segment => !string.IsNullOrWhiteSpace(segment));
+    }
+
+    static string StripHtml(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
+
+        var cleaned = Regex.Replace(value, "<.*?>", " ");
+        return Regex.Replace(cleaned, @"\s+", " ").Trim();
+    }
+
+    static string Truncate(string value, int maxLength)
+    {
+        if (string.IsNullOrWhiteSpace(value) || value.Length <= maxLength)
+        {
+            return value;
+        }
+
+        return value[..maxLength].TrimEnd() + "…";
+    }
+
+    static int NetVotes(AnimePage animePage) => animePage.UpVotes - animePage.DownVotes;
+
+    static double SafeJikan(AnimePage animePage) => animePage.AnimeJikanScore is > 0 ? animePage.AnimeJikanScore.Value : 0;
+
+    static double HybridScore(AnimePage animePage)
+    {
+        var scoreBoost = SafeJikan(animePage) * 10;
+        var communityBoost = NetVotes(animePage) * 2;
+        var featuredBoost = animePage.Featured ? 12 : 0;
+        var airingBoost = string.Equals(animePage.AnimeStatus, "Currently Airing", StringComparison.OrdinalIgnoreCase) ? 6 : 0;
+
+        return scoreBoost + communityBoost + featuredBoost + airingBoost;
+    }
+
+    string StatusTone(string? status)
+    {
+        if (string.IsNullOrWhiteSpace(status))
+        {
+            return "bg-secondary-subtle text-secondary-emphasis";
+        }
+
+        if (status.Contains("airing", StringComparison.OrdinalIgnoreCase))
+        {
+            return "bg-primary-subtle text-primary-emphasis";
+        }
+
+        if (status.Contains("finished", StringComparison.OrdinalIgnoreCase))
+        {
+            return "bg-success-subtle text-success-emphasis";
+        }
+
+        if (status.Contains("upcoming", StringComparison.OrdinalIgnoreCase) || status.Contains("not yet", StringComparison.OrdinalIgnoreCase))
+        {
+            return "bg-warning-subtle text-warning-emphasis";
+        }
+
+        return "bg-secondary-subtle text-secondary-emphasis";
+    }
+
+    string BuildSearchData(AnimePage animePage)
+    {
+        var searchParts = new[]
+        {
+            animePage.AnimeName,
+            StripHtml(animePage.AnimeSummary),
+            animePage.AnimeGenres,
+            animePage.Platforms,
+            animePage.AnimeStatus
+        };
+
+        return string.Join(" ", searchParts.Where(text => !string.IsNullOrWhiteSpace(text))).ToLowerInvariant();
+    }
+
+    var rankedAnime = anime
+        .OrderByDescending(animePage => HybridScore(animePage))
+        .ThenByDescending(animePage => SafeJikan(animePage))
+        .ThenByDescending(animePage => NetVotes(animePage))
+        .ThenBy(animePage => animePage.AnimeName)
+        .ToList();
+
+    var topThree = rankedAnime.Take(3).ToList();
+
+    var allGenres = anime
+        .SelectMany(animePage => ParseSegments(animePage.AnimeGenres))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(value => value)
+        .ToList();
+
+    var allStatuses = anime
+        .Select(animePage => animePage.AnimeStatus?.Trim())
+        .Where(value => !string.IsNullOrWhiteSpace(value))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(value => value)
+        .ToList();
+
+    var averageJikanScore = anime
+        .Where(animePage => animePage.AnimeJikanScore is > 0)
+        .Select(animePage => animePage.AnimeJikanScore!.Value)
+        .DefaultIfEmpty(0)
+        .Average();
+
+    var featuredCount = anime.Count(animePage => animePage.Featured);
+    var currentlyAiringCount = anime.Count(animePage => string.Equals(animePage.AnimeStatus, "Currently Airing", StringComparison.OrdinalIgnoreCase));
+    var hiddenGemCount = anime.Count(animePage => SafeJikan(animePage) >= 7.5 && NetVotes(animePage) <= 5);
+    const int initialRenderCount = 48;
+    var rankingDetailBaseUrl = Url.Action("AnimePageDetails", "Anime") ?? "/Anime/AnimePageDetails";
+    var rankingClientItems = rankedAnime
+        .Select(animePage =>
+        {
+            var previewText = Truncate(StripHtml(animePage.AnimeSummary), 180);
+            var statusLabel = string.IsNullOrWhiteSpace(animePage.AnimeStatus) ? "Status unknown" : animePage.AnimeStatus!;
+
+            return new
+            {
+                id = animePage.Id,
+                title = animePage.AnimeName,
+                search = BuildSearchData(animePage),
+                status = statusLabel.ToLowerInvariant(),
+                statusLabel,
+                genres = ParseSegments(animePage.AnimeGenres).Take(3).ToArray(),
+                genreTokens = ParseSegments(animePage.AnimeGenres).Select(segment => segment.ToLowerInvariant()).ToArray(),
+                featured = animePage.Featured,
+                imageUrl = animePage.AnimeImageUrl,
+                jikan = SafeJikan(animePage),
+                upvotes = animePage.UpVotes,
+                downvotes = animePage.DownVotes,
+                net = NetVotes(animePage),
+                hybrid = HybridScore(animePage),
+                episodeCount = animePage.EpisodeCount,
+                platformPreview = string.Join(", ", ParseSegments(animePage.Platforms).Take(2)),
+                previewText = string.IsNullOrWhiteSpace(previewText)
+                    ? "No synopsis has been added yet, so let the stats guide the vibe check."
+                    : previewText
+            };
+        })
+        .ToList();
+    var rankingClientJson = JsonSerializer.Serialize(rankingClientItems);
+}
+
+<style>
+    .anime-rankings-page .rankings-hero,
+    .anime-rankings-page .rankings-surface,
+    .anime-rankings-page .podium-card,
+    .anime-rankings-page .ranking-card {
+        border: 1px solid rgba(var(--bs-emphasis-color-rgb), 0.08);
+        background: rgba(var(--bs-tertiary-bg-rgb), 0.82);
+        backdrop-filter: blur(12px);
+    }
+
+    .anime-rankings-page .rankings-hero {
+        background:
+            radial-gradient(circle at top left, rgba(220, 53, 69, 0.22), transparent 35%),
+            radial-gradient(circle at bottom right, rgba(13, 110, 253, 0.16), transparent 35%),
+            rgba(var(--bs-tertiary-bg-rgb), 0.9);
+        border-radius: 1.5rem;
+    }
+
+    .anime-rankings-page .rankings-surface,
+    .anime-rankings-page .podium-card,
+    .anime-rankings-page .ranking-card,
+    .anime-rankings-page .leader-spotlight,
+    .anime-rankings-page .ranking-stat-tile {
+        border-radius: 1.25rem;
+        box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.08);
+    }
+
+    .anime-rankings-page .leader-spotlight,
+    .anime-rankings-page .ranking-stat-tile {
+        background: rgba(var(--bs-body-bg-rgb), 0.56);
+        border: 1px solid rgba(var(--bs-emphasis-color-rgb), 0.08);
+    }
+
+    body[data-bs-theme="dark"] .anime-rankings-page .leader-spotlight,
+    body[data-bs-theme="dark"] .anime-rankings-page .ranking-stat-tile,
+    body[data-bs-theme="dark"] .anime-rankings-page .podium-card,
+    body[data-bs-theme="dark"] .anime-rankings-page .ranking-card {
+        box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.28);
+    }
+
+    .anime-rankings-page .ranking-stat-tile {
+        min-width: 10rem;
+        padding: 1rem 1.1rem;
+    }
+
+    .anime-rankings-page .quick-filter-group .btn.active,
+    .anime-rankings-page .view-toggle-group .btn.active {
+        color: var(--bs-white);
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+    }
+
+    .anime-rankings-page .podium-card,
+    .anime-rankings-page .ranking-card {
+        padding: 1rem;
+        height: 100%;
+    }
+
+    .anime-rankings-page .podium-poster,
+    .anime-rankings-page .ranking-card__media {
+        position: relative;
+        overflow: hidden;
+        border-radius: 1rem;
+        aspect-ratio: 3 / 4;
+        background:
+            linear-gradient(145deg, rgba(220, 53, 69, 0.18), rgba(13, 110, 253, 0.14)),
+            rgba(var(--bs-secondary-bg-rgb), 0.96);
+    }
+
+    .anime-rankings-page .podium-poster img,
+    .anime-rankings-page .ranking-card__media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .anime-rankings-page .podium-poster-placeholder,
+    .anime-rankings-page .ranking-poster-placeholder {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        color: var(--bs-secondary-color);
+    }
+
+    .anime-rankings-page .rank-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 3.25rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: 999px;
+        font-weight: 700;
+        background: linear-gradient(135deg, rgba(220, 53, 69, 0.92), rgba(13, 110, 253, 0.82));
+        color: var(--bs-white);
+        box-shadow: 0 0.75rem 1.5rem rgba(220, 53, 69, 0.22);
+    }
+
+    .anime-rankings-page .podium-card--1 {
+        border-color: rgba(255, 193, 7, 0.45);
+    }
+
+    .anime-rankings-page .podium-card--2 {
+        border-color: rgba(108, 117, 125, 0.38);
+    }
+
+    .anime-rankings-page .podium-card--3 {
+        border-color: rgba(205, 127, 50, 0.4);
+    }
+
+    .anime-rankings-page .ranking-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.38rem 0.72rem;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        background: rgba(var(--bs-primary-rgb), 0.1);
+        border: 1px solid rgba(var(--bs-primary-rgb), 0.18);
+    }
+
+    .anime-rankings-page .rankings-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+
+    .anime-rankings-page .rankings-grid.rankings-grid--compact {
+        grid-template-columns: 1fr;
+    }
+
+    .anime-rankings-page .ranking-card {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .anime-rankings-page .ranking-card__content {
+        display: grid;
+        grid-template-columns: 7.5rem minmax(0, 1fr);
+        gap: 1rem;
+        align-items: start;
+    }
+
+    .anime-rankings-page .ranking-summary {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .anime-rankings-page .form-control,
+    .anime-rankings-page .form-select {
+        border-radius: 0.9rem;
+    }
+
+    .anime-rankings-page .leader-link {
+        width: fit-content;
+    }
+
+    @@media (max-width: 767.98px) {
+        .anime-rankings-page .ranking-card__content {
+            grid-template-columns: 1fr;
+        }
+
+        .anime-rankings-page .ranking-card__media {
+            max-width: 12rem;
+        }
+    }
+</style>
+
+<div class="anime-rankings-page d-flex flex-column gap-4">
+    @if (topThree.Count > 0)
+    {
+        <section>
+            <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+                <div>
+                    <h2 class="h4 fw-bold mb-1">Top three spotlight</h2>
+                    <p class="text-body-secondary mb-0">A quick podium before you start filtering the full leaderboard.</p>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                @for (var i = 0; i < topThree.Count; i++)
+                {
+                    var animePage = topThree[i];
+                    var previewText = Truncate(StripHtml(animePage.AnimeSummary), 140);
+                    var statusLabel = string.IsNullOrWhiteSpace(animePage.AnimeStatus) ? "Status unknown" : animePage.AnimeStatus!;
+                    var podiumGenres = ParseSegments(animePage.AnimeGenres).Take(2).ToList();
+
+                    <div class="col-12 col-md-4">
+                        <article class="podium-card podium-card--@(i + 1) d-flex flex-column gap-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="rank-pill">#@(i + 1)</span>
+                                @if (animePage.Featured)
+                                {
+                                    <span class="badge text-bg-danger rounded-pill">Featured</span>
+                                }
+                            </div>
+
+                            <div class="podium-poster">
+                                @if (!string.IsNullOrWhiteSpace(animePage.AnimeImageUrl))
+                                {
+                                    <img src="@animePage.AnimeImageUrl" alt="@animePage.AnimeName poster" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <div class="podium-poster-placeholder">
+                                        <i class="bi bi-stars fs-1"></i>
+                                        <span>No artwork yet</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <div>
+                                <h3 class="h5 fw-bold mb-1">@animePage.AnimeName</h3>
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge rounded-pill @StatusTone(statusLabel)">@statusLabel</span>
+                                    @if (animePage.AnimeJikanScore is > 0)
+                                    {
+                                        <span class="badge text-bg-warning rounded-pill">Jikan @SafeJikan(animePage).ToString("0.0")</span>
+                                    }
+                                    <span class="badge text-bg-primary rounded-pill">Net @(NetVotes(animePage) >= 0 ? "+" : string.Empty)@NetVotes(animePage)</span>
+                                </div>
+                                <p class="text-body-secondary mb-3">@(string.IsNullOrWhiteSpace(previewText) ? "No synopsis yet, but the stats say this one belongs on your radar." : previewText)</p>
+                                @if (podiumGenres.Count > 0)
+                                {
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        @foreach (var genre in podiumGenres)
+                                        {
+                                            <span class="ranking-chip">@genre</span>
+                                        }
+                                    </div>
+                                }
+                                <a asp-action="AnimePageDetails" asp-controller="Anime" asp-route-id="@animePage.Id" class="btn btn-outline-primary interactable">View details</a>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <section class="card border-0 shadow-sm rankings-surface">
+        <div class="card-body p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+                <div>
+                    <h2 class="h4 fw-bold mb-1">Tune the board</h2>
+                    <p class="text-body-secondary mb-0">Filters stack instantly, and the live leader updates with every change.</p>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 view-toggle-group" role="group" aria-label="Ranking layout toggle">
+                    <button type="button" class="btn btn-outline-primary active js-view-toggle" data-view="grid">Cards</button>
+                    <button type="button" class="btn btn-outline-primary js-view-toggle" data-view="compact">Compact</button>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12 col-lg-4">
+                    <label class="form-label fw-semibold" for="animeRankingSearch">Search</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input id="animeRankingSearch" class="form-control" type="search" placeholder="Search by title, genre, summary, or platform" />
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <label class="form-label fw-semibold" for="rankingGenre">Genre</label>
+                    <select id="rankingGenre" class="form-select">
+                        <option value="">All genres</option>
+                        @foreach (var genre in allGenres)
+                        {
+                            <option value="@genre.ToLowerInvariant()">@genre</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <label class="form-label fw-semibold" for="rankingStatus">Status</label>
+                    <select id="rankingStatus" class="form-select">
+                        <option value="">Any status</option>
+                        @foreach (var status in allStatuses)
+                        {
+                            <option value="@status!.ToLowerInvariant()">@status</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <label class="form-label fw-semibold" for="rankingSort">Sort by</label>
+                    <select id="rankingSort" class="form-select">
+                        <option value="hybrid">Hybrid score</option>
+                        <option value="jikan">Jikan score</option>
+                        <option value="community">Net votes</option>
+                        <option value="upvotes">Upvotes</option>
+                        <option value="alphabetical">Alphabetical</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex flex-wrap align-items-center gap-2 mt-3 quick-filter-group" role="group" aria-label="Quick ranking filters">
+                <button type="button" class="btn btn-outline-primary active js-quick-filter" data-filter="all">All</button>
+                <button type="button" class="btn btn-outline-primary js-quick-filter" data-filter="featured">Featured</button>
+                <button type="button" class="btn btn-outline-primary js-quick-filter" data-filter="airing">Currently Airing</button>
+                <button type="button" class="btn btn-outline-primary js-quick-filter" data-filter="hidden-gems">Hidden Gems <span class="badge text-bg-secondary ms-1">@hiddenGemCount</span></button>
+                <button type="button" id="rankingResetButton" class="btn btn-outline-secondary ms-lg-auto">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                </button>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-4">
+                <div id="rankingResultsText" class="small text-body-secondary">Showing @Math.Min(initialRenderCount, rankedAnime.Count) of @rankedAnime.Count anime.</div>
+                <div class="small text-body-secondary">Featured, airing, and hidden-gem shortcuts can be combined with your search. The board renders top matches first to stay fast.</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+            <div>
+                <h2 class="h4 fw-bold mb-1">Live leaderboard</h2>
+                <p class="text-body-secondary mb-0">The ranks below update instantly when you search, filter, or change the scoring mode.</p>
+            </div>
+        </div>
+
+        <div id="rankingGrid" class="rankings-grid" data-initial-render-count="@initialRenderCount"></div>
+
+        <div id="rankingLoadMoreContainer" class="d-flex justify-content-center mt-3 d-none">
+            <button type="button" id="rankingLoadMoreButton" class="btn btn-outline-primary">Load more results</button>
+        </div>
+
+        <noscript>
+            <div class="alert alert-secondary mt-3 mb-0">Enable JavaScript to browse the live leaderboard.</div>
+        </noscript>
+
+        <script id="rankingData" type="application/json">@Html.Raw(rankingClientJson)</script>
+        <script id="rankingDetailBaseUrl" type="application/json">@Html.Raw(JsonSerializer.Serialize(rankingDetailBaseUrl))</script>
+
+        <div id="rankingEmptyState" class="card border-0 shadow-sm rankings-surface d-none mt-3">
+            <div class="card-body p-4 text-center">
+                <i class="bi bi-emoji-frown fs-1 d-block mb-3 text-body-secondary"></i>
+                <h3 class="h5 fw-bold">No anime matched those filters.</h3>
+                <p class="text-body-secondary mb-0">Try clearing the search or switching the quick filter to bring more shows back into the arena.</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.getElementById('rankingGrid');
+            const rankingDataElement = document.getElementById('rankingData');
+            const rankingDetailBaseUrlElement = document.getElementById('rankingDetailBaseUrl');
+            if (!container) {
+                return;
+            }
+
+            const rankingData = rankingDataElement ? JSON.parse(rankingDataElement.textContent || '[]') : [];
+            const detailBaseUrl = rankingDetailBaseUrlElement ? JSON.parse(rankingDetailBaseUrlElement.textContent || '"/Anime/AnimePageDetails"') : '/Anime/AnimePageDetails';
+            const searchInput = document.getElementById('animeRankingSearch');
+            const genreSelect = document.getElementById('rankingGenre');
+            const statusSelect = document.getElementById('rankingStatus');
+            const sortSelect = document.getElementById('rankingSort');
+            const resetButton = document.getElementById('rankingResetButton');
+            const resultsText = document.getElementById('rankingResultsText');
+            const emptyState = document.getElementById('rankingEmptyState');
+            const leaderName = document.getElementById('currentLeaderName');
+            const leaderMeta = document.getElementById('currentLeaderMeta');
+            const loadMoreContainer = document.getElementById('rankingLoadMoreContainer');
+            const loadMoreButton = document.getElementById('rankingLoadMoreButton');
+            const quickFilters = Array.from(document.querySelectorAll('.js-quick-filter'));
+            const viewToggles = Array.from(document.querySelectorAll('.js-view-toggle'));
+            const totalCount = rankingData.length;
+            const initialRenderCount = Number.parseInt(container.dataset.initialRenderCount || '48', 10);
+            const renderBatchSize = initialRenderCount;
+            const collator = new Intl.Collator(undefined, { sensitivity: 'base', numeric: true });
+
+            let activeQuickFilter = 'all';
+            let renderLimit = initialRenderCount;
+            let searchDebounceHandle;
+
+            const numericValue = (item, key) => Number.parseFloat(item[key] || '0');
+            const textValue = (item, key) => (item[key] || '').toLowerCase();
+
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function statusToneClass(status) {
+                const normalizedStatus = (status || '').toLowerCase();
+
+                if (!normalizedStatus) {
+                    return 'bg-secondary-subtle text-secondary-emphasis';
+                }
+
+                if (normalizedStatus.includes('airing')) {
+                    return 'bg-primary-subtle text-primary-emphasis';
+                }
+
+                if (normalizedStatus.includes('finished')) {
+                    return 'bg-success-subtle text-success-emphasis';
+                }
+
+                if (normalizedStatus.includes('upcoming') || normalizedStatus.includes('not yet')) {
+                    return 'bg-warning-subtle text-warning-emphasis';
+                }
+
+                return 'bg-secondary-subtle text-secondary-emphasis';
+            }
+
+            function buildDetailUrl(id) {
+                const separator = detailBaseUrl.includes('?') ? '&' : '?';
+                return `${detailBaseUrl}${separator}id=${encodeURIComponent(id)}`;
+            }
+
+            function renderCard(item, index) {
+                const safeTitle = escapeHtml(item.title);
+                const safeStatusLabel = escapeHtml(item.statusLabel || 'Status unknown');
+                const safePreview = escapeHtml(item.previewText);
+                const safePlatformPreview = escapeHtml(item.platformPreview || '');
+                const netPrefix = item.net >= 0 ? '+' : '';
+                const posterMarkup = item.imageUrl
+                    ? `<img src="${escapeHtml(item.imageUrl)}" alt="${safeTitle} poster" loading="lazy" decoding="async" />`
+                    : `<div class="ranking-poster-placeholder"><i class="bi bi-camera-reels fs-1"></i><span>No artwork</span></div>`;
+                const jikanMarkup = item.jikan > 0
+                    ? `<span class="badge text-bg-warning rounded-pill">Jikan ${item.jikan.toFixed(1)}</span>`
+                    : '';
+                const featuredMarkup = item.featured
+                    ? '<span class="badge text-bg-danger rounded-pill">Featured</span>'
+                    : '';
+                const genreMarkup = Array.isArray(item.genres) && item.genres.length
+                    ? `<div class="d-flex flex-wrap gap-2 mb-3">${item.genres.map(genre => `<span class="ranking-chip">${escapeHtml(genre)}</span>`).join('')}</div>`
+                    : '';
+                const platformMarkup = safePlatformPreview
+                    ? `<span><i class="bi bi-play-btn-fill me-1"></i>${safePlatformPreview}</span>`
+                    : '';
+
+                return `
+                    <article class="ranking-card interactable-small">
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                            <span class="rank-pill">#<span class="js-rank-number">${index + 1}</span></span>
+                            <div class="d-flex flex-wrap gap-2 justify-content-end">
+                                <span class="badge rounded-pill ${statusToneClass(item.status)}">${safeStatusLabel}</span>
+                                ${featuredMarkup}
+                            </div>
+                        </div>
+
+                        <div class="ranking-card__content">
+                            <div class="ranking-card__media">
+                                ${posterMarkup}
+                            </div>
+
+                            <div class="d-flex flex-column h-100">
+                                <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+                                    <div>
+                                        <h3 class="h5 fw-bold mb-1">${safeTitle}</h3>
+                                        <div class="small text-body-secondary">${item.episodeCount} episode${item.episodeCount === 1 ? '' : 's'}</div>
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-2 justify-content-end">
+                                        ${jikanMarkup}
+                                        <span class="badge text-bg-primary rounded-pill">Net ${netPrefix}${item.net}</span>
+                                    </div>
+                                </div>
+
+                                <p class="ranking-summary text-body-secondary mb-3">${safePreview}</p>
+
+                                ${genreMarkup}
+
+                                <div class="mt-auto d-flex flex-wrap justify-content-between align-items-center gap-2 pt-3 border-top border-secondary border-opacity-10">
+                                    <div class="d-flex flex-wrap gap-3 small text-body-secondary">
+                                        <span><i class="bi bi-hand-thumbs-up-fill text-success me-1"></i>${item.upvotes}</span>
+                                        <span><i class="bi bi-hand-thumbs-down-fill text-danger me-1"></i>${item.downvotes}</span>
+                                        ${platformMarkup}
+                                    </div>
+                                    <a href="${buildDetailUrl(item.id)}" class="btn btn-sm btn-outline-primary interactable">Open page</a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>`;
+            }
+
+            function syncActiveButtons(buttons, activeValue, attributeName) {
+                buttons.forEach(button => {
+                    button.classList.toggle('active', button.dataset[attributeName] === activeValue);
+                });
+            }
+
+            function matchesQuickFilter(item) {
+                switch (activeQuickFilter) {
+                    case 'featured':
+                        return Boolean(item.featured);
+                    case 'airing':
+                        return textValue(item, 'status').includes('airing');
+                    case 'hidden-gems':
+                        return numericValue(item, 'jikan') >= 7.5 && numericValue(item, 'net') <= 5;
+                    default:
+                        return true;
+                }
+            }
+
+            function matchesFilters(item) {
+                const searchTerm = (searchInput.value || '').trim().toLowerCase();
+                const selectedGenre = (genreSelect.value || '').toLowerCase();
+                const selectedStatus = (statusSelect.value || '').toLowerCase();
+                const searchableText = textValue(item, 'search');
+                const genres = Array.isArray(item.genreTokens) ? item.genreTokens : [];
+                const status = textValue(item, 'status');
+
+                if (searchTerm && !searchableText.includes(searchTerm)) {
+                    return false;
+                }
+
+                if (selectedGenre && !genres.includes(selectedGenre)) {
+                    return false;
+                }
+
+                if (selectedStatus && status !== selectedStatus) {
+                    return false;
+                }
+
+                return matchesQuickFilter(item);
+            }
+
+            function compareItems(left, right) {
+                switch (sortSelect.value) {
+                    case 'jikan':
+                        return numericValue(right, 'jikan') - numericValue(left, 'jikan') || collator.compare(left.title || '', right.title || '');
+                    case 'community':
+                        return numericValue(right, 'net') - numericValue(left, 'net') || collator.compare(left.title || '', right.title || '');
+                    case 'upvotes':
+                        return numericValue(right, 'upvotes') - numericValue(left, 'upvotes') || collator.compare(left.title || '', right.title || '');
+                    case 'alphabetical':
+                        return collator.compare(left.title || '', right.title || '');
+                    default:
+                        return numericValue(right, 'hybrid') - numericValue(left, 'hybrid') || collator.compare(left.title || '', right.title || '');
+                }
+            }
+
+            function updateLeader(visibleItems) {
+                if (!leaderName || !leaderMeta) {
+                    return;
+                }
+
+                if (!visibleItems.length) {
+                    leaderName.textContent = 'No anime found';
+                    leaderMeta.textContent = 'Adjust the filters to bring the leaderboard back.';
+                    return;
+                }
+
+                const leaderItem = visibleItems[0];
+                const leaderScore = numericValue(leaderItem, 'jikan').toFixed(1);
+                const leaderNet = numericValue(leaderItem, 'net');
+                const statusLabel = leaderItem.statusLabel || 'Status unknown';
+                const netPrefix = leaderNet >= 0 ? '+' : '';
+
+                leaderName.textContent = leaderItem.title || 'Anime spotlight';
+                leaderMeta.textContent = `Net ${netPrefix}${leaderNet} • Jikan ${leaderScore} • ${statusLabel}`;
+            }
+
+            function render() {
+                const visibleItems = rankingData.filter(matchesFilters).sort(compareItems);
+                const renderedItems = visibleItems.slice(0, renderLimit);
+
+                container.innerHTML = renderedItems.map((item, index) => renderCard(item, index)).join('');
+
+                if (resultsText) {
+                    if (visibleItems.length) {
+                        const prefix = visibleItems.length > renderedItems.length
+                            ? `Showing ${renderedItems.length} of ${visibleItems.length} matching anime`
+                            : `Showing ${visibleItems.length} of ${visibleItems.length} matching anime`;
+                        resultsText.textContent = `${prefix} (${totalCount} total).`;
+                    } else {
+                        resultsText.textContent = 'No anime matched the current filters.';
+                    }
+                }
+
+                if (emptyState) {
+                    emptyState.classList.toggle('d-none', visibleItems.length !== 0);
+                }
+
+                if (loadMoreContainer && loadMoreButton) {
+                    const hasMoreResults = visibleItems.length > renderedItems.length;
+                    loadMoreContainer.classList.toggle('d-none', !hasMoreResults);
+                    loadMoreButton.textContent = hasMoreResults
+                        ? `Load more results (${visibleItems.length - renderedItems.length} remaining)`
+                        : 'Load more results';
+                }
+
+                updateLeader(visibleItems);
+            }
+
+            quickFilters.forEach(button => {
+                button.addEventListener('click', function () {
+                    activeQuickFilter = button.dataset.filter || 'all';
+                    renderLimit = initialRenderCount;
+                    syncActiveButtons(quickFilters, activeQuickFilter, 'filter');
+                    render();
+                });
+            });
+
+            viewToggles.forEach(button => {
+                button.addEventListener('click', function () {
+                    const nextView = button.dataset.view || 'grid';
+                    container.classList.toggle('rankings-grid--compact', nextView === 'compact');
+                    syncActiveButtons(viewToggles, nextView, 'view');
+                });
+            });
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    window.clearTimeout(searchDebounceHandle);
+                    searchDebounceHandle = window.setTimeout(function () {
+                        renderLimit = initialRenderCount;
+                        render();
+                    }, 120);
+                });
+            }
+
+            [genreSelect, statusSelect, sortSelect].forEach(element => {
+                if (!element) {
+                    return;
+                }
+
+                element.addEventListener('change', function () {
+                    renderLimit = initialRenderCount;
+                    render();
+                });
+            });
+
+            if (loadMoreButton) {
+                loadMoreButton.addEventListener('click', function () {
+                    renderLimit += renderBatchSize;
+                    render();
+                });
+            }
+
+            if (resetButton) {
+                resetButton.addEventListener('click', function () {
+                    searchInput.value = '';
+                    genreSelect.value = '';
+                    statusSelect.value = '';
+                    sortSelect.value = 'hybrid';
+                    activeQuickFilter = 'all';
+                    renderLimit = initialRenderCount;
+                    container.classList.remove('rankings-grid--compact');
+                    syncActiveButtons(quickFilters, activeQuickFilter, 'filter');
+                    syncActiveButtons(viewToggles, 'grid', 'view');
+                    render();
+                });
+            }
+
+            syncActiveButtons(quickFilters, activeQuickFilter, 'filter');
+            syncActiveButtons(viewToggles, 'grid', 'view');
+            render();
+        });
+    </script>
+}

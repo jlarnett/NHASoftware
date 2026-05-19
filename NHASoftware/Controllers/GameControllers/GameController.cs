@@ -43,6 +43,11 @@ public class GameController : Controller
         });
     }
 
+    public IActionResult Rankings()
+    {
+        return View("GameRankingsPage");
+    }
+
     public async Task<IActionResult> LetterDetail(int id)
     {
         var letter = AlphabetDecipher.ConvertNumberToAlphabetLetter(id);

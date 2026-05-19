@@ -55,6 +55,11 @@ public class AnimeController : Controller
         });
     }
 
+    public IActionResult Rankings()
+    {
+        return View("AnimeRankingsPage");
+    }
+
     public async Task<IActionResult> Roll(int pageNumber)
     {
         const int pageSize = 50;
