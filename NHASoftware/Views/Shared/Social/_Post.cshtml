@@ -18,7 +18,14 @@
     string uuid = Model.UUID.Value.ToString();
 }
 
-<div class="container-fluid border border-1 shadow border-dark ridge rounded-2 mt-2 post-container" post-id="@Model.Id" images-attached="@Model.HasImagesAttached.ToString()" images-loaded="false" post-uuid="@uuid.ToString()" post-container-id="@Model.Id">
+@{
+    var shareUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.PathBase}{Context.Request.Path}#post-{Model.Id}";
+    var shareText = $"Check out this post from {Model.User!.DisplayName} on Anime Social";
+    var encodedShareUrl = Uri.EscapeDataString(shareUrl);
+    var encodedShareText = Uri.EscapeDataString(shareText);
+}
+
+<div id="post-@Model.Id" class="container-fluid border border-1 shadow border-dark ridge rounded-2 mt-2 post-container" post-id="@Model.Id" images-attached="@Model.HasImagesAttached.ToString()" images-loaded="false" post-uuid="@uuid.ToString()" post-container-id="@Model.Id">
     <div class="row align-items-center mt-2">
         <!--User Profile image & display name-->
         <div class="col-auto px-2">
@@ -49,12 +56,48 @@
             </a>
         </div>
 
-        <div class="col-auto p-0 me-1">
-            <a class="btn btn-sm border-0 bg-transparent text-muted fs-5 interactable hide-post-link py-2">
-                <i class="bi bi-share" post-id="@Model.Id" title="Share"
-                   is-comment="@isCommentBool.ToString()"
-                   uuid="@Model.UUID"></i>
-            </a>
+        <div class="col-auto p-0 me-1 dropdown">
+            <button class="btn btn-sm border-0 bg-transparent text-muted fs-5 interactable py-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Share">
+                <i class="bi bi-share"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow">
+                <li>
+                    <button class="dropdown-item native-share-link" type="button" data-share-title="@shareText" data-share-url="@shareUrl">
+                        Share...
+                    </button>
+                </li>
+                <li>
+                    <button class="dropdown-item copy-share-link" type="button" data-share-url="@shareUrl">
+                        Copy link
+                    </button>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item" href="https://twitter.com/intent/tweet?url=@encodedShareUrl&text=@encodedShareText" target="_blank" rel="noopener noreferrer">
+                        Share to X
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="https://www.facebook.com/sharer/sharer.php?u=@encodedShareUrl" target="_blank" rel="noopener noreferrer">
+                        Share to Facebook
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="https://www.linkedin.com/sharing/share-offsite/?url=@encodedShareUrl" target="_blank" rel="noopener noreferrer">
+                        Share to LinkedIn
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="https://www.reddit.com/submit?url=@encodedShareUrl&title=@encodedShareText" target="_blank" rel="noopener noreferrer">
+                        Share to Reddit
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="mailto:?subject=@encodedShareText&body=@encodedShareUrl">
+                        Share by Email
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
     @*     <div class="row">

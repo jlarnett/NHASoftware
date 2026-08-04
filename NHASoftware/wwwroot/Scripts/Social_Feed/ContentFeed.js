@@ -59,6 +59,58 @@
         });
     });
 
+    $('#ContentFeed').on('click', '.copy-share-link', async function (e) {
+        e.preventDefault();
+
+        var shareUrl = $(e.currentTarget).data('share-url');
+
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(shareUrl);
+            }
+            else {
+                var temporaryInput = $('<input>');
+                $('body').append(temporaryInput);
+                temporaryInput.val(shareUrl).trigger('select');
+                document.execCommand('copy');
+                temporaryInput.remove();
+            }
+
+            SystemNotification.createNotification("Share link copied");
+        }
+        catch (error) {
+            console.warn("Failed to copy share link.", error);
+            SystemNotification.createNotification("Unable to copy share link");
+        }
+    });
+
+    $('#ContentFeed').on('click', '.native-share-link', async function (e) {
+        e.preventDefault();
+
+        var shareButton = $(e.currentTarget);
+        var shareTitle = shareButton.data('share-title');
+        var shareUrl = shareButton.data('share-url');
+
+        if (!navigator.share) {
+            SystemNotification.createNotification("Sharing is not supported on this device");
+            return;
+        }
+
+        try {
+            await navigator.share({
+                title: shareTitle,
+                text: shareTitle,
+                url: shareUrl
+            });
+        }
+        catch (error) {
+            if (error && error.name !== 'AbortError') {
+                console.warn("Native share failed.", error);
+                SystemNotification.createNotification("Unable to open share options");
+            }
+        }
+    });
+
     $('#ContentFeed').on('click', '.unhide-post-link', function (e) {
 
         var EventBtn = $(e.target);
