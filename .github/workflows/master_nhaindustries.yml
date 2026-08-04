@@ -62,7 +62,11 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # 2. Deploy to your Azure Web App
+      # 2. Ensure the Azure Web App is running before deploying
+      - name: Start Azure Web App
+        run: az webapp start --name NHAIndustries --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
+
+      # 3. Deploy to your Azure Web App
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
