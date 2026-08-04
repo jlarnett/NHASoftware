@@ -192,6 +192,7 @@ logger!.LogTrace($"Web App starting environment is production - {app.Environment
 logger!.LogTrace($"Web App starting environment is development - {app.Environment.IsDevelopment().ToString()}");
 logger!.LogTrace($"Web App builder starting environment is production - {builder.Environment.IsProduction().ToString()}");
 logger!.LogTrace($"Web App builder environment is development - {builder.Environment.IsDevelopment().ToString()}");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -239,7 +240,7 @@ using (var scope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope(
 app.UseHangfireDashboard("/hangfire", new DashboardOptions()
 {
     //Passes the authorization to app. 
-    Authorization = new []{new MyAuthorizationFilter()}
+    Authorization = [new MyAuthorizationFilter()]
 });
 
 app.MapControllerRoute(

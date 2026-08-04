@@ -300,7 +300,7 @@
             ],
             disableResizeEditor: true,
             placeholder: 'Type Post Summary Here.......',
-            height: 200,
+            height: 120,
 
             hint: {
                 match: /\B@(\w*)$/,

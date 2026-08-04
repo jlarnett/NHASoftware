@@ -1,6 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using Microsoft.FeatureManagement.Mvc.TagHelpers
 @using NHA.Website.Software.Entities.Identity
 @using NHA.Website.Software.FeatureManagement
 @using NHA.Website.Software.Services.Social.PostBuilderService
@@ -22,104 +20,61 @@
 
 @if (_SignInManager.IsSignedIn(User))
 {
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col"></div>
-            @Html.AntiForgeryToken()
-            <div class="col col-12 col-sm-9 col-lg-9">
-                <div class="row text-center">
-                    <div class="col">
-                        <img src="~/Images/icons8-brain-32.png"/>
-                    </div>
-                    <h1 class="h3 text-primary">Speak Your Mind</h1>
-                </div>
-                <div class="row border m-auto" style="min-width: 100%; width: 0;">
-                    <form id="BasicPostForm" method="post" enctype="multipart/form-data">
-                        <div id="MainPostTextboxContainer" class="p-0">
-                            @* <textarea id="MainPostTextbox" name="Summary"></textarea> *@
-                            <input asp-for="Summary" id="MainPostTextbox"/>
-                        </div>
-                    </form>
-                </div>
-                <div class="row py-1 g-2">
-                    <!-- Basic Upload Button -->
-                    <div class="col">
-                        <button id="SubmitBtn"
-                                user="@_UserManager.GetUserId(User)"
-                                type="button"
-                                class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 fs-5 interactable">
-                            <span class="btn-text">Upload</span>
-                            <div id="BasicPostLoadingSpinner"
-                                 class="spinner-border spinner-border-sm text-light d-none"
-                                 role="status"
-                                 aria-hidden="true"></div>
-                        </button>
-                    </div>
-
-                    <!-- Upload With Photos Button -->
-                    <feature name="@FeatureFlags.CustomizedPostsEnabled">
-                        <div class="col">
-                            <button id="AddPhotos"
-                                    user="@_UserManager.GetUserId(User)"
-                                    type="button"
-                                    class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2 fs-5 interactable"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#AddPostPhotosModal">
-                                <span>Upload With Photos</span>
-                            </button>
-                        </div>
-                    </feature>
-                </div>
-                <div class="row p-0">
-                    <span id="MainPostTextboxValidationMessage" class="text-primary" style="display: none;">Error Submitting Post.....</span>
-                </div>
-            </div>
-            <div class="col"></div>
-
-        </div>
-
-        <!--AddAsync Post Photos Modal-->
-        <feature name="@FeatureFlags.CustomizedPostsEnabled">
-            <div class="modal fade" id="AddPostPhotosModal" tabindex="-1" role="dialog" aria-labelledby="AddPostPhotosModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content border border-primary border-2 shadow">
-                        <div class="modal-header border-bottom justify-content-between">
-                            <h5 class="modal-title text-primary" id="AddPostPhotosModalLabel">Personalize Post</h5>
-                            <button type="button" class="close interactable" data-bs-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            @model NHA.Website.Software.ConsumableEntities.DTOs.PostDTO
-                            <form id="CustomPostForm" method="post" enctype="multipart/form-data">
-                                <div class="row mb-2">
-                                    <div id="CustomPostTextboxContainer" class="p-0">
-                                        <textarea id="CustomPostTextbox" name="Summary"></textarea>
-                                    </div>
-                                </div>
-                                <div class="row mb-2">
-                                    <input type="file" id="CustomPostImageFileInput" class="p-0 interactable" multiple="multiple" role="button" name="ImageFiles" />
-                                </div>
-                                <div class="row mb-2">
-                                    <button id="SubmitCustomPostBtn" class="btn btn-dark rounded-2 interactable" value="Create" type="Submit">Upload Custom Post</button>
-                                </div>
-                                <div class="row p-0">
-                                    <span id="CustomPostValidationMessage" style="display: none;" class="text-primary">Error Submitting Post.....</span>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </feature>
-    </div>
 }
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col"></div>
         <div class="HomeContainer col-12 col-sm-9 col-lg-9">
-            <div id="HomeContentFeed" class="" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
+            @if (_SignInManager.IsSignedIn(User))
+            {
+                @Html.AntiForgeryToken()
+                <div class="home-post-composer" style="opacity: 0.9;">
+                    <div class="row border home-post-form-row">
+                        <div class="col-12 px-0">
+                            <form id="BasicPostForm" method="post" enctype="multipart/form-data" class="w-100">
+                                <div id="MainPostTextboxContainer" class="w-100 p-0">
+                                    @* <textarea id="MainPostTextbox" name="Summary"></textarea> *@
+                                    <input asp-for="Summary" id="MainPostTextbox"/>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row py-1 g-2 mx-0">
+                        <div class="col px-0">
+                            <button id="SubmitBtn"
+                                    user="@_UserManager.GetUserId(User)"
+                                    type="button"
+                                    class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 fs-5 interactable">
+                                <span class="btn-text">Upload</span>
+                                <div id="BasicPostLoadingSpinner"
+                                     class="spinner-border spinner-border-sm text-light d-none"
+                                     role="status"
+                                     aria-hidden="true"></div>
+                            </button>
+                        </div>
+
+                        <feature name="@FeatureFlags.CustomizedPostsEnabled">
+                            <div class="col px-0">
+                                <button id="AddPhotos"
+                                        user="@_UserManager.GetUserId(User)"
+                                        type="button"
+                                        class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2 fs-5 interactable"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#AddPostPhotosModal">
+                                    <span>Upload With Photos</span>
+                                </button>
+                            </div>
+                        </feature>
+                    </div>
+                    <div class="row mx-0">
+                        <div class="col-12 px-0">
+                            <span id="MainPostTextboxValidationMessage" class="text-primary" style="display: none;">Error Submitting Post.....</span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div id="HomeContentFeed" class="w-100" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
                 <div id="ContentFeed" class="">
                     @{
                         var posts = await _PostBuilder.RetrieveParentPosts(_UserManager.GetUserId(User) ?? "");
@@ -128,10 +83,52 @@
                 </div>
             </div>
         </div>
-        <div class="col"></div>
     </div>
 
 </div>
+
+@if (_SignInManager.IsSignedIn(User))
+{
+    <feature name="@FeatureFlags.CustomizedPostsEnabled">
+        <div class="modal fade" id="AddPostPhotosModal" tabindex="-1" role="dialog" aria-labelledby="AddPostPhotosModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content border border-primary border-2 shadow">
+                    <div class="modal-header border-bottom justify-content-between">
+                        <h5 class="modal-title text-primary" id="AddPostPhotosModalLabel">Personalize Post</h5>
+                        <button type="button" class="close interactable" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @model NHA.Website.Software.ConsumableEntities.DTOs.PostDTO
+                        <form id="CustomPostForm" method="post" enctype="multipart/form-data">
+                            <div class="row mb-2">
+                                <div class="col-12 px-0" id="CustomPostTextboxContainer">
+                                    <textarea id="CustomPostTextbox" name="Summary"></textarea>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-12 px-0">
+                                    <input type="file" id="CustomPostImageFileInput" class="p-0 interactable" multiple="multiple" role="button" name="ImageFiles" />
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-12 px-0 text-start">
+                                    <button id="SubmitCustomPostBtn" class="btn btn-dark rounded-2 interactable w-auto d-inline-flex align-items-center justify-content-center" value="Create" type="Submit">Upload Custom Post</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 px-0">
+                                    <span id="CustomPostValidationMessage" style="display: none;" class="text-primary">Error Submitting Post.....</span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </feature>
+}
 
 
 
@@ -146,6 +143,30 @@
     <script src="~/Scripts/Social_Feed/ContentFeedImageLoader.js"></script>
     <script src="~/Scripts/Social_Feed/ContentFeedLoader.js"></script>
     <script>
+        (() => {
+            const composer = document.querySelector('.home-post-composer');
+            const container = document.querySelector('.HomeContainer');
+
+            if (!composer || !container) {
+                return;
+            }
+
+            const syncComposerPosition = () => {
+                if (window.innerWidth < 768) {
+                    composer.style.removeProperty('left');
+                    composer.style.removeProperty('width');
+                    return;
+                }
+
+                const containerRect = container.getBoundingClientRect();
+                composer.style.left = `${containerRect.left}px`;
+                composer.style.width = `${containerRect.width}px`;
+            };
+
+            window.addEventListener('resize', syncComposerPosition);
+            syncComposerPosition();
+        })();
+
         ImageLoader.ShouldPostLoadImagesFromDB();
     </script>
 }

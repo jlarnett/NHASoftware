@@ -70,15 +70,36 @@ function LoadFriendListTable(friends) {
     var friendListTableJquery = $("#FriendListTable");
 
     var friendListTable = $("#FriendListTable").DataTable({
+        autoWidth: false,
+        responsive: true,
+        lengthChange: false,
+        pageLength: 10,
+        language: {
+            search: "",
+            searchPlaceholder: "Search friends...",
+            emptyTable: "No friends found."
+        },
+        columnDefs: [
+            {
+                targets: 1,
+                orderable: false,
+                searchable: false,
+                width: "1%"
+            }
+        ],
         "columns": [
             {
                 data : null,
                 render: function (data, type, row, meta) {
-                    return "<div class='border-primary rounded-2 border p-2'> " +
-                                "<div class='col text-center'> " +
-                                    "<a class='h5 link-black text-decoration-none' href='/Users/GetProfiles?userId=" + row.id + "'>" + row.displayName + "</a>" +
+                    var profilePicturePath = row.profilePicturePath ? row.profilePicturePath : "DefaultProfilePicture.png";
+
+                    return "<div class='connection-cell-card'>" +
+                                "<img class='connection-user-avatar' src='/ProfilePictures/" + profilePicturePath + "' alt='" + row.displayName + " profile picture' />" +
+                                "<div class='connection-user-meta'>" +
+                                    "<a class='connection-user-link' href='/Users/GetProfiles?userId=" + row.id + "'>" + row.displayName + "</a>" +
+                                    "<span class='connection-user-caption'>View profile</span>" +
                                 "</div>" +
-                            "</div>"
+                            "</div>";
                 }
             },
             {
@@ -86,14 +107,12 @@ function LoadFriendListTable(friends) {
                 render: function (data, type, row, meta) {
 
                     if (IsCurrentUserAdmin() === "True" || friendListTableJquery.attr("profile-user-id") === RetrieveCurrentUserId()) {
-                        return "<div class='border-primary rounded-2 border p-2'> " +
-                            "<div class='border-end border-primary'> " +
-                            "<a class='h5 link-primary remove-friend' role='button' data-bs-toggle='modal' friend-user-displayname='" + row.displayName + "' friend-user-id='" + row.id + "' data-bs-target='#DeleteFriendModal'>Delete</a>"
-                        "</div>" +
-                            "</div>"
+                        return "<div class='connection-action-card'>" +
+                                    "<a class='btn btn-outline-danger btn-sm connection-action-link remove-friend' role='button' data-bs-toggle='modal' friend-user-displayname='" + row.displayName + "' friend-user-id='" + row.id + "' data-bs-target='#DeleteFriendModal'>Remove</a>" +
+                                "</div>";
                     }
                     else {
-                        return ""
+                        return "<div class='connection-action-card connection-action-card-empty'><span class='connection-user-caption'>No actions</span></div>";
                     }
                 }
             }

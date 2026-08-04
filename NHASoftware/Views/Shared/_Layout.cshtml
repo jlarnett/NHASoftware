@@ -117,16 +117,16 @@
 <!-- Main body Content / Contains current user's id for common.js use -->
 <div class="container-fluid bg-body" id="MainPageContentContainer" userId="@UserManager.GetUserId(User)" user-session-active="@SignInManager.IsSignedIn(User).ToString()" admin-user="@userIsAdmin.ToString()">
     <div class="row">
-        <div id="LeftMenu" class="col-2 mt-11 d-none d-md-block border-end border-primary bg-transparent p-1">
+        <div id="LeftMenu" class="col-3 mt-11 d-none d-md-block border-end border-primary bg-transparent p-1">
                 @{ await Html.RenderPartialAsync("Sponsers/_SponsorListPartial"); }
         </div>
-        <main role="main" class="col p-4 pt-2 mt-11">
+        <main role="main" class="col pt-2 mt-11">
             @RenderBody()
             <button id="backToTop" title="Go to top" class="btn btn-outline-primary">
                 <i class="bi bi-arrow-up"></i>
             </button>
         </main>
-            <div class="col-2 mt-11 d-none d-md-block bg-transparent p-1" style="min-height: 75.5em;">
+            <div class="col-3 mt-11 d-none d-md-block bg-transparent p-1" style="min-height: 75.5em;">
             @{ await Html.RenderPartialAsync("FriendList/_FriendListPartial");}
         </div>
     </div>

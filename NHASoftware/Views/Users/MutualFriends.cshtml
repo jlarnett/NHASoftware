@@ -2,26 +2,40 @@
 @{
     ViewData["Title"] = "Mutual Friends";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var mutualFriendCount = Model.MutualFriendsList?.Count() ?? 0;
 }
 <head>
+    <link rel="stylesheet" href="~/css/FriendPages.css">
     <script src="~/Scripts/FriendSystem/MutualFriendList.js"></script>
 </head>
 
 
-<div class="container-fluid border border-primary mt-2">
-    <div class="row">
-        <div class="col text-center mb-2">
-            <h1 class="h1">Mutual Friends</h1>
+<div class="container-fluid connections-page">
+    <div class="connections-card">
+        <div class="row align-items-center g-3 connections-header">
+            <div class="col-lg">
+                <span class="connections-eyebrow">Shared Network</span>
+                <h1 class="h1 connections-title">Mutual Friends</h1>
+                <p class="connections-subtitle">People you and @Model.User.DisplayName both know.</p>
+            </div>
+            <div class="col-lg-auto">
+                <div class="connections-stat-pill">
+                    <span class="connections-stat-value">@mutualFriendCount</span>
+                    <span class="connections-stat-label">Mutual</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive connections-table-wrapper">
+            <table id="FriendListTable" class="table align-middle mb-0 connection-table" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Mutual Friend</th>
+                    </tr>
+                </thead>
+            </table>
         </div>
     </div>
-
-    <table id="FriendListTable" class="table" style="width:100%">
-        <thead>
-            <tr>
-                <th>Mutual Friend</th>
-            </tr>
-        </thead>
-    </table>
 </div>
 <div>
 </div>

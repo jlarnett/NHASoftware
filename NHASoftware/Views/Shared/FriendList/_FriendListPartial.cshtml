@@ -80,8 +80,8 @@
 
 
                             <div class="m-auto mb-2 w-100 rounded-4 border border-success border-opacity-25 bg-black bg-opacity-25 p-1 shadow-sm dropdown no-hover">
-                                <button id="friend-dropdown-@friendButtonIdNumber" class="col btn btn-dark border-0 bg-transparent rounded-4 p-0 overflow-hidden" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
-                                    <div class="d-flex align-items-center flex-nowrap bg-transparent m-auto px-2 py-2 text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
+                                <button id="friend-dropdown-@friendButtonIdNumber" class="btn btn-dark border-0 bg-transparent rounded-4 p-0 overflow-hidden friend-list-trigger" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
+                                    <div class="d-flex align-items-center flex-nowrap bg-transparent m-auto px-2 py-2 text-decoration-none fl-click friend-list-trigger-content" friend-id="@friend.Key.Id" role="button">
                                         <div class="flex-shrink-0 position-relative me-2" friend-id="@friend.Key.Id">
                                             <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid rounded-circle bg-primary border border-2 border-success-subtle" style="width: 46px; height: 46px; object-fit: cover;" />
                                             <span class="position-absolute bottom-0 end-0 rounded-circle bg-success border border-dark" style="width: 12px; height: 12px;" friend-id="@friend.Key.Id"></span>
@@ -90,7 +90,7 @@
                                             <div class="fw-semibold text-truncate" friend-id="@friend.Key.Id">@friend.Key.DisplayName</div>
                                             <div class="small text-white-50 text-truncate" friend-id="@friend.Key.Id">Active @friend.Value</div>
                                         </div>
-                                        <div class="flex-shrink-0 d-flex align-items-center gap-2 ms-2" friend-id="@friend.Key.Id">
+                                        <div class="flex-shrink-0 d-flex align-items-center gap-2 ms-2 friend-list-trigger-status" friend-id="@friend.Key.Id">
                                             @if (newMessages.Count > 0)
                                             {
                                                 <span class="badge rounded-pill bg-danger" friend-id="@friend.Key.Id">@newMessages.Count</span>
@@ -146,8 +146,8 @@
 
 
                             <div class="m-auto mb-2 w-100 rounded-4 border border-light border-opacity-10 bg-black bg-opacity-25 p-1 shadow-sm dropdown no-hover">
-                                <button id="friend-dropdown-@friendButtonIdNumber" class="col btn btn-dark border-0 bg-transparent rounded-4 p-0 overflow-hidden" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
-                                    <div class="d-flex align-items-center flex-nowrap bg-transparent m-auto px-2 py-2 text-decoration-none fl-click" friend-id="@friend.Key.Id" role="button">
+                                <button id="friend-dropdown-@friendButtonIdNumber" class="btn btn-dark border-0 bg-transparent rounded-4 p-0 overflow-hidden friend-list-trigger" data-bs-toggle="dropdown" aria-expanded="false" friend-id="@friend.Key.Id ">
+                                    <div class="d-flex align-items-center flex-nowrap bg-transparent m-auto px-2 py-2 text-decoration-none fl-click friend-list-trigger-content" friend-id="@friend.Key.Id" role="button">
                                         <div class="flex-shrink-0 position-relative me-2" friend-id="@friend.Key.Id">
                                             <img src="~/ProfilePictures/@friend.Key.ProfilePicturePath" friend-id="@friend.Key.Id" class="img-fluid rounded-circle bg-primary border border-2 border-secondary-subtle" style="width: 46px; height: 46px; object-fit: cover;" />
                                             <span class="position-absolute bottom-0 end-0 rounded-circle bg-secondary border border-dark" style="width: 12px; height: 12px;" friend-id="@friend.Key.Id"></span>
@@ -156,7 +156,7 @@
                                             <div class="fw-semibold text-truncate" friend-id="@friend.Key.Id">@friend.Key.DisplayName</div>
                                             <div class="small text-white-50 text-truncate" friend-id="@friend.Key.Id">Last seen @friend.Value</div>
                                         </div>
-                                        <div class="flex-shrink-0 d-flex align-items-center gap-2 ms-2" friend-id="@friend.Key.Id">
+                                        <div class="flex-shrink-0 d-flex align-items-center gap-2 ms-2 friend-list-trigger-status" friend-id="@friend.Key.Id">
                                             @if (newMessages.Count > 0)
                                             {
                                                 <span class="badge rounded-pill bg-danger" friend-id="@friend.Key.Id">@newMessages.Count</span>

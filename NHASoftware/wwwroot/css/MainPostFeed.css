@@ -10,11 +10,13 @@
 /*Home Page Content Feed. Main Feed where posts are directly appended*/
 #HomeContentFeed {
     margin: auto;
+    width: 100%;
     /*width: 75%;*/
 /*    height: 45em;
     position: static;*/
     /*padding: 0em 15em 0em 15em;*/
     overflow-y: auto;
+    padding-bottom: 8rem;
 }
 
 .postEditorPadding {
@@ -23,9 +25,36 @@
 
 /*Home Page Outer Content Feed. This is where the #HomeContentFeed lives*/
 .HomeContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
+}
+
+.home-post-composer {
+    width: 100%;
+    background-color: var(--bs-body-bg);
+    z-index: 1020;
+    padding-bottom: .75rem;
+}
+
+.home-post-form-row {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#BasicPostForm,
+#MainPostTextboxContainer,
+#MainPostTextboxContainer .note-editor,
+#MainPostTextboxContainer .note-editor.note-frame,
+#MainPostTextboxContainer .note-editor .note-editing-area {
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .home-post-composer {
+        position: fixed;
+        bottom: 0;
+        right: auto;
+    }
 }
 
 .carousel-inner {

@@ -260,6 +260,8 @@ public class FriendSystem : IFriendSystem
             }
         }
 
+        //Safety Remove All
+        friends.RemoveAll(f => f.Id.Equals(userId));
         return friends;
     }
 

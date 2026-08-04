@@ -30,21 +30,21 @@
     }
 }
 
-<div class="container-fluid shadow">
-    <div class="row border-primary ridge border-start border-2 border-end border-top border-bottom rounded-top-2">
-        <div class="border-end border-primary rounded-2 border-2 col-4 p-2">
-            <img class="img-fluid rounded-2" src="~/ProfilePictures/@Model.User.ProfilePicturePath" alt="@Model.User.DisplayName's Profile Picture'"/>
+<div class="container-fluid shadow profile-page">
+    <div class="row g-0 border-primary ridge border-start border-2 border-end border-top border-bottom rounded-top-2 profile-summary-card">
+        <div class="border-end border-primary rounded-2 border-2 col-lg-4 p-3 profile-image-panel">
+            <img class="img-fluid rounded-2 profile-hero-image" src="~/ProfilePictures/@Model.User.ProfilePicturePath" alt="@Model.User.DisplayName's Profile Picture'"/>
         </div>
-        <div class="col text-center">
+        <div class="col-lg profile-stats-panel text-center">
 
-            <a class="link-primary h5" role="button" href="/Users/FriendsView?userId=@Model.User.Id">@friendCount Friends</a>
+            <a class="link-primary h5 profile-stat-link" role="button" href="/Users/FriendsView?userId=@Model.User.Id">@friendCount Friends</a>
             
             @if (User.Identity!.IsAuthenticated && !userManager.GetUserId(User)!.Equals(Model.User.Id))
             {
 
-                <div class="border-top border-dark mb-2">
-                    <a class="link-dark h5" role="button" href="/Users/MutualFriendsView?userIdOne=@Model.User.Id&userIdTwo=@activeUserId">@mutualFriendCount Mutual Friends</a>
-                    <div class="flex-wrap">
+                <div class="border-top border-dark mb-2 profile-mutual-section">
+                    <a class="link-dark h5 profile-stat-link profile-mutual-link" role="button" href="/Users/MutualFriendsView?userIdOne=@Model.User.Id&userIdTwo=@activeUserId">@mutualFriendCount Mutual Friends</a>
+                    <div class="d-flex flex-column flex-wrap profile-mutual-list">
                         @{
                             var mutualFriendCounter = 0;
                             const int mutualFriendMax = 3;
@@ -53,12 +53,10 @@
                             {
                                 if (mutualFriendCounter < mutualFriendMax)
                                 {
-                                    <div class="d-flex border-bottom border-dark p-2">
-                                        <div class="text-center">
-                                           <div class="col-2 m-auto">
-                                                <img class="img-fluid" src="~/ProfilePictures/@user.ProfilePicturePath" href="" alt="@user.DisplayName's Profile Picture'"/>
-                                            </div>
-                                            <a class="link-primary h3" href="/Users/GetProfiles?userId=@user.Id" role="button">@user.DisplayName</a>
+                                    <div class="d-flex border-bottom border-dark p-2 mutual-friend-item">
+                                        <div class="d-flex align-items-center gap-3 text-start w-100">
+                                            <img class="img-fluid mutual-friend-avatar" src="~/ProfilePictures/@user.ProfilePicturePath" href="" alt="@user.DisplayName's Profile Picture'"/>
+                                            <a class="link-primary h6 m-0 mutual-friend-name" href="/Users/GetProfiles?userId=@user.Id" role="button">@user.DisplayName</a>
                                         </div>
                                     </div>
                                     mutualFriendCounter++;
@@ -74,12 +72,12 @@
             }
 
         </div>
-        <div class="col border-start border-primary border-2 rounded-2">
-            <h1 class="text-center text-primary h4">Biography</h1>
+        <div class="col-lg border-start border-primary border-2 rounded-2 profile-bio-panel">
+            <h1 class="text-center text-primary h4 profile-section-title">Biography</h1>
 
             <div class="container-fluid">
                 <div class="row mb-1">
-                    <textarea class="form-control" style="min-height: 200px; max-height: 350px;" type="text" id="UserBiographyInput" userId="@Model.User.Id" name="UserBiographyInput" disabled="true" placeholder="User Biography" value="@Model.User.Biography">@Model.User.Biography</textarea>
+                    <textarea class="form-control profile-biography-input" style="min-height: 200px; max-height: 350px;" type="text" id="UserBiographyInput" userId="@Model.User.Id" name="UserBiographyInput" disabled="true" placeholder="User Biography" value="@Model.User.Biography">@Model.User.Biography</textarea>
                 </div>
                 <div class="row">
                     <div class="col"></div>
@@ -87,7 +85,7 @@
                     
                     @if (activeUserId.Equals(Model.User.Id) || AccessWarden.IsAdmin(User))
                     {
-                        <button class="btn-dark text-light rounded-2 m-auto col" id="ModifyBiography">
+                        <button class="btn-dark text-light rounded-2 m-auto col profile-biography-button" id="ModifyBiography">
                             Modify
                         </button>
                     }
@@ -95,8 +93,8 @@
             </div>
         </div>
     </div>
-    <div class="row border-start border-2 rounded-bottom-2 border-end border-bottom border-primary">
-        <div class="p-2 col-4 align-self-center ">
+    <div class="row g-0 border-start border-2 rounded-bottom-2 border-end border-bottom border-primary profile-footer-card">
+        <div class="p-2 col-lg-4 align-self-center profile-name-panel">
             <h2 class="text-center h3 text-break m-auto fw-bold">@Model.User.DisplayName</h2>
         </div>
         
@@ -105,10 +103,10 @@
             string friendRequestSent = (await friendSystem.IsFriendRequestSentAsync(@userManager.GetUserId(User)!, @Model.User.Id)).ToString();
         }
 
-        <div class="col-md-4 p-4 align-self-center" id="FriendRequestButton" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)" isFriends="@isFriends" friendRequestSent="@friendRequestSent">
+        <div class="col-md-4 p-4 align-self-center profile-friend-action" id="FriendRequestButton" recipientId="@Model.User.Id" senderId="@userManager.GetUserId(User)" isFriends="@isFriends" friendRequestSent="@friendRequestSent">
             @Html.AntiForgeryToken()
 
-            <a class="btn btn-outline-primary dropdown-toggle my-auto" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="btn btn-outline-primary dropdown-toggle my-auto profile-friend-dropdown" href="#" role="button" id="FriendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <img id="FriendRequestIcon" src="~/Images/CheckMarkIcon.png" alt="FriendCheckMarkIcon" class=" col img-fluid"/>
                 <div id="FriendDropdownText" class="d-inline-block">TEST VALUE</div>
             </a>
@@ -118,12 +116,12 @@
     </div>
 </div>
 
-<div id="SocialWall" class="container-fluid ">
+<div id="SocialWall" class="container-fluid profile-wall-section">
     <div class="row">
-        <p class="text-center h4 mt-3 fw-semibold">@Model.User.DisplayName's Wall</p>
+        <p class="text-center h4 mt-3 fw-semibold display-6 text-secondary">@Model.User.DisplayName's Wall</p>
     </div>
     
-    <div id="ContentFeed" class="row" profile-user-id="@Model.User.Id">
+    <div id="ContentFeed" class="profile-wall-feed" profile-user-id="@Model.User.Id">
     </div>
 </div>
 

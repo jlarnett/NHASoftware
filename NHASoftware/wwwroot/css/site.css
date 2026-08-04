@@ -125,6 +125,25 @@ body {
     overflow-x: hidden !important;
     overflow-y: auto;
 }
+
+.friend-list-trigger {
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+
+@media (max-width: 576px) {
+    .friend-list-trigger-content {
+        flex-wrap: wrap !important;
+        align-items: flex-start !important;
+    }
+
+    .friend-list-trigger-status {
+        margin-left: 0 !important;
+        margin-top: .5rem;
+        padding-left: 54px;
+    }
+}
 /***********************************************************************************
 ****************SCROLLBAR STYLING***************************************************************/
 
