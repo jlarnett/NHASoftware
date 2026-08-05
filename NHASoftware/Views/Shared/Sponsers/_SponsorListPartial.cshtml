@@ -31,7 +31,7 @@
                     </a>
                 </div>
                 <a asp-action="AnimePageDetails" class="h5 text-body text-decoration-none interactable fw-semibold" asp-controller="Anime" asp-route-id="@featuredAnime.Id">@featuredAnime.AnimeName</a>
-                <div class="multiline-ellipsis expandable-ellipsis interactable-small"
+                <div class="multiline-ellipsis expandable-ellipsis interactable-small mx-auto"
                      style="max-width: 350px;"
                      role="button"
                      tabindex="0"
@@ -83,13 +83,13 @@
                 @foreach (var anime in topTen)
                 {
                     <li class="list-group-item bg-body-secondary rounded-3 px-3 py-2 border border-secondary-subtle shadow-sm position-relative interactable-small">
-                        <div class="d-flex justify-content-between align-items-start gap-2">
-                            <div class="d-flex align-items-start gap-2 me-2">
+                        <div class="d-flex justify-content-between align-items-start gap-2 flex-nowrap">
+                            <div class="d-flex align-items-start gap-2 me-2 flex-grow-1" style="min-width: 0;">
                                 <img src="@anime.AnimeImageUrl"
                                      class="rounded-2 flex-shrink-0"
                                      style="width: 42px; height: 56px; object-fit: cover;"
                                      alt="@anime.AnimeName's cover photo" />
-                                <div>
+                                <div style="min-width: 0;">
                                     <a class="text-body text-decoration-none fw-semibold stretched-link"
                                        asp-controller="Anime"
                                        asp-action="AnimePageDetails"
@@ -98,7 +98,7 @@
                                     </a>
                                 </div>
                             </div>
-                            <span class="badge text-bg-primary rounded-pill position-relative">@anime.AnimeJikanScore/10</span>
+                            <span class="badge text-bg-primary rounded-pill position-relative flex-shrink-0 ms-1">@anime.AnimeJikanScore/10</span>
                         </div>
                     </li>
                 }
