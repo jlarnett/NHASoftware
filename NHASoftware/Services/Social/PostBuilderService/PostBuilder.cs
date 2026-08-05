@@ -44,7 +44,8 @@ public class PostBuilder : IPostBuilder
     public async Task<List<PostDTO>> RetrieveParentPosts(string currentUserId)
     {
         var shouldReloadCache = _cacheLoadingManager.ShouldCacheReload(CachingKeys.Posts);
-        var cacheKey = $"{CachingKeys.PopulatedPostDTOs}_{currentUserId}";
+        var sessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
+        var cacheKey = $"{CachingKeys.PopulatedPostDTOs}_{currentUserId}_{sessionId}";
 
         if (!_memoryCache.TryGetValue(cacheKey, out List<PostDTO>? populatedPostDTOs) || shouldReloadCache)
         {
@@ -52,7 +53,7 @@ public class PostBuilder : IPostBuilder
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                 .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
 
-            _memoryCache.Set(CachingKeys.PopulatedPostDTOs, populatedPostDTOs, cacheEntryOptions);
+            _memoryCache.Set(cacheKey, populatedPostDTOs, cacheEntryOptions);
         }
 
         return populatedPostDTOs!;
@@ -129,13 +130,27 @@ public class PostBuilder : IPostBuilder
     /// <returns>IEnumerable list of postDTOs with the like counters populated. </returns>
     private async Task<List<PostDTO>> PopulatePostDTODetails(List<PostDTO> postDTOs)
     {
-        List<PostDTO> posts = new List<PostDTO>();
-        var userLikes = (await _unitOfWork.UserLikeRepository.GetAllAsync()).ToList();
+        List<PostDTO> posts = [];
+        var postIds = postDTOs.Where(dto => dto.Id.HasValue).Select(dto => dto.Id!.Value).Distinct().ToList();
+
+        if (postIds.Count == 0)
+        {
+            return posts;
+        }
+
+        var userLikes = await _unitOfWork.UserLikeRepository.GetByPostIdsAsync(postIds);
+        var likesByPostId = userLikes.ToLookup(userLike => userLike.PostId);
+        var postIdsWithImages = await _unitOfWork.PostImageRepository.GetPostIdsWithImagesAsync(postIds);
+        var commentCounts = await _unitOfWork.PostRepository.GetCommentCountsByParentPostIdsAsync(postIds);
+        var currentUserId = ClaimsPrincipal.Current is null
+            ? string.Empty
+            : _userManager.GetUserId(ClaimsPrincipal.Current) ?? string.Empty;
 
         foreach (var dto in postDTOs)
         {
-            posts.Add(await PopulatePostDto(dto, userLikes));
+            posts.Add(PopulatePostDtoCore(dto, likesByPostId, postIdsWithImages, commentCounts, currentUserId));
         }
+
         return posts;
     }
 
@@ -145,15 +160,47 @@ public class PostBuilder : IPostBuilder
     /// </summary>
     /// <param name="dto">The postDTO to finish populating</param>
     /// <returns>Fully populated postDTO</returns>
-    public async Task<PostDTO> PopulatePostDto(PostDTO dto, List<UserLikes> userLikes)
+    private PostDTO PopulatePostDtoCore(PostDTO dto,
+        ILookup<int, UserLikes> likesByPostId,
+        HashSet<int> postIdsWithImages,
+        IReadOnlyDictionary<int, int> commentCounts,
+        string currentUserId)
     {
-        dto.LikeCount = (await _unitOfWork.UserLikeRepository.FindAsync(p => p.PostId == dto.Id && !p.IsDislike)).Count();
-        dto.DislikeCount = (await _unitOfWork.UserLikeRepository.FindAsync(p => p.PostId == dto.Id && p.IsDislike)).Count();
-        dto.UserLikedPost = UserLikedPost(dto.Id, userLikes);
-        dto.UserDislikedPost = UserDislikedPost(dto.Id, userLikes);
-        dto.HasImagesAttached = await _unitOfWork.PostImageRepository.HasImagesAttachedAsync(dto.Id);
+        if (!dto.Id.HasValue)
+        {
+            return dto;
+        }
+
+        var postId = dto.Id.Value;
+        var likesForPost = likesByPostId[postId];
+
+        dto.LikeCount = likesForPost.Count(userLike => !userLike.IsDislike);
+        dto.DislikeCount = likesForPost.Count(userLike => userLike.IsDislike);
+        dto.CommentCount = commentCounts.GetValueOrDefault(postId);
+        dto.UserLikedPost = !string.IsNullOrEmpty(currentUserId)
+            && likesForPost.Any(userLike => !userLike.IsDislike && userLike.UserId == currentUserId);
+        dto.UserDislikedPost = !string.IsNullOrEmpty(currentUserId)
+            && likesForPost.Any(userLike => userLike.IsDislike && userLike.UserId == currentUserId);
+        dto.HasImagesAttached = postIdsWithImages.Contains(postId);
 
         return dto;
+    }
+
+    public async Task<PostDTO> PopulatePostDto(PostDTO dto, List<UserLikes> userLikes)
+    {
+        if (!dto.Id.HasValue)
+        {
+            return dto;
+        }
+
+        var postId = dto.Id.Value;
+        var postIdsWithImages = await _unitOfWork.PostImageRepository.GetPostIdsWithImagesAsync([postId]);
+        var commentCounts = await _unitOfWork.PostRepository.GetCommentCountsByParentPostIdsAsync([postId]);
+        var currentUserId = ClaimsPrincipal.Current is null
+            ? string.Empty
+            : _userManager.GetUserId(ClaimsPrincipal.Current) ?? string.Empty;
+
+        return PopulatePostDtoCore(dto, userLikes.ToLookup(userLike => userLike.PostId), postIdsWithImages, commentCounts, currentUserId);
     }
 
     /// <summary>

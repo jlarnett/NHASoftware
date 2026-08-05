@@ -176,10 +176,10 @@
     <div class="row align-items-center m-2">
         <div class="col-auto me-2">
             @{
-                var commentCount = await _PostBuilder.GetCommentCountForPost(@Model.Id);
+                var commentCount = Model.CommentCount;
             }
 
-            <a class="text-nowrap hide-comments interactable" comment-count="@commentCount" unique-post-id="@uuid.ToString()" post-id="@Model.Id" role="button">Show Comments (@await _PostBuilder.GetCommentCountForPost(@Model.Id))</a>
+            <a class="text-nowrap hide-comments interactable" comment-count="@commentCount" unique-post-id="@uuid.ToString()" post-id="@Model.Id" role="button">Show Comments (@commentCount)</a>
         </div>
         @{ await Html.RenderPartialAsync("Social/_PostLikeSection", @Model); }
     </div>

@@ -233,6 +233,13 @@ app.UseSessionTrackerMiddleware();
 using (var scope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
 {
     scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+
+    var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+    recurringJobManager.AddOrUpdate<IProfilePictureFileScrubber>("ProfilePictureScrubber", x => x.RemoveOldProfilePicturesFromFolder(), Cron.Hourly);
+    recurringJobManager.AddOrUpdate<IAnimeLeecher>("AnimeLeecher", x => x.LoadExternalAnime(), Cron.Yearly);
+    recurringJobManager.AddOrUpdate<IGameLeecher>("GameLeecher", x => x.LoadExternalGameInformation(), Cron.Yearly);
+    recurringJobManager.AddOrUpdate<IAdMaximizerService>("FeaturedAnimeSelector", x => x.PickFeaturedAnime(), Cron.Hourly);
+    recurringJobManager.AddOrUpdate<IAdMaximizerService>("FeaturedGameSelector", x => x.PickFeaturedGame(), Cron.Hourly);
 }
 
 //App Hang fire Configuration.

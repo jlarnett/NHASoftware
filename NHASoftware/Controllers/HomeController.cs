@@ -51,11 +51,6 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        CreateProfilePictureHangfireJob();
-        CreateAnimeLoadHangfireJob();
-        CreateGameLoadHangfireJob();
-        CreateFeaturedAnimeSelectorJob();
-        CreateFeaturedGameSelectorJob();
         AssignSessionGuidCookie();
         return View();
     }

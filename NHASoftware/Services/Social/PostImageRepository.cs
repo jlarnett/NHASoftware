@@ -21,4 +21,23 @@ public class PostImageRepository : GenericRepository<PostImage>, IPostImageRepos
         var firstPost = result.FirstOrDefault();
         return firstPost != null;
     }
+
+    public async Task<HashSet<int>> GetPostIdsWithImagesAsync(IEnumerable<int> postIds)
+    {
+        var postIdsList = postIds.Distinct().ToList();
+
+        if (postIdsList.Count == 0)
+        {
+            return [];
+        }
+
+        var result = await _context.PostImages!
+            .AsNoTracking()
+            .Where(postImage => postImage.PostId.HasValue && postIdsList.Contains(postImage.PostId.Value))
+            .Select(postImage => postImage.PostId!.Value)
+            .Distinct()
+            .ToListAsync();
+
+        return [.. result];
+    }
 }

@@ -26,6 +26,25 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
         return await _context.Posts!.Include(p => p.User).FirstOrDefaultAsync(p => p.Id.Equals(postId));
     }
 
+    public async Task<Dictionary<int, int>> GetCommentCountsByParentPostIdsAsync(IEnumerable<int> parentPostIds)
+    {
+        var parentPostIdList = parentPostIds.Distinct().ToList();
+
+        if (parentPostIdList.Count == 0)
+        {
+            return [];
+        }
+
+        return await _context.Posts!
+            .AsNoTracking()
+            .Where(post => post.ParentPostId.HasValue
+                && parentPostIdList.Contains(post.ParentPostId.Value)
+                && !post.IsHiddenFromUserProfile
+                && !post.IsDeletedFlag)
+            .GroupBy(post => post.ParentPostId!.Value)
+            .ToDictionaryAsync(group => group.Key, group => group.Count());
+    }
+
     /// <summary>
     /// Accesses the EF context & gets all social posts for specified users. 
     /// </summary>

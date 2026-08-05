@@ -17,6 +17,7 @@ public class PostDTO
 
     public int? LikeCount { get; set; }
     public int? DislikeCount { get; set; }
+    public int CommentCount { get; set; }
     public bool UserDislikedPost { get; set; }
     public bool UserLikedPost { get; set; }
 

@@ -3,4 +3,5 @@ using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 namespace NHA.Website.Software.Services.Social;
 public interface IUserLikeRepository : IGenericRepository<UserLikes>
 {
+    public Task<List<UserLikes>> GetByPostIdsAsync(IEnumerable<int> postIds);
 }
