@@ -9,5 +9,7 @@ namespace NHA.Website.Software.Services.SessionHistory
         Task<bool> CreateLogoutEvent(string email);
         Task<bool> CreateRenewEvent(string email);
         Task<DateTime?> GetUserLastActiveTime(ApplicationUser user);
+        Task<DateTime?> GetUserLastActiveTime(string userId);
+        Task<IReadOnlyDictionary<string, DateTime?>> GetUsersLastActiveTimesAsync(IEnumerable<string> userIds);
     }
 }

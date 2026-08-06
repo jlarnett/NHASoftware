@@ -5,4 +5,6 @@ namespace NHA.Website.Software.Services.SessionHistory;
 public interface ISessionHistoryRepository : IGenericRepository<SessionHistoryEvent>
 {
     Task<List<SessionHistoryEvent>> GetSortedSessionActivityForUserAsync(string userId);
+    Task<DateTime?> GetLastSessionActivityForUserAsync(string userId);
+    Task<Dictionary<string, DateTime?>> GetLastSessionActivityForUsersAsync(IEnumerable<string> userIds);
 }

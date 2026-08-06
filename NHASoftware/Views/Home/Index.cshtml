@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using NHA.Website.Software.Entities.Identity
 @using NHA.Website.Software.FeatureManagement
+@using NHA.Website.Software.Services.SessionHistory
 @using NHA.Website.Software.Services.Social.PostBuilderService
 @using NHA.Website.Software.Views.Shared.Social.ViewModels
 
@@ -9,6 +10,7 @@
 @inject UserManager<ApplicationUser> _UserManager
 @inject SignInManager<ApplicationUser> _SignInManager
 @inject IPostBuilder _PostBuilder
+@inject IActiveSessionTracker _SessionTracker
 
 @{
     ViewData["Title"] = "Feed";
@@ -78,6 +80,19 @@
                 <div id="ContentFeed" class="">
                     @{
                         var posts = await _PostBuilder.RetrieveParentPosts(_UserManager.GetUserId(User) ?? "");
+                        var lastActiveTimes = await _SessionTracker.GetUsersLastActiveTimesAsync(posts
+                            .Select(post => post.UserId)
+                            .Where(userId => !string.IsNullOrWhiteSpace(userId))
+                            .Cast<string>());
+
+                        foreach (var post in posts)
+                        {
+                            if (!string.IsNullOrWhiteSpace(post.UserId) && lastActiveTimes.TryGetValue(post.UserId, out var lastActiveTime))
+                            {
+                                post.UserLastActiveTime = lastActiveTime;
+                            }
+                        }
+
                         await Html.RenderPartialAsync("Social/_MultiPost", new MultiPostVM(posts));
                     }
                 </div>

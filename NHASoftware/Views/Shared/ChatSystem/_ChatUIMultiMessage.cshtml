@@ -11,12 +11,17 @@
         {
             if ((await _UserManager.GetUserAsync(User))!.Id.Equals(message.RecipientUserId) )
             {
-                <div class="row m-auto border-top border-primary p-1">
+                <div class="row m-auto p-1 chs-new-messages-divider">
                     <div class="row p-0 m-auto">
-                        <div class="bg-danger border-2 col text-black h2 text-center m-auto p-2">New Messages</div>
+                        <div class="col text-center m-auto">
+                            <span class="badge rounded-pill bg-success-subtle border border-success text-success-emphasis fs-6 fw-semibold px-3 py-2 shadow-sm">
+                                New Messages
+                            </span>
+                        </div>
                     </div>
                 </div>
                 newMessagesDividerCreated = true;
+                message.NewMessage = true;
             }
         }
 

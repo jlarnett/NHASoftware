@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using NHA.Website.Software.Services.Anime;
 using NHA.Website.Software.Services.Game;
 using NHA.Website.Software.Services.Sponsors;
+using NHA.Website.Software.Services.SessionHistory;
 using NHA.Website.Software.Views.Shared.ChatSystem.ViewModels;
 
 namespace NHA.Website.Software.Controllers;
@@ -29,12 +30,14 @@ public class HomeController : Controller
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProfilePictureFileScrubber _scrubber;
     private readonly IMapper _mapper;
+    private readonly IActiveSessionTracker _sessionTracker;
 
 
     public HomeController(ILogger<HomeController> logger,
         UserManager<ApplicationUser> userManager,
         ICookieMonster cookieMonster,
-        IMapper mapper, IUnitOfWork unitOfWork, IPostBuilder postBuilder, IProfilePictureFileScrubber scrubber)
+        IMapper mapper, IUnitOfWork unitOfWork, IPostBuilder postBuilder, IProfilePictureFileScrubber scrubber,
+        IActiveSessionTracker sessionTracker)
     {
         /*************************************************************************************
          *  Dependency injection services
@@ -47,6 +50,7 @@ public class HomeController : Controller
         _unitOfWork = unitOfWork;
         _scrubber = scrubber;
         _mapper = mapper;
+        _sessionTracker = sessionTracker;
     }
 
     public IActionResult Index()
@@ -64,6 +68,7 @@ public class HomeController : Controller
     public async Task<IActionResult> ReturnSocialPosts()
     {
         var postDTOs = await _postBuilder.RetrieveParentPosts(_userManager.GetUserId(User) ?? "");
+        await PopulatePostLastActiveTimesAsync(postDTOs);
         return PartialView("Social/_MultiPost", new MultiPostVM(postDTOs));
     }
 
@@ -96,6 +101,7 @@ public class HomeController : Controller
     public async Task<IActionResult> GetAllPostForUser(string userId)
     {
         var postDTOs  = await _postBuilder.GetAllPostForUser(userId);
+        await PopulatePostLastActiveTimesAsync(postDTOs);
         return PartialView("Social/_MultiPost", new MultiPostVM(postDTOs));
     }
 
@@ -146,6 +152,7 @@ public class HomeController : Controller
         var chatMessageDTOs = chatMessages.Select(_mapper.Map<ChatMessage, ChatMessageDTO>).ToList();
 
         ChatUIViewModel vm = new ChatUIViewModel(friend, chatMessageDTOs);
+        vm.FriendLastActiveTime = friend == null ? null : await _sessionTracker.GetUserLastActiveTime(friend.Id);
         var updateResult = await UpdateChatMessageToSeen(chatMessages);
 
         if (!updateResult)
@@ -153,6 +160,25 @@ public class HomeController : Controller
 
         return PartialView("ChatSystem/_ChatUI", vm);
 
+    }
+
+    private async Task PopulatePostLastActiveTimesAsync(IEnumerable<PostDTO> posts)
+    {
+        var postList = posts.ToList();
+        var userIds = postList
+            .Select(post => post.UserId)
+            .Where(userId => !string.IsNullOrWhiteSpace(userId))
+            .Cast<string>();
+
+        var lastActiveTimes = await _sessionTracker.GetUsersLastActiveTimesAsync(userIds);
+
+        foreach (var post in postList)
+        {
+            if (!string.IsNullOrWhiteSpace(post.UserId) && lastActiveTimes.TryGetValue(post.UserId, out var lastActiveTime))
+            {
+                post.UserLastActiveTime = lastActiveTime;
+            }
+        }
     }
 
     private async Task<bool> UpdateChatMessageToSeen(List<ChatMessage> chatMessages)

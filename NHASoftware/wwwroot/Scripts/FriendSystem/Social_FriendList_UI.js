@@ -101,7 +101,9 @@ function CheckForNewMessages() {
                     let chsuuid = GetChatChsUUID(cm.senderUserId);
 
                     GetNewMessagesFromUser(cm.senderUserId).then(function (response) {
-                        $("#chs-messages-" + chsuuid).append(response);
+                        let messageContainer = $("#chs-messages-" + chsuuid);
+                        messageContainer.find('.chs-new-messages-divider').remove();
+                        messageContainer.append(response);
                         PlayNotificationAudio();
                     });
 

@@ -8,13 +8,17 @@
 
 @{
     var chatUUID = Guid.NewGuid();
+    var lastSessionActivityDate = Model.FriendLastActiveTime;
+    var isFriendOnline = lastSessionActivityDate.HasValue && (DateTime.UtcNow - lastSessionActivityDate.Value).TotalMinutes < 10;
+    var profileOutlineClass = isFriendOnline ? "border-success" : "border-secondary-subtle";
+    var profileStatusLabel = isFriendOnline ? "Online" : "Offline";
 }
 
 
 <div class="col-3 border-start border-end border-top border-2 rounded-2 border-black pe-auto bg-body-tertiary p-0 ms-2 h-50 align-self-end" id="chs-@chatUUID" chs-container="@chatUUID" chs-recipient="@Model.Friend!.Id">
     <div class="row m-auto p-1 bg-dark bg-opacity-100 border-bottom border-1 border-black chat-header interactable-small" role="button">
         <div class="col-auto p-0 m-auto">
-            <img class="img-fluid rounded-circle col-2 m-auto o-fit" alt="@Model.Friend.DisplayName's profile picture" src="~/ProfilePictures/@Model.Friend!.ProfilePicturePath"/>
+            <img class="img-fluid rounded-circle col-2 m-auto o-fit border border-2 @profileOutlineClass" alt="@Model.Friend.DisplayName's profile picture" src="~/ProfilePictures/@Model.Friend!.ProfilePicturePath" title="@profileStatusLabel"/>
             <a class="h6 text-center text-primary m-auto profile-link text-truncate col " role="button" userId="@Model.Friend.Id">@Model.Friend.DisplayName</a>
         </div>
         <div class="col p-0 text-wrap text-start text-truncate " >
@@ -60,6 +64,24 @@
                     await Html.RenderPartialAsync("ChatSystem/_ChatUIMultiMessage", new ChatUIMultiMessage(Model.ChatMessages));
                 }
             </div>
+            <script>
+                (() => {
+                    const messageContainer = document.getElementById('chs-messages-@chatUUID');
+
+                    if (!messageContainer) {
+                        return;
+                    }
+
+                    const scrollToBottom = () => {
+                        requestAnimationFrame(() => {
+                            messageContainer.scrollTop = messageContainer.scrollHeight;
+                        });
+                    };
+
+                    scrollToBottom();
+                    new MutationObserver(scrollToBottom).observe(messageContainer, { childList: true, subtree: true });
+                })();
+            </script>
         </div>
         @{ await Html.RenderPartialAsync("ChatSystem/_ChatUIForm", new ChatMessageDTO()
            {

@@ -152,7 +152,7 @@ builder.Services.AddTransient<ITimeBender, TimeBender>();
 builder.Services.AddTransient<IPostBuilder, PostBuilder>();
 builder.Services.AddTransient<ISessionHistoryRepository, SessionHistoryRepository>();
 builder.Services.AddTransient<ISponsorAdRepository, SponsorAdRepository>();
-builder.Services.AddTransient<IActiveSessionTracker, ActiveSessionTracker>();
+builder.Services.AddScoped<IActiveSessionTracker, ActiveSessionTracker>();
 builder.Services.AddTransient<IAnimeLeecher, AnimeLeecher>();
 builder.Services.AddTransient<IGameLeecher, GameLeecher>();
 builder.Services.AddTransient<IAdMaximizerService, AdMaximizerService>();

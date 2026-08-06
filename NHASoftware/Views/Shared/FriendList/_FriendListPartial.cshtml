@@ -40,13 +40,14 @@
                 @Html.AntiForgeryToken()
                 @{
                     var friends = await _FriendSystem.GetUsersFriendListAsync(_UserManager.GetUserId(User)!);
+                    var lastActiveTimes = await _SessionTracker.GetUsersLastActiveTimesAsync(friends.Select(friend => friend.Id));
                     Dictionary<ApplicationUser, string> onlineUsers = new Dictionary<ApplicationUser, string>();
                     Dictionary<ApplicationUser, string> offlineUsers = new Dictionary<ApplicationUser, string>();
 
 
                 foreach (var friend in friends)
                 {
-                    var lastSessionActivityDate = await _SessionTracker.GetUserLastActiveTime(friend);
+                    var lastSessionActivityDate = lastActiveTimes.GetValueOrDefault(friend.Id);
 
                     if (lastSessionActivityDate.HasValue)
                     {

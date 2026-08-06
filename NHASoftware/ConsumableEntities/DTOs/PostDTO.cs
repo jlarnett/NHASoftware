@@ -24,4 +24,5 @@ public class PostDTO
     public List<IFormFile>? ImageFiles { get; set; } = new List<IFormFile>();
     public bool HasImagesAttached { get; set; }
     public Guid? UUID { get; set; }
+    public DateTime? UserLastActiveTime { get; set; }
 }

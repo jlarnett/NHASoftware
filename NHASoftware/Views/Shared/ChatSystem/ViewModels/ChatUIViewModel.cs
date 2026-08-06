@@ -7,6 +7,7 @@ namespace NHA.Website.Software.Views.Shared.ChatSystem.ViewModels
     {
         public ApplicationUser? Friend { get; set; }
         public List<ChatMessageDTO> ChatMessages { get; set; }
+        public DateTime? FriendLastActiveTime { get; set; }
 
 
         public ChatUIViewModel(ApplicationUser? friend, List<ChatMessageDTO> messages)

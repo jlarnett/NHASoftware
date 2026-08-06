@@ -19,5 +19,7 @@ namespace NHA.Website.Software.ConsumableEntities.DTOs
         public bool MessageViewedByRecipient { get; set; }
 
         public Guid ChsUUID { get; set; }
+
+        public bool NewMessage = false;
     }
 }

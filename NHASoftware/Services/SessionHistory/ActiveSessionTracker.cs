@@ -12,6 +12,7 @@ namespace NHA.Website.Software.Services.SessionHistory
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<ActiveSessionTracker> _logger;
+        private readonly Dictionary<string, DateTime?> _lastActiveTimesCache = new(StringComparer.Ordinal);
 
         public ActiveSessionTracker(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, ILogger<ActiveSessionTracker> logger)
         {
@@ -86,14 +87,56 @@ namespace NHA.Website.Software.Services.SessionHistory
             return false;
         }
 
-        public async Task<DateTime?> GetUserLastActiveTime(ApplicationUser user)
+        public Task<DateTime?> GetUserLastActiveTime(ApplicationUser user)
         {
-            var userSessionActivitySorted = await _unitOfWork.SessionHistoryRepository.GetSortedSessionActivityForUserAsync(user.Id);
+            return GetUserLastActiveTime(user.Id);
+        }
 
-            if(userSessionActivitySorted.Any())
-                return userSessionActivitySorted.First().Time;
+        public async Task<DateTime?> GetUserLastActiveTime(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return null;
+            }
 
-            return null;
+            if (_lastActiveTimesCache.TryGetValue(userId, out var lastActiveTime))
+            {
+                return lastActiveTime;
+            }
+
+            lastActiveTime = await _unitOfWork.SessionHistoryRepository.GetLastSessionActivityForUserAsync(userId);
+            _lastActiveTimesCache[userId] = lastActiveTime;
+
+            return lastActiveTime;
+        }
+
+        public async Task<IReadOnlyDictionary<string, DateTime?>> GetUsersLastActiveTimesAsync(IEnumerable<string> userIds)
+        {
+            var distinctUserIds = userIds
+                .Where(userId => !string.IsNullOrWhiteSpace(userId))
+                .Distinct(StringComparer.Ordinal)
+                .ToArray();
+
+            if (distinctUserIds.Length == 0)
+            {
+                return new Dictionary<string, DateTime?>();
+            }
+
+            var missingUserIds = distinctUserIds
+                .Where(userId => !_lastActiveTimesCache.ContainsKey(userId))
+                .ToArray();
+
+            if (missingUserIds.Length > 0)
+            {
+                var fetchedLastActiveTimes = await _unitOfWork.SessionHistoryRepository.GetLastSessionActivityForUsersAsync(missingUserIds);
+
+                foreach (var userId in missingUserIds)
+                {
+                    _lastActiveTimesCache[userId] = fetchedLastActiveTimes.GetValueOrDefault(userId);
+                }
+            }
+
+            return distinctUserIds.ToDictionary(userId => userId, userId => _lastActiveTimesCache[userId], StringComparer.Ordinal);
         }
     }
 }
