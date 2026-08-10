@@ -38,18 +38,21 @@ public class PostBuilder : IPostBuilder
     }
 
     /// <summary>
-    /// Retrieves a list of all parent posts in DB. Fully populates the PostDTOs & handles caching 
+    /// Retrieves a paged list of parent posts in DB. Fully populates the PostDTOs & handles caching.
     /// </summary>
-    /// <returns>a list of all parent posts in DB in PostDTO format</returns>
-    public async Task<List<PostDTO>> RetrieveParentPosts(string currentUserId)
+    /// <returns>a paged list of parent posts in DB in PostDTO format</returns>
+    public async Task<List<PostDTO>> RetrieveParentPosts(string currentUserId, int pageNumber = 1, int pageSize = 10)
     {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+
         var shouldReloadCache = _cacheLoadingManager.ShouldCacheReload(CachingKeys.Posts);
         var sessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
-        var cacheKey = $"{CachingKeys.PopulatedPostDTOs}_{currentUserId}_{sessionId}";
+        var cacheKey = $"{CachingKeys.PopulatedPostDTOs}_{currentUserId}_{sessionId}_{pageNumber}_{pageSize}";
 
         if (!_memoryCache.TryGetValue(cacheKey, out List<PostDTO>? populatedPostDTOs) || shouldReloadCache)
         {
-            populatedPostDTOs = await GeneratePostDTOList(await RetrieveParentPostFromRepository());
+            populatedPostDTOs = await GeneratePostDTOList(await RetrieveParentPostFromRepository(pageNumber, pageSize));
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                 .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
 
@@ -236,10 +239,10 @@ public class PostBuilder : IPostBuilder
 
 
     /// <summary>
-    /// Retrieve all the parent post from PostRepository. Basically any post without ParentPostId value. 
+    /// Retrieves a page of parent posts from PostRepository after excluding session-hidden posts.
     /// </summary>
-    /// <returns>IEnumerable of posts retrieved from DB. </returns>
-    private async Task<IEnumerable<Post>> RetrieveParentPostFromRepository()
+    /// <returns>IEnumerable of posts retrieved from DB.</returns>
+    private async Task<IEnumerable<Post>> RetrieveParentPostFromRepository(int pageNumber, int pageSize)
     {
         //Locate ALL hidden post for session Id
         var sessionId = _cookieMonster.TryRetrieveCookie(CookieKeys.Session);
@@ -253,9 +256,6 @@ public class PostBuilder : IPostBuilder
             hiddenPosts = [.. hiddenPostIds];
         }
 
-        var parentPosts = (await _unitOfWork.PostRepository.GetAllPostsWithIncludesAsync())
-            .Where(p => p.ParentPostId == null && !hiddenPosts.Contains(p.Id!.Value));
-
-        return parentPosts;
+        return await _unitOfWork.PostRepository.GetParentPostsWithIncludesAsync(hiddenPosts, pageNumber, pageSize);
     }
 }

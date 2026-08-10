@@ -21,6 +21,29 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
             .AsNoTracking()
             .ToListAsync();
 
+    public async Task<List<Post>> GetParentPostsWithIncludesAsync(IEnumerable<int> hiddenPostIds, int pageNumber = 1, int pageSize = 10)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        var hiddenPostIdList = hiddenPostIds.Distinct().ToList();
+        var query = _context.Posts!
+            .Include(p => p.User)
+            .Where(p => !p.IsDeletedFlag && p.ParentPostId == null);
+
+        if (hiddenPostIdList.Count > 0)
+        {
+            query = query.Where(p => p.Id.HasValue && !hiddenPostIdList.Contains(p.Id.Value));
+        }
+
+        return await query
+            .OrderByDescending(p => p.CreationDate)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task<Post?> GetPostByIDWithIncludesAsync(int postId)
     {
         return await _context.Posts!.Include(p => p.User).FirstOrDefaultAsync(p => p.Id.Equals(postId));

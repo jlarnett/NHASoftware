@@ -21,10 +21,10 @@ namespace NHA.Website.Software.Services.Social.PostBuilderService
         Task<List<PostDTO>> GetAllPostForUser(string userId);
 
         /// <summary>
-        /// Retrieves a list of all parent posts in DB. Fully populates the PostDTOs & handles caching 
+        /// Retrieves a paged list of parent posts in DB. Fully populates the PostDTOs & handles caching.
         /// </summary>
-        /// <returns>a list of all parent posts in DB in PostDTO format</returns>
-        Task<List<PostDTO>> RetrieveParentPosts(string userId);
+        /// <returns>a paged list of parent posts in DB in PostDTO format</returns>
+        Task<List<PostDTO>> RetrieveParentPosts(string userId, int pageNumber = 1, int pageSize = 10);
 
 
         /// <summary>

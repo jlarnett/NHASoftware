@@ -23,6 +23,8 @@ using NHA.Website.Software.Views.Shared.ChatSystem.ViewModels;
 namespace NHA.Website.Software.Controllers;
 public class HomeController : Controller
 {
+    public const int HomeFeedPageSize = 100;
+
     private ILogger<HomeController> _logger;
     private readonly ICookieMonster _cookieMonster;
     private readonly IPostBuilder _postBuilder;
@@ -65,9 +67,9 @@ public class HomeController : Controller
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public async Task<IActionResult> ReturnSocialPosts()
+    public async Task<IActionResult> ReturnSocialPosts(int pageNumber = 1, int pageSize = HomeFeedPageSize)
     {
-        var postDTOs = await _postBuilder.RetrieveParentPosts(_userManager.GetUserId(User) ?? "");
+        var postDTOs = await _postBuilder.RetrieveParentPosts(_userManager.GetUserId(User) ?? "", pageNumber, pageSize);
         await PopulatePostLastActiveTimesAsync(postDTOs);
         return PartialView("Social/_MultiPost", new MultiPostVM(postDTOs));
     }

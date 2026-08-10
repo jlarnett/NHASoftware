@@ -1,7 +1,7 @@
 ﻿class ContentFeedAjaxCalls {
-    static RetrieveMorePosts() {
+    static RetrieveMorePosts(pageNumber, pageSize) {
         //AJAX CALL TO /Home/ReturnSocialPosts endpoint. Returns async result of posts inside MultiPost partial view ready for consumption
-        return $.get("/Home/ReturnSocialPosts", function (data) {});
+        return $.get(`/Home/ReturnSocialPosts?pageNumber=${pageNumber}&pageSize=${pageSize}`, function (data) {});
     }
 
     static RetrievePostComments(postId, uuid) {

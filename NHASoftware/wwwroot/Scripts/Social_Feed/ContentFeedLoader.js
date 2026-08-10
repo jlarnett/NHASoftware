@@ -18,6 +18,11 @@ class ContentFeedLoader {
     static canLoad = true;
 
     static ShouldContentFeedShouldLoadMorePosts() {
+        const contentFeed = $("#ContentFeed");
+        if (contentFeed.attr("data-has-more") === "false") {
+            return;
+        }
+
         //Checks the home page scroll bar. When the scrollbar is lower than the specified percentage it fires home feed content loading.
         var scrollbarValue = $(window).scrollTop() + $(window).height();
         var windowHeightPercentToLoadFeed = 55;
@@ -41,12 +46,28 @@ class ContentFeedLoader {
 
     static OptimizedMainContentFeedLoad() {
         //Loads the id #ContentFeed with all posts created by user. Calls Home Base Controller (Simplifies Partial View Return)
+        const contentFeed = $("#ContentFeed");
+        const currentPage = parseInt(contentFeed.attr("data-current-page") ?? "1", 10);
+        const pageSize = parseInt(contentFeed.attr("data-page-size") ?? "10", 10);
+        const nextPage = currentPage + 1;
+
         ContentFeedUtility.AddSpinnerToContentFeed();
-        ContentFeedAjaxCalls.RetrieveMorePosts().then(function (posts) {
-            ContentFeedUtility.AppendPostsToContentFeed(posts);
-            ContentFeedUtility.RebuildFeedTextboxes();
-            ContentFeedUtility.RemoveSpinnerFromContentFeed();
-        });
+        ContentFeedAjaxCalls.RetrieveMorePosts(nextPage, pageSize)
+            .then(function (posts) {
+                const trimmedPosts = posts?.trim() ?? "";
+
+                if (trimmedPosts.length === 0) {
+                    contentFeed.attr("data-has-more", "false");
+                    return;
+                }
+
+                contentFeed.attr("data-current-page", nextPage);
+                ContentFeedUtility.AppendPostsToContentFeed(posts);
+                ContentFeedUtility.RebuildFeedTextboxes();
+            })
+            .always(function () {
+                ContentFeedUtility.RemoveSpinnerFromContentFeed();
+            });
     }
 
     static LoadUserProfilePosts() {
