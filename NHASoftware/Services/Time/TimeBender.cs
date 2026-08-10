@@ -11,6 +11,7 @@
             var timeInMinutes = timeInSeconds / 60;
             var timeInHours = timeInMinutes / 60;
             var timeInDays = timeInHours / 24;
+            var timeInWeeks = timeInDays / 7;
             var timeInYears = timeInDays / 365;
 
 
@@ -30,9 +31,14 @@
             {
                 return $"{timeInHours}h ago";
             }
-            if (timeInDays is < 365 and >= 1)
+            if (timeInDays is < 7 and >= 1)
             {
                 return $"{timeInDays}d ago";
+            }
+
+            if (timeInWeeks is < 52 and >= 1)
+            {
+                return $"{timeInWeeks}w ago";
             }
             if (timeInYears >= 1)
             {

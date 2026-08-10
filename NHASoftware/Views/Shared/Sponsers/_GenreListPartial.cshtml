@@ -3,9 +3,23 @@
 @model NHA.Website.Software.Views.Shared.Sponsers.ViewModel.GenreListVm
 
 @{
-    <div class="align-content-center p-0">
+    <div class="align-content-center p-0 h5">
         @{
             var genres = @Model.Genres.Split(';');
+
+            string GenreBadgeTone(GenreListType type, int index)
+            {
+                return (type, index) switch
+                {
+                    (GenreListType.Anime, 0) => "bg-primary-subtle text-primary-emphasis border border-primary-subtle rounded-pill",
+                    (GenreListType.Anime, 1) => "bg-info-subtle text-info-emphasis border border-info-subtle rounded-pill",
+                    (GenreListType.Anime, 2) => "bg-danger-subtle text-danger-emphasis border border-danger-subtle rounded-pill",
+                    (GenreListType.Game, 0) => "bg-success-subtle text-success-emphasis border border-success-subtle rounded-pill",
+                    (GenreListType.Game, 1) => "bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill",
+                    (GenreListType.Game, 2) => "bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle rounded-pill",
+                    _ => "bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle rounded-pill"
+                };
+            }
 
             for (int i = 0; i < genres.Length; i++)
             {
@@ -15,17 +29,17 @@
                     {
                         case 0:
                             <a asp-controller="Anime" asp-action="GenreIndex" asp-route-genre="@genres[i]" class="col-auto text-decoration-none">
-                                <span class="badge text-bg-primary border-2 interactable">@genres[i]</span>
+                                <span class="badge interactable @GenreBadgeTone(Model.Type, i)">@genres[i]</span>
                             </a>
                             break;
                         case 1:
                             <a asp-controller="Anime" asp-action="GenreIndex" asp-route-genre="@genres[i]" class="col-auto text-decoration-none">
-                                <span class="badge text-bg-success border-2 interactable">@genres[i]</span>
+                                <span class="badge interactable @GenreBadgeTone(Model.Type, i)">@genres[i]</span>
                             </a>
                             break;
                         case 2:
                             <a asp-controller="Anime" asp-action="GenreIndex" asp-route-genre="@genres[i]" class="col-auto text-decoration-none">
-                                <span class="badge text-bg-dark border-2 interactable">@genres[i]</span>
+                                <span class="badge interactable @GenreBadgeTone(Model.Type, i)">@genres[i]</span>
                             </a>
                             break;
                     }
@@ -36,17 +50,17 @@
                     {
                         case 0:
                             <a asp-controller="Game" asp-action="GenreIndex" asp-route-genre="@genres[i]" class="col-auto text-decoration-none">
-                                <span class="badge text-bg-primary border-2 interactable">@genres[i]</span>
+                                <span class="badge interactable @GenreBadgeTone(Model.Type, i)">@genres[i]</span>
                             </a>
                             break;
                         case 1:
                             <a asp-controller="Game" asp-action="GenreIndex" asp-route-genre="@genres[i]" class="col-auto text-decoration-none">
-                                <span class="badge text-bg-success border-2 interactable">@genres[i]</span>
+                                <span class="badge interactable @GenreBadgeTone(Model.Type, i)">@genres[i]</span>
                             </a>
                             break;
                         case 2:
                             <a asp-controller="Game" asp-action="GenreIndex" asp-route-genre="@genres[i]" class="col-auto text-decoration-none">
-                                <span class="badge text-bg-dark border-2 interactable">@genres[i]</span>
+                                <span class="badge interactable @GenreBadgeTone(Model.Type, i)">@genres[i]</span>
                             </a>
                             break;
                     }
@@ -56,62 +70,60 @@
                     if(genres[i].IsNullOrEmpty()) continue;
                     string ConvertPlatformToIcon(string platform)
                     {
-                        if (platform.Equals("Netflix"))
+                        if (platform.Equals("Netflix", StringComparison.OrdinalIgnoreCase))
                         {
                             return "/Images/netflix_logo_icon_170919.png";
                         }
 
-                        if (platform.Equals("Crunchyroll"))
+                        if (platform.Equals("Crunchyroll", StringComparison.OrdinalIgnoreCase))
                         {
                             return "/Images/crunchyroll_social_network_network_connection_communication_icon_192251.png";
                         }
 
-                        if (platform.Equals("Hulu"))
+                        if (platform.Equals("Hulu", StringComparison.OrdinalIgnoreCase))
                         {
                             return "/Images/brand_hulu_icon_157922.png";
                         }
 
-                        if (platform.Equals("Hulu"))
-                        {
-                            return "/Images/brand_hulu_icon_157922.png";
-                        }
-
-                        if (platform.Equals("Shahid"))
-                        {
-                            return "/Images/shahid.svg";
-                        }
-
-                        if (platform.Equals("HIDIVE"))
-                        {
-                            return "/Images/HIDIVE_2017 (3).svg";
-                        }
-
-                        if (platform.Equals("Animekey"))
-                        {
-                            return "/Images/AnimeKey (2).WEBP";
-                        }
-
-                        if (platform.Equals("Animax Mongolia"))
-                        {
-                            return "/Images/AnimeMax (2).WEBP";
-                        }
-
-                        if (platform.Equals("Disney+"))
+                        if (platform.Equals("Disney+", StringComparison.OrdinalIgnoreCase) ||
+                            platform.Equals("Disney+ Hotstar", StringComparison.OrdinalIgnoreCase))
                         {
                             return "/Images/icons8-disney-plus-32.png";
                         }
 
-                        if (platform.Equals("Adult Swim"))
+                        if (platform.Equals("Shahid", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return "/Images/shahid.svg";
+                        }
+
+                        if (platform.Equals("HIDIVE", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return "/Images/HIDIVE_2017 (3).svg";
+                        }
+
+                        if (platform.Equals("Animekey", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return "/Images/AnimeKey (2).WEBP";
+                        }
+
+                        if (platform.Equals("Animax Mongolia", StringComparison.OrdinalIgnoreCase) ||
+                            platform.Equals("Animax Korea", StringComparison.OrdinalIgnoreCase) ||
+                            platform.Equals("Animax Asia", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return "/Images/AnimeMax (2).WEBP";
+                        }
+
+                        if (platform.Equals("Adult Swim", StringComparison.OrdinalIgnoreCase))
                         {
                             return "/Images/adult_swim_32x32.png";
                         }
 
-                        if (platform.Contains("Aniplus"))
+                        if (platform.Contains("Aniplus", StringComparison.OrdinalIgnoreCase))
                         {
                             return "/Images/aniplus_32x32.png";
                         }
 
-                        return platform.Equals("Tubi TV") ? "/Images/tubi_logo_icon_249346.png" : "";
+                        return platform.Equals("Tubi TV", StringComparison.OrdinalIgnoreCase) ? "/Images/tubi_logo_icon_249346.png" : "";
                     }
 
                     switch (i)
