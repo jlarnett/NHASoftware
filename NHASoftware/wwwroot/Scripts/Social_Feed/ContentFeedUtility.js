@@ -235,7 +235,8 @@
             // [groupName, [list of button]]
             ],
             disableResizeEditor: true,
-            placeholder: 'Type Comment Summary Here......',
+            placeholder: 'Write a reply...',
+            height: 96,
             hint: {
                 match: /\B@(\w*)$/,
                 search: function (keyword, callback) {

@@ -6,79 +6,78 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 
-<li comment-delete-id="@Model.Id">
-    <div>
-        <div class="row align-items-center mb-1">
-            <div class="col-1"></div>
-            <div class="col-1 px-0">
-                <div class="row align-content-center">
-                    <a asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@Model.User!.Id">
-                        <img class="img-fluid img-thumbnail col-6 m-auto interactable avatar" alt="@Model.User!.Email's profile picture" src="/ProfilePictures/@Model.User!.ProfilePicturePath"/>
-                    </a>
-                </div>
-                </div>
-            <div class="col-auto">
-                <a class="profile-link h6 text-decoration-none fw-semibold" role="button" userId="@Model.User!.Id">@Model.User!.DisplayName</a>
-                <div class="">
-                    <a class="text-decoration-none" role="button">@_TimeBender.GetTimeShortHandString(@Model.CreationDate.GetValueOrDefault())</a>
-                </div>
-                </div>
-            <div class="col"></div>
-            <div class="col-auto">
-                @{ await Html.RenderPartialAsync("Social/_PostActionButtonSection", @Model); } 
-            </div>
+<li comment-delete-id="@Model.Id" class="comment-thread-item">
+    <div class="comment-thread">
+        <div class="comment-thread-rail">
+            <a asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@Model.User!.Id" class="comment-avatar-link">
+                <img class="img-fluid img-thumbnail interactable avatar comment-avatar" alt="@Model.User!.Email's profile picture" src="/ProfilePictures/@Model.User!.ProfilePicturePath" />
+            </a>
+            <span class="comment-thread-line" aria-hidden="true"></span>
         </div>
-        <div class="row align-items-center">
-            <div class="col-2"></div>
-            <div class="col align-middle p-2 text-break">
-                @{
-                    var doc = new HtmlDocument();
-                    doc.LoadHtml(@Model.Summary);
 
-                    IEnumerable<string> taggedObjectHref = [];
-                    IEnumerable<string> taggedObjectImages = [];
-
-                    if (Model.Summary.Contains("image-url"))
-                    {
-                        taggedObjectHref = doc.DocumentNode.SelectNodes("//a")
-                        .Select(a => a.GetAttributeValue("href", ""));
-                        taggedObjectImages = doc.DocumentNode.SelectNodes("//a")
-                        .Select(a => a.GetAttributeValue("image-url", ""));
-
-                    }
-                    var objectHref = taggedObjectHref as string[] ?? taggedObjectHref.ToArray();
-                    var objectImages = taggedObjectImages as string[] ?? taggedObjectImages.ToArray();
-
-                    <div class="row p-1">
-                        @Html.Raw(Model.Summary)
-                    </div>
-
-                    if (objectImages.Any())
-                    {
-                        <div class="row rounded-2">
-                            @{
-                                var counter = 0;
-                                foreach (var imageUrl in objectImages)
-                                {
-                                    if (imageUrl == null || imageUrl == "") continue;
-                                    <div class="col">
-                                        <a class="row text-center m-auto rounded-2 interactable" href="@objectHref[counter]">
-                                            <img src="@imageUrl" class="rounded-3 p-0" alt="Post Tag ImageUrl" />
-                                        </a>
-                                    </div>
-
-                                    counter++;
-                                }
-                            }
+        <div class="comment-thread-body">
+            <div class="comment-card rounded-3 px-3 py-2">
+                <div class="comment-card-header d-flex align-items-start gap-3 pb-1">
+                    <div class="flex-grow-1 min-w-0">
+                        <a class="profile-link h6 text-decoration-none fw-semibold mb-0 d-inline-block" role="button" userId="@Model.User!.Id">@Model.User!.DisplayName</a>
+                        <div>
+                            <a class="text-decoration-none comment-timestamp" role="button">@_TimeBender.GetTimeShortHandString(@Model.CreationDate.GetValueOrDefault())</a>
                         </div>
+                    </div>
+                    <div class="col-auto ps-0">
+                        @{ await Html.RenderPartialAsync("Social/_PostActionButtonSection", @Model); }
+                    </div>
+                </div>
+
+                <div class="comment-card-body pb-1 text-break">
+                    @{
+                        var doc = new HtmlDocument();
+                        doc.LoadHtml(@Model.Summary);
+
+                        IEnumerable<string> taggedObjectHref = [];
+                        IEnumerable<string> taggedObjectImages = [];
+
+                        if (Model.Summary.Contains("image-url"))
+                        {
+                            taggedObjectHref = doc.DocumentNode.SelectNodes("//a")
+                            .Select(a => a.GetAttributeValue("href", ""));
+                            taggedObjectImages = doc.DocumentNode.SelectNodes("//a")
+                            .Select(a => a.GetAttributeValue("image-url", ""));
+
+                        }
+                        var objectHref = taggedObjectHref as string[] ?? taggedObjectHref.ToArray();
+                        var objectImages = taggedObjectImages as string[] ?? taggedObjectImages.ToArray();
+
+                        <div class="comment-summary p-1">
+                            @Html.Raw(Model.Summary)
+                        </div>
+
+                        if (objectImages.Any())
+                        {
+                            <div class="row rounded-3 g-2 mt-1">
+                                @{
+                                    var counter = 0;
+                                    foreach (var imageUrl in objectImages)
+                                    {
+                                        if (imageUrl == null || imageUrl == "") continue;
+                                        <div class="col">
+                                            <a class="row text-center m-auto rounded-3 interactable overflow-hidden" href="@objectHref[counter]">
+                                                <img src="@imageUrl" class="rounded-3 p-0" alt="Post Tag ImageUrl" />
+                                            </a>
+                                        </div>
+
+                                        counter++;
+                                    }
+                                }
+                            </div>
+                        }
                     }
-                }
+                </div>
+
+                <div class="comment-card-footer pt-1 pb-1">
+                    @{ await Html.RenderPartialAsync("Social/_PostLikeSection", @Model); }
+                </div>
             </div>
         </div>
-        <div class="row align-items-center m-2">
-            <div class="col-2"></div>
-            @{await Html.RenderPartialAsync("Social/_PostLikeSection", @Model);}
-        </div>
-        <hr/>
     </div>
 </li>

@@ -23,7 +23,7 @@ using NHA.Website.Software.Views.Shared.ChatSystem.ViewModels;
 namespace NHA.Website.Software.Controllers;
 public class HomeController : Controller
 {
-    public const int HomeFeedPageSize = 100;
+    public const int HomeFeedPageSize = 25;
 
     private ILogger<HomeController> _logger;
     private readonly ICookieMonster _cookieMonster;

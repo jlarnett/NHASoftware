@@ -67,38 +67,38 @@
             <ul class="dropdown-menu dropdown-menu-end shadow">
                 <li>
                     <button class="dropdown-item native-share-link" type="button" data-share-title="@shareText" data-share-url="@shareUrl">
-                        Share...
+                        <i class="bi bi-share me-2" aria-hidden="true"></i>Share...
                     </button>
                 </li>
                 <li>
                     <button class="dropdown-item copy-share-link" type="button" data-share-url="@shareUrl">
-                        Copy link
+                        <i class="bi bi-link-45deg me-2" aria-hidden="true"></i>Copy link
                     </button>
                 </li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                     <a class="dropdown-item" href="https://twitter.com/intent/tweet?url=@encodedShareUrl&text=@encodedShareText" target="_blank" rel="noopener noreferrer">
-                        Share to X
+                        <i class="bi bi-twitter-x me-2" aria-hidden="true"></i>Share to X
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item" href="https://www.facebook.com/sharer/sharer.php?u=@encodedShareUrl" target="_blank" rel="noopener noreferrer">
-                        Share to Facebook
+                        <i class="bi bi-facebook me-2" aria-hidden="true"></i>Share to Facebook
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item" href="https://www.linkedin.com/sharing/share-offsite/?url=@encodedShareUrl" target="_blank" rel="noopener noreferrer">
-                        Share to LinkedIn
+                        <i class="bi bi-linkedin me-2" aria-hidden="true"></i>Share to LinkedIn
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item" href="https://www.reddit.com/submit?url=@encodedShareUrl&title=@encodedShareText" target="_blank" rel="noopener noreferrer">
-                        Share to Reddit
+                        <i class="bi bi-reddit me-2" aria-hidden="true"></i>Share to Reddit
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item" href="mailto:?subject=@encodedShareText&body=@encodedShareUrl">
-                        Share by Email
+                        <i class="bi bi-envelope me-2" aria-hidden="true"></i>Share by Email
                     </a>
                 </li>
             </ul>
@@ -195,23 +195,32 @@
 
         @if(commentCount > 0)
         {
-            <h2 class="text-primary h5 text-center">Comments</h2>
+            <h4 class="community-discussion-header d-flex align-items-center justify-content-center gap-2 text-body-emphasis fw-semibold border-bottom border-2 pb-2 mb-3">
+                <i class="bi bi-chat text-body-secondary" aria-hidden="true"></i>
+                <span>Community Discussion</span>
+            </h4>
         }
 
-        <ul unique-comment-list="@uuid.ToString()" class="list-unstyled">
+        <ul unique-comment-list="@uuid.ToString()" class="list-unstyled comment-thread-list">
         </ul>
         <form method="post" enctype="multipart/form-data" comment-form-uuid="@uuid.ToString()">
             @{
                 if (_SignInManager.IsSignedIn(User))
                 {
-                    <div class="row mb-2">
-                        <div class="col-2"></div>
-                        <div class="col-6">
-                            <textarea class="summernote-comments text-black" post-id="@Model.Id" comment-textbox-uuid="@uuid.ToString()" name="Summary">
-                            </textarea>
+                    <div class="comment-composer mt-3 mb-2">
+                        <div class="comment-composer-shell border border-1 rounded-3 p-2 p-md-3">
+                            <div class="comment-composer-editor-wrap mb-2">
+                                <textarea class="summernote-comments text-black" post-id="@Model.Id" comment-textbox-uuid="@uuid.ToString()" name="Summary"></textarea>
+                            </div>
+
+                            <div class="comment-composer-actions d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary rounded-3 px-4 comment-send-btn interactable d-inline-flex align-items-center gap-2" unique-identifier="@uuid.ToString()" parent-post-id="@Model.Id">
+                                    <i class="bi bi-send-fill"></i>
+                                    <span>Reply</span>
+                                </button>
+                            </div>
                         </div>
-                        <button class="btn btn-dark rounded-2 col-auto comment-send-btn interactable" unique-identifier="@uuid.ToString()" parent-post-id="@Model.Id">Reply</button>
-                    </div> 
+                    </div>
                 }
             }
         </form>

@@ -249,7 +249,7 @@
     $("#ContentFeed").on("click", ".comment-send-btn", function (e) { 
         e.preventDefault();
 
-        let SendButton = $(e.target);
+        let SendButton = $(this);
         let uuid = SendButton.attr("unique-identifier");
         let parentPostId = SendButton.attr("parent-post-id");
 
