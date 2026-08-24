@@ -750,6 +750,10 @@ namespace NHA.Website.Software.Migrations
                     b.Property<byte[]>("ImageBytes")
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("MediaPath")
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
                     b.Property<int?>("PostId")
                         .HasColumnType("int");
 

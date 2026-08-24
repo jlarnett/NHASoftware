@@ -2,4 +2,5 @@
 public interface IFileExtensionValidator
 {
     bool CheckValidImageExtensions(string uploadedFileName);
+    bool CheckValidVideoExtensions(string uploadedFileName);
 }

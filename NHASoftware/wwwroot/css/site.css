@@ -116,6 +116,66 @@ body {
     object-fit: cover;
 }
 
+.chat-message-row {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.chat-message-content-row {
+    flex-wrap: nowrap;
+}
+
+.chat-message-main {
+    display: flex;
+}
+
+.chat-message-main-outgoing {
+    justify-content: flex-end;
+}
+
+.chat-message-avatar-column {
+    flex: 0 0 auto;
+}
+
+.chat-message-avatar {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background-color: var(--bs-secondary-bg);
+}
+
+.chat-message-bubble {
+    max-width: min(100%, 26rem);
+    padding: 0.65rem 0.9rem;
+    border-radius: 1rem;
+    line-height: 1.4;
+    word-break: break-word;
+    box-shadow: 0 0.125rem 0.35rem rgba(0, 0, 0, 0.18);
+}
+
+.chat-message-bubble-incoming {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-top-left-radius: 0.4rem;
+}
+
+.chat-message-bubble-outgoing {
+    background-color: rgba(13, 110, 253, 0.14);
+    border-top-right-radius: 0.4rem;
+}
+
+.chat-message-timestamp {
+    font-size: 0.78rem;
+    margin-top: 0.2rem;
+    opacity: 0.9;
+}
+
+.chat-message-timestamp-incoming {
+    padding-left: 3.5rem;
+}
+
 #LeftMenu, .right-sidebar {
     min-height: auto;
 }

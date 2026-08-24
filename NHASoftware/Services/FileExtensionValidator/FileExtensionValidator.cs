@@ -8,6 +8,13 @@ public class FileExtensionValidator : IFileExtensionValidator
         return IsExtensionPathEmptyOrIncorrect(ext, permittedExtensions);
     }
 
+    public bool CheckValidVideoExtensions(string uploadedFileName)
+    {
+        string[] permittedExtensions = { ".mp4", ".webm", ".ogg" };
+        var ext = Path.GetExtension(uploadedFileName).ToLowerInvariant();
+        return IsExtensionPathEmptyOrIncorrect(ext, permittedExtensions);
+    }
+
     private bool IsExtensionPathEmptyOrIncorrect(string ext, string[] permittedExtensions)
     {
         if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))

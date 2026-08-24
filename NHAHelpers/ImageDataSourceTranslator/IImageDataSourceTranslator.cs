@@ -2,6 +2,6 @@
 {
     public interface IImageDataSourceTranslator
     {
-        string GetDataSourceTranslation(string imageExtension, byte[] imageBytes);
+        string GetDataSourceTranslation(string fileExtension, byte[] fileBytes);
     }
 }

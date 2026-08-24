@@ -37,7 +37,7 @@
 
     static ClearCustomPostForm() {
         $("#CustomPostTextbox").summernote('reset');
-        $("#CustomPostImageFileInput").val(null);
+        $("#CustomPostMediaFileInput").val(null);
         $("#CustomPostValidationMessage").hide("slow");
     }
 

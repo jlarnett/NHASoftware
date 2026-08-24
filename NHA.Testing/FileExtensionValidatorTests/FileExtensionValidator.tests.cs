@@ -18,5 +18,18 @@ namespace NHA.Testing.FileExtensionValidatorTests
             var result = validator.CheckValidImageExtensions(fileNameInput);
             Assert.AreEqual(expectedResult, result);
         }
+
+        [TestMethod]
+        [DataRow("test.mp4", true)]
+        [DataRow("test.webm", true)]
+        [DataRow("test.ogg", true)]
+        [DataRow("test.mov", false)]
+        [DataRow("test.jpg", false)]
+        public void CheckValidVideoExtensions(string fileNameInput, bool expectedResult)
+        {
+            IFileExtensionValidator validator = new FileExtensionValidator();
+            var result = validator.CheckValidVideoExtensions(fileNameInput);
+            Assert.AreEqual(expectedResult, result);
+        }
     }
 }

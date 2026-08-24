@@ -23,6 +23,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         base.OnModelCreating(builder);
         builder.Entity<Post>().HasMany(p => p.Comments).WithOne(p => p.ParentPost).HasForeignKey(p => p.ParentPostId);
         builder.Entity<Post>().HasMany(p => p.PostImages).WithOne(p => p.Post).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<PostImage>().Property(p => p.MediaPath).HasMaxLength(260);
     }
 
     public DbSet<ForumSection>? ForumSections { get; set; }

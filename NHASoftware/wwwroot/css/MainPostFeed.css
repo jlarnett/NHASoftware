@@ -49,6 +49,179 @@
     width: 100%;
 }
 
+body[data-bs-theme="light"] .note-editor.note-frame {
+    border-color: rgba(108, 117, 125, 0.2);
+    background-color: var(--bs-body-bg);
+}
+
+body[data-bs-theme="light"] .note-editor.note-frame .note-toolbar,
+body[data-bs-theme="light"] .note-editor.note-frame .note-statusbar {
+    background-color: var(--bs-tertiary-bg);
+    border-color: rgba(108, 117, 125, 0.2);
+    color: var(--bs-body-color);
+}
+
+body[data-bs-theme="light"] .note-editor.note-frame .note-btn,
+body[data-bs-theme="light"] .note-editor.note-frame .note-btn-group .dropdown-toggle {
+    background-color: transparent;
+    border-color: rgba(108, 117, 125, 0.2);
+    color: var(--bs-body-color);
+}
+
+body[data-bs-theme="light"] .note-editor.note-frame .note-btn:hover,
+body[data-bs-theme="light"] .note-editor.note-frame .note-btn:focus,
+body[data-bs-theme="light"] .note-editor.note-frame .note-btn-group .dropdown-toggle:hover,
+body[data-bs-theme="light"] .note-editor.note-frame .note-btn-group .dropdown-toggle:focus {
+    background-color: rgba(13, 110, 253, 0.08);
+    color: var(--bs-body-color);
+}
+
+body[data-bs-theme="light"] .note-editor.note-frame .note-dropdown-menu,
+body[data-bs-theme="light"] .note-editor.note-frame .dropdown-menu {
+    background-color: var(--bs-body-bg);
+    border-color: rgba(108, 117, 125, 0.2);
+    color: var(--bs-body-color);
+}
+
+body[data-bs-theme="light"] .note-editor.note-frame .dropdown-item {
+    color: var(--bs-body-color);
+}
+
+body[data-bs-theme="light"] .note-editor.note-frame .dropdown-item,
+body[data-bs-theme="light"] .note-editor.note-frame .dropdown-item * {
+    color: var(--bs-body-color) !important;
+}
+
+body[data-bs-theme="light"] .note-editor.note-frame .dropdown-item:hover,
+body[data-bs-theme="light"] .note-editor.note-frame .dropdown-item:focus {
+    background-color: rgba(13, 110, 253, 0.08);
+    color: var(--bs-body-color);
+}
+
+body[data-bs-theme="dark"] .note-editor.note-frame {
+    border-color: rgba(255, 255, 255, 0.18);
+    background-color: var(--bs-body-bg);
+}
+
+body[data-bs-theme="dark"] .note-editor.note-frame .note-toolbar,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-statusbar {
+    background-color: var(--bs-tertiary-bg);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: var(--bs-body-color);
+}
+
+body[data-bs-theme="dark"] .note-editor.note-frame .note-btn,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-btn-group .dropdown-toggle {
+    background-color: transparent;
+    border-color: rgba(255, 255, 255, 0.18);
+    color: var(--bs-body-color);
+}
+
+body[data-bs-theme="dark"] .note-editor.note-frame .note-btn-group .dropdown-toggle,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-btn-group .dropdown-toggle span,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-btn-group .dropdown-toggle i,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-btn-group .dropdown-toggle .note-current-fontname,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-btn-group .dropdown-toggle .note-current-fontsize,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-btn-group .dropdown-toggle .note-current-color-button {
+    color: var(--bs-body-color) !important;
+}
+
+body[data-bs-theme="dark"] .note-editor.note-frame .note-btn:hover,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-btn:focus,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-btn-group .dropdown-toggle:hover,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-btn-group .dropdown-toggle:focus {
+    background-color: rgba(13, 110, 253, 0.18);
+    color: var(--bs-body-color);
+}
+
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu {
+    background-color: var(--bs-body-bg);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: var(--bs-body-color);
+}
+
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-item {
+    color: var(--bs-body-color);
+}
+
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-item,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-item * {
+    color: var(--bs-body-color) !important;
+}
+
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu .dropdown-item,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu .dropdown-item *,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu .note-dropdown-item,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu .note-dropdown-item *,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu .dropdown-item,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu .dropdown-item *,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu .note-dropdown-item,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu .note-dropdown-item *,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu h1,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu h2,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu h3,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu h4,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu h5,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu h6,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu p,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu blockquote,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu pre {
+    color: #e9ecef !important;
+    -webkit-text-fill-color: #e9ecef !important;
+}
+
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-item:hover,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-item:focus {
+    background-color: rgba(13, 110, 253, 0.18);
+    color: var(--bs-body-color);
+}
+
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu .dropdown-item:hover,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu .dropdown-item:focus,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu .dropdown-item.active,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu li:hover,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu li:focus,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu a:hover,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu a:focus,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu button:hover,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu button:focus,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu .dropdown-item:hover,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu .dropdown-item:focus,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu .dropdown-item.active,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu li:hover,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu li:focus,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu a:hover,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu a:focus,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu button:hover,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu button:focus,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu .dropdown-item:hover *,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu .dropdown-item:focus *,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu .dropdown-item.active *,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu li:hover *,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu a:hover *,
+body[data-bs-theme="dark"] .note-editor.note-frame .note-dropdown-menu button:hover *,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu .dropdown-item:hover *,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu .dropdown-item:focus *,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu .dropdown-item.active *,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu li:hover *,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu a:hover *,
+body[data-bs-theme="dark"] .note-editor.note-frame .dropdown-menu button:hover * {
+    background: rgba(13, 110, 253, 0.18) !important;
+    background-color: rgba(13, 110, 253, 0.18) !important;
+    color: #e9ecef !important;
+}
+
+.note-editor.note-frame .note-dropdown-menu,
+.note-editor.note-frame .dropdown-menu {
+    min-width: 14rem;
+}
+
+.note-editor.note-frame .note-dropdown-menu .dropdown-item,
+.note-editor.note-frame .dropdown-menu .dropdown-item {
+    white-space: nowrap;
+}
+
 @media (min-width: 768px) {
     .home-post-composer {
         position: fixed;
@@ -119,6 +292,27 @@ body[data-bs-theme="dark"] .note-editor.note-frame .note-placeholder {
     border-radius: 4px;
     padding: 2px 4px;
     font-weight: bold;
+}
+
+.post-summary {
+    min-width: 0;
+}
+
+.post-summary > :last-child {
+    margin-bottom: 0;
+}
+
+.post-summary ul,
+.post-summary ol {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.post-summary li > ul,
+.post-summary li > ol {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .comment-thread-list {

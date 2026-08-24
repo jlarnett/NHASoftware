@@ -8,13 +8,13 @@
             var postIsPartiallyVisibleInView = Utils.isElementInView(this, false);
             var postIsFullyVisibleInView = Utils.isElementInView(this, true);
         
-            var postHasImagesAttached = $(this).attr("images-attached");
-            var postHasLoadedImagesAlready = $(this).attr("images-loaded");
+            var postHasMediaAttached = $(this).attr("media-attached");
+            var postHasLoadedMediaAlready = $(this).attr("media-loaded");
             var postId = $(this).attr("post-id");
             var uuid = $(this).attr("post-uuid");
 
-            if (postIsPartiallyVisibleInView && postHasImagesAttached !== "False" && postHasLoadedImagesAlready === "false") {
-                $(this).attr("images-loaded", "true");
+            if (postIsPartiallyVisibleInView && postHasMediaAttached !== "False" && postHasLoadedMediaAlready === "false") {
+                $(this).attr("media-loaded", "true");
                 ImageLoader.RetrieveImagesForPost(postId, uuid);
             }
         });
@@ -29,34 +29,43 @@
         ContentFeedUtility.AddSpinnerToImageSection(uuid);
 
         if (!(postId in this.StoredPostImages)) {
-            ContentFeedAjaxCalls.RetrieveImagesForPost(postId).then(function (images) {
+            ContentFeedAjaxCalls.RetrieveImagesForPost(postId).then(function (mediaItems) {
                 ContentFeedUtility.RemoveSpinnerFromImageSection(uuid);
-                ImageLoader.LoadImagesToPost(images, uuid);
-                ContentFeedUtility.ShowPostImageCarousel(uuid);
-                ImageLoader.StoredPostImages[postId] = images;
+                ImageLoader.LoadImagesToPost(mediaItems, uuid);
+                ImageLoader.StoredPostImages[postId] = mediaItems;
             });
         }
         else {
             ImageLoader.LoadImagesToPost(this.StoredPostImages[postId], uuid);
-            ContentFeedUtility.ShowPostImageCarousel(uuid);
             ContentFeedUtility.RemoveSpinnerFromImageSection(uuid);
         }
     }
 
-    static LoadImagesToPost(images, uuid) {
+    static LoadImagesToPost(mediaItems, uuid) {
         //Takes in the list of images retrieved from API Call and creates the HTML for images.
         //The HTML is appended to image section of post. 
 
-        var imageHtml = this.GeneratePostImagesHtmlRedesign(images);
-        var indicatorHtml = this.GenerateCarouselIndicatorHtml(images, uuid);
+        let imageItems = mediaItems.filter((mediaItem) => !mediaItem.isVideo);
+        let videoItems = mediaItems.filter((mediaItem) => mediaItem.isVideo);
 
-        $("#Image-Carousel-Inner-" + uuid).append(imageHtml);
-        $("#Image-Carousel-" + uuid).prepend(indicatorHtml);
+        if (imageItems.length > 0) {
+            var imageHtml = this.GeneratePostImagesHtmlRedesign(imageItems);
+            var indicatorHtml = this.GenerateCarouselIndicatorHtml(imageItems, uuid);
 
-        var myCarousel = document.querySelector("#Image-Carousel-" + uuid);
-        var carousel = new bootstrap.Carousel(myCarousel, {
-            interval: 3000,
-        })
+            $("#Image-Carousel-Inner-" + uuid).append(imageHtml);
+            $("#Image-Carousel-" + uuid).prepend(indicatorHtml);
+            ContentFeedUtility.ShowPostImageCarousel(uuid);
+
+            var myCarousel = document.querySelector("#Image-Carousel-" + uuid);
+            var carousel = new bootstrap.Carousel(myCarousel, {
+                interval: 3000,
+            })
+        }
+
+        if (videoItems.length > 0) {
+            var videoHtml = this.GeneratePostVideosHtml(videoItems);
+            $("#Post-Videos-" + uuid).append(videoHtml).show();
+        }
     }
 
     static GenerateCarouselIndicatorHtml(images, uuid) {
@@ -88,16 +97,52 @@
         let imageCount = 0;
 
         images.forEach((image) => {
+            var mediaHtml = '<img class="d-block w-100" src="' + image.dataSource + '" alt="Post Image"/>';
+
             if (imageCount > 0) {
-                postImageHtml.push('<div class="carousel-item"><img class="d-block w-100" src="', image, '" alt="Post Image"/></div>');
+                postImageHtml.push('<div class="carousel-item">', mediaHtml, '</div>');
             }
             else {
-                postImageHtml.push('<div class="carousel-item active"><img class="d-block w-100" src="', image, '" alt="Post Image"/></div>');
+                postImageHtml.push('<div class="carousel-item active">', mediaHtml, '</div>');
             }
 
             imageCount += 1;
         });
 
         return postImageHtml.join('');
+    }
+
+    static GeneratePostVideosHtml(videos) {
+        let postVideoHtml = [];
+
+        videos.forEach((video) => {
+            let mimeType = this.ResolveVideoMimeType(video.fileExtensionType);
+            let videoSource = video.mediaUrl || video.dataSource;
+            postVideoHtml.push(
+                '<div class="ratio ratio-16x9 rounded-3 overflow-hidden border border-white">',
+                '<video class="w-100 h-100 bg-black" controls playsinline preload="metadata">',
+                '<source src="', videoSource, '" type="', mimeType, '">',
+                'Your browser does not support the video tag.',
+                '</video>',
+                '</div>'
+            );
+        });
+
+        return postVideoHtml.join('');
+    }
+
+    static ResolveVideoMimeType(fileExtensionType) {
+        switch ((fileExtensionType || '').toLowerCase()) {
+            case '.mp4':
+                return 'video/mp4';
+            case '.webm':
+                return 'video/webm';
+            case '.ogg':
+                return 'video/ogg';
+            case '.mov':
+                return 'video/quicktime';
+            default:
+                return 'video/mp4';
+        }
     }
 }

@@ -39,6 +39,7 @@ using NHA.Website.Software.SessionTrackingMiddleware;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
+const long maxVideoUploadBytes = 100L * 1024 * 1024;
 
 // gets the connectionString from Configuration.
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
@@ -81,6 +82,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = maxVideoUploadBytes;
+});
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = maxVideoUploadBytes;
+});
 
 builder.Services.AddControllersWithViews();
 #region CorsPolicy

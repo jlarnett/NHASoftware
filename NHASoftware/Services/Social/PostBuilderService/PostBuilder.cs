@@ -143,7 +143,7 @@ public class PostBuilder : IPostBuilder
 
         var userLikes = await _unitOfWork.UserLikeRepository.GetByPostIdsAsync(postIds);
         var likesByPostId = userLikes.ToLookup(userLike => userLike.PostId);
-        var postIdsWithImages = await _unitOfWork.PostImageRepository.GetPostIdsWithImagesAsync(postIds);
+        var postIdsWithMedia = await _unitOfWork.PostImageRepository.GetPostIdsWithImagesAsync(postIds);
         var commentCounts = await _unitOfWork.PostRepository.GetCommentCountsByParentPostIdsAsync(postIds);
         var currentUserId = ClaimsPrincipal.Current is null
             ? string.Empty
@@ -151,7 +151,7 @@ public class PostBuilder : IPostBuilder
 
         foreach (var dto in postDTOs)
         {
-            posts.Add(PopulatePostDtoCore(dto, likesByPostId, postIdsWithImages, commentCounts, currentUserId));
+            posts.Add(PopulatePostDtoCore(dto, likesByPostId, postIdsWithMedia, commentCounts, currentUserId));
         }
 
         return posts;
@@ -159,13 +159,13 @@ public class PostBuilder : IPostBuilder
 
     /// <summary>
     /// Populates PostDTO with currently logged in users like details (whether they liked the post & how many people like post in general)
-    /// Also sets a HasImageAttached flag. This triggers dynamic image loading from JS
+    /// Also sets a HasMediaAttached flag. This triggers dynamic media loading from JS
     /// </summary>
     /// <param name="dto">The postDTO to finish populating</param>
     /// <returns>Fully populated postDTO</returns>
     private PostDTO PopulatePostDtoCore(PostDTO dto,
         ILookup<int, UserLikes> likesByPostId,
-        HashSet<int> postIdsWithImages,
+        HashSet<int> postIdsWithMedia,
         IReadOnlyDictionary<int, int> commentCounts,
         string currentUserId)
     {
@@ -184,7 +184,7 @@ public class PostBuilder : IPostBuilder
             && likesForPost.Any(userLike => !userLike.IsDislike && userLike.UserId == currentUserId);
         dto.UserDislikedPost = !string.IsNullOrEmpty(currentUserId)
             && likesForPost.Any(userLike => userLike.IsDislike && userLike.UserId == currentUserId);
-        dto.HasImagesAttached = postIdsWithImages.Contains(postId);
+        dto.HasMediaAttached = postIdsWithMedia.Contains(postId);
 
         return dto;
     }
@@ -197,13 +197,13 @@ public class PostBuilder : IPostBuilder
         }
 
         var postId = dto.Id.Value;
-        var postIdsWithImages = await _unitOfWork.PostImageRepository.GetPostIdsWithImagesAsync([postId]);
+        var postIdsWithMedia = await _unitOfWork.PostImageRepository.GetPostIdsWithImagesAsync([postId]);
         var commentCounts = await _unitOfWork.PostRepository.GetCommentCountsByParentPostIdsAsync([postId]);
         var currentUserId = ClaimsPrincipal.Current is null
             ? string.Empty
             : _userManager.GetUserId(ClaimsPrincipal.Current) ?? string.Empty;
 
-        return PopulatePostDtoCore(dto, userLikes.ToLookup(userLike => userLike.PostId), postIdsWithImages, commentCounts, currentUserId);
+        return PopulatePostDtoCore(dto, userLikes.ToLookup(userLike => userLike.PostId), postIdsWithMedia, commentCounts, currentUserId);
     }
 
     /// <summary>

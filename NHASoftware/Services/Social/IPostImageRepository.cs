@@ -5,5 +5,6 @@ public interface IPostImageRepository : IGenericRepository<PostImage>
 {
     public Task<bool> HasImagesAttachedAsync(int? postId);
     public Task<List<PostImage>> GetPostImagesAsync(int? postId);
+    public Task<PostImage?> GetPostMediaAsync(int? mediaId);
     public Task<HashSet<int>> GetPostIdsWithImagesAsync(IEnumerable<int> postIds);
 }

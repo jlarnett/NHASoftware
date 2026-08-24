@@ -23,6 +23,10 @@ namespace NHA.Website.Software.Controllers.WebAPIs.SocialAPI;
 [ApiController]
 public class PostsController : ControllerBase
 {
+    private const long MaxImageFileSizeBytes = 5 * 1024 * 1024;
+    private const long MaxVideoFileSizeBytes = 100 * 1024 * 1024;
+    private const string PostMediaFolderName = "PostMedia";
+
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly UserManager<ApplicationUser> _userManager;
@@ -33,12 +37,13 @@ public class PostsController : ControllerBase
     private readonly ICacheLoadingManager _cacheLoadingManager;
     private readonly IPostBuilder _postBuilder;
     private readonly ICookieMonster _cookieMonster;
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
     public PostsController(IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager,
         ILogger<PostDTO> logger, IFileExtensionValidator validator,
         IImageDataSourceTranslator imageTranslator, IMemoryCache memoryCache,
         ICacheLoadingManager cacheLoadingManager, IPostBuilder postBuilder,
-        ICookieMonster cookieMonster)
+        ICookieMonster cookieMonster, IWebHostEnvironment webHostEnvironment)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
@@ -50,6 +55,7 @@ public class PostsController : ControllerBase
         _cacheLoadingManager = cacheLoadingManager;
         _postBuilder = postBuilder;
         _cookieMonster = cookieMonster;
+        _webHostEnvironment = webHostEnvironment;
     }
 
     [HttpGet]
@@ -60,22 +66,65 @@ public class PostsController : ControllerBase
     }
 
     [HttpGet("GetPostImages/{id}")]
-    public async Task<ActionResult<List<string>>> GetPostImages(int? id)
+    public async Task<IActionResult> GetPostImages(int? id)
     {
         if (id == null)
             return NotFound();
 
         var images = await _unitOfWork.PostImageRepository.GetPostImagesAsync(id);
-        List<string> imageDataSources = new List<string>();
+        var mediaDataSources = new List<object>();
 
         foreach (var image in images)
         {
-            var imageDataSource =
-                _imageDataSourceTranslator.GetDataSourceTranslation(image.FileExtensionType, image.ImageBytes!);
-            imageDataSources.Add(imageDataSource);
+            var isVideo = IsVideoFileExtension(image.FileExtensionType);
+            var imageDataSource = !isVideo && image.ImageBytes != null
+                ? _imageDataSourceTranslator.GetDataSourceTranslation(image.FileExtensionType, image.ImageBytes)
+                : null;
+
+            mediaDataSources.Add(new
+            {
+                id = image.Id,
+                dataSource = imageDataSource,
+                mediaUrl = isVideo ? GetVideoMediaUrl(image) : null,
+                fileExtensionType = image.FileExtensionType,
+                isVideo
+            });
         }
 
-        return Ok(imageDataSources);
+        return Ok(mediaDataSources);
+    }
+
+    [HttpGet("GetPostMedia/{mediaId}")]
+    public async Task<IActionResult> GetPostMedia(int? mediaId)
+    {
+        if (mediaId == null)
+        {
+            return NotFound();
+        }
+
+        var media = await _unitOfWork.PostImageRepository.GetPostMediaAsync(mediaId);
+
+        if (media == null || string.IsNullOrWhiteSpace(media.FileExtensionType))
+        {
+            return NotFound();
+        }
+
+        if (!string.IsNullOrWhiteSpace(media.MediaPath))
+        {
+            var physicalPath = GetPhysicalMediaPath(media.MediaPath);
+
+            if (System.IO.File.Exists(physicalPath))
+            {
+                return PhysicalFile(physicalPath, GetMediaContentType(media.FileExtensionType), enableRangeProcessing: true);
+            }
+        }
+
+        if (media.ImageBytes == null)
+        {
+            return NotFound();
+        }
+
+        return File(media.ImageBytes, GetMediaContentType(media.FileExtensionType), enableRangeProcessing: true);
     }
 
     // PUT: api/Posts/5
@@ -153,7 +202,7 @@ public class PostsController : ControllerBase
 
     /// <summary>
     /// POST: api/Posts/CustomizedPosts
-    /// API Endpoint for creating new custom social media post. This is the endpoint used for creating post with images attached.
+    /// API Endpoint for creating new custom social media post. This is the endpoint used for creating posts with media attached.
     /// </summary>
     /// <param name="postdto"></param>
     /// <returns>Returns IActionResult with new post. </returns>
@@ -171,15 +220,17 @@ public class PostsController : ControllerBase
                 { success = false, message = "Post must be more than 10 characters long." });
         }
 
-        var imageFilesIncluded = postdto.ImageFiles != null && postdto.ImageFiles.Count > 0;
+        var mediaFilesIncluded = postdto.MediaFiles != null && postdto.MediaFiles.Count > 0;
 
-        if (imageFilesIncluded)
+        if (mediaFilesIncluded)
         {
-            foreach (var imageFile in postdto.ImageFiles!)
+            foreach (var mediaFile in postdto.MediaFiles!)
             {
-                if (!_fileExtensionValidator.CheckValidImageExtensions(imageFile.FileName))
+                if (!TryValidatePostMediaFile(mediaFile, out var validationMessage))
+                {
                     return BadRequest(new
-                    { success = false, message = "Unable To Submit Custom Post - Image file extension not supported." });
+                    { success = false, message = validationMessage });
+                }
             }
         }
 
@@ -191,11 +242,11 @@ public class PostsController : ControllerBase
         {
             var newlyCreatedPost = await _postBuilder.LocateNewlyCreatedPost(post);
 
-            if (imageFilesIncluded)
+            if (mediaFilesIncluded)
             {
-                var imageSaveResult = await SavePostImagesToDatabase(newlyCreatedPost.Id, postdto.ImageFiles!);
-                if (!imageSaveResult)
-                    return BadRequest(new { success = false, message = "Error Saving Images To DB" });
+                var mediaSaveResult = await SavePostMediaToDatabase(newlyCreatedPost.Id, postdto.MediaFiles!);
+                if (!mediaSaveResult)
+                    return BadRequest(new { success = false, message = "Error saving post media to DB." });
             }
 
             var newPost = await _postBuilder.LocateNewlyCreatedPost(post);
@@ -392,6 +443,30 @@ public class PostsController : ControllerBase
         return post.Any();
     }
 
+    private static bool IsVideoFileExtension(string fileExtensionType)
+    {
+        return fileExtensionType.StartsWith(".mp4", StringComparison.OrdinalIgnoreCase)
+            || fileExtensionType.StartsWith(".webm", StringComparison.OrdinalIgnoreCase)
+            || fileExtensionType.StartsWith(".ogg", StringComparison.OrdinalIgnoreCase)
+            || fileExtensionType.StartsWith(".mov", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string GetMediaContentType(string fileExtensionType)
+    {
+        return fileExtensionType.ToLowerInvariant() switch
+        {
+            ".png" => "image/png",
+            ".jpg" => "image/jpeg",
+            ".jpeg" => "image/jpeg",
+            ".bmp" => "image/bmp",
+            ".mp4" => "video/mp4",
+            ".webm" => "video/webm",
+            ".ogg" => "video/ogg",
+            ".mov" => "video/quicktime",
+            _ => "application/octet-stream"
+        };
+    }
+
     private Post AssignServerSidePostParameters(PostDTO postdto)
     {
         var post = _mapper.Map<PostDTO, Post>(postdto);
@@ -402,39 +477,140 @@ public class PostsController : ControllerBase
         return post;
     }
 
-    private async Task<bool> SavePostImagesToDatabase(int? postId, List<IFormFile> imageFiles)
+    private bool TryValidatePostMediaFile(IFormFile mediaFile, out string validationMessage)
     {
-        List<PostImage> images = new List<PostImage>();
+        validationMessage = string.Empty;
 
-        foreach (var imageFile in imageFiles)
+        if (mediaFile.Length <= 0)
         {
-            using var memoryStream = new MemoryStream();
-            await imageFile.CopyToAsync(memoryStream);
+            validationMessage = "Unable to submit custom post - one of the uploaded files is empty.";
+            return false;
+        }
 
-            // Upload the file if less than 5 MB
-            if (memoryStream.Length < 5242880)
+        if (_fileExtensionValidator.CheckValidImageExtensions(mediaFile.FileName))
+        {
+            if (mediaFile.Length > MaxImageFileSizeBytes)
             {
+                validationMessage = "Unable to submit custom post - image files must be 5 MB or smaller.";
+                return false;
+            }
+
+            return true;
+        }
+
+        if (_fileExtensionValidator.CheckValidVideoExtensions(mediaFile.FileName))
+        {
+            if (mediaFile.Length > MaxVideoFileSizeBytes)
+            {
+                validationMessage = "Unable to submit custom post - video files must be 100 MB or smaller.";
+                return false;
+            }
+
+            return true;
+        }
+
+        validationMessage = "Unable to submit custom post - file extension not supported. Please upload an image or supported video file.";
+        return false;
+    }
+
+    private async Task<bool> SavePostMediaToDatabase(int? postId, List<IFormFile> mediaFiles)
+    {
+        List<PostImage> media = new List<PostImage>();
+        List<string> createdFilePaths = new List<string>();
+
+        try
+        {
+            foreach (var mediaFile in mediaFiles)
+            {
+                var fileExtension = Path.GetExtension(mediaFile.FileName).ToLowerInvariant();
+
+                if (IsVideoFileExtension(fileExtension))
+                {
+                    var relativeMediaPath = await SaveVideoFileAsync(mediaFile);
+                    createdFilePaths.Add(GetPhysicalMediaPath(relativeMediaPath));
+
+                    media.Add(new PostImage
+                    {
+                        MediaPath = relativeMediaPath,
+                        PostId = postId,
+                        FileExtensionType = fileExtension
+                    });
+
+                    continue;
+                }
+
+                using var memoryStream = new MemoryStream();
+                await mediaFile.CopyToAsync(memoryStream);
+
                 PostImage postImage = new()
                 {
                     ImageBytes = memoryStream.ToArray(),
                     PostId = postId,
-                    FileExtensionType = Path.GetExtension(imageFile.FileName)
+                    FileExtensionType = fileExtension
                 };
 
-                images.Add(postImage);
+                media.Add(postImage);
             }
 
+            await _unitOfWork.PostImageRepository.AddRange(media);
+            var savePostImageResult = await _unitOfWork.CompleteAsync();
+
+            if (savePostImageResult > 0)
+            {
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to save post media for post {postId}", postId);
         }
 
-        await _unitOfWork.PostImageRepository.AddRange(images);
-        var savePostImageResult = await _unitOfWork.CompleteAsync();
-
-        if (savePostImageResult > 0)
+        foreach (var createdFilePath in createdFilePaths)
         {
-            return true;
+            if (System.IO.File.Exists(createdFilePath))
+            {
+                System.IO.File.Delete(createdFilePath);
+            }
         }
 
         return false;
+    }
+
+    private async Task<string> SaveVideoFileAsync(IFormFile mediaFile)
+    {
+        var fileExtension = Path.GetExtension(mediaFile.FileName).ToLowerInvariant();
+        var uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
+        var relativeMediaPath = Path.Combine(PostMediaFolderName, uniqueFileName);
+        var physicalMediaPath = GetPhysicalMediaPath(relativeMediaPath);
+        var mediaDirectory = Path.GetDirectoryName(physicalMediaPath);
+
+        if (!string.IsNullOrWhiteSpace(mediaDirectory))
+        {
+            Directory.CreateDirectory(mediaDirectory);
+        }
+
+        await using var fileStream = new FileStream(physicalMediaPath, FileMode.Create, FileAccess.Write, FileShare.None);
+        await mediaFile.CopyToAsync(fileStream);
+
+        return relativeMediaPath;
+    }
+
+    private string GetVideoMediaUrl(PostImage postImage)
+    {
+        if (!string.IsNullOrWhiteSpace(postImage.MediaPath))
+        {
+            return $"{Request.PathBase}/{postImage.MediaPath.Replace('\\', '/')}";
+        }
+
+        return $"{Request.PathBase}/api/posts/GetPostMedia/{postImage.Id}";
+    }
+
+    private string GetPhysicalMediaPath(string relativeMediaPath)
+    {
+        var normalizedRelativePath = relativeMediaPath.Replace('/', Path.DirectorySeparatorChar)
+            .Replace('\\', Path.DirectorySeparatorChar);
+
+        return Path.Combine(_webHostEnvironment.WebRootPath, normalizedRelativePath);
     }
 
 }

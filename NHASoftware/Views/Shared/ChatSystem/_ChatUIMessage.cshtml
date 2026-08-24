@@ -6,39 +6,42 @@
 @inject ITimeBender _TimeBender
 @{
     var currentUserId = _UserManager.GetUserId(User);
-    var borderClasses = !Model.NewMessage ? "row m-auto p-1 border-top border-primary" : "row m-auto p-1 ";
+    var borderClasses = !Model.NewMessage ? "row m-auto p-1" : "row m-auto p-1 ";
+    var isCurrentUserMessage = currentUserId != null && currentUserId.Equals(Model.SenderUserId);
 
     if (currentUserId != null)
     {
-        if (currentUserId.Equals(Model.SenderUserId))
+        if (isCurrentUserMessage)
         {
-            <div class="@borderClasses">
-                <div class="row p-0 m-auto">
-                    <div class="col">
-                        <div class="text-body-tertiary">@Model.Summary</div>
+            <div class="@borderClasses chat-message-row chat-message-row-outgoing">
+                <div class="row p-0 m-auto align-items-end justify-content-end gx-2 chat-message-content-row">
+                    <div class="col chat-message-main chat-message-main-outgoing">
+                        <div class="chat-message-bubble chat-message-bubble-outgoing text-body-tertiary">@Model.Summary</div>
                     </div>
-                    <div class="col-4 m-auto">
-                        <img class="img-fluid col-10 rounded-pill m-auto" alt="@Model.SenderUser!.DisplayName's profile picture" src="~/ProfilePictures/@Model.SenderUser!.ProfilePicturePath"/>
+                    <div class="col-auto m-auto chat-message-avatar-column">
+                        <img class="img-fluid rounded-circle chat-message-avatar" alt="@Model.SenderUser!.DisplayName's profile picture" src="~/ProfilePictures/@Model.SenderUser!.ProfilePicturePath"/>
                     </div>
                 </div>
                 <div class="row p-0 m-auto">
-                    <div class="text-primary text-end col">@_TimeBender.GetTimeShortHandString(Model.CreationDate!.Value)</div>
+                    <div class="text-primary text-end col chat-message-timestamp">@_TimeBender.GetTimeShortHandString(Model.CreationDate!.Value)</div>
                 </div>
             </div>
         }
         else
         {
-            <div class="@borderClasses">
-                <div class="row p-0">
-                    <div class="col-4">
-                        <img class="img-fluid col-10 rounded-pill " src="~/ProfilePictures/@Model.SenderUser!.ProfilePicturePath" />
+            <div class="@borderClasses chat-message-row chat-message-row-incoming">
+                <div class="row p-0 align-items-end gx-2 chat-message-content-row">
+                    <div class="col-auto chat-message-avatar-column">
+                        <img class="img-fluid rounded-circle chat-message-avatar" alt="@Model.SenderUser!.DisplayName's profile picture" src="~/ProfilePictures/@Model.SenderUser!.ProfilePicturePath" />
                     </div>
-                    <div class="col text-body-tertiary">
-                        @Model.Summary
+                    <div class="col chat-message-main">
+                        <div class="chat-message-bubble chat-message-bubble-incoming text-body-tertiary">
+                            @Model.Summary
+                        </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="text-primary">@_TimeBender.GetTimeShortHandString(Model.CreationDate!.Value)</div>
+                    <div class="text-primary chat-message-timestamp chat-message-timestamp-incoming">@_TimeBender.GetTimeShortHandString(Model.CreationDate!.Value)</div>
                 </div>
             </div>
         }

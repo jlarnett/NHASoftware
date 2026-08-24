@@ -21,8 +21,8 @@ public class PostDTO
     public bool UserDislikedPost { get; set; }
     public bool UserLikedPost { get; set; }
 
-    public List<IFormFile>? ImageFiles { get; set; } = new List<IFormFile>();
-    public bool HasImagesAttached { get; set; }
+    public List<IFormFile>? MediaFiles { get; set; } = new List<IFormFile>();
+    public bool HasMediaAttached { get; set; }
     public Guid? UUID { get; set; }
     public DateTime? UserLastActiveTime { get; set; }
 }

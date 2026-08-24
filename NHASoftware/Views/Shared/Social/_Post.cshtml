@@ -29,7 +29,7 @@
     var profileStatusLabel = isUserOnline ? "Online" : "Offline";
 }
 
-<div id="post-@Model.Id" class="container-fluid border border-1 shadow-sm border-dark ridge rounded-2 mt-2 post-container" post-id="@Model.Id" images-attached="@Model.HasImagesAttached.ToString()" images-loaded="false" post-uuid="@uuid.ToString()" post-container-id="@Model.Id">
+<div id="post-@Model.Id" class="container-fluid border border-1 shadow-sm border-dark ridge rounded-2 mt-2 post-container" post-id="@Model.Id" media-attached="@Model.HasMediaAttached.ToString()" media-loaded="false" post-uuid="@uuid.ToString()" post-container-id="@Model.Id">
     <div class="row align-items-center mt-2">
         <!--User Profile image & display name-->
         <div class="col-auto px-2">
@@ -133,7 +133,7 @@
                     var objectHref = taggedObjectHref as string[] ?? taggedObjectHref.ToArray();
                     var objectImages = taggedObjectImages as string[] ?? taggedObjectImages.ToArray();
 
-                    <div class="row p-1">
+                    <div class="post-summary p-1">
                         @Html.Raw(Model.Summary)
                     </div>
 
@@ -174,6 +174,11 @@
                     <span class="visually-hidden">Next</span>
                 </button>
             </div>
+        </div>
+    </div>
+    <div class="row text-break mt-2">
+        <div unique-video-section="@uuid" class="col">
+            <div id="Post-Videos-@uuid" class="d-flex flex-column gap-2" style="display: none"></div>
         </div>
     </div>
     <!--Posts Likes & Comment Show section-->

@@ -60,7 +60,7 @@
                                         class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2 fs-5 interactable"
                                         data-bs-toggle="modal"
                                         data-bs-target="#AddPostPhotosModal">
-                                    <span>Upload With Photos</span>
+                                    <span>Upload With Media</span>
                                 </button>
                             </div>
                         </feature>
@@ -121,7 +121,7 @@
                             </div>
                             <div class="row mb-2">
                                 <div class="col-12 px-0">
-                                    <input type="file" id="CustomPostImageFileInput" class="p-0 interactable" multiple="multiple" role="button" name="ImageFiles" />
+                                    <input type="file" id="CustomPostMediaFileInput" class="p-0 interactable" multiple="multiple" role="button" name="MediaFiles" accept="image/*,video/mp4,video/webm,video/ogg" />
                                 </div>
                             </div>
                             <div class="row mb-2">
@@ -147,13 +147,13 @@
 @section Scripts {
     
 
-    <script src="~/Scripts/Social_Feed/Gratitude.js"></script>
-    <script src="~/Scripts/Social_Feed/ContentFeed.Input.js"></script>
-    <script src="~/Scripts/Social_Feed/ContentFeedAjaxCalls.js"></script>
-    <script src="~/Scripts/Social_Feed/ContentFeedUtility.js"></script>
-    <script src="~/Scripts/Social_Feed/ContentFeed.js"></script>
-    <script src="~/Scripts/Social_Feed/ContentFeedImageLoader.js"></script>
-    <script src="~/Scripts/Social_Feed/ContentFeedLoader.js"></script>
+    <script src="~/Scripts/Social_Feed/Gratitude.js" asp-append-version="true"></script>
+    <script src="~/Scripts/Social_Feed/ContentFeed.Input.js" asp-append-version="true"></script>
+    <script src="~/Scripts/Social_Feed/ContentFeedAjaxCalls.js" asp-append-version="true"></script>
+    <script src="~/Scripts/Social_Feed/ContentFeedUtility.js" asp-append-version="true"></script>
+    <script src="~/Scripts/Social_Feed/ContentFeed.js" asp-append-version="true"></script>
+    <script src="~/Scripts/Social_Feed/ContentFeedImageLoader.js" asp-append-version="true"></script>
+    <script src="~/Scripts/Social_Feed/ContentFeedLoader.js" asp-append-version="true"></script>
     <script>
         (() => {
             const composer = document.querySelector('.home-post-composer');

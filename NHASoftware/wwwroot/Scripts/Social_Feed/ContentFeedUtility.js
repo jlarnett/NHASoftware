@@ -298,6 +298,8 @@
 
         $('#MainPostTextbox').summernote({
             toolbar: [
+                ['style', ['style']],
+                ['para', ['ul', 'ol', 'paragraph']]
             ],
             disableResizeEditor: true,
             placeholder: 'Type Post Summary Here.......',
@@ -364,7 +366,8 @@
 
         $('#CustomPostTextbox').summernote({
             toolbar: [
-            // [groupName, [list of button]]
+                ['style', ['style']],
+                ['para', ['ul', 'ol', 'paragraph']]
             ],
             disableResizeEditor: true,
             placeholder: 'Type Custom Post Summary Here.....',
