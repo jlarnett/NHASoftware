@@ -70,22 +70,34 @@ internal static class ApiTestEnvironment
     /// <returns>The decoded antiforgery token value.</returns>
     internal static async Task<string> GetAntiforgeryTokenAsync(HttpClient httpClient, string path = DefaultAntiforgeryPath)
     {
-        var html = await httpClient.GetStringAsync(path);
-        var token = ExtractAntiforgeryToken(html);
+        var page = await GetPageDetailsAsync(httpClient, path);
+        var token = ExtractAntiforgeryToken(page.Html);
 
         if (string.IsNullOrWhiteSpace(token) && !string.Equals(path, DefaultAntiforgeryPath, StringComparison.OrdinalIgnoreCase))
         {
-            html = await httpClient.GetStringAsync(DefaultAntiforgeryPath);
-            token = ExtractAntiforgeryToken(html);
-            path = DefaultAntiforgeryPath;
+            page = await GetPageDetailsAsync(httpClient, DefaultAntiforgeryPath);
+            token = ExtractAntiforgeryToken(page.Html);
         }
 
         if (string.IsNullOrWhiteSpace(token))
         {
-            throw new InvalidOperationException($"Antiforgery token was not found at path '{path}'.");
+            throw new InvalidOperationException(
+                $"Antiforgery token was not found at path '{path}'. " +
+                $"Status: {(int)page.StatusCode} {page.StatusCode}. " +
+                $"FinalUri: '{page.FinalUri}'. " +
+                $"ContentType: '{page.ContentType ?? "<none>"}'. " +
+                $"HtmlPreview: '{CreateHtmlPreview(page.Html)}'.");
         }
 
         return WebUtility.HtmlDecode(token);
+    }
+
+    private static async Task<(HttpStatusCode StatusCode, Uri? FinalUri, string? ContentType, string Html)> GetPageDetailsAsync(HttpClient httpClient, string path)
+    {
+        using var response = await httpClient.GetAsync(path);
+        var html = await response.Content.ReadAsStringAsync();
+
+        return (response.StatusCode, response.RequestMessage?.RequestUri, response.Content.Headers.ContentType?.ToString(), html);
     }
 
     private static string? ExtractAntiforgeryToken(string html)
@@ -97,6 +109,19 @@ internal static class ApiTestEnvironment
             .Descendants("input")
             .FirstOrDefault(node => string.Equals(node.GetAttributeValue("name", string.Empty), "__RequestVerificationToken", StringComparison.OrdinalIgnoreCase))
             ?.GetAttributeValue("value", null);
+    }
+
+    private static string CreateHtmlPreview(string html)
+    {
+        const int maxLength = 1000;
+        var normalized = html.Replace("\r", " ").Replace("\n", " ").Replace("\t", " ").Trim();
+
+        if (normalized.Length <= maxLength)
+        {
+            return normalized;
+        }
+
+        return normalized[..maxLength] + "...";
     }
 
     /// <summary>
