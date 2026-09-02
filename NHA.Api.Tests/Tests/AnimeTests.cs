@@ -22,6 +22,7 @@ namespace NHA.Api.Tests.Tests
                     ex);
             }
 
+            Console.WriteLine("testing ruleset");
             Assert.True(response.IsSuccessStatusCode, $"Expected a success status code from {ApiBaseUrl}/api/AnimePages?pageNumber=1 but received {(int?)response.StatusCode}.");
             Assert.NotNull(response.Content);
         }
