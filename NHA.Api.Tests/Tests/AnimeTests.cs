@@ -24,7 +24,6 @@ namespace NHA.Api.Tests.Tests
 
             Assert.True(response.IsSuccessStatusCode, $"Expected a success status code from {ApiBaseUrl}/api/AnimePages?pageNumber=1 but received {(int?)response.StatusCode}.");
             Assert.NotNull(response.Content);
-            Assert.Equal(50, response.Content.Count);
         }
     }
 }

@@ -10,6 +10,8 @@ namespace NHA.Api.Tests.Setup;
 /// </summary>
 internal static class ApiTestEnvironment
 {
+    private const string DefaultAntiforgeryPath = "/Identity/Account/Login";
+
     /// <summary>
     /// Resolves the API base URL from environment configuration or falls back to the local development URL.
     /// </summary>
@@ -71,10 +73,17 @@ internal static class ApiTestEnvironment
     /// <param name="httpClient">The client whose cookies and base address should be used for the request.</param>
     /// <param name="path">The relative path that renders the antiforgery token.</param>
     /// <returns>The decoded antiforgery token value.</returns>
-    internal static async Task<string> GetAntiforgeryTokenAsync(HttpClient httpClient, string path = "/")
+    internal static async Task<string> GetAntiforgeryTokenAsync(HttpClient httpClient, string path = DefaultAntiforgeryPath)
     {
         var html = await httpClient.GetStringAsync(path);
         var match = AntiforgeryTokenRegex.Match(html);
+
+        if (!match.Success && !string.Equals(path, DefaultAntiforgeryPath, StringComparison.OrdinalIgnoreCase))
+        {
+            html = await httpClient.GetStringAsync(DefaultAntiforgeryPath);
+            match = AntiforgeryTokenRegex.Match(html);
+            path = DefaultAntiforgeryPath;
+        }
 
         if (!match.Success)
         {
@@ -96,7 +105,7 @@ internal static class ApiTestEnvironment
         HttpClient httpClient,
         string requestUri,
         IEnumerable<KeyValuePair<string, string>> formValues,
-        string antiforgeryPath = "/")
+        string antiforgeryPath = DefaultAntiforgeryPath)
     {
         var antiforgeryToken = await GetAntiforgeryTokenAsync(httpClient, antiforgeryPath);
         using var request = new HttpRequestMessage(HttpMethod.Post, requestUri)
