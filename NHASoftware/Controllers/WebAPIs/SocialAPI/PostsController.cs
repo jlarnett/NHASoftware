@@ -194,7 +194,7 @@ public class PostsController : ControllerBase
                 post = newlyCreatedPost,
                 message = "Post successfully submitted to DB."
             });
-        } 
+        }
 
         _logger.Log(LogLevel.Debug, "system was unable to add postDto to DB.");
         return BadRequest(new { success = false , message = "POST API returned bad request. Post was not saved to DB."});

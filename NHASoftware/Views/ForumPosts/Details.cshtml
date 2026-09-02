@@ -21,7 +21,7 @@
     <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="@Model.ForumPost.Id" class=" btn btn-dark interactable">Create Comment</a>
 </div>
 
-<div class="row align-items-center">
+<div class="row align-items-center px-3">
     <a class="col-auto text-decoration-none p-0 pt-1 fs-2 me-1" asp-controller="ForumTopics" asp-action="Details" asp-route-id="@Model.ForumPost.ForumTopicId">
         <span class="badge text-bg-primary border-2 interactable m-auto">
             @Model.ForumPost.ForumTopic!.Title
@@ -34,7 +34,7 @@
     </a>
 </div>
 
-<div class="row">
+<div class="row px-3">
     <div class="col-auto text-decoration-none p-0 me-2 align-self-baseline small">
         <i class="bi bi-person-fill" title="Post Owner"></i>
     </div>

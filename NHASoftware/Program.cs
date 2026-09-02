@@ -80,7 +80,10 @@ IMapper mapper = mapperConfig.CreateMapper();
 //Application database config
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString!));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = builder.Environment.IsProduction();
+}).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.WebHost.ConfigureKestrel(options =>
@@ -143,38 +146,38 @@ builder.Services.AddTransient<IEmailSender, MailGunSender>();
 builder.Services.AddSingleton<IFileExtensionValidator, FileExtensionValidator>();
 builder.Services.AddTransient<IWarden, AccessWarden>();
 builder.Services.AddTransient<IHtmlStringCleaner, HtmlStringCleaner>();
-builder.Services.AddTransient<IProfilePictureFileScrubber, ProfilePictureFileScrubber>();
+builder.Services.AddScoped<IProfilePictureFileScrubber, ProfilePictureFileScrubber>();
 
 //Setup for generic repository system
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddTransient<IForumPostRepository, ForumPostRepository>();
-builder.Services.AddTransient<IForumCommentRepository, ForumCommentRepository>();
-builder.Services.AddTransient<IForumTopicRepository, ForumTopicRepository>();
-builder.Services.AddTransient<IForumSectionRepository, ForumSectionRepository>();
-builder.Services.AddTransient<IAnimePageRepository, AnimePageRepository>();
-builder.Services.AddTransient<IAnimeEpisodeRepository, AnimeEpisodeRepository>();
-builder.Services.AddTransient<IPostRepository, PostRepository>();
-builder.Services.AddTransient<IUserLikeRepository, UserLikeRepository>();
-builder.Services.AddTransient<IFriendRepository, FriendRepository>();
-builder.Services.AddTransient<IFriendRequestRepository, FriendRequestRepository>();
-builder.Services.AddTransient<IChatMessageRepository, ChatMessageRepository>();
-builder.Services.AddTransient<ITimeBender, TimeBender>();
-builder.Services.AddTransient<IPostBuilder, PostBuilder>();
-builder.Services.AddTransient<ISessionHistoryRepository, SessionHistoryRepository>();
-builder.Services.AddTransient<ISponsorAdRepository, SponsorAdRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IForumPostRepository, ForumPostRepository>();
+builder.Services.AddScoped<IForumCommentRepository, ForumCommentRepository>();
+builder.Services.AddScoped<IForumTopicRepository, ForumTopicRepository>();
+builder.Services.AddScoped<IForumSectionRepository, ForumSectionRepository>();
+builder.Services.AddScoped<IAnimePageRepository, AnimePageRepository>();
+builder.Services.AddScoped<IAnimeEpisodeRepository, AnimeEpisodeRepository>();
+builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<IUserLikeRepository, UserLikeRepository>();
+builder.Services.AddScoped<IFriendRepository, FriendRepository>();
+builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
+builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
+builder.Services.AddScoped<ITimeBender, TimeBender>();
+builder.Services.AddScoped<IPostBuilder, PostBuilder>();
+builder.Services.AddScoped<ISessionHistoryRepository, SessionHistoryRepository>();
+builder.Services.AddScoped<ISponsorAdRepository, SponsorAdRepository>();
 builder.Services.AddScoped<IActiveSessionTracker, ActiveSessionTracker>();
-builder.Services.AddTransient<IAnimeLeecher, AnimeLeecher>();
-builder.Services.AddTransient<IGameLeecher, GameLeecher>();
-builder.Services.AddTransient<IAdMaximizerService, AdMaximizerService>();
+builder.Services.AddScoped<IAnimeLeecher, AnimeLeecher>();
+builder.Services.AddScoped<IGameLeecher, GameLeecher>();
+builder.Services.AddScoped<IAdMaximizerService, AdMaximizerService>();
 
 
 //Cookie service
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddTransient<ICookieMonster, CookieMonster>();
+builder.Services.AddSingleton<ICookieMonster, CookieMonster>();
 builder.Services.AddSingleton(typeof(ICacheGoblin<>), typeof(CacheGoblin<>));
-builder.Services.AddTransient<IFriendSystem, FriendSystem>();
-builder.Services.AddTransient<IImageDataSourceTranslator, ImageDataSourceTranslator>();
+builder.Services.AddScoped<IFriendSystem, FriendSystem>();
+builder.Services.AddScoped<IImageDataSourceTranslator, ImageDataSourceTranslator>();
 builder.Services.AddSingleton<ICacheLoadingManager, CacheLoadingManager>();
 
 
@@ -254,7 +257,6 @@ using (var scope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope(
 }
 
 //App Hang fire Configuration.
-
 app.UseHangfireDashboard("/hangfire", new DashboardOptions()
 {
     //Passes the authorization to app. 
@@ -282,6 +284,3 @@ app.Use(async (context, next) =>
 });
 
 app.Run();
-
-
-

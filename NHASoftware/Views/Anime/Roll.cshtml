@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="~/css/AnimeRoll.css"/>
 </head>
 
-<div id="AnimeRollFeed" class="feed" tabindex="0">
+<div id="AnimeRollFeed" class="feed" tabindex="0" data-current-page="@Model.Page" data-total-pages="@Model.TotalPages">
     @foreach (var anime in Model.RollAnime)
     {
         <div class="row vh-100 d-flex justify-content-center align-items-center" >
@@ -79,137 +79,259 @@
 
 </div>
 
-@{
-    var newPageNumber = Model.Page + 1;
-}
-<div class="row">
-    <!-- Side spacing columns only on md and up -->
-    <div class="d-none d-md-block col-md-1"></div>
-    <a class="btn btn-outline-primary" style="display: none;" class="btn btn-primary col" asp-controller="Anime" asp-action="Roll" asp-route-pageNumber="@newPageNumber">Load more</a>
-    <!-- Side spacing columns only on md and up -->
-    <div class="d-none d-md-block col-md-1"></div>
-</div>
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        let players = [];
+        const players = new Map();
 
-        window.onYouTubeIframeAPIReady = function() {
-            const iframes = document.querySelectorAll('.anime-video');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                const player = players.get(entry.target.id);
+                if (!player || !player.playVideo) return;
 
-            // Create YT.Player instances
+                if (entry.isIntersecting) {
+                    player.setVolume(50);
+                    player.unMute();
+                    player.playVideo();
+
+                    players.forEach((currentPlayer, playerId) => {
+                        if (playerId !== entry.target.id && currentPlayer.pauseVideo) {
+                            currentPlayer.mute();
+                            currentPlayer.pauseVideo();
+                        }
+                    });
+                } else {
+                    player.mute();
+                    player.pauseVideo();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        window.initializeAnimeRollVideos = function(scope = document) {
+            if (!window.YT || !YT.Player) return;
+
+            const iframes = scope.querySelectorAll('.anime-video');
             iframes.forEach(iframe => {
+                if (players.has(iframe.id)) return;
+
                 const player = new YT.Player(iframe.id, {
                     events: {
                         'onReady': event => {
-                            event.target.mute(); // initially muted
+                            event.target.mute();
                         }
                     }
                 });
-                players.push(player);
+
+                players.set(iframe.id, player);
+                observer.observe(iframe);
             });
+        };
 
-            // Scroll observer
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    const idx = Array.from(iframes).indexOf(entry.target);
-                    const player = players[idx];
-                    if (!player || !player.playVideo) return;
-
-                    if (entry.isIntersecting) {
-                        // Unmute the new video
-                        player.setVolume(50);
-                        player.unMute();
-                        player.playVideo();
-
-                        // Mute all other videos
-                        players.forEach((p, i) => {
-                            if (i !== idx && p.pauseVideo) {
-                                p.mute();
-                                p.pauseVideo(); // optional, pause others
-                            }
-                        });
-                    } else {
-                        // Mute videos when scrolled out
-                        player.mute();
-                        player.pauseVideo(); // optional
-                    }
-                });
-            }, { threshold: 0.5 });
-
-            iframes.forEach(iframe => observer.observe(iframe));
+        window.onYouTubeIframeAPIReady = function() {
+            window.initializeAnimeRollVideos();
         };
     });
 </script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const feed = document.querySelector('.feed');
-    const nextPageUrl = "@Url.Action("Roll", "Anime", new { pageNumber = newPageNumber })";
+    const feed = document.getElementById('AnimeRollFeed');
+    if (!feed) return;
+
+    const apiUrl = '@Url.Content("~/api/AnimePages")';
+    const animeDetailsUrl = '@Url.Action("AnimePageDetails", "Anime")';
+    const genreIndexUrl = '@Url.Action("GenreIndex", "Anime")';
+    const platformIndexUrl = '@Url.Action("PlatformIndex", "Anime")';
+    const threshold = 5;
+    let currentPage = Number(feed.dataset.currentPage || '1');
+    const totalPages = Number(feed.dataset.totalPages || '1');
+    let isLoading = false;
+
+    const animeBadgeClasses = [
+        'bg-primary-subtle text-primary-emphasis border border-primary-subtle rounded-pill',
+        'bg-info-subtle text-info-emphasis border border-info-subtle rounded-pill',
+        'bg-danger-subtle text-danger-emphasis border border-danger-subtle rounded-pill'
+    ];
+
+    const getValue = (obj, camelName, pascalName) => obj[camelName] ?? obj[pascalName];
+    const escapeHtml = value => {
+        const div = document.createElement('div');
+        div.textContent = value ?? '';
+        return div.innerHTML;
+    };
+    const escapeAttribute = value => escapeHtml(value).replace(/"/g, '&quot;');
+
+    const getPlatformIcon = platform => {
+        if (!platform) return '';
+
+        const normalizedPlatform = platform.toLowerCase();
+
+        if (normalizedPlatform === 'netflix') return '/Images/netflix_logo_icon_170919.png';
+        if (normalizedPlatform === 'crunchyroll') return '/Images/crunchyroll_social_network_network_connection_communication_icon_192251.png';
+        if (normalizedPlatform === 'hulu') return '/Images/brand_hulu_icon_157922.png';
+        if (normalizedPlatform === 'disney+' || normalizedPlatform === 'disney+ hotstar') return '/Images/icons8-disney-plus-32.png';
+        if (normalizedPlatform === 'shahid') return '/Images/shahid.svg';
+        if (normalizedPlatform === 'hidive') return '/Images/HIDIVE_2017 (3).svg';
+        if (normalizedPlatform === 'animekey') return '/Images/AnimeKey (2).WEBP';
+        if (normalizedPlatform === 'animax mongolia' || normalizedPlatform === 'animax korea' || normalizedPlatform === 'animax asia') return '/Images/AnimeMax (2).WEBP';
+        if (normalizedPlatform === 'adult swim') return '/Images/adult_swim_32x32.png';
+        if (normalizedPlatform.includes('aniplus')) return '/Images/aniplus_32x32.png';
+        if (normalizedPlatform === 'tubi tv') return '/Images/tubi_logo_icon_249346.png';
+
+        return '';
+    };
+
+    const renderGenres = genres => (genres || '')
+        .split(';')
+        .map(genre => genre.trim())
+        .filter(Boolean)
+        .slice(0, animeBadgeClasses.length)
+        .map((genre, index) => `
+            <a href="${genreIndexUrl}?genre=${encodeURIComponent(genre)}" class="col-auto text-decoration-none">
+                <span class="badge interactable ${animeBadgeClasses[index]}">${escapeHtml(genre)}</span>
+            </a>`)
+        .join('');
+
+    const renderPlatforms = platforms => (platforms || '')
+        .split(';')
+        .map(platform => platform.trim())
+        .filter(Boolean)
+        .map(platform => {
+            const icon = getPlatformIcon(platform);
+            if (!icon) return '';
+
+            return `
+                <a href="${platformIndexUrl}?platform=${encodeURIComponent(platform)}" class="text-decoration-none">
+                    <img src="${icon}" alt="${escapeAttribute(platform)}" class="me-1 interactable" title="${escapeAttribute(platform)}">
+                </a>`;
+        })
+        .join('');
+
+    const renderAnime = anime => {
+        const animeId = getValue(anime, 'id', 'Id');
+        const trailerUrl = getValue(anime, 'trailerUrl', 'TrailerUrl') || '';
+        const animeName = getValue(anime, 'animeName', 'AnimeName') || '';
+        const animeSummary = getValue(anime, 'animeSummary', 'AnimeSummary') || '';
+        const animeGenres = getValue(anime, 'animeGenres', 'AnimeGenres') || '';
+        const platforms = getValue(anime, 'platforms', 'Platforms') || '';
+        const episodeCount = getValue(anime, 'episodeCount', 'EpisodeCount') ?? '';
+        const animeJikanScore = getValue(anime, 'animeJikanScore', 'AnimeJikanScore') ?? '';
+
+        return `
+        <div class="row vh-100 d-flex justify-content-center align-items-center">
+            <div class="d-none d-md-block col-md-1"></div>
+            <div class="col vh-100 align-content-center">
+                <div class="video-container ratio ratio-21x9 rounded-2 overflow-hidden">
+                    <iframe src="${escapeAttribute(trailerUrl)}?enablejsapi=1&mute=1"
+                            id="anime-${animeId}"
+                            class="anime-video"
+                            title="${escapeAttribute(animeName)} Trailer"
+                            loading="lazy"
+                            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            referrerpolicy="strict-origin-when-cross-origin">
+                    </iframe>
+                </div>
+                <div class="mt-2">
+                    <div class="row">
+                        <a class="text-primary interactable col" href="${animeDetailsUrl}?id=${encodeURIComponent(animeId)}">${escapeHtml(animeName)}</a>
+                        <div class="col-auto">
+                            <div class="align-content-center p-0 h5">${renderPlatforms(platforms)}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-1 multiline-ellipsis">
+                    <h5 class="text-body">${animeSummary}</h5>
+                </div>
+                <div class="align-content-center p-0 h5">${renderGenres(animeGenres)}</div>
+                <div class="mt-1">
+                    <h5 class="text-body"><strong>Episodes:</strong> ${escapeHtml(String(episodeCount))}</h5>
+                </div>
+                <div class="mt-1">
+                    <h5 class="text-body"><strong>Jikan Score:</strong> ${escapeHtml(String(animeJikanScore))}</h5>
+                </div>
+                <div class="text-center">
+                    <a class="scroll-down link-primary">
+                        <i class="bi bi-arrow-down interactable" style="font-size: 2rem;"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="d-none d-md-block col-md-1"></div>
+        </div>
+        <hr>`;
+    };
+
+    const loadNextPage = async () => {
+        if (isLoading || currentPage >= totalPages) return;
+
+        isLoading = true;
+
+        try {
+            const response = await fetch(`${apiUrl}?pageNumber=${currentPage + 1}`, {
+                headers: { 'Accept': 'application/json' }
+            });
+
+            if (!response.ok) return;
+
+            const animeItems = await response.json();
+            const filteredItems = animeItems.filter(anime => getValue(anime, 'trailerUrl', 'TrailerUrl'));
+
+            currentPage += 1;
+            feed.dataset.currentPage = String(currentPage);
+
+            if (!filteredItems.length) return;
+
+            feed.insertAdjacentHTML('beforeend', filteredItems.map(renderAnime).join(''));
+            window.initializeAnimeRollVideos?.(feed);
+        } finally {
+            isLoading = false;
+        }
+    };
+
+    const tryLoadNextPage = () => {
+        if (feed.scrollTop + feed.clientHeight >= feed.scrollHeight - threshold) {
+            void loadNextPage();
+        }
+    };
 
     feed.addEventListener('scroll', () => {
-        // how close to the bottom we trigger (px)
-        const threshold = 5;
-
-        if (feed.scrollTop + feed.clientHeight >= feed.scrollHeight - threshold) {
-            window.location.href = nextPageUrl;
-        }
+        tryLoadNextPage();
     });
 
-    // Arrow down key event
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowDown') {
-
-            // Check if we reached the bottom
             if (feed.scrollTop + feed.clientHeight >= feed.scrollHeight - threshold) {
-                window.location.href = nextPageUrl;
+                void loadNextPage();
             }
-
-            // Prevent the default arrow behavior if needed
             e.preventDefault();
         }
     });
-});
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const element = document.getElementById('AnimeRollFeed');
-        if (element) {
-            element.focus();
+
+    feed.focus();
+
+    feed.addEventListener('click', (e) => {
+        const link = e.target.closest('.scroll-down');
+        if (!link) return;
+
+        e.preventDefault();
+
+        const rows = feed.querySelectorAll('.row');
+        let nextRowTop = feed.scrollTop;
+
+        for (const row of rows) {
+            const rowTop = row.offsetTop;
+            if (rowTop > feed.scrollTop) {
+                nextRowTop = rowTop;
+                break;
+            }
         }
-    });
 
-        document.addEventListener('DOMContentLoaded', () => {
-        const feed = document.getElementById('AnimeRollFeed');
-        const links = document.querySelectorAll('.scroll-down');
-
-        links.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (!feed) return;
-
-                // Find the current topmost visible row
-                const rows = feed.querySelectorAll('.row');
-                let nextRowTop = feed.scrollTop; // default fallback
-
-                for (let row of rows) {
-                    const rowTop = row.offsetTop;
-                    if (rowTop > feed.scrollTop) {
-                        nextRowTop = rowTop;
-                        break;
-                    }
-                }
-
-                // Scroll smoothly to the top of the next row
-                feed.scrollTo({
-                    top: nextRowTop,
-                    behavior: 'smooth'
-                });
-            });
+        feed.scrollTo({
+            top: nextRowTop,
+            behavior: 'smooth'
         });
     });
-
-
+});
 </script>
 

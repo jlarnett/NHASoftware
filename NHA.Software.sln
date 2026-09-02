@@ -1,18 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.31911.260
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12120.281 insiders
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHA.Website.Software", "NHASoftware\NHA.Website.Software.csproj", "{164F3137-1610-49F6-A5B3-A0F0BFC4D3FC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHA.Helpers", "NHAHelpers\NHA.Helpers.csproj", "{46915FF9-540A-4ACF-8711-B56F6E7CC767}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHA.Testing", "NHA.Testing\NHA.Testing.csproj", "{6B2B27AC-D85B-48A4-984E-F02A71EC60A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHA.Unit.Tests", "NHA.Testing\NHA.Unit.Tests.csproj", "{6B2B27AC-D85B-48A4-984E-F02A71EC60A3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHA.Api.Tests", "NHA.Api.Tests\NHA.Api.Tests.csproj", "{53BA04DC-09EB-41D7-A3E4-F4C813B3C31E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{6B2B27AC-D85B-48A4-984E-F02A71EC60A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B2B27AC-D85B-48A4-984E-F02A71EC60A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B2B27AC-D85B-48A4-984E-F02A71EC60A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53BA04DC-09EB-41D7-A3E4-F4C813B3C31E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53BA04DC-09EB-41D7-A3E4-F4C813B3C31E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53BA04DC-09EB-41D7-A3E4-F4C813B3C31E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53BA04DC-09EB-41D7-A3E4-F4C813B3C31E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

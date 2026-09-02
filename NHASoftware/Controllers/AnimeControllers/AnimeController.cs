@@ -81,6 +81,7 @@ public class AnimeController : Controller
         }
 
         vm.Page = pageNumber;
+        vm.TotalPages = totalPages;
         return View(vm);
     }
 

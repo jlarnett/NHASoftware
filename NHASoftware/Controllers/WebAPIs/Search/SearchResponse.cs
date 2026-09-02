@@ -6,8 +6,8 @@ namespace NHA.Website.Software.Controllers.WebAPIs.Search
 {
     public class SearchResponse
     {
-        public IEnumerable<AnimePage> AnimePages { get; set; }
-        public IEnumerable<GamePage> GamePages { get; set; }
+        public IEnumerable<AnimePage> AnimePages { get; set; } = [];
+        public IEnumerable<GamePage> GamePages { get; set; } = [];
         public IEnumerable<ApplicationUser> Users { get; set; } = [];
 
         public SearchResponse(IEnumerable<AnimePage> anime, IEnumerable<GamePage> games, IEnumerable<ApplicationUser> users)
@@ -15,6 +15,11 @@ namespace NHA.Website.Software.Controllers.WebAPIs.Search
             AnimePages = anime;
             GamePages = games;
             Users = users;
+        }
+
+        public SearchResponse()
+        {
+            
         }
     }
 }

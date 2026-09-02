@@ -37,7 +37,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<FriendRequest>? FriendRequests { get; set; }
     public DbSet<Friends>? Friends { get; set; }
     public DbSet<PostImage>? PostImages { get; set; }
-    public DbSet<SessionHistoryEvent>? SessionHistory { get; set; }
+    public DbSet<SessionHistoryEvent> SessionHistory { get; set; } = default!;
     public DbSet<ChatMessage>? ChatMessages { get; set; }
     public DbSet<RemovedProfilePicturePath>? RemovedProfilePicturePaths { get; set; }
     public DbSet<SponsorAd>? Ads { get; set; }

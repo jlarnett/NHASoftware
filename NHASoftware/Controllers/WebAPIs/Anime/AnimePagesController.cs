@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NHA.Website.Software.DBContext;
+﻿using Microsoft.AspNetCore.Mvc;
 using NHA.Website.Software.Entities.Anime;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 
@@ -37,5 +30,6 @@ namespace NHA.Website.Software.Controllers.WebAPIs.Anime
             var anime = await _unitOfWork.AnimePageRepository.GetResultPageAsync(pageNumber, 50);
             return Ok(anime);
         }
+
     }
 }

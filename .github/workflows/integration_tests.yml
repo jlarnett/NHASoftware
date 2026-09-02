@@ -1,0 +1,106 @@
+name: Run Anime Social Integration Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'NHASoftware/**'
+      - 'NHA.Api.Tests/**'
+      - '.github/workflows/integration_tests.yml'
+  workflow_dispatch:
+
+jobs:
+  integration_tests:
+    runs-on: ubuntu-latest
+
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: Y
+          MSSQL_SA_PASSWORD: ${{ secrets.SQL_SA_PASSWORD }}
+        ports:
+          - 1433:1433
+
+    env:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://127.0.0.1:5258
+      ConnectionStrings__DefaultConnection: Server=127.0.0.1,1433;Database=NHAIntegrationTests;User Id=sa;Password=${{ secrets.SQL_SA_PASSWORD }};TrustServerCertificate=True;Encrypt=False;
+      NHA_API_BASE_URL: http://127.0.0.1:5258
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+          include-prerelease: true
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+          include-prerelease: true
+
+      - name: Restore
+        run: dotnet restore NHA.Software.sln
+
+      - name: Build Project
+        run: dotnet build NHA.Software.sln --configuration Release --no-restore
+
+      - name: Wait for SQL Server
+        shell: bash
+        run: |
+          for i in {1..30}; do
+            (echo > /dev/tcp/127.0.0.1/1433) >/dev/null 2>&1 && exit 0
+            echo "Waiting for SQL Server..."
+            sleep 2
+          done
+          echo "SQL Server did not start in time."
+          exit 1
+
+      - name: Start app
+        shell: bash
+        run: |
+          dotnet run --project NHASoftware/NHA.Website.Software.csproj --configuration Release --no-build > app.log 2>&1 &
+          echo $! > app.pid
+
+      - name: Wait for app
+        shell: bash
+        run: |
+          for i in {1..60}; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5258/ || true)
+            if [ "$status" = "200" ] || [ "$status" = "302" ]; then
+              echo "App is up with status $status"
+              exit 0
+            fi
+            echo "Waiting for app..."
+            sleep 2
+          done
+          echo "App did not start in time."
+          cat app.log
+          exit 1
+
+      - name: Run API tests
+        run: dotnet test NHA.Api.Tests/NHA.Api.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=api-tests.trx"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-results
+          path: |
+            **/*.trx
+            app.log
+
+      - name: Stop app
+        if: always()
+        shell: bash
+        run: |
+          if [ -f app.pid ]; then
+            kill $(cat app.pid) || true
+          fi

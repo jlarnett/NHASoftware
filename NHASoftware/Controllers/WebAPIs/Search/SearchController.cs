@@ -41,8 +41,8 @@ namespace NHA.Website.Software.Controllers.WebAPIs.Search
             {
                 // Set cache options
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromHours(4))
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(30));
+                    .SetAbsoluteExpiration(TimeSpan.FromDays(5))
+                    .SetSlidingExpiration(TimeSpan.FromHours(24));
 
                 var animeSearchResults =
                     await _unitOfWork.AnimePageRepository.FindWithoutTrackingAsync(ap => ap.AnimeName.Contains(searchString));

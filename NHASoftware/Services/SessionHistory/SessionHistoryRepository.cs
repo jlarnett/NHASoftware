@@ -16,10 +16,10 @@ public class SessionHistoryRepository : GenericRepository<SessionHistoryEvent>, 
     /// </summary>
     /// <returns></returns>
     public async Task<List<SessionHistoryEvent>> GetSortedSessionActivityForUserAsync(string userId) =>
-        await _context.SessionHistory!.Where(s => s.userId.Equals(userId)).OrderByDescending(s => s.Time).ToListAsync();
+        await _context.Set<SessionHistoryEvent>().Where(s => s.userId.Equals(userId)).OrderByDescending(s => s.Time).ToListAsync();
 
     public async Task<DateTime?> GetLastSessionActivityForUserAsync(string userId) =>
-        await _context.SessionHistory!
+        await _context.Set<SessionHistoryEvent>()
             .Where(s => s.userId == userId)
             .MaxAsync(s => (DateTime?)s.Time);
 
@@ -35,7 +35,7 @@ public class SessionHistoryRepository : GenericRepository<SessionHistoryEvent>, 
             return new Dictionary<string, DateTime?>();
         }
 
-        var lastActiveTimes = await _context.SessionHistory!
+        var lastActiveTimes = await _context.Set<SessionHistoryEvent>()
             .Where(s => distinctUserIds.Contains(s.userId))
             .GroupBy(s => s.userId)
             .Select(g => new

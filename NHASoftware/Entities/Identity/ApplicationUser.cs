@@ -15,11 +15,11 @@ public class ApplicationUser : IdentityUser
 
     [AllowNull]
     [MaxLength(20)]
-    public string? DisplayName { get; set; }
+    public string? DisplayName { get; set; } = "Anonymous Gangsta";
 
     [AllowNull]
     [MaxLength(1000)]
-    public string? ProfilePicturePath { get; set; }
+    public string? ProfilePicturePath { get; set; } = "DefaultProfilePicture.png";
 
 
     [AllowNull]

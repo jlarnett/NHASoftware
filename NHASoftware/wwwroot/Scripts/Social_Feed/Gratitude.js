@@ -12,7 +12,7 @@
         if (userSessionActive === "False") {
             console.log("User Login required to like social media posts & comments");
             let validationMessageElement = $("span[unique-error-identifier$=" + uuid + "]");
-            ShowValidationMessage(validationMessageElement, "Please Login to interact with posts & comments");
+            ShowValidationMessage(validationMessageElement, "Please log in to join the conversation");
             return;
         }
 
@@ -60,7 +60,7 @@
         if (userSessionActive === "False") {
             console.log("User Login required to like social media posts & comments");
             let validationMessageElement = $("span[unique-error-identifier$=" + uuid + "]");
-            ShowValidationMessage(validationMessageElement, "Please Login to interact with posts & comments");
+            ShowValidationMessage(validationMessageElement, "Please log in to join the conversation");
             return;
         }
 
@@ -132,7 +132,10 @@
         validationMessageElement
             .stop(true, true)
             .text(message)
-            .fadeIn(200);
+            .hide()
+            .css("opacity", 0)
+            .slideDown(150)
+            .animate({ opacity: 1 }, 200);
     }
 
     function IncrementLikeCounter(EventBtn) {
