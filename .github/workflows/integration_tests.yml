@@ -25,7 +25,7 @@ jobs:
     env:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://127.0.0.1:5258
-      ConnectionStrings__DefaultConnection: Server=127.0.0.1,1433;Database=NHAIntegrationTests;User Id=sa;Password=${{ secrets.SQL_SA_PASSWORD }};TrustServerCertificate=True;Encrypt=False;
+      ConnectionStrings__DefaultConnection: 'Server=127.0.0.1,1433;Database=NHAIntegrationTests;User Id=sa;Password="${{ secrets.SQL_SA_PASSWORD }}";TrustServerCertificate=True;Encrypt=False;'
       NHA_API_BASE_URL: http://127.0.0.1:5258
 
     steps:
@@ -66,7 +66,7 @@ jobs:
       - name: Start app
         shell: bash
         run: |
-          dotnet run --project NHASoftware/NHA.Website.Software.csproj --configuration Release --no-build > app.log 2>&1 &
+          dotnet run --project NHASoftware/NHA.Website.Software.csproj --configuration Release --no-build --no-launch-profile > app.log 2>&1 &
           echo $! > app.pid
 
       - name: Wait for app
