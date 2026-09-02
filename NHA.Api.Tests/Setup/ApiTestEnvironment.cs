@@ -1,5 +1,5 @@
+using HtmlAgilityPack;
 using System.Net;
-using System.Text.RegularExpressions;
 using NHA.Api.Tests.Endpoints;
 using Refit;
 
@@ -23,11 +23,6 @@ internal static class ApiTestEnvironment
     /// Stores cookies for the shared HTTP client used by non-isolated test flows.
     /// </summary>
     private static readonly CookieContainer SharedCookieContainer = new();
-
-    /// <summary>
-    /// Extracts the Razor Pages antiforgery token from rendered HTML.
-    /// </summary>
-    private static readonly Regex AntiforgeryTokenRegex = new("<input[^>]*name=\"__RequestVerificationToken\"[^>]*value=\"([^\"]+)\"", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     /// <summary>
     /// Shared HTTP client for test requests that can safely reuse cookies and authentication state.
@@ -76,21 +71,32 @@ internal static class ApiTestEnvironment
     internal static async Task<string> GetAntiforgeryTokenAsync(HttpClient httpClient, string path = DefaultAntiforgeryPath)
     {
         var html = await httpClient.GetStringAsync(path);
-        var match = AntiforgeryTokenRegex.Match(html);
+        var token = ExtractAntiforgeryToken(html);
 
-        if (!match.Success && !string.Equals(path, DefaultAntiforgeryPath, StringComparison.OrdinalIgnoreCase))
+        if (string.IsNullOrWhiteSpace(token) && !string.Equals(path, DefaultAntiforgeryPath, StringComparison.OrdinalIgnoreCase))
         {
             html = await httpClient.GetStringAsync(DefaultAntiforgeryPath);
-            match = AntiforgeryTokenRegex.Match(html);
+            token = ExtractAntiforgeryToken(html);
             path = DefaultAntiforgeryPath;
         }
 
-        if (!match.Success)
+        if (string.IsNullOrWhiteSpace(token))
         {
             throw new InvalidOperationException($"Antiforgery token was not found at path '{path}'.");
         }
 
-        return WebUtility.HtmlDecode(match.Groups[1].Value);
+        return WebUtility.HtmlDecode(token);
+    }
+
+    private static string? ExtractAntiforgeryToken(string html)
+    {
+        var document = new HtmlDocument();
+        document.LoadHtml(html);
+
+        return document.DocumentNode
+            .Descendants("input")
+            .FirstOrDefault(node => string.Equals(node.GetAttributeValue("name", string.Empty), "__RequestVerificationToken", StringComparison.OrdinalIgnoreCase))
+            ?.GetAttributeValue("value", null);
     }
 
     /// <summary>
