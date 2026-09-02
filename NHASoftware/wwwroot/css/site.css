@@ -549,3 +549,21 @@ body[data-bs-theme="dark"] .interactable-small:hover {
     flex: 1 1 auto !important;
     width: 100%;
 }
+
+@media (max-width: 575.98px) {
+    .site-navbar .mobile-nav-toggle {
+        font-size: 1.5rem !important;
+        padding: 0.5rem 0.75rem !important;
+        min-width: 3.5rem !important;
+    }
+
+    .site-navbar .main-nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 1rem;
+    }
+
+    .site-navbar .mobile-nav-button {
+        min-width: 42px !important;
+        min-height: 42px !important;
+    }
+}

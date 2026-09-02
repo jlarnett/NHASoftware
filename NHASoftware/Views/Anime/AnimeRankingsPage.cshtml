@@ -125,6 +125,7 @@
     var hiddenGemCount = anime.Count(animePage => SafeJikan(animePage) >= 7.5 && NetVotes(animePage) <= 5);
     const int initialRenderCount = 48;
     var rankingDetailBaseUrl = Url.Action("AnimePageDetails", "Anime") ?? "/Anime/AnimePageDetails";
+    var rankingGenreBaseUrl = Url.Action("GenreIndex", "Anime") ?? "/Anime/GenreIndex";
     var rankingClientItems = rankedAnime
         .Select(animePage =>
         {
@@ -249,13 +250,10 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 3.25rem;
-        padding: 0.45rem 0.75rem;
-        border-radius: 999px;
-        font-weight: 700;
-        background: linear-gradient(135deg, rgba(220, 53, 69, 0.92), rgba(13, 110, 253, 0.82));
-        color: var(--bs-white);
-        box-shadow: 0 0.75rem 1.5rem rgba(220, 53, 69, 0.22);
+        min-width: 3.75rem;
+        padding: 0.55rem 0.95rem;
+        font-size: 1rem;
+        line-height: 1.1;
     }
 
     .anime-rankings-page .podium-card--1 {
@@ -271,14 +269,18 @@
     }
 
     .anime-rankings-page .ranking-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        padding: 0.38rem 0.72rem;
-        border-radius: 999px;
         font-size: 0.82rem;
-        background: rgba(var(--bs-primary-rgb), 0.1);
-        border: 1px solid rgba(var(--bs-primary-rgb), 0.18);
+    }
+
+    .anime-rankings-page .ranking-chip-link {
+        text-decoration: none;
+        position: relative;
+        z-index: 2;
+    }
+
+    .anime-rankings-page .vote-icon {
+        font-size: 1.15rem;
+        vertical-align: -0.12em;
     }
 
     .anime-rankings-page .rankings-grid {
@@ -312,6 +314,39 @@
         overflow: hidden;
     }
 
+    .anime-rankings-page .podium-card__body {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+    }
+
+    .anime-rankings-page .podium-card__action {
+        margin-top: auto;
+        width: 100%;
+        justify-content: center;
+        position: relative;
+        z-index: 2;
+    }
+
+    .anime-rankings-page .ranking-card__footer {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .anime-rankings-page .ranking-card__meta {
+        min-width: 0;
+    }
+
+    .anime-rankings-page .ranking-card__action {
+        min-width: 8rem;
+        justify-content: center;
+        white-space: nowrap;
+        position: relative;
+        z-index: 2;
+    }
+
     .anime-rankings-page .form-control,
     .anime-rankings-page .form-select {
         border-radius: 0.9rem;
@@ -329,6 +364,14 @@
         .anime-rankings-page .ranking-card__media {
             max-width: 12rem;
         }
+
+        .anime-rankings-page .ranking-card__footer {
+            grid-template-columns: 1fr;
+        }
+
+        .anime-rankings-page .ranking-card__action {
+            width: 100%;
+        }
     }
 </style>
 
@@ -338,8 +381,7 @@
         <section>
             <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
                 <div>
-                    <h2 class="h4 fw-bold mb-1">Top three spotlight</h2>
-                    <p class="text-body-secondary mb-0">A quick podium before you start filtering the full leaderboard.</p>
+                    <h2 class="h4 fw-bold mb-1">Spotlight</h2>
                 </div>
             </div>
 
@@ -352,9 +394,9 @@
                     var podiumGenres = ParseSegments(animePage.AnimeGenres).Take(2).ToList();
 
                     <div class="col-12 col-md-4">
-                        <article class="podium-card podium-card--@(i + 1) d-flex flex-column gap-3">
+                        <article class="podium-card podium-card--@(i + 1) d-flex flex-column gap-3 position-relative">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="rank-pill">#@(i + 1)</span>
+                                <span class="bg-body-secondary fw-semibold text-body-emphasis border px-2 py-1 border-light-subtle rounded-pill position-relative flex-shrink-0 rank-pill">#@(i + 1)</span>
                                 @if (animePage.Featured)
                                 {
                                     <span class="badge text-bg-danger rounded-pill">Featured</span>
@@ -375,7 +417,7 @@
                                 }
                             </div>
 
-                            <div>
+                            <div class="podium-card__body">
                                 <h3 class="h5 fw-bold mb-1">@animePage.AnimeName</h3>
                                 <div class="d-flex flex-wrap gap-2 mb-3">
                                     <span class="badge rounded-pill @StatusTone(statusLabel)">@statusLabel</span>
@@ -389,14 +431,26 @@
                                 @if (podiumGenres.Count > 0)
                                 {
                                     <div class="d-flex flex-wrap gap-2 mb-3">
-                                        @foreach (var genre in podiumGenres)
+                                        @for (var genreIndex = 0; genreIndex < podiumGenres.Count; genreIndex++)
                                         {
-                                            <span class="ranking-chip">@genre</span>
+                                            var genre = podiumGenres[genreIndex];
+                                            var genreTone = genreIndex switch
+                                            {
+                                                0 => "bg-primary-subtle text-primary-emphasis border border-primary-subtle rounded-pill",
+                                                1 => "bg-info-subtle text-info-emphasis border border-info-subtle rounded-pill",
+                                                2 => "bg-danger-subtle text-danger-emphasis border border-danger-subtle rounded-pill",
+                                                _ => "bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle rounded-pill"
+                                            };
+                                            <a asp-action="GenreIndex" asp-controller="Anime" asp-route-genre="@genre" class="ranking-chip-link">
+                                                <span class="badge interactable ranking-chip @genreTone">@genre</span>
+                                            </a>
                                         }
                                     </div>
                                 }
-                                <a asp-action="AnimePageDetails" asp-controller="Anime" asp-route-id="@animePage.Id" class="btn btn-outline-primary interactable">View details</a>
+                                <a asp-action="AnimePageDetails" asp-controller="Anime" asp-route-id="@animePage.Id" class="btn btn-outline-primary interactable podium-card__action">View details</a>
                             </div>
+
+                            <a asp-action="AnimePageDetails" asp-controller="Anime" asp-route-id="@animePage.Id" class="stretched-link" aria-label="View details for @animePage.AnimeName"></a>
                         </article>
                     </div>
                 }
@@ -408,8 +462,7 @@
         <div class="card-body p-4">
             <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
                 <div>
-                    <h2 class="h4 fw-bold mb-1">Tune the board</h2>
-                    <p class="text-body-secondary mb-0">Filters stack instantly, and the live leader updates with every change.</p>
+                    <h2 class="h4 fw-bold mb-1">Filter</h2>
                 </div>
 
                 <div class="d-flex flex-wrap gap-2 view-toggle-group" role="group" aria-label="Ranking layout toggle">
@@ -470,7 +523,6 @@
 
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-4">
                 <div id="rankingResultsText" class="small text-body-secondary">Showing @Math.Min(initialRenderCount, rankedAnime.Count) of @rankedAnime.Count anime.</div>
-                <div class="small text-body-secondary">Featured, airing, and hidden-gem shortcuts can be combined with your search. The board renders top matches first to stay fast.</div>
             </div>
         </div>
     </section>
@@ -495,6 +547,7 @@
 
         <script id="rankingData" type="application/json">@Html.Raw(rankingClientJson)</script>
         <script id="rankingDetailBaseUrl" type="application/json">@Html.Raw(JsonSerializer.Serialize(rankingDetailBaseUrl))</script>
+        <script id="rankingGenreBaseUrl" type="application/json">@Html.Raw(JsonSerializer.Serialize(rankingGenreBaseUrl))</script>
 
         <div id="rankingEmptyState" class="card border-0 shadow-sm rankings-surface d-none mt-3">
             <div class="card-body p-4 text-center">
@@ -512,12 +565,14 @@
             const container = document.getElementById('rankingGrid');
             const rankingDataElement = document.getElementById('rankingData');
             const rankingDetailBaseUrlElement = document.getElementById('rankingDetailBaseUrl');
+            const rankingGenreBaseUrlElement = document.getElementById('rankingGenreBaseUrl');
             if (!container) {
                 return;
             }
 
             const rankingData = rankingDataElement ? JSON.parse(rankingDataElement.textContent || '[]') : [];
             const detailBaseUrl = rankingDetailBaseUrlElement ? JSON.parse(rankingDetailBaseUrlElement.textContent || '"/Anime/AnimePageDetails"') : '/Anime/AnimePageDetails';
+            const genreBaseUrl = rankingGenreBaseUrlElement ? JSON.parse(rankingGenreBaseUrlElement.textContent || '"/Anime/GenreIndex"') : '/Anime/GenreIndex';
             const searchInput = document.getElementById('animeRankingSearch');
             const genreSelect = document.getElementById('rankingGenre');
             const statusSelect = document.getElementById('rankingStatus');
@@ -579,6 +634,24 @@
                 return `${detailBaseUrl}${separator}id=${encodeURIComponent(id)}`;
             }
 
+            function buildGenreUrl(genre) {
+                const separator = genreBaseUrl.includes('?') ? '&' : '?';
+                return `${genreBaseUrl}${separator}genre=${encodeURIComponent(genre)}`;
+            }
+
+            function genreToneClass(index) {
+                switch (index) {
+                    case 0:
+                        return 'bg-primary-subtle text-primary-emphasis border border-primary-subtle rounded-pill';
+                    case 1:
+                        return 'bg-info-subtle text-info-emphasis border border-info-subtle rounded-pill';
+                    case 2:
+                        return 'bg-danger-subtle text-danger-emphasis border border-danger-subtle rounded-pill';
+                    default:
+                        return 'bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle rounded-pill';
+                }
+            }
+
             function renderCard(item, index) {
                 const safeTitle = escapeHtml(item.title);
                 const safeStatusLabel = escapeHtml(item.statusLabel || 'Status unknown');
@@ -595,16 +668,16 @@
                     ? '<span class="badge text-bg-danger rounded-pill">Featured</span>'
                     : '';
                 const genreMarkup = Array.isArray(item.genres) && item.genres.length
-                    ? `<div class="d-flex flex-wrap gap-2 mb-3">${item.genres.map(genre => `<span class="ranking-chip">${escapeHtml(genre)}</span>`).join('')}</div>`
+                    ? `<div class="d-flex flex-wrap gap-2 mb-3">${item.genres.map((genre, genreIndex) => `<a href="${buildGenreUrl(genre)}" class="ranking-chip-link"><span class="badge interactable ranking-chip ${genreToneClass(genreIndex)}">${escapeHtml(genre)}</span></a>`).join('')}</div>`
                     : '';
                 const platformMarkup = safePlatformPreview
                     ? `<span><i class="bi bi-play-btn-fill me-1"></i>${safePlatformPreview}</span>`
                     : '';
 
                 return `
-                    <article class="ranking-card interactable-small">
+                    <article class="ranking-card interactable-small position-relative">
                         <div class="d-flex justify-content-between align-items-center gap-2">
-                            <span class="rank-pill">#<span class="js-rank-number">${index + 1}</span></span>
+                            <span class="bg-body-secondary fw-semibold text-body-emphasis border px-2 py-1 border-light-subtle rounded-pill position-relative flex-shrink-0 rank-pill">#<span class="js-rank-number">${index + 1}</span></span>
                             <div class="d-flex flex-wrap gap-2 justify-content-end">
                                 <span class="badge rounded-pill ${statusToneClass(item.status)}">${safeStatusLabel}</span>
                                 ${featuredMarkup}
@@ -632,16 +705,18 @@
 
                                 ${genreMarkup}
 
-                                <div class="mt-auto d-flex flex-wrap justify-content-between align-items-center gap-2 pt-3 border-top border-secondary border-opacity-10">
-                                    <div class="d-flex flex-wrap gap-3 small text-body-secondary">
-                                        <span><i class="bi bi-hand-thumbs-up-fill text-success me-1"></i>${item.upvotes}</span>
-                                        <span><i class="bi bi-hand-thumbs-down-fill text-danger me-1"></i>${item.downvotes}</span>
+                                <div class="ranking-card__footer mt-auto pt-3 border-top border-secondary border-opacity-10">
+                                    <div class="ranking-card__meta d-flex flex-wrap gap-3 small text-body-secondary">
+                                        <span><i class="bi bi-hand-thumbs-up-fill text-success me-1 vote-icon"></i>${item.upvotes}</span>
+                                        <span><i class="bi bi-hand-thumbs-down-fill text-danger me-1 vote-icon"></i>${item.downvotes}</span>
                                         ${platformMarkup}
                                     </div>
-                                    <a href="${buildDetailUrl(item.id)}" class="btn btn-sm btn-outline-primary interactable">Open page</a>
+                                    <a href="${buildDetailUrl(item.id)}" class="btn btn-sm btn-outline-primary interactable ranking-card__action">Open page</a>
                                 </div>
                             </div>
                         </div>
+
+                        <a href="${buildDetailUrl(item.id)}" class="stretched-link" aria-label="Open ${safeTitle} details"></a>
                     </article>`;
             }
 

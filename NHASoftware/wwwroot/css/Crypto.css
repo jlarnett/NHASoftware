@@ -1,33 +1,37 @@
 ﻿.crypto-page {
     max-width: 1400px;
     margin-inline: auto;
-    --crypto-hero-top: rgba(13, 110, 253, 0.18);
-    --crypto-hero-bottom: rgba(111, 66, 193, 0.16);
+    --crypto-hero-top: rgba(25, 135, 84, 0.18);
+    --crypto-hero-bottom: rgba(32, 201, 151, 0.16);
     --crypto-hero-sheen: rgba(255, 255, 255, 0.6);
     --crypto-surface-bg: rgba(255, 255, 255, 0.72);
     --crypto-card-bg: rgba(255, 255, 255, 0.84);
-    --crypto-border: rgba(13, 110, 253, 0.14);
-    --crypto-strong-border: rgba(13, 110, 253, 0.28);
-    --crypto-chip-bg: rgba(13, 110, 253, 0.1);
-    --crypto-chip-color: #0d6efd;
+    --crypto-border: rgba(25, 135, 84, 0.14);
+    --crypto-strong-border: rgba(25, 135, 84, 0.28);
+    --crypto-chip-bg: rgba(25, 135, 84, 0.1);
+    --crypto-chip-color: #198754;
     --crypto-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.08);
     --crypto-option-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(246, 249, 255, 0.9));
-    --crypto-option-hover-shadow: 0 0.85rem 1.5rem rgba(13, 110, 253, 0.12);
+    --crypto-option-hover-shadow: 0 0.85rem 1.5rem rgba(25, 135, 84, 0.12);
+    --crypto-toolbar-bg: linear-gradient(180deg, rgba(25, 135, 84, 0.14), rgba(255, 255, 255, 0.94));
+    --crypto-toolbar-shadow: 0 0.75rem 1.5rem rgba(15, 23, 42, 0.08);
 }
 
 body[data-bs-theme="dark"] .crypto-page {
-    --crypto-hero-top: rgba(13, 110, 253, 0.28);
-    --crypto-hero-bottom: rgba(111, 66, 193, 0.24);
+    --crypto-hero-top: rgba(25, 135, 84, 0.3);
+    --crypto-hero-bottom: rgba(32, 201, 151, 0.22);
     --crypto-hero-sheen: rgba(255, 255, 255, 0.05);
     --crypto-surface-bg: rgba(255, 255, 255, 0.04);
     --crypto-card-bg: rgba(255, 255, 255, 0.06);
     --crypto-border: rgba(255, 255, 255, 0.08);
-    --crypto-strong-border: rgba(13, 110, 253, 0.3);
-    --crypto-chip-bg: rgba(13, 110, 253, 0.16);
-    --crypto-chip-color: rgb(173, 204, 255);
+    --crypto-strong-border: rgba(25, 135, 84, 0.34);
+    --crypto-chip-bg: rgba(25, 135, 84, 0.18);
+    --crypto-chip-color: rgb(134, 239, 172);
     --crypto-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.18);
     --crypto-option-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-    --crypto-option-hover-shadow: 0 0.85rem 1.5rem rgba(13, 110, 253, 0.16);
+    --crypto-option-hover-shadow: 0 0.85rem 1.5rem rgba(25, 135, 84, 0.18);
+    --crypto-toolbar-bg: linear-gradient(180deg, rgba(25, 135, 84, 0.3), rgba(15, 23, 42, 0.92));
+    --crypto-toolbar-shadow: 0 0.9rem 1.8rem rgba(0, 0, 0, 0.32);
 }
 
 .crypto-hero {
@@ -69,6 +73,27 @@ body[data-bs-theme="dark"] .crypto-page {
     margin-top: 1rem;
 }
 
+.crypto-selection-toolbar {
+    position: sticky;
+    top: 5.5rem;
+    z-index: 20;
+    padding: 1rem;
+    margin-inline: -0.25rem;
+    border-radius: 1rem;
+    background: var(--crypto-toolbar-bg);
+    border: 1px solid var(--crypto-border);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--crypto-toolbar-shadow);
+}
+
+body[data-bs-theme="dark"] .crypto-selection-toolbar {
+    border-color: rgba(25, 135, 84, 0.28);
+}
+
+.crypto-selection-toolbar__stats {
+    row-gap: 0.75rem;
+}
+
 .crypto-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -93,15 +118,15 @@ body[data-bs-theme="dark"] .crypto-page {
 .crypto-option:hover,
 .crypto-option:focus-visible {
     transform: translateY(-3px);
-    border-color: rgba(13, 110, 253, 0.55);
+    border-color: rgba(25, 135, 84, 0.55);
     box-shadow: var(--crypto-option-hover-shadow);
     outline: none;
 }
 
 .crypto-option.selected {
-    border-color: rgba(13, 110, 253, 0.9);
-    background: linear-gradient(180deg, rgba(13, 110, 253, 0.16), rgba(13, 110, 253, 0.08));
-    box-shadow: inset 0 0 0 1px rgba(13, 110, 253, 0.18), 0 1rem 2rem rgba(13, 110, 253, 0.14);
+    border-color: rgba(25, 135, 84, 0.9);
+    background: linear-gradient(180deg, rgba(25, 135, 84, 0.16), rgba(25, 135, 84, 0.08));
+    box-shadow: inset 0 0 0 1px rgba(25, 135, 84, 0.18), 0 1rem 2rem rgba(25, 135, 84, 0.14);
 }
 
 .crypto-option-symbol {
@@ -155,6 +180,11 @@ body[data-bs-theme="dark"] .crypto-page {
 @media (max-width: 767.98px) {
     .crypto-focus-card {
         padding: 1.25rem;
+    }
+
+    .crypto-selection-toolbar {
+        top: 4.75rem;
+        padding: 0.85rem;
     }
 
     .crypto-grid {

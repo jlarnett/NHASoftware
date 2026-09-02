@@ -19,81 +19,7 @@
 <link rel="stylesheet" href="~/css/Crypto.css" asp-append-version="true" />
 
 <div class="crypto-page">
-    <section class="card border-0 crypto-hero shadow-sm mb-4">
-        <div class="card-body p-4 p-xl-5">
-            <div class="row g-4 align-items-center">
-                <div class="col-xl-7">
-                    <span class="badge rounded-pill text-bg-primary crypto-badge mb-3">Live Crypto Dashboard</span>
-                    <h1 class="display-6 fw-bold mb-3">Track live prices with a cleaner, faster experience.</h1>
-                    <p class="lead text-body-secondary mb-4">
-                        This page still uses the same Coinlore API, but now it includes more quick-pick coins,
-                        better visual hierarchy, live status feedback, and a custom Coinlore id option for extra flexibility.
-                    </p>
-                    <div class="d-flex flex-wrap gap-2 crypto-chip-list">
-                        <span class="badge crypto-chip">Same API endpoint</span>
-                        <span class="badge crypto-chip">10 quick picks</span>
-                        <span class="badge crypto-chip">Custom coin id support</span>
-                        <span class="badge crypto-chip">Auto-refresh on selection</span>
-                    </div>
-                </div>
-                <div class="col-xl-5">
-                    <div class="crypto-focus-card">
-                        <p class="text-uppercase small fw-semibold mb-2 text-body-secondary">Current selection</p>
-                        <h2 id="SelectedCryptoName" class="mb-1">Bitcoin</h2>
-                        <p id="SelectedCryptoSymbol" class="text-body-secondary mb-4">BTC · Coinlore id 90</p>
-                        <div class="d-grid gap-2 d-sm-flex">
-                            <button type="button" class="btn btn-primary px-4" id="Submit">Refresh price</button>
-                            <button type="button" class="btn btn-outline-secondary px-4" id="ResetSelection">Reset to Bitcoin</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <section class="row g-3 mt-1 crypto-stats-row">
-                <div class="col-sm-6 col-xl">
-                    <div class="card border-0 crypto-metric shadow-sm h-100">
-                        <div class="card-body">
-                            <p class="text-uppercase small fw-semibold text-body-secondary mb-2">Coin</p>
-                            <h3 id="CryptoLabel" class="h4 mb-1">Bitcoin</h3>
-                            <p id="CryptoTicker" class="mb-0 text-body-secondary">BTC</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-xl">
-                    <div class="card border-0 crypto-metric shadow-sm h-100">
-                        <div class="card-body">
-                            <p class="text-uppercase small fw-semibold text-body-secondary mb-2">USD Price</p>
-                            <h3 id="CryptoPrice" class="h4 mb-0">Loading...</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-xl">
-                    <div class="card border-0 crypto-metric shadow-sm h-100">
-                        <div class="card-body">
-                            <p class="text-uppercase small fw-semibold text-body-secondary mb-2">24h Change</p>
-                            <h3 id="CryptoChange24h" class="h4 mb-0">--</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-xl">
-                    <div class="card border-0 crypto-metric shadow-sm h-100">
-                        <div class="card-body">
-                            <p class="text-uppercase small fw-semibold text-body-secondary mb-2">Market Cap</p>
-                            <h3 id="CryptoMarketCap" class="h4 mb-0">--</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-xl">
-                    <div class="card border-0 crypto-metric shadow-sm h-100">
-                        <div class="card-body">
-                            <p class="text-uppercase small fw-semibold text-body-secondary mb-2">Rank</p>
-                            <h3 id="CryptoRank" class="h4 mb-0">--</h3>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </section>
 
     <div class="row g-4 mb-4">
         <div class="col-xxl-8">
@@ -101,10 +27,29 @@
                 <div class="card-body p-4">
                     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-2 mb-4">
                         <div>
-                            <h2 class="h4 mb-1">Popular crypto picks</h2>
-                            <p class="text-body-secondary mb-0">Choose a coin card to load the latest market data.</p>
+                            <h2 class="h4 mb-1">Popular Picks</h2>
+                            <p class="text-body-secondary mb-0">Make a selection to load the latest market data.</p>
                         </div>
-                        <span class="badge rounded-pill crypto-chip crypto-pill">Quick picks powered by Coinlore ids</span>
+                    </div>
+
+                    <div class="crypto-selection-toolbar mb-4">
+                        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+                            <div>
+                                <p class="text-uppercase small fw-semibold mb-1 text-body-secondary">Active coin</p>
+                                <h3 id="SelectedCryptoNameInline" class="h5 mb-1">Bitcoin</h3>
+                                <p id="SelectedCryptoSymbolInline" class="text-body-secondary mb-0">BTC · Coinlore id 90</p>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2 align-items-center crypto-selection-toolbar__stats">
+                                <span class="badge rounded-pill bg-body-secondary text-body-emphasis border border-light-subtle px-3 py-2">Price <span id="CryptoPriceInline" class="ms-1">Loading...</span></span>
+                                <span id="CryptoChange24hInlineBadge" class="badge rounded-pill bg-body-secondary text-body-emphasis border border-light-subtle px-3 py-2">24h <span id="CryptoChange24hInline" class="ms-1">--</span></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-sm-flex mt-3">
+                            <button type="button" class="btn btn-primary px-4" id="SubmitInline">Refresh price</button>
+                            <button type="button" class="btn btn-outline-secondary px-4" id="ResetSelectionInline">Reset to Bitcoin</button>
+                        </div>
                     </div>
 
                     <div class="crypto-grid" id="CryptoOptionGrid">
@@ -131,9 +76,6 @@
                 <div class="card-body p-4 d-flex flex-column gap-4">
                     <div>
                         <h2 class="h4 mb-2">Load a custom coin</h2>
-                        <p class="text-body-secondary mb-0">
-                            Want more options? Enter any Coinlore id and this page will fetch it using the same API flow.
-                        </p>
                     </div>
 
                     <div>
