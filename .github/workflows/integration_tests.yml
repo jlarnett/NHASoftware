@@ -64,8 +64,8 @@ jobs:
             exit 1
           fi
 
-          for i in {1..30}; do
-            if docker exec "$sql_container_id" /bin/bash -c "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$SQL_SA_PASSWORD\" -C -Q \"SELECT 1\" >/dev/null 2>&1 || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$SQL_SA_PASSWORD\" -Q \"SELECT 1\" >/dev/null 2>&1"; then
+          for i in {1..60}; do
+            if docker logs "$sql_container_id" 2>&1 | grep -q "SQL Server is now ready for client connections"; then
               echo "SQL Server is ready."
               exit 0
             fi
