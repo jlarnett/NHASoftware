@@ -1,5 +1,5 @@
-using HtmlAgilityPack;
 using System.Net;
+using System.Net.Http.Json;
 using NHA.Api.Tests.Endpoints;
 using Refit;
 
@@ -10,7 +10,7 @@ namespace NHA.Api.Tests.Setup;
 /// </summary>
 internal static class ApiTestEnvironment
 {
-    private const string DefaultAntiforgeryPath = "/Identity/Account/Login";
+    private const string DefaultAntiforgeryEndpoint = "/api/antiforgery";
 
     /// <summary>
     /// Resolves the API base URL from environment configuration or falls back to the local development URL.
@@ -63,58 +63,44 @@ internal static class ApiTestEnvironment
     }
 
     /// <summary>
-    /// Reads a page and extracts the antiforgery token value from its HTML markup.
+    /// Retrieves an antiforgery token from the application.
     /// </summary>
     /// <param name="httpClient">The client whose cookies and base address should be used for the request.</param>
-    /// <param name="path">The relative path that renders the antiforgery token.</param>
+    /// <param name="path">Unused compatibility parameter retained for existing test helpers.</param>
     /// <returns>The decoded antiforgery token value.</returns>
-    internal static async Task<string> GetAntiforgeryTokenAsync(HttpClient httpClient, string path = DefaultAntiforgeryPath)
+    internal static async Task<string> GetAntiforgeryTokenAsync(HttpClient httpClient, string path = DefaultAntiforgeryEndpoint)
     {
-        var page = await GetPageDetailsAsync(httpClient, path);
-        var token = ExtractAntiforgeryToken(page.Html);
+        using var response = await httpClient.GetAsync(DefaultAntiforgeryEndpoint);
+        var content = await response.Content.ReadAsStringAsync();
 
-        if (string.IsNullOrWhiteSpace(token) && !string.Equals(path, DefaultAntiforgeryPath, StringComparison.OrdinalIgnoreCase))
-        {
-            page = await GetPageDetailsAsync(httpClient, DefaultAntiforgeryPath);
-            token = ExtractAntiforgeryToken(page.Html);
-        }
-
-        if (string.IsNullOrWhiteSpace(token))
+        if (!response.IsSuccessStatusCode)
         {
             throw new InvalidOperationException(
-                $"Antiforgery token was not found at path '{path}'. " +
-                $"Status: {(int)page.StatusCode} {page.StatusCode}. " +
-                $"FinalUri: '{page.FinalUri}'. " +
-                $"ContentType: '{page.ContentType ?? "<none>"}'. " +
-                $"HtmlPreview: '{CreateHtmlPreview(page.Html)}'.");
+                $"Antiforgery token request failed at '{DefaultAntiforgeryEndpoint}'. " +
+                $"Status: {(int)response.StatusCode} {response.StatusCode}. " +
+                $"FinalUri: '{response.RequestMessage?.RequestUri}'. " +
+                $"ContentType: '{response.Content.Headers.ContentType?.ToString() ?? "<none>"}'. " +
+                $"BodyPreview: '{CreatePreview(content)}'.");
         }
 
-        return WebUtility.HtmlDecode(token);
+        var tokenResponse = await response.Content.ReadFromJsonAsync<AntiforgeryTokenResponse>();
+
+        if (string.IsNullOrWhiteSpace(tokenResponse?.RequestToken))
+        {
+            throw new InvalidOperationException(
+                $"Antiforgery token response was empty at '{DefaultAntiforgeryEndpoint}'. " +
+                $"FinalUri: '{response.RequestMessage?.RequestUri}'. " +
+                $"ContentType: '{response.Content.Headers.ContentType?.ToString() ?? "<none>"}'. " +
+                $"BodyPreview: '{CreatePreview(content)}'.");
+        }
+
+        return WebUtility.HtmlDecode(tokenResponse.RequestToken);
     }
 
-    private static async Task<(HttpStatusCode StatusCode, Uri? FinalUri, string? ContentType, string Html)> GetPageDetailsAsync(HttpClient httpClient, string path)
-    {
-        using var response = await httpClient.GetAsync(path);
-        var html = await response.Content.ReadAsStringAsync();
-
-        return (response.StatusCode, response.RequestMessage?.RequestUri, response.Content.Headers.ContentType?.ToString(), html);
-    }
-
-    private static string? ExtractAntiforgeryToken(string html)
-    {
-        var document = new HtmlDocument();
-        document.LoadHtml(html);
-
-        return document.DocumentNode
-            .Descendants("input")
-            .FirstOrDefault(node => string.Equals(node.GetAttributeValue("name", string.Empty), "__RequestVerificationToken", StringComparison.OrdinalIgnoreCase))
-            ?.GetAttributeValue("value", null);
-    }
-
-    private static string CreateHtmlPreview(string html)
+    private static string CreatePreview(string content)
     {
         const int maxLength = 1000;
-        var normalized = html.Replace("\r", " ").Replace("\n", " ").Replace("\t", " ").Trim();
+        var normalized = content.Replace("\r", " ").Replace("\n", " ").Replace("\t", " ").Trim();
 
         if (normalized.Length <= maxLength)
         {
@@ -130,13 +116,13 @@ internal static class ApiTestEnvironment
     /// <param name="httpClient">The client whose cookies should be used for the antiforgery handshake and post.</param>
     /// <param name="requestUri">The relative endpoint that will receive the form post.</param>
     /// <param name="formValues">The form fields to submit.</param>
-    /// <param name="antiforgeryPath">The relative path used to obtain the antiforgery token.</param>
+    /// <param name="antiforgeryPath">Unused compatibility parameter retained for existing test helpers.</param>
     /// <returns>The response returned by the server.</returns>
     internal static async Task<HttpResponseMessage> PostFormWithAntiforgeryAsync(
         HttpClient httpClient,
         string requestUri,
         IEnumerable<KeyValuePair<string, string>> formValues,
-        string antiforgeryPath = DefaultAntiforgeryPath)
+        string antiforgeryPath = DefaultAntiforgeryEndpoint)
     {
         var antiforgeryToken = await GetAntiforgeryTokenAsync(httpClient, antiforgeryPath);
         using var request = new HttpRequestMessage(HttpMethod.Post, requestUri)
@@ -146,5 +132,10 @@ internal static class ApiTestEnvironment
 
         request.Headers.Add("RequestVerificationToken", antiforgeryToken);
         return await httpClient.SendAsync(request);
+    }
+
+    private sealed class AntiforgeryTokenResponse
+    {
+        public string? RequestToken { get; set; }
     }
 }

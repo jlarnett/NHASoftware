@@ -49,7 +49,7 @@ internal abstract class ApiSessionBase
     /// </summary>
     /// <param name="path">The relative page path used to retrieve the token.</param>
     /// <returns>The decoded antiforgery token value.</returns>
-    public Task<string> GetAntiforgeryTokenAsync(string path = "/Identity/Account/Login") =>
+    public Task<string> GetAntiforgeryTokenAsync(string path = "/api/antiforgery") =>
         ApiTestEnvironment.GetAntiforgeryTokenAsync(HttpClient, path);
 
     /// <summary>
@@ -62,6 +62,6 @@ internal abstract class ApiSessionBase
     public Task<HttpResponseMessage> PostFormWithAntiforgeryAsync(
         string requestUri,
         IEnumerable<KeyValuePair<string, string>> formValues,
-        string antiforgeryPath = "/Identity/Account/Login") =>
+        string antiforgeryPath = "/api/antiforgery") =>
         ApiTestEnvironment.PostFormWithAntiforgeryAsync(HttpClient, requestUri, formValues, antiforgeryPath);
 }
