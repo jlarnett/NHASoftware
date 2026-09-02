@@ -14,7 +14,7 @@
 <div id="AnimeRollFeed" class="feed" tabindex="0" data-current-page="@Model.Page" data-total-pages="@Model.TotalPages">
     @foreach (var anime in Model.RollAnime)
     {
-        <div class="row vh-100 d-flex justify-content-center align-items-center" >
+        <div class="row vh-100 d-flex justify-content-center align-items-center anime-roll-item" >
             <!-- Side spacing columns only on md and up -->
             <div class="d-none d-md-block col-md-1"></div>
 
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const animeJikanScore = getValue(anime, 'animeJikanScore', 'AnimeJikanScore') ?? '';
 
         return `
-        <div class="row vh-100 d-flex justify-content-center align-items-center">
+        <div class="row vh-100 d-flex justify-content-center align-items-center anime-roll-item">
             <div class="d-none d-md-block col-md-1"></div>
             <div class="col vh-100 align-content-center">
                 <div class="video-container ratio ratio-21x9 rounded-2 overflow-hidden">
@@ -310,27 +310,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     feed.focus();
 
-    feed.addEventListener('click', (e) => {
+    feed.addEventListener('click', async (e) => {
         const link = e.target.closest('.scroll-down');
         if (!link) return;
 
         e.preventDefault();
 
-        const rows = feed.querySelectorAll('.row');
-        let nextRowTop = feed.scrollTop;
+        const items = Array.from(feed.querySelectorAll('.anime-roll-item'));
+        const currentItem = link.closest('.anime-roll-item');
+        if (!currentItem) return;
 
-        for (const row of rows) {
-            const rowTop = row.offsetTop;
-            if (rowTop > feed.scrollTop) {
-                nextRowTop = rowTop;
-                break;
-            }
+        let currentIndex = items.indexOf(currentItem);
+        if (currentIndex < 0) return;
+
+        let nextItem = items[currentIndex + 1] ?? null;
+
+        if (!nextItem && currentPage < totalPages) {
+            await loadNextPage();
+
+            const refreshedItems = Array.from(feed.querySelectorAll('.anime-roll-item'));
+            currentIndex = refreshedItems.indexOf(currentItem);
+            nextItem = refreshedItems[currentIndex + 1] ?? null;
         }
 
-        feed.scrollTo({
-            top: nextRowTop,
-            behavior: 'smooth'
-        });
+        nextItem?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 });
 </script>

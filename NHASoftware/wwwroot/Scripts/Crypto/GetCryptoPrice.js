@@ -40,8 +40,8 @@
     }
 
     function setLoading(isLoading) {
-        $("#Submit, #UseCustomCrypto, #ResetSelection").prop("disabled", isLoading);
-        $("#Submit").text(isLoading ? "Refreshing..." : "Refresh price");
+        $("#Submit, #SubmitInline, #UseCustomCrypto, #ResetSelection, #ResetSelectionInline").prop("disabled", isLoading);
+        $("#Submit, #SubmitInline").text(isLoading ? "Refreshing..." : "Refresh price");
     }
 
     function formatPrice(value) {
@@ -87,22 +87,28 @@
             $matchingOption.addClass("selected").attr("aria-pressed", "true");
         }
 
-        $("#SelectedCryptoName").text(selectedCrypto.name);
-        $("#SelectedCryptoSymbol").text(`${selectedCrypto.symbol} · Coinlore id ${selectedCrypto.id}`);
+        $("#SelectedCryptoName, #SelectedCryptoNameInline").text(selectedCrypto.name);
+        $("#SelectedCryptoSymbol, #SelectedCryptoSymbolInline").text(`${selectedCrypto.symbol} · Coinlore id ${selectedCrypto.id}`);
     }
 
     function updateMetricStyles(changeValue) {
         const numericValue = Number(changeValue);
         const $changeMetric = $("#CryptoChange24h");
+        const $changeInlineBadge = $("#CryptoChange24hInlineBadge");
 
         $changeMetric.removeClass("crypto-positive crypto-negative crypto-neutral");
+        $changeInlineBadge.removeClass("text-success-emphasis text-danger-emphasis text-body-emphasis border-success-subtle border-danger-subtle border-light-subtle bg-success-subtle bg-danger-subtle bg-body-secondary");
 
         if (!Number.isFinite(numericValue) || numericValue === 0) {
             $changeMetric.addClass("crypto-neutral");
+            $changeInlineBadge.addClass("bg-body-secondary text-body-emphasis border-light-subtle");
             return;
         }
 
         $changeMetric.addClass(numericValue > 0 ? "crypto-positive" : "crypto-negative");
+        $changeInlineBadge.addClass(numericValue > 0
+            ? "bg-success-subtle text-success-emphasis border-success-subtle"
+            : "bg-danger-subtle text-danger-emphasis border-danger-subtle");
     }
 
     function updateDashboard(coin) {
@@ -116,8 +122,8 @@
 
         $("#CryptoLabel").text(selectedCrypto.name);
         $("#CryptoTicker").text(selectedCrypto.symbol);
-        $("#CryptoPrice").text(formatPrice(coin.price_usd));
-        $("#CryptoChange24h").text(formatPercentChange(coin.percent_change_24h));
+        $("#CryptoPrice, #CryptoPriceInline").text(formatPrice(coin.price_usd));
+        $("#CryptoChange24h, #CryptoChange24hInline").text(formatPercentChange(coin.percent_change_24h));
         $("#CryptoMarketCap").text(formatWholeDollars(coin.market_cap_usd));
         $("#CryptoRank").text(coin.rank ? `#${coin.rank}` : "--");
 
@@ -162,11 +168,11 @@
         fetchCrypto(selectedCrypto.id);
     });
 
-    $("#Submit").on("click", function () {
+    $("#Submit, #SubmitInline").on("click", function () {
         fetchCrypto(selectedCrypto.id);
     });
 
-    $("#ResetSelection").on("click", function () {
+    $("#ResetSelection, #ResetSelectionInline").on("click", function () {
         selectedCrypto = {
             id: defaultId,
             name: "Bitcoin",
