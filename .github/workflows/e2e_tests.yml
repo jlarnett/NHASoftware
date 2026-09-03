@@ -101,10 +101,38 @@ jobs:
           distribution: 'temurin'
           java-version: '25'
 
-      - name: Install Edge 136
+      - name: Install Edge
         uses: browser-actions/setup-edge@v1
         with:
           edge-version: stable
+
+      - name: Configure Edge for CI
+        shell: bash
+        run: |
+          edge_paths=()
+
+          for edge_command in microsoft-edge microsoft-edge-stable; do
+            edge_path=$(command -v "$edge_command" || true)
+            if [ -n "$edge_path" ]; then
+              edge_paths+=("$edge_path")
+            fi
+          done
+
+          if [ ${#edge_paths[@]} -eq 0 ]; then
+            echo "Microsoft Edge was not found on PATH."
+            exit 1
+          fi
+
+          for edge_path in "${edge_paths[@]}"; do
+            if [ ! -f "${edge_path}.real" ]; then
+              sudo mv "$edge_path" "${edge_path}.real"
+            fi
+
+            printf '%s\n' '#!/usr/bin/env bash' "exec \"${edge_path}.real\" --no-sandbox --disable-dev-shm-usage \"\$@\"" | sudo tee "$edge_path" > /dev/null
+
+            sudo chmod +x "$edge_path"
+            "$edge_path" --version
+          done
 
       - name: Setup Maven
         shell: bash
@@ -120,6 +148,7 @@ jobs:
           echo "WORKERS=${{ secrets.TEST_WORKERS }}" >> .env
 
       - name: Run Cucumber Selenium Tests
+        timeout-minutes: 20
         run: |
           cd JavaTestFramework
           mvn clean test
