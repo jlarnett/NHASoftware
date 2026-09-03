@@ -1,0 +1,137 @@
+name: Run Anime Social e2e Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'NHASoftware/**'
+      - 'NHA.Api.Tests/**'
+      - '.github/workflows/e2e_tests.yml'
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: Y
+          MSSQL_SA_PASSWORD: ${{ secrets.SQL_SA_PASSWORD }}
+        ports:
+          - 1433:1433
+
+    env:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://127.0.0.1:5258
+      ConnectionStrings__DefaultConnection: Server=127.0.0.1,1433;Database=NHAIntegrationTests;User Id=sa;Password=${{ secrets.SQL_SA_PASSWORD }};TrustServerCertificate=True;Encrypt=False;
+      NHA_API_BASE_URL: http://127.0.0.1:5258
+      SQL_SA_PASSWORD: ${{ secrets.SQL_SA_PASSWORD }}
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+          include-prerelease: true
+
+      - name: Restore
+        run: dotnet restore NHA.Software.sln
+
+      - name: Build Project
+        run: dotnet build NHA.Software.sln --configuration Release --no-restore
+
+      - name: Wait for SQL Server
+        shell: bash
+        run: |
+          sql_container_id=$(docker ps --filter "publish=1433" --format "{{.ID}}" | head -n 1)
+
+          if [ -z "$sql_container_id" ]; then
+            echo "SQL Server container was not found."
+            docker ps -a
+            exit 1
+          fi
+
+          for i in {1..60}; do
+            if docker logs "$sql_container_id" 2>&1 | grep -q "SQL Server is now ready for client connections"; then
+              echo "SQL Server is ready."
+              exit 0
+            fi
+            echo "Waiting for SQL Server..."
+            sleep 2
+          done
+          echo "SQL Server did not start in time."
+          docker logs "$sql_container_id"
+          exit 1
+
+      - name: Start app
+        shell: bash
+        run: |
+          dotnet run --project NHASoftware/NHA.Website.Software.csproj --configuration Release --no-build --no-launch-profile > app.log 2>&1 &
+          echo $! > app.pid
+
+      - name: Wait for app
+        shell: bash
+        run: |
+          for i in {1..60}; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5258/ || true)
+            if [ "$status" = "200" ] || [ "$status" = "302" ]; then
+              echo "App is up with status $status"
+              exit 0
+            fi
+            echo "Waiting for app..."
+            sleep 2
+          done
+          echo "App did not start in time."
+          cat app.log
+          exit 1
+
+      - name: Clone Test Repository
+        run: git clone https://github.com/jlarnett/JavaTestFramework.git
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+
+      - name: Install Edge 136
+        shell: powershell
+        run: |
+          choco install microsoft-edge --version=136.0.3240.92 --ignore-checksums -y
+
+      - name: Setup Maven
+        run: choco install maven -y
+
+      - name: Create .env file
+        run: |
+          cd JavaTestFramework
+          echo "APP_USERNAME=${{ secrets.APP_USERNAME }}" >> .env
+          echo "APP_PASSWORD=${{ secrets.APP_PASSWORD }}" >> .env
+          echo "WORKERS=${{ secrets.TEST_WORKERS }}" >> .env
+
+      - name: Run Cucumber Selenium Tests
+        run: |
+          cd JavaTestFramework
+          mvn clean test
+
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-test-reports
+          path: JavaTestFramework/target/cucumber-report.html
+
+      - name: Stop app
+        if: always()
+        shell: bash
+        run: |
+          if [ -f app.pid ]; then
+            kill $(cat app.pid) || true
+          fi
