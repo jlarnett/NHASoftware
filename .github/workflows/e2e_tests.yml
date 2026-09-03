@@ -104,7 +104,7 @@ jobs:
       - name: Install Edge 136
         uses: browser-actions/setup-edge@v1
         with:
-          edge-version: 136.0.3240.92
+          edge-version: stable
 
       - name: Setup Maven
         shell: bash
