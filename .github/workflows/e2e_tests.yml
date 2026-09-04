@@ -117,10 +117,10 @@ jobs:
       - name: Create .env file
         run: |
           cd JavaTestFramework
-          echo "APP_USERNAME=${{ secrets.APP_USERNAME }}" >> .env
           echo "APP_PASSWORD=${{ secrets.APP_PASSWORD }}" >> .env
-          echo "WORKERS=${{ secrets.TEST_WORKERS }}" >> .env
+          echo "BASE_URL=http://127.0.0.1:5258" >> .env
           echo "NHA_API_BASE_URL=http://127.0.0.1:5258" >> .env
+          echo "WORKERS=${{ secrets.TEST_WORKERS }}" >> .env
 
       - name: Run Cucumber Selenium Tests
         timeout-minutes: 20
