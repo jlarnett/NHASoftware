@@ -77,6 +77,18 @@ jobs:
           dotnet run --project NHASoftware/NHA.Website.Software.csproj --configuration Release --no-build --no-launch-profile > app.log 2>&1 &
           echo $! > app.pid
 
+      - name: Debug app
+        if: always()
+        run: |
+          echo "===== APP LOG ====="
+          cat app.log || true
+
+          echo "===== PROCESSES ====="
+          ps aux | grep -i dotnet || true
+
+          echo "===== PORT 5258 ====="
+          ss -ltnp | grep 5258 || true
+
       - name: Wait for app
         shell: bash
         run: |
