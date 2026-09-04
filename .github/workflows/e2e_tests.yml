@@ -1,4 +1,4 @@
-name: Run Anime Social e2e Tests
+name: e2e Tests
 
 on:
   pull_request:
