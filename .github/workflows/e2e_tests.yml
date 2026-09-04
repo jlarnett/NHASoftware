@@ -101,10 +101,12 @@ jobs:
           distribution: 'temurin'
           java-version: '25'
 
-      - name: Install Edge 136
-        uses: browser-actions/setup-edge@v1
-        with:
-          edge-version: 152.0.4191.53
+      - name: Install Edge 152.0.4191.53 (pinned)
+        run: |
+          sudo apt-get update
+          wget -q https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_152.0.4191.53-1_amd64.deb
+          sudo apt-get install -y ./microsoft-edge-stable_152.0.4191.53-1_amd64.deb
+          microsoft-edge --version
 
       - name: Setup Maven
         shell: bash
