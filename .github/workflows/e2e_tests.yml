@@ -143,26 +143,26 @@ jobs:
           path = Path("JavaTestFramework/src/test/java/driver/DriverFactory.java")
           text = path.read_text()
           pattern = re.compile(r'''        EdgeOptions options = new EdgeOptions\(\);\s*
-        options\.addArguments\("--headless=new"\);\s*
-        options\.addArguments\("--window-size=1920,1080"\);\s*
-        options\.addArguments\("--disable-gpu"\);\s*
-        var edgeDriver = new EdgeDriver\(options\);''')
+          options\.addArguments\("--headless=new"\);\s*
+          options\.addArguments\("--window-size=1920,1080"\);\s*
+          options\.addArguments\("--disable-gpu"\);\s*
+          var edgeDriver = new EdgeDriver\(options\);''')
           replacement = '''        EdgeOptions options = new EdgeOptions();
-        options.addArguments("--headless=new");
-        options.addArguments("--window-size=1920,1080");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--remote-debugging-port=0");
-        options.addArguments("--user-data-dir=/tmp/msedge-" + Thread.currentThread().getId());
+          options.addArguments("--headless=new");
+          options.addArguments("--window-size=1920,1080");
+          options.addArguments("--disable-gpu");
+          options.addArguments("--no-sandbox");
+          options.addArguments("--disable-dev-shm-usage");
+          options.addArguments("--remote-debugging-port=0");
+          options.addArguments("--user-data-dir=/tmp/msedge-" + Thread.currentThread().getId());
 
-        var edgeBinary = System.getenv("EDGE_BIN");
-        if (edgeBinary != null && !edgeBinary.isBlank()) {
-            options.setBinary(edgeBinary);
-        }
+          var edgeBinary = System.getenv("EDGE_BIN");
+          if (edgeBinary != null && !edgeBinary.isBlank()) {
+              options.setBinary(edgeBinary);
+          }
 
-        var edgeDriver = new EdgeDriver(options);
-'''
+          var edgeDriver = new EdgeDriver(options);
+          '''
 
           if not pattern.search(text):
             raise SystemExit("Expected DriverFactory.java block was not found.")
