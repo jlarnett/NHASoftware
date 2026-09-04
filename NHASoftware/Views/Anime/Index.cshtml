@@ -43,7 +43,12 @@
     <h2>Alphabetical Anime Index <em class=" h3 text-primary">(@animePageCount)</em></h2>
     
     <a asp-action="CreateAnimePage" asp-controller="Anime" class="interactable">Create Anime Entry</a> |
-    <a asp-action="AnimePageDetails" asp-route-id="@randomAnime!.Id" asp-controller="Anime" class="interactable">Next &#x2794;</a>
+    @{
+        if (randomAnime != null)
+        {
+            <a asp-action="AnimePageDetails" asp-route-id="@randomAnime.Id" asp-controller="Anime" class="interactable">Next &#x2794;</a>
+        }
+    }
 
     <p>Select one of the letters to be view all animes beginning with that letter. The animes will be listed in alphabetical order. </p>
     
