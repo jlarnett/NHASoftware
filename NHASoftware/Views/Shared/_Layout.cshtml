@@ -99,7 +99,9 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.4.8/jquery.jgrowl.min.js"></script>
 </head>
 <body>
-
+<header>
+    @{ await Html.RenderPartialAsync("Navigation/_NavigationBarPartial");}
+</header>
 
 @{
     var currentUser = await UserManager.GetUserAsync(User);
