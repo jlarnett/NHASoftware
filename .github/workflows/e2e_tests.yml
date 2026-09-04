@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  e2e:
+  run tests:
     runs-on: ubuntu-latest
 
     services:
