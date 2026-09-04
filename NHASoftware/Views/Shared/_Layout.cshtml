@@ -100,7 +100,6 @@
 </head>
 <body>
 <header>
-    @{ await Html.RenderPartialAsync("Navigation/_NavigationBarPartial");}
 </header>
 
 @{
@@ -117,7 +116,6 @@
 <div class="container-fluid bg-body" id="MainPageContentContainer" userId="@UserManager.GetUserId(User)" user-session-active="@SignInManager.IsSignedIn(User).ToString()" admin-user="@userIsAdmin.ToString()">
     <div class="row">
         <div id="LeftMenu" class="col-3 mt-11 d-none d-md-block border-end border-primary bg-transparent p-1">
-                @{ await Html.RenderPartialAsync("Sponsers/_SponsorListPartial"); }
         </div>
         <main role="main" class="col pt-2 mt-11">
             @RenderBody()
@@ -126,7 +124,6 @@
             </button>
         </main>
             <div class="col-3 mt-11 d-none d-md-block bg-transparent p-1" style="min-height: 75.5em;">
-            @{ await Html.RenderPartialAsync("FriendList/_FriendListPartial");}
         </div>
     </div>
 </div>
