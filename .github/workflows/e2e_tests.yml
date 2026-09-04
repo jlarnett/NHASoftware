@@ -101,23 +101,10 @@ jobs:
           distribution: 'temurin'
           java-version: '25'
 
-      - name: Install Edge
+      - name: Install Edge 136
         uses: browser-actions/setup-edge@v1
         with:
-          edge-version: stable
-
-      - name: Detect Edge binary
-        shell: bash
-        run: |
-          edge_path=$(command -v microsoft-edge || command -v microsoft-edge-stable || true)
-
-          if [ -z "$edge_path" ]; then
-            echo "Microsoft Edge was not found on PATH."
-            exit 1
-          fi
-
-          echo "EDGE_BIN=$edge_path" >> "$GITHUB_ENV"
-          "$edge_path" --version
+          edge-version: 136.0.3240.92
 
       - name: Setup Maven
         shell: bash
@@ -130,45 +117,8 @@ jobs:
           cd JavaTestFramework
           echo "APP_USERNAME=${{ secrets.APP_USERNAME }}" >> .env
           echo "APP_PASSWORD=${{ secrets.APP_PASSWORD }}" >> .env
-          echo "WORKERS=1" >> .env
+          echo "WORKERS=${{ secrets.TEST_WORKERS }}" >> .env
           echo "NHA_API_BASE_URL=http://127.0.0.1:5258" >> .env
-
-      - name: Patch Edge options for Linux CI
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import re
-
-          path = Path("JavaTestFramework/src/test/java/driver/DriverFactory.java")
-          text = path.read_text()
-          pattern = re.compile(r'''        EdgeOptions options = new EdgeOptions\(\);\s*
-          options\.addArguments\("--headless=new"\);\s*
-          options\.addArguments\("--window-size=1920,1080"\);\s*
-          options\.addArguments\("--disable-gpu"\);\s*
-          var edgeDriver = new EdgeDriver\(options\);''')
-          replacement = '''        EdgeOptions options = new EdgeOptions();
-          options.addArguments("--headless=new");
-          options.addArguments("--window-size=1920,1080");
-          options.addArguments("--disable-gpu");
-          options.addArguments("--no-sandbox");
-          options.addArguments("--disable-dev-shm-usage");
-          options.addArguments("--remote-debugging-port=0");
-          options.addArguments("--user-data-dir=/tmp/msedge-" + Thread.currentThread().getId());
-
-          var edgeBinary = System.getenv("EDGE_BIN");
-          if (edgeBinary != null && !edgeBinary.isBlank()) {
-              options.setBinary(edgeBinary);
-          }
-
-          var edgeDriver = new EdgeDriver(options);
-          '''
-
-          if not pattern.search(text):
-            raise SystemExit("Expected DriverFactory.java block was not found.")
-
-          path.write_text(pattern.sub(replacement, text, count=1))
-          PY
 
       - name: Run Cucumber Selenium Tests
         timeout-minutes: 20
