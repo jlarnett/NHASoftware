@@ -29,6 +29,13 @@ jobs:
       ConnectionStrings__DefaultConnection: Server=127.0.0.1,1433;Database=NHAIntegrationTests;User Id=sa;Password=${{ secrets.SQL_SA_PASSWORD }};TrustServerCertificate=True;Encrypt=False;
       NHA_API_BASE_URL: http://127.0.0.1:5258
       SQL_SA_PASSWORD: ${{ secrets.SQL_SA_PASSWORD }}
+      FeatureManagement__Beta: "true"
+      FeatureManagement__AnimeEnabled: "true"
+      FeatureManagement__CustomizedPostsEnabled: "true"
+      FeatureManagement__ForumsEnabled: "true"
+      FeatureManagement__CryptoEnabled: "true"
+      FeatureManagement__SponsorAdsEnabled: "true"
+      FeatureManagement__GameWikiEnabled: "true"
 
     steps:
       - name: Checkout Code Repository
