@@ -36,6 +36,7 @@ using NHA.Website.Software.Services.Social.PostBuilderService;
 using NHA.Website.Software.Services.Sponsors;
 using NHA.Website.Software.Services.Time;
 using NHA.Website.Software.SessionTrackingMiddleware;
+using NHA.Website.Software.Services.TestDataSeeding;
 
 //Creates instance of WebApplicationBuilder Class
 var builder = WebApplication.CreateBuilder(args);
@@ -200,6 +201,7 @@ builder.Services.AddProblemDetails(options =>
 
 //Creates the Web application object by calling the WebBuilder.Build() method. All services should be added before here. 
 var app = builder.Build();
+await TestDataSeeder.SeedAsync(app.Services);
 
 var logger = app.Services.GetService<ILogger<Program>>();
 logger!.LogTrace($"Web App starting environment is production - {app.Environment.IsProduction().ToString()}");
@@ -229,10 +231,7 @@ if (app.Environment.IsProduction())
 //Custom Middleware to log request duration
 app.UseRequestDurationMiddleware();
 
-if (!builder.Configuration.GetValue<bool>("DisableHttpsRedirection"))
-{
-    app.UseHttpsRedirection();
-}
+app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
