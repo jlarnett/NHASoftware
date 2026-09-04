@@ -229,7 +229,11 @@ if (app.Environment.IsProduction())
 //Custom Middleware to log request duration
 app.UseRequestDurationMiddleware();
 
-app.UseHttpsRedirection();
+if (!builder.Configuration.GetValue<bool>("DisableHttpsRedirection"))
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseStaticFiles();
 
 app.UseRouting();
