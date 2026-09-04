@@ -131,6 +131,10 @@ jobs:
 
           exit 1
 
+      - name: Test application response
+        run: |
+          curl -v http://127.0.0.1:5258/
+
       - name: Clone Test Repository
         run: git clone https://github.com/jlarnett/JavaTestFramework.git
 
