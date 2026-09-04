@@ -71,39 +71,27 @@ jobs:
           docker logs "$sql_container_id"
           exit 1
 
+      - name: Build Project
+        run: dotnet build NHA.Software.sln --configuration Release --no-restore
+
       - name: Start app
         shell: bash
         run: |
-          dotnet run \
-            --project NHASoftware/NHA.Website.Software.csproj \
-            --configuration Release \
-            --no-launch-profile \
+          ASPNETCORE_URLS=http://127.0.0.1:5258 \
+          dotnet ./NHASoftware/bin/Release/net9.0/NHA.Website.Software.dll \
             > app.log 2>&1 &
 
           APP_PID=$!
           echo "$APP_PID" > app.pid
-
-          echo "Started dotnet process: $APP_PID"
+          echo "Started app process: $APP_PID"
 
           sleep 5
 
           echo "===== APP LOG ====="
           cat app.log || true
 
-          echo "===== PROCESSES ====="
-          ps aux | grep -i dotnet || true
-
-          echo "===== PORT 5258 ====="
-          ss -ltnp | grep 5258 || true
-
-      - name: Debug app
-        if: always()
-        run: |
-          echo "===== APP LOG ====="
-          cat app.log || true
-
-          echo "===== PROCESSES ====="
-          ps aux | grep -i dotnet || true
+          echo "===== PROCESS ====="
+          ps -fp "$APP_PID" || true
 
           echo "===== PORT 5258 ====="
           ss -ltnp | grep 5258 || true
@@ -112,16 +100,35 @@ jobs:
         shell: bash
         run: |
           for i in {1..60}; do
-            status=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5258/ || true)
-            if [ "$status" = "200" ]; then
-              echo "App is up with status $status"
-              exit 0
+            if ss -ltn | grep -q ':5258'; then
+              echo "Port 5258 is listening."
+
+              status=$(curl -s -o /tmp/response.html \
+                -w "%{http_code}" \
+                http://127.0.0.1:5258/ || true)
+
+              echo "HTTP status: $status"
+              echo "Response size:"
+              wc -c /tmp/response.html
+
+              if [ "$status" = "200" ]; then
+                echo "Application is ready."
+                exit 0
+              fi
             fi
-            echo "Waiting for app..."
+
+            echo "Waiting for application..."
             sleep 2
           done
-          echo "App did not start in time."
-          cat app.log
+
+          echo "Application failed to start."
+
+          echo "===== APP LOG ====="
+          cat app.log || true
+
+          echo "===== PORTS ====="
+          ss -ltnp || true
+
           exit 1
 
       - name: Clone Test Repository
