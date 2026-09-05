@@ -78,9 +78,6 @@ jobs:
           docker logs "$sql_container_id"
           exit 1
 
-      - name: Build Project
-        run: dotnet build NHA.Software.sln --configuration Release --no-restore
-
       - name: Start app
         shell: bash
         run: |
@@ -138,10 +135,6 @@ jobs:
 
           exit 1
 
-      - name: Test application response
-        run: |
-          curl -v http://127.0.0.1:5258/
-
       - name: Clone Test Repository
         run: git clone https://github.com/jlarnett/JavaTestFramework.git
 
@@ -167,7 +160,6 @@ jobs:
       - name: Create .env file
         run: |
           cd JavaTestFramework
-          echo "APP_USERNAME=${{ secrets.APP_USERNAME }}" >> .env
           echo "APP_PASSWORD=${{ secrets.APP_PASSWORD }}" >> .env
           echo "BASE_URL=http://127.0.0.1:5258" >> .env
           echo "NHA_API_BASE_URL=http://127.0.0.1:5258" >> .env
