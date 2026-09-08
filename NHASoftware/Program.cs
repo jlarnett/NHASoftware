@@ -21,7 +21,6 @@ using NHA.Website.Software.Services.CookieMonster;
 using NHA.Website.Software.Services.AccessWarden;
 using NHA.Website.Software.Services.Anime;
 using NHA.Website.Software.Services.FriendSystem;
-using NHA.Website.Software.Services.SendGrid;
 using NHA.Website.Software.Services.SendGrid.Configuration;
 using NHA.Helpers.HtmlStringCleaner;
 using NHA.Website.Software.DBContext;
@@ -92,6 +91,11 @@ builder.WebHost.ConfigureKestrel(options =>
     options.Limits.MaxRequestBodySize = maxVideoUploadBytes;
 });
 
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.MaxRequestBodySize = maxVideoUploadBytes;
+});
+
 builder.Services.Configure<FormOptions>(options =>
 {
     options.MultipartBodyLengthLimit = maxVideoUploadBytes;
@@ -100,13 +104,13 @@ builder.Services.Configure<FormOptions>(options =>
 builder.Services.AddControllersWithViews();
 #region CorsPolicy
 
-//CORS policy setup. Allows calls to binace api ----------------------------------------------------------------------->
+//CORS policy setup. Allows calls to Binance api ----------------------------------------------------------------------->
 
-var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
+    options.AddPolicy(name: myAllowSpecificOrigins,
         corsPolicyBuilder =>
         {
             corsPolicyBuilder.WithOrigins(
@@ -148,6 +152,8 @@ builder.Services.AddSingleton<IFileExtensionValidator, FileExtensionValidator>()
 builder.Services.AddTransient<IWarden, AccessWarden>();
 builder.Services.AddTransient<IHtmlStringCleaner, HtmlStringCleaner>();
 builder.Services.AddScoped<IProfilePictureFileScrubber, ProfilePictureFileScrubber>();
+builder.Services.Configure<PostVideoStorageOptions>(builder.Configuration.GetSection("AzureBlobStorage"));
+builder.Services.AddScoped<IPostVideoStorage, AzureBlobPostVideoStorage>();
 
 //Setup for generic repository system
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -238,7 +244,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 //Enables app cors property with the Binance api policy.
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors(myAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();
