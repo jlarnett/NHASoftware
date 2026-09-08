@@ -15,6 +15,7 @@ using NHA.Website.Software.Services.CacheLoadingManager;
 using NHA.Website.Software.Services.CookieMonster;
 using NHA.Website.Software.Services.FileExtensionValidator;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
+using NHA.Website.Software.Services.Social;
 using NHA.Website.Software.Services.Social.PostBuilderService;
 using System.Text.RegularExpressions;
 
@@ -25,7 +26,6 @@ public class PostsController : ControllerBase
 {
     private const long MaxImageFileSizeBytes = 5 * 1024 * 1024;
     private const long MaxVideoFileSizeBytes = 100 * 1024 * 1024;
-    private const string PostMediaFolderName = "PostMedia";
 
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
@@ -36,13 +36,14 @@ public class PostsController : ControllerBase
     private readonly IMemoryCache _memoryCache;
     private readonly ICacheLoadingManager _cacheLoadingManager;
     private readonly IPostBuilder _postBuilder;
+    private readonly IPostVideoStorage _postVideoStorage;
     private readonly ICookieMonster _cookieMonster;
     private readonly IWebHostEnvironment _webHostEnvironment;
 
     public PostsController(IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager,
         ILogger<PostDTO> logger, IFileExtensionValidator validator,
         IImageDataSourceTranslator imageTranslator, IMemoryCache memoryCache,
-        ICacheLoadingManager cacheLoadingManager, IPostBuilder postBuilder,
+        ICacheLoadingManager cacheLoadingManager, IPostBuilder postBuilder, IPostVideoStorage postVideoStorage,
         ICookieMonster cookieMonster, IWebHostEnvironment webHostEnvironment)
     {
         _mapper = mapper;
@@ -54,6 +55,7 @@ public class PostsController : ControllerBase
         _memoryCache = memoryCache;
         _cacheLoadingManager = cacheLoadingManager;
         _postBuilder = postBuilder;
+        _postVideoStorage = postVideoStorage;
         _cookieMonster = cookieMonster;
         _webHostEnvironment = webHostEnvironment;
     }
@@ -111,6 +113,13 @@ public class PostsController : ControllerBase
 
         if (!string.IsNullOrWhiteSpace(media.MediaPath))
         {
+            var blobStream = await _postVideoStorage.OpenReadAsync(media.MediaPath, HttpContext.RequestAborted);
+
+            if (blobStream != null)
+            {
+                return File(blobStream, GetMediaContentType(media.FileExtensionType), enableRangeProcessing: true);
+            }
+
             var physicalPath = GetPhysicalMediaPath(media.MediaPath);
 
             if (System.IO.File.Exists(physicalPath))
@@ -516,7 +525,7 @@ public class PostsController : ControllerBase
     private async Task<bool> SavePostMediaToDatabase(int? postId, List<IFormFile> mediaFiles)
     {
         List<PostImage> media = new List<PostImage>();
-        List<string> createdFilePaths = new List<string>();
+        List<string> createdMediaPaths = new List<string>();
 
         try
         {
@@ -526,8 +535,8 @@ public class PostsController : ControllerBase
 
                 if (IsVideoFileExtension(fileExtension))
                 {
-                    var relativeMediaPath = await SaveVideoFileAsync(mediaFile);
-                    createdFilePaths.Add(GetPhysicalMediaPath(relativeMediaPath));
+                    var relativeMediaPath = await _postVideoStorage.SaveAsync(mediaFile, HttpContext.RequestAborted);
+                    createdMediaPaths.Add(relativeMediaPath);
 
                     media.Add(new PostImage
                     {
@@ -565,43 +574,16 @@ public class PostsController : ControllerBase
             _logger.LogError(ex, "Failed to save post media for post {postId}", postId);
         }
 
-        foreach (var createdFilePath in createdFilePaths)
+        foreach (var createdMediaPath in createdMediaPaths)
         {
-            if (System.IO.File.Exists(createdFilePath))
-            {
-                System.IO.File.Delete(createdFilePath);
-            }
+            await _postVideoStorage.DeleteAsync(createdMediaPath, CancellationToken.None);
         }
 
         return false;
     }
 
-    private async Task<string> SaveVideoFileAsync(IFormFile mediaFile)
-    {
-        var fileExtension = Path.GetExtension(mediaFile.FileName).ToLowerInvariant();
-        var uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
-        var relativeMediaPath = Path.Combine(PostMediaFolderName, uniqueFileName);
-        var physicalMediaPath = GetPhysicalMediaPath(relativeMediaPath);
-        var mediaDirectory = Path.GetDirectoryName(physicalMediaPath);
-
-        if (!string.IsNullOrWhiteSpace(mediaDirectory))
-        {
-            Directory.CreateDirectory(mediaDirectory);
-        }
-
-        await using var fileStream = new FileStream(physicalMediaPath, FileMode.Create, FileAccess.Write, FileShare.None);
-        await mediaFile.CopyToAsync(fileStream);
-
-        return relativeMediaPath;
-    }
-
     private string GetVideoMediaUrl(PostImage postImage)
     {
-        if (!string.IsNullOrWhiteSpace(postImage.MediaPath))
-        {
-            return $"{Request.PathBase}/{postImage.MediaPath.Replace('\\', '/')}";
-        }
-
         return $"{Request.PathBase}/api/posts/GetPostMedia/{postImage.Id}";
     }
 
