@@ -144,11 +144,19 @@ jobs:
           distribution: 'temurin'
           java-version: '25'
 
-      - name: Install Edge 152.0.4191.53 (pinned)
+      - name: Install Edge
         run: |
+          if command -v microsoft-edge >/dev/null 2>&1; then
+            microsoft-edge --version
+            exit 0
+          fi
+
+          wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-edge.gpg
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-edge.gpg] https://packages.microsoft.com/repos/edge stable main" \
+            | sudo tee /etc/apt/sources.list.d/microsoft-edge.list
+
           sudo apt-get update
-          wget -q https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_152.0.4191.53-1_amd64.deb
-          sudo apt-get install -y ./microsoft-edge-stable_152.0.4191.53-1_amd64.deb
+          sudo apt-get install -y microsoft-edge-stable
           microsoft-edge --version
 
       - name: Setup Maven
