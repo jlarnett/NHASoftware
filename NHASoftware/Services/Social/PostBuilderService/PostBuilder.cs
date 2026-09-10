@@ -81,9 +81,9 @@ public class PostBuilder : IPostBuilder
     /// </summary>
     /// <param name="userId">Users Identity Id you want posts for</param>
     /// <returns>postsDto IEnumerable</returns>
-    public async Task<List<PostDTO>> GetAllPostForUser(string userId)
+    public async Task<List<PostDTO>> GetAllPostForUser(string userId, int pageNumber = 1, int pageSize = 10)
     {
-        var posts = await _unitOfWork.PostRepository.GetUsersSocialPostsAsync(userId);
+        var posts = await _unitOfWork.PostRepository.GetUsersSocialPostsAsync(userId, pageNumber, pageSize);
         var postDTOs = posts.Select(_mapper.Map<Post, PostDTO>).ToList();
         return await PopulatePostDTODetails(postDTOs);
     }

@@ -4,4 +4,5 @@ public class LetterIndexViewModel
 {
     public char AlphabetLetter { get; set; }
     public List<AnimePage> AnimeList { get; set; } = [];
+    public bool IsEnglish { get; set; }
 }

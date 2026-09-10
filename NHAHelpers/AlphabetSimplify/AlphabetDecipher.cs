@@ -2,11 +2,11 @@
 {
     public class AlphabetDecipher
     {
-        private const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        private static readonly string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
 
         public static char ConvertNumberToAlphabetLetter(int letterNumber)
         {
-            if (letterNumber >= 0 && letterNumber < 26)
+            if (letterNumber >= 0 && letterNumber < alphabet.Length)
             {
                 return alphabet[letterNumber];
             }

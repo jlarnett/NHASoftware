@@ -53,15 +53,6 @@
     <p>Select one of the letters to be view all animes beginning with that letter. The animes will be listed in alphabetical order. </p>
     
     @{
-        string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        int letterCounter = 0;
-
-        foreach (var letter in alphabet)
-        {
-            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" class="link-primary index-letters interactable">@letter</a>
-            letterCounter++;
-        }
-
         <hr/>
 
         <h2 class="mt-4">Genres <em class=" h3 text-primary">(@allGenres.Count)</em></h2>
@@ -71,10 +62,10 @@
         foreach (var animeGenre in sorted)
         {
             if (animeGenre.IsNullOrEmpty()) continue;
-                <a asp-action="GenreIndex" asp-controller="Anime" asp-route-genre="@animeGenre" class="link-primary index-letters fs-3 interactable">@animeGenre</a>
+            <a asp-action="GenreIndex" asp-controller="Anime" asp-route-genre="@animeGenre" class="link-primary index-letters fs-3 interactable">@animeGenre</a>
         }
 
-        <hr/>
+        <hr />
 
         <h2 class="mt-4">Streaming Platforms <em class=" h3 text-primary">(@allPlatforms.Count)</em></h2>
         var sortedPlatforms = allPlatforms.Order();
@@ -87,9 +78,40 @@
 
         <hr/>
 
+        string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        string hiraganaAlphabet = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん";
+        string katakanaAlphabet = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+        int letterCounter = 0;
+
+        <h2 class="mt-4">Alphabetical <em class=" h3 text-primary">· (English)</em></h2>
+
+        foreach (var letter in alphabet)
+        {
+            var letterCount = Model.AnimeList.Count(x => x.AnimeName.StartsWith(letter));
+            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" title="Contains - @letterCount anime" class="link-primary index-letters interactable">@letter</a>
+            letterCounter++;
+        }
+
+        <hr />
+        <h2 class="mt-4">Alphabetical <em class=" h3 text-primary">· (Hiragana)</em></h2>
+        foreach (var letter in hiraganaAlphabet)
+        {
+            var letterCount = Model.AnimeList.Count(x => x.AnimeJapaneseName != null && x.AnimeJapaneseName.StartsWith(letter));
+            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" asp-route-isEnglish="false" title="Contains - @letterCount anime" class="link-primary index-letters interactable">@letter</a>
+            letterCounter++;
+        }
+
+        <hr />
+        <h2 class="mt-4">Alphabetical ·<em class=" h3 text-primary"> (katakana)</em></h2>
+        foreach (var letter in katakanaAlphabet)
+        {
+            var letterCount = Model.AnimeList.Count(x => x.AnimeJapaneseName != null && x.AnimeJapaneseName.StartsWith(letter));
+            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" asp-route-isEnglish="false" title="Contains - @letterCount anime" class="link-primary index-letters interactable">@letter</a>
+            letterCounter++;
+        }
+
         <h2 class="mt-4">Rankings<em class=" h3 text-primary"></em></h2>
         <a asp-action="Rankings" asp-controller="Anime" asp-route-platform="" class="link-primary index-letters fs-3 interactable">All-Time</a>
-
 
     }
 </div>

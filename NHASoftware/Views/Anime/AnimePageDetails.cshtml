@@ -131,28 +131,41 @@
 
         @if (episodes.Any())
         {
-            <table class="table table-striped table-hover border border-primary">
-                <thead>
-                <tr class="text-center align-middle">
-                    <th scope="col">Episode #</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Contains Filler</th>
-                    <th scope="col-4">Summary</th>
-                    <th scope="col"></th>
+            <table id="animeEpisodesTable" class="table table-striped table-hover border border-primary">
+                <thead class="text-center align-middle">
+                <tr>
+                    <th scope="col" class="text-center align-middle">Order</th>
+                    <th scope="col" class="text-center align-middle">Title</th>
+                    <th scope="col" class="text-center align-middle">Summary</th>
+                    <th scope="col" class="text-center align-middle">Filler</th>
+                    <th scope="col" class="text-center align-middle"></th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody class="align-middle">
     
                 @foreach (var episode in episodes)
                 {
-                    <tr class="text-center align-middle"> 
-                        <th scope="row">@episode.EpisodeNumber</th>
-                        <td>@episode.EpisodeName</td>
-                        <td>@episode.EpisodeContainsFiller</td>
-                        <td>@episode.EpisodeSummary</td>
-                        <td>
-                            <a class="btn btn-dark interactable" asp-controller="Anime" asp-action="ModifyEpisode" asp-route-animeEpisodeId="@episode.Id">Modify</a>
-                            <a class="btn btn-primary interactable" asp-controller="Anime" asp-action="DeleteEpisode" asp-route-id="@episode.Id">Remove</a>
+                    <tr>
+                        <th scope="row" class="text-center align-middle">@episode.EpisodeNumber</th>
+                        <td class="text-center align-middle">@episode.EpisodeName</td>
+                        <td class="text-center align-middle">@episode.EpisodeSummary</td>
+                        <td class="text-center align-middle">
+                            @{
+                                if (episode.EpisodeContainsFiller)
+                                {
+                                    <span class="badge interactable bg-primary-subtle text-primary-emphasis border border-primary-subtle rounded-pill">Yes</span>
+                                }
+                                else
+                                {
+                                        <span class="badge interactable bg-success-subtle text-success-emphasis border border-success-subtle rounded-pill">No</span>
+                                }
+                            }
+                        </td>
+                        <td class="text-center align-middle">
+                            <div class="d-grid gap-2">
+                                <a class="btn btn-dark interactable w-100" asp-controller="Anime" asp-action="ModifyEpisode" asp-route-animeEpisodeId="@episode.Id">Modify</a>
+                                <a class="btn btn-primary interactable w-100" asp-controller="Anime" asp-action="DeleteEpisode" asp-route-id="@episode.Id">Remove</a>
+                            </div>
                         </td>
                     </tr>
                 }
@@ -200,6 +213,7 @@
 </div>
 
 <script>
+    new DataTable('#animeEpisodesTable');
     (function () {
       const link = document.getElementById('nextLink');
 

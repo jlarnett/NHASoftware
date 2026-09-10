@@ -45,7 +45,10 @@ namespace NHA.Website.Software.Controllers.WebAPIs.Search
                     .SetSlidingExpiration(TimeSpan.FromHours(24));
 
                 var animeSearchResults =
-                    await _unitOfWork.AnimePageRepository.FindWithoutTrackingAsync(ap => ap.AnimeName.Contains(searchString));
+                    await _unitOfWork.AnimePageRepository.FindWithoutTrackingAsync(ap =>
+                        ap.AnimeName.Contains(searchString) ||
+                        (ap.AnimeEnglishName != null && ap.AnimeEnglishName.Contains(searchString)) ||
+                        (ap.AnimeJapaneseName != null && ap.AnimeJapaneseName.Contains(searchString)));
                 var gameSearchResults =
                     await _unitOfWork.GamePageRepository.FindWithoutTrackingAsync(ap => ap.Name.Contains(searchString));
                 var userSearchResults =

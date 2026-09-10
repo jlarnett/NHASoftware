@@ -42,7 +42,6 @@ public class UsersController : Controller
     public async Task<IActionResult> GetProfiles(string? userId)
     {
         var user = await _userManager.FindByIdAsync(userId!);
-        var posts = await _unitOfWork.PostRepository.FindAsync(p => p.UserId!.Equals(user!.Id));
 
         var profileVM = new ProfileVM()
         {

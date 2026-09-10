@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Entities.Identity;
 using NHA.Website.Software.Services.FileExtensionValidator;
+using NHA.Website.Software.Services.ProfilePicture;
 
 namespace NHASoftware.Areas.Identity.Pages.Account.Manage
 {
@@ -17,17 +18,17 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
-        private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IFileExtensionValidator _fileExtensionValidator;
+        private readonly IProfilePictureStorage _profilePictureStorage;
 
         public IndexModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, 
-            ApplicationDbContext context, IWebHostEnvironment environment, IFileExtensionValidator fileExtensionValidator)
+            ApplicationDbContext context, IFileExtensionValidator fileExtensionValidator, IProfilePictureStorage profilePictureStorage)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
-            _hostEnvironment = environment;
             _fileExtensionValidator = fileExtensionValidator;
+            _profilePictureStorage = profilePictureStorage;
         }
 
         /// <summary>
@@ -167,50 +168,44 @@ namespace NHASoftware.Areas.Identity.Pages.Account.Manage
         /// <returns></returns>
         private async Task<bool> TryUpdateProfilePicture(ApplicationUser user)
         {
-            if(Input.ProfilePicture != null)
+            if (Input.ProfilePicture == null)
             {
-                //Getting the user & updating the profile picture photo path in user database. 
-                var updatedUser = await _context.Users.FindAsync(user.Id);
-                string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "ProfilePictures");
+                return true;
+            }
 
-                //Checking for file extension validation. 
-                if (_fileExtensionValidator.CheckValidImageExtensions(Input.ProfilePicture.FileName))
+            //Getting the user & updating the profile picture photo path in user database. 
+            var updatedUser = await _context.Users.FindAsync(user.Id);
+
+            //Checking for file extension validation. 
+            if (_fileExtensionValidator.CheckValidImageExtensions(Input.ProfilePicture.FileName))
+            {
+                //Delete old profile picture from files.
+                if (!string.IsNullOrWhiteSpace(updatedUser!.ProfilePicturePath)
+                    && !string.Equals(updatedUser.ProfilePicturePath, "DefaultProfilePicture.png", StringComparison.OrdinalIgnoreCase))
                 {
-                    //Delete old profile picture from files.
-                    if (updatedUser!.ProfilePicturePath != null)
+                    await _context.RemovedProfilePicturePaths!.AddAsync(new RemovedProfilePicturePath(updatedUser.ProfilePicturePath));
+                    var result = await _context.SaveChangesAsync();
+
+                    if (result == 0)
                     {
-                        string oldProfilePicturePath = Path.Combine(uploadsFolder, updatedUser.ProfilePicturePath);
-                        await _context.RemovedProfilePicturePaths!.AddAsync(new RemovedProfilePicturePath(oldProfilePicturePath));
-                        var result = await _context.SaveChangesAsync();
-                        StatusMessage = result > 0 ? "" : "Failed to add profile picture path to DB to be removed";
-                    }
-
-                    //Assigning unique GUID + filename to create unique name for path. 
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + Input.ProfilePicture.FileName;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    //Writes the file to the path
-                    Input.ProfilePicture.CopyTo(new FileStream(filePath, FileMode.Create));
-
-                    updatedUser.ProfilePicturePath = uniqueFileName;
-                    var dataChanges = await _context.SaveChangesAsync();
-
-                    if (dataChanges == 0)
-                    {
-                        StatusMessage = "Error Unexpected error happened when trying to save changes to database. 0 Changes made to database!";
+                        StatusMessage = "Failed to queue the old profile picture for removal.";
                         return false;
                     }
-
-                    return true;
                 }
-                else
+
+                updatedUser.ProfilePicturePath = await _profilePictureStorage.SaveAsync(Input.ProfilePicture);
+                var dataChanges = await _context.SaveChangesAsync();
+
+                if (dataChanges == 0)
                 {
-                    StatusMessage = "Error File Extension did not match valid image extensions";
+                    StatusMessage = "Error Unexpected error happened when trying to save changes to database. 0 Changes made to database!";
                     return false;
                 }
 
+                return true;
             }
 
+            StatusMessage = "Error File Extension did not match valid image extensions";
             return false;
         }
     }

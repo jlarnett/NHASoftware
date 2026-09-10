@@ -10,6 +10,7 @@
 @{
     ViewData["Title"] = @Model.User!.DisplayName;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    const int profileFeedPageSize = 25;
 }
 
 <head>
@@ -121,7 +122,7 @@
         <p class="text-center h4 mt-3 fw-semibold display-6 text-secondary">@Model.User.DisplayName's Wall</p>
     </div>
     
-    <div id="ContentFeed" class="profile-wall-feed" profile-user-id="@Model.User.Id">
+    <div id="ContentFeed" class="profile-wall-feed" profile-user-id="@Model.User.Id" data-current-page="0" data-page-size="@profileFeedPageSize" data-has-more="true">
     </div>
 </div>
 

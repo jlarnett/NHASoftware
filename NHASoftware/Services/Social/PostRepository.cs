@@ -73,13 +73,18 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
     /// </summary>
     /// <param name="userId">userId of the post you want to pull from DB</param>
     /// <returns>List of social media posts. </returns>
-    public async Task<List<Post>> GetUsersSocialPostsAsync(string userId)
+    public async Task<List<Post>> GetUsersSocialPostsAsync(string userId, int pageNumber = 1, int pageSize = 10)
     {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+
         return await _context.Posts!
             .Include(p => p.User)
             .Include(p => p.ParentPost)
             .Where(u => u.UserId!.Equals(userId) && u.IsDeletedFlag.Equals(false) && u.IsHiddenFromUserProfile.Equals(false))
             .OrderByDescending(p => p.CreationDate)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .AsNoTracking()
             .ToListAsync();
     }
