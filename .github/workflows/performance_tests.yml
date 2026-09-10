@@ -150,11 +150,15 @@ jobs:
         working-directory: performanceTesting
         run: npm run build
 
+      - name: Setup k6
+        uses: grafana/setup-k6-action@v1
+
       - name: Run K6 Tests
         shell: pwsh
         working-directory: performanceTesting
         run: |
-          k6 run .\dist\test.js --summary-export .\reports\k6-summary.json --console-output .\reports\k6-console.log
+          New-Item -ItemType Directory -Force -Path reports | Out-Null
+          k6 run ./dist/test.js --summary-export ./reports/k6-summary.json --console-output ./reports/k6-console.log
 
       - name: Upload k6 reports
         if: always()
