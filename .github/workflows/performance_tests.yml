@@ -29,7 +29,6 @@ jobs:
       ConnectionStrings__DefaultConnection: Server=127.0.0.1,1433;Database=NHAIntegrationTests;User Id=sa;Password=${{ secrets.SQL_SA_PASSWORD }};TrustServerCertificate=True;Encrypt=False;
       NHA_API_BASE_URL: http://127.0.0.1:5258
       SQL_SA_PASSWORD: ${{ secrets.SQL_SA_PASSWORD }}
-      TEST_USER_EMAIL: ${{ secrets.APP_USER_EMAIL }}
       TEST_USER_PASSWORD: ${{ secrets.APP_PASSWORD }}
       FeatureManagement__Beta: "true"
       FeatureManagement__AnimeEnabled: "true"
