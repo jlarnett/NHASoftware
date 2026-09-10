@@ -155,6 +155,9 @@ jobs:
       - name: Run K6 Tests
         shell: pwsh
         working-directory: performanceTesting
+        env:
+          BASE_URL: http://127.0.0.1:5258
+          TEST_USER_PASSWORD: ${{ secrets.APP_PASSWORD }}
         run: |
           New-Item -ItemType Directory -Force -Path reports | Out-Null
           k6 run ./dist/test.js --summary-export ./reports/k6-summary.json --console-output ./reports/k6-console.log
