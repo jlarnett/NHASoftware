@@ -134,42 +134,39 @@ jobs:
           ss -ltnp || true
 
           exit 1
-
       - name: Clone Test Repository
-        run: git clone https://github.com/jlarnett/NHA.Social.Perf.git
+        shell: pwsh
+        run: git clone https://github.com/jlarnett/NHA.Social.Perf.git performanceTesting
 
       - name: Set up NPM
-        run: |
-          npm ci
+        shell: pwsh
+        working-directory: performanceTesting
+        run: npm ci
 
       - name: Create .env file
+        shell: pwsh
+        working-directory: performanceTesting
         run: |
-          cd performanceTesting
-          echo "TEST_USER_PASSWORD=${{ secrets.APP_PASSWORD }}" >> .env
-          echo "BASE_URL=http://127.0.0.1:5258" >> .env
+          "TEST_USER_EMAIL=${{ secrets.APP_USER_EMAIL }}" | Out-File -FilePath .env -Encoding utf8 -Append
+          "TEST_USER_PASSWORD=${{ secrets.APP_PASSWORD }}" | Out-File -FilePath .env -Encoding utf8 -Append
+          "BASE_URL=http://127.0.0.1:5258" | Out-File -FilePath .env -Encoding utf8 -Append
 
       - name: Build K6 Project
-        run: |
-          cd performanceTesting
-          npm run build
+        shell: pwsh
+        working-directory: performanceTesting
+        run: npm run build
 
       - name: Run K6 Tests
+        shell: pwsh
+        working-directory: performanceTesting
         run: |
-          cd performanceTesting
-          .\k6-dotenv.exe run .\dist\test.js
+          New-Item -ItemType Directory -Force -Path reports | Out-Null
+          .\k6-dotenv.exe run .\dist\test.js --summary-export .\reports\k6-summary.json --console-output .\reports\k6-console.log
 
       - name: Upload k6 reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: k6-reports
-          path: reports/**
+          path: performanceTesting/reports/**
           if-no-files-found: error
-
-      - name: Stop app
-        if: always()
-        shell: bash
-        run: |
-          if [ -f app.pid ]; then
-            kill $(cat app.pid) || true
-          fi
