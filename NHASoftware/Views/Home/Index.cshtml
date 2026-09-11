@@ -74,7 +74,7 @@
             }
 
             <div id="HomeContentFeed" class="w-100" user-session-active="@_SignInManager.IsSignedIn(User).ToString()" userId="@_UserManager.GetUserId(User)">
-                <div id="ContentFeed" class="" data-current-page="1" data-page-size="@homeFeedPageSize">
+                <div id="ContentFeed" class="" data-current-page="1" data-page-size="@homeFeedPageSize" data-has-more="true">
                     @{
                         var posts = await _PostBuilder.RetrieveParentPosts(_UserManager.GetUserId(User) ?? "", 1, homeFeedPageSize);
                         var lastActiveTimes = await _SessionTracker.GetUsersLastActiveTimesAsync(posts

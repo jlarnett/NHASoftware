@@ -152,6 +152,8 @@ builder.Services.AddSingleton<IFileExtensionValidator, FileExtensionValidator>()
 builder.Services.AddTransient<IWarden, AccessWarden>();
 builder.Services.AddTransient<IHtmlStringCleaner, HtmlStringCleaner>();
 builder.Services.AddScoped<IProfilePictureFileScrubber, ProfilePictureFileScrubber>();
+builder.Services.Configure<ProfilePictureStorageOptions>(builder.Configuration.GetSection("AzureBlobStorage"));
+builder.Services.AddScoped<IProfilePictureStorage, AzureBlobProfilePictureStorage>();
 builder.Services.Configure<PostVideoStorageOptions>(builder.Configuration.GetSection("AzureBlobStorage"));
 builder.Services.AddScoped<IPostVideoStorage, AzureBlobPostVideoStorage>();
 

@@ -18,7 +18,7 @@ namespace NHA.Website.Software.Services.Social.PostBuilderService
         /// </summary>
         /// <param name="userId">Users Identity Id you want posts for</param>
         /// <returns>postsDto IEnumerable</returns>
-        Task<List<PostDTO>> GetAllPostForUser(string userId);
+        Task<List<PostDTO>> GetAllPostForUser(string userId, int pageNumber = 1, int pageSize = 10);
 
         /// <summary>
         /// Retrieves a paged list of parent posts in DB. Fully populates the PostDTOs & handles caching.

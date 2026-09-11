@@ -3,9 +3,7 @@
     $(window).on("scroll", function() {
         //Called whenever the user scrolls the document. Handles loading more post for infinite feed loop
         //Handles loading images as the user scrolls the feed. This keeps the base load time for post faster
-        if (ContentFeedUtility.TryGetContentFeedUserProfileId() === undefined) {
-            ContentFeedLoader.ShouldContentFeedShouldLoadMorePosts();
-        }
+        ContentFeedLoader.ShouldContentFeedShouldLoadMorePosts();
 
         ImageLoader.ShouldPostLoadImagesFromDB();
     });
@@ -47,12 +45,17 @@ class ContentFeedLoader {
     static OptimizedMainContentFeedLoad() {
         //Loads the id #ContentFeed with all posts created by user. Calls Home Base Controller (Simplifies Partial View Return)
         const contentFeed = $("#ContentFeed");
+        const profileUserId = ContentFeedUtility.TryGetContentFeedUserProfileId();
         const currentPage = parseInt(contentFeed.attr("data-current-page") ?? "1", 10);
         const pageSize = parseInt(contentFeed.attr("data-page-size") ?? "10", 10);
         const nextPage = currentPage + 1;
 
         ContentFeedUtility.AddSpinnerToContentFeed();
-        ContentFeedAjaxCalls.RetrieveMorePosts(nextPage, pageSize)
+        const request = profileUserId !== undefined
+            ? ContentFeedAjaxCalls.RetrieveAllPostForUser(profileUserId, nextPage, pageSize)
+            : ContentFeedAjaxCalls.RetrieveMorePosts(nextPage, pageSize);
+
+        request
             .then(function (posts) {
                 const trimmedPosts = posts?.trim() ?? "";
 
@@ -72,20 +75,35 @@ class ContentFeedLoader {
 
     static LoadUserProfilePosts() {
         //Tries to load content feed with user profile post only if content feed is on user profile page.
-        var profileUserId = ContentFeedUtility.TryGetContentFeedUserProfileId();
+        const contentFeed = $("#ContentFeed");
+        const profileUserId = ContentFeedUtility.TryGetContentFeedUserProfileId();
         if (profileUserId !== undefined) {
-            this.LoadFeedWithProfilePost(profileUserId);
+            const pageSize = parseInt(contentFeed.attr("data-page-size") ?? "10", 10);
+            this.LoadFeedWithProfilePost(profileUserId, 1, pageSize);
         }
     }
 
-    static LoadFeedWithProfilePost(userId) {
+    static LoadFeedWithProfilePost(userId, pageNumber, pageSize) {
         //Loads the id #ContentFeed with all posts created by user. Calls Post WebAPI
+        const contentFeed = $("#ContentFeed");
         ContentFeedUtility.AddSpinnerToContentFeed();
-        ContentFeedAjaxCalls.RetrieveAllPostForUser(userId).then(function (posts) {
-            ContentFeedUtility.AppendPostsToContentFeed(posts);
-            ContentFeedUtility.RebuildFeedTextboxes();
-            ContentFeedUtility.RemoveSpinnerFromContentFeed();
-        });
+        ContentFeedAjaxCalls.RetrieveAllPostForUser(userId, pageNumber, pageSize)
+            .then(function (posts) {
+                const trimmedPosts = posts?.trim() ?? "";
+
+                if (trimmedPosts.length === 0) {
+                    contentFeed.attr("data-has-more", "false");
+                    return;
+                }
+
+                contentFeed.attr("data-current-page", pageNumber);
+                contentFeed.empty();
+                ContentFeedUtility.AppendPostsToContentFeed(posts);
+                ContentFeedUtility.RebuildFeedTextboxes();
+            })
+            .always(function () {
+                ContentFeedUtility.RemoveSpinnerFromContentFeed();
+            });
     }
 }
 

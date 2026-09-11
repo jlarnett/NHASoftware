@@ -1,37 +1,51 @@
-﻿using NHA.Website.Software.Entities.Anime;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using NHA.Website.Software.Entities.Anime;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 
 namespace NHA.Website.Software.Services.Anime
 {
     public class AnimeLeecher(IUnitOfWork unitOfWork, ILogger<AnimeLeecher> logger) : IAnimeLeecher
     {
+        private const string baseUrl = "https://api.tenrai.org/v1/anime";
         private int _pageNumber = 1;
 
 
         public async Task LoadExternalAnime()
         {
-            HashSet<string> knownAnimeList = [];
-            var currentAnime = await unitOfWork.AnimePageRepository.GetAllAsync();
+            var currentAnime = (await unitOfWork.AnimePageRepository.GetAllAsync()).ToList();
             var currentAnimeEpisodes = (await unitOfWork.AnimeEpisodeRepository.GetAllAsync()).ToList();
-
-            foreach (var anime in currentAnime)
-            {
-                knownAnimeList.Add(anime.AnimeName);
-            }
             
             bool hasMore = true;
             using var http = new HttpClient();
 
             while (hasMore)
             {
-                var url = $"https://api.jikan.moe/v4/anime?page={this._pageNumber}&limit=25";
-                var response = await http.GetFromJsonAsync<ApiResponse>(url);
+                var url = $"{baseUrl}?page={this._pageNumber}&limit=25";
+                ApiResponse? response;
+
+                try
+                {
+                    response = await http.GetFromJsonAsync<ApiResponse>(url);
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e, e.Message);
+                    continue;
+                }
+
 
                 if (response?.data.Count > 0)
                 {
                     foreach (var anime in response.data)
                     {
-                        if (anime is not { title_english: not null, title: not null, title_japanese: not null }) continue;
+                        var animeNames = GetAnimeNameVariants(anime);
+
+                        if (animeNames.Count == 0)
+                            continue;
+
+                        var displayName = BuildAnimeName(anime);
+                        var englishName = CleanAnimeName(anime.title_english);
+                        var japaneseName = CleanAnimeName(anime.title_japanese);
 
                         var streamingUrl = $"https://api.jikan.moe/v4/anime/{anime.mal_id}/streaming";
                         StreamingResponse? streamingResponse = null;
@@ -45,26 +59,21 @@ namespace NHA.Website.Software.Services.Anime
                             logger.LogError(e.Message);
                         }
 
-                        var exists = knownAnimeList.Contains(anime.title_english) ||
-                                     knownAnimeList.Contains(anime.title) || knownAnimeList.Contains(anime.title_japanese);
+                        var matchingAnimePages = currentAnime
+                            .Where(x => DoesAnimePageMatch(x, animeNames))
+                            .ToList();
+
+                        var exists = matchingAnimePages.Count != 0;
                             
                         if (!exists)
                         {
-                            if(anime.title_english == null && anime.title == null) 
-                                continue;
-
-                            var name = (string.IsNullOrEmpty(anime.title_english)
-                                ? anime.title_english
-                                : anime.title) ?? string.Empty;
-
-                            if (name.Equals(""))
-                                name = anime.title_japanese ?? string.Empty;
-                            
                             var summary = anime.synopsis ?? string.Empty;
                             
                             var animePage = new AnimePage()
                             {
-                                AnimeName = name,
+                                AnimeName = displayName,
+                                AnimeEnglishName = englishName,
+                                AnimeJapaneseName = japaneseName,
                                 AnimeSummary = summary,
                                 AnimeImageUrl = anime.images.jpg.large_image_url,
                                 AnimeStatus = anime.status,
@@ -81,7 +90,7 @@ namespace NHA.Website.Software.Services.Anime
                             }
 
                             await unitOfWork.AnimePageRepository.AddAsync(animePage);
-                            knownAnimeList.Add(name);
+                            currentAnime.Add(animePage);
                         }
                         else
                         {
@@ -98,13 +107,13 @@ namespace NHA.Website.Software.Services.Anime
                             }
 
                             //Exists we just want ot handle certain updates
-                            var animePages = await unitOfWork.AnimePageRepository.
-                                FindAsync(x => x.AnimeName.Equals(anime.title_english) || x.AnimeName.Equals(anime.title_japanese) || x.AnimeName.Equals(anime.title));
-
                             var summary = anime.synopsis ?? string.Empty;
 
-                            foreach (var animePage in animePages)
+                            foreach (var animePage in matchingAnimePages)
                             {
+                                animePage.AnimeName = displayName;
+                                animePage.AnimeEnglishName = englishName;
+                                animePage.AnimeJapaneseName = japaneseName;
                                 animePage.AnimeSummary = summary;
                                 animePage.AnimeImageUrl = anime.images.jpg.large_image_url;
                                 animePage.AnimeStatus = anime.status;
@@ -171,8 +180,58 @@ namespace NHA.Website.Software.Services.Anime
             public string? background { get; set; } = "";
             public List<Genre> genres { get; set; } = [];
             public ImageGroup images { get; set; } = new ImageGroup();
-            public string? title_japanese = "";
+            public string? title_japanese { get; set; } = "";
             public Trailer trailer { get; set; } = new Trailer();
+        }
+
+        private static List<string> GetAnimeNameVariants(Anime anime)
+        {
+            HashSet<string> names = new(StringComparer.OrdinalIgnoreCase);
+
+            AddAnimeName(names, anime.title_english);
+            AddAnimeName(names, anime.title);
+            AddAnimeName(names, anime.title_japanese);
+            AddAnimeName(names, BuildAnimeName(anime));
+
+            return [.. names];
+        }
+
+        private static bool DoesAnimePageMatch(AnimePage animePage, IEnumerable<string> animeNames)
+        {
+            var existingNames = new[]
+            {
+                animePage.AnimeName,
+                animePage.AnimeEnglishName,
+                animePage.AnimeJapaneseName,
+            };
+
+            return existingNames
+                .Where(name => !string.IsNullOrWhiteSpace(name))
+                .Select(name => name!.Trim())
+                .Any(existingName => animeNames.Any(name => existingName.Equals(name, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        private static string BuildAnimeName(Anime anime)
+        {
+            return FirstAvailableName(anime.title_english, anime.title, anime.title_japanese);
+        }
+
+        private static string FirstAvailableName(params string?[] names)
+        {
+            return names.FirstOrDefault(name => !string.IsNullOrWhiteSpace(name))?.Trim() ?? string.Empty;
+        }
+
+        private static void AddAnimeName(HashSet<string> names, string? value)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                names.Add(value.Trim());
+            }
+        }
+
+        private static string CleanAnimeName(string? value)
+        {
+            return value?.Trim() ?? string.Empty;
         }
 
         public class Trailer

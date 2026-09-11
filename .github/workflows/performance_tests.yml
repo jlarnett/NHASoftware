@@ -1,4 +1,4 @@
-name: e2e Tests
+name: Performance Tests
 
 on:
   pull_request:
@@ -6,11 +6,11 @@ on:
     paths:
       - 'NHASoftware/**'
       - 'NHA.Api.Tests/**'
-      - '.github/workflows/e2e_tests.yml'
+      - '.github/workflows/performance_tests.yml'
   workflow_dispatch:
 
 jobs:
-  e2e_tests:
+  performance_tests:
     runs-on: ubuntu-latest
 
     services:
@@ -29,6 +29,7 @@ jobs:
       ConnectionStrings__DefaultConnection: Server=127.0.0.1,1433;Database=NHAIntegrationTests;User Id=sa;Password=${{ secrets.SQL_SA_PASSWORD }};TrustServerCertificate=True;Encrypt=False;
       NHA_API_BASE_URL: http://127.0.0.1:5258
       SQL_SA_PASSWORD: ${{ secrets.SQL_SA_PASSWORD }}
+      TEST_USER_PASSWORD: ${{ secrets.APP_PASSWORD }}
       FeatureManagement__Beta: "true"
       FeatureManagement__AnimeEnabled: "true"
       FeatureManagement__CustomizedPostsEnabled: "true"
@@ -134,63 +135,37 @@ jobs:
           ss -ltnp || true
 
           exit 1
-
       - name: Clone Test Repository
-        run: git clone https://github.com/jlarnett/JavaTestFramework.git
+        shell: pwsh
+        run: git clone https://github.com/jlarnett/NHA.Social.Perf.git performanceTesting
 
-      - name: Set up Java 25
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '25'
+      - name: Set up NPM
+        shell: pwsh
+        working-directory: performanceTesting
+        run: npm ci
 
-      - name: Install Edge
+      - name: Build K6 Project
+        shell: pwsh
+        working-directory: performanceTesting
+        run: npm run build
+
+      - name: Setup k6
+        uses: grafana/setup-k6-action@v1
+
+      - name: Run K6 Tests
+        shell: pwsh
+        working-directory: performanceTesting
+        env:
+          BASE_URL: http://127.0.0.1:5258
+          TEST_USER_PASSWORD: ${{ secrets.APP_PASSWORD }}
         run: |
-          if command -v microsoft-edge >/dev/null 2>&1; then
-            microsoft-edge --version
-            exit 0
-          fi
+          New-Item -ItemType Directory -Force -Path reports | Out-Null
+          k6 run ./dist/test.js --summary-export ./reports/k6-summary.json --console-output ./reports/k6-console.log
 
-          wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-edge.gpg
-          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-edge.gpg] https://packages.microsoft.com/repos/edge stable main" \
-            | sudo tee /etc/apt/sources.list.d/microsoft-edge.list
-
-          sudo apt-get update
-          sudo apt-get install -y microsoft-edge-stable
-          microsoft-edge --version
-
-      - name: Setup Maven
-        shell: bash
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y maven
-
-      - name: Create .env file
-        run: |
-          cd JavaTestFramework
-          echo "APP_PASSWORD=${{ secrets.APP_PASSWORD }}" >> .env
-          echo "BASE_URL=http://127.0.0.1:5258" >> .env
-          echo "NHA_API_BASE_URL=http://127.0.0.1:5258" >> .env
-          echo "WORKERS=${{ secrets.TEST_WORKERS }}" >> .env
-          echo "HEADLESS=true" >> .env
-
-      - name: Run Cucumber Selenium Tests
-        timeout-minutes: 20
-        run: |
-          cd JavaTestFramework
-          mvn clean test
-
-      - name: Upload Test Reports
+      - name: Upload k6 reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: selenium-test-reports
-          path: JavaTestFramework/target/cucumber-report.html
-
-      - name: Stop app
-        if: always()
-        shell: bash
-        run: |
-          if [ -f app.pid ]; then
-            kill $(cat app.pid) || true
-          fi
+          name: k6-reports
+          path: performanceTesting/reports/**
+          if-no-files-found: error

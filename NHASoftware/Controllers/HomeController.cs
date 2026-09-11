@@ -100,9 +100,9 @@ public class HomeController : Controller
     /// <param name="userId">Users Identity Id you want posts for</param>
     /// <returns>_MultiPost partial view result</returns>
     [HttpGet("GetAllPostForUser/{userId}")]
-    public async Task<IActionResult> GetAllPostForUser(string userId)
+    public async Task<IActionResult> GetAllPostForUser(string userId, int pageNumber = 1, int pageSize = HomeFeedPageSize)
     {
-        var postDTOs  = await _postBuilder.GetAllPostForUser(userId);
+        var postDTOs  = await _postBuilder.GetAllPostForUser(userId, pageNumber, pageSize);
         await PopulatePostLastActiveTimesAsync(postDTOs);
         return PartialView("Social/_MultiPost", new MultiPostVM(postDTOs));
     }

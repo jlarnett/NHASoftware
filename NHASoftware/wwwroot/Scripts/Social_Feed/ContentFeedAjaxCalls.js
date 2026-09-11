@@ -80,9 +80,9 @@
         });
     }
 
-    static RetrieveAllPostForUser(userId) {
+    static RetrieveAllPostForUser(userId, pageNumber, pageSize) {
         //Calls the Post WebAPI & gets all post created under supplied userId
-        return $.get("/GetAllPostForUser/" + userId, function(data) {});
+        return $.get(`/GetAllPostForUser/${userId}?pageNumber=${pageNumber}&pageSize=${pageSize}`, function(data) {});
     }
 
     static RetrieveImagesForPost(postId) {

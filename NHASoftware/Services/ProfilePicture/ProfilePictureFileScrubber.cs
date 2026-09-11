@@ -7,29 +7,59 @@ namespace NHA.Website.Software.Services.ProfilePicture
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<ProfilePictureFileScrubber> _logger;
+        private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IProfilePictureStorage _profilePictureStorage;
 
-        public ProfilePictureFileScrubber(ApplicationDbContext context, ILogger<ProfilePictureFileScrubber> logger)
+        public ProfilePictureFileScrubber(
+            ApplicationDbContext context,
+            ILogger<ProfilePictureFileScrubber> logger,
+            IWebHostEnvironment hostEnvironment,
+            IProfilePictureStorage profilePictureStorage)
         {
             _context = context;
             _logger = logger;
+            _hostEnvironment = hostEnvironment;
+            _profilePictureStorage = profilePictureStorage;
         }
+
         public async Task RemoveOldProfilePicturesFromFolder()
         {
-            var paths = await _context.RemovedProfilePicturePaths!.ToListAsync();
+            var removedProfilePicturePaths = _context.RemovedProfilePicturePaths;
+
+            if (removedProfilePicturePaths == null)
+            {
+                return;
+            }
+
+            var paths = await removedProfilePicturePaths.ToListAsync();
 
             foreach (var path in paths)
             {
-                if (File.Exists(path.Path) && !path.Path.Contains("DefaultProfilePicture.png"))
+                if (string.IsNullOrWhiteSpace(path.Path)
+                    || path.Path.Contains("DefaultProfilePicture.png", StringComparison.OrdinalIgnoreCase))
                 {
-                    try
+                    removedProfilePicturePaths.Remove(path);
+                    continue;
+                }
+
+                try
+                {
+                    var localFilePath = Path.Combine(_hostEnvironment.WebRootPath, "ProfilePictures", Path.GetFileName(path.Path));
+
+                    if (File.Exists(localFilePath))
                     {
-                        File.Delete(path.Path);
-                        _context.RemovedProfilePicturePaths!.Remove(path);
+                        File.Delete(localFilePath);
                     }
-                    catch (Exception e)
+                    else
                     {
-                        _logger.LogTrace("Was unable to delete profile picture file from file system still in use");
+                        await _profilePictureStorage.DeleteAsync(path.Path);
                     }
+
+                    removedProfilePicturePaths.Remove(path);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogTrace(ex, "Was unable to delete profile picture from local or blob storage.");
                 }
             }
 

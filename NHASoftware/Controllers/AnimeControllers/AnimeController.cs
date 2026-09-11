@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.FeatureManagement.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -9,8 +8,6 @@ using NHA.Helpers.HtmlStringCleaner;
 using NHA.Website.Software.Caching;
 using NHA.Website.Software.DBContext;
 using NHA.Website.Software.Entities.Anime;
-using NHA.Website.Software.Entities.Forums;
-using NHA.Website.Software.Services.Anime;
 using NHA.Website.Software.Services.RepositoryPatternFoundationals;
 using NHA.Website.Software.Views.Anime.Vms;
 namespace NHA.Website.Software.Controllers.AnimeControllers;
@@ -85,7 +82,7 @@ public class AnimeController : Controller
         return View(vm);
     }
 
-    public async Task<IActionResult> LetterDetail(int id)
+    public async Task<IActionResult> LetterDetail(int id, bool isEnglish = true)
     { 
         var letter = AlphabetDecipher.ConvertNumberToAlphabetLetter(id);
 
@@ -110,13 +107,25 @@ public class AnimeController : Controller
             }
         }
 
+        foreach (var anime in animePages ?? [])
+        {
+            if (anime.AnimeJapaneseName == null)
+                continue; 
+
+            if (anime.AnimeJapaneseName.StartsWith(letter))
+            {
+                animeList.Add(anime);
+            }
+        }
+
         //Sorting the list by alphabetical order.
         var alphabeticallySortedAnimeForLetter = animeList.OrderBy(ap => ap.AnimeName).ToList();
 
         var vm = new LetterIndexViewModel()
         {
             AlphabetLetter = letter,
-            AnimeList = alphabeticallySortedAnimeForLetter
+            AnimeList = alphabeticallySortedAnimeForLetter,
+            IsEnglish = isEnglish
         };
 
         return View("LetterIndex", vm);

@@ -9,6 +9,14 @@ public class AnimePage
     [DisplayName("Anime Name")]
     [MaxLength(2500)]
     public string AnimeName { get; set; } = string.Empty;
+
+    [DisplayName("Anime English Name")]
+    [MaxLength(2500)]
+    public string? AnimeEnglishName { get; set; } = string.Empty;
+
+    [DisplayName("Anime Japanese Name")]
+    [MaxLength(2500)]
+    public string? AnimeJapaneseName { get; set; } = string.Empty;
     
     [DisplayName("Anime Summary")]
     public string AnimeSummary { get; set; } = string.Empty;

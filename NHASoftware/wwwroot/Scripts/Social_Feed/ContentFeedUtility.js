@@ -302,7 +302,7 @@
                 ['para', ['ul', 'ol', 'paragraph']]
             ],
             disableResizeEditor: true,
-            placeholder: 'Type Post Summary Here.......',
+            placeholder: 'What’s on your mind?',
             height: 120,
 
             hint: {
@@ -370,7 +370,7 @@
                 ['para', ['ul', 'ol', 'paragraph']]
             ],
             disableResizeEditor: true,
-            placeholder: 'Type Custom Post Summary Here.....',
+            placeholder: 'What’s on your mind?',
             hint: {
                 match: /\B@(\w*)$/,
                 search: function (keyword, callback) {
