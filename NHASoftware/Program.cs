@@ -277,21 +277,14 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions()
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllers();
 app.MapRazorPages();
 
 //Used by post builder to access claims.current
 app.Use(async (context, next) =>
 {
     Thread.CurrentPrincipal = context.User;
-
-    try
-    {
-        await next(context);
-    }
-    catch (Exception e)
-    {
-        Console.WriteLine(e);
-    }
+    await next(context);
 });
 
 app.Run();

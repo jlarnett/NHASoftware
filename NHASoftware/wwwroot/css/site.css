@@ -1,4 +1,9 @@
-﻿html 
+﻿:root {
+    --site-font-sans: "Nunito Sans", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --site-font-heading: "Space Grotesk", "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html 
 {
   font-size: 14px;
 }
@@ -16,6 +21,38 @@ html {
 
 body {
   min-height: 100%;
+  font-family: var(--site-font-sans);
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6,
+.display-1, .display-2, .display-3, .display-4, .display-5, .display-6,
+.navbar-brand,
+.btn,
+.form-control,
+.form-select,
+.nav-link,
+.dropdown-item,
+.card-title,
+label,
+input,
+textarea,
+select,
+button {
+    font-family: var(--site-font-sans);
+}
+
+h1, h2, h3, h4, h5, h6,
+.display-1, .display-2, .display-3, .display-4, .display-5, .display-6,
+.navbar-brand,
+.card-title {
+    font-family: var(--site-font-heading);
+    font-weight: 600;
+    letter-spacing: -0.01em;
 }
 .multiline-ellipsis {
     display: -webkit-box;
