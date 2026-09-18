@@ -1,12 +1,41 @@
 ﻿body {
 }
 
+.anime-index-page {
+    max-width: 1100px;
+}
+
+.anime-index-panel {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.anime-index-section + .anime-index-section {
+    margin-top: 2rem;
+}
+
+.anime-index-links {
+    width: 100%;
+}
+
 .index-letters {
-    margin: 10px 20px 10px 0px;
-    font-size: 30px;
+    margin: 0;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
 }
 
 .animepage-links {
     width: 90%;
     font-size: 20px;
+}
+
+@media (max-width: 576px) {
+    .anime-index-panel {
+        padding: 1.25rem !important;
+    }
+
+    .index-letters {
+        width: 100%;
+        justify-content: center;
+    }
 }

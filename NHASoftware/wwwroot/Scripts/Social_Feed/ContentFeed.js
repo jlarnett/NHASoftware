@@ -189,7 +189,7 @@
                 $("#MainPostTextboxValidationMessage").text(response.responseJSON.errors.Summary);
             }
 
-            $("#MainPostTextboxValidationMessage").show(100);
+            $("#MainPostTextboxValidationMessage").prop("hidden", false).removeClass("d-none").show(100);
         });
     });
 
@@ -216,7 +216,7 @@
             else {
                 $("#CustomPostValidationMessage").text(response.responseJSON.errors.Summary);
             }
-            $("#CustomPostValidationMessage").show(100);
+            $("#CustomPostValidationMessage").prop("hidden", false).removeClass("d-none").show(100);
         });
     });
 
@@ -241,7 +241,7 @@
             else {
                 $("#ReportPostValidationMessage").text(response.responseJSON.errors.Summary);
             }
-            $("#ReportPostValidationMessage").show(100);
+            $("#ReportPostValidationMessage").prop("hidden", false).removeClass("d-none").show(100);
             SystemNotification.createNotification("Failed to report post");
         });
     });
@@ -264,7 +264,7 @@
                 ContentFeedUtility.AddCommentToContentFeedUI(uuid, response.post);
             }
         }).catch(function (response) {
-            let validationMessageElement = $("span[unique-error-identifier$="+ uuid +"]");
+            let validationMessageElement = $("span[unique-error-identifier$='"+ uuid +"']");
 
             if (response.responseJSON.message !== undefined) {
                 validationMessageElement.text(response.responseJSON.message);
@@ -273,7 +273,7 @@
                 validationMessageElement.text(response.responseJSON.errors.Summary);
             }
 
-            validationMessageElement.show(100);
+            validationMessageElement.prop("hidden", false).removeClass("d-none").show(100);
         });
     });
 

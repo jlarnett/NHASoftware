@@ -257,7 +257,12 @@ app.UseSessionTrackerMiddleware();
 //Force DB Migration
 using (var scope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
 {
-    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await dbContext.Database.MigrateAsync();
+
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    await EnsureRoleExistsAsync(roleManager, "basic");
+    await EnsureRoleExistsAsync(roleManager, "admin");
 
     var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
     recurringJobManager.AddOrUpdate<IProfilePictureFileScrubber>("ProfilePictureScrubber", x => x.RemoveOldProfilePicturesFromFolder(), Cron.Hourly);
@@ -277,21 +282,29 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions()
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllers();
 app.MapRazorPages();
 
 //Used by post builder to access claims.current
 app.Use(async (context, next) =>
 {
     Thread.CurrentPrincipal = context.User;
-
-    try
-    {
-        await next(context);
-    }
-    catch (Exception e)
-    {
-        Console.WriteLine(e);
-    }
+    await next(context);
 });
+
+static async Task EnsureRoleExistsAsync(RoleManager<IdentityRole> roleManager, string roleName)
+{
+    if (await roleManager.RoleExistsAsync(roleName))
+    {
+        return;
+    }
+
+    var createRoleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
+
+    if (!createRoleResult.Succeeded)
+    {
+        throw new InvalidOperationException($"Failed to create required identity role '{roleName}'.");
+    }
+}
 
 app.Run();

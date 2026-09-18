@@ -72,7 +72,7 @@ function LoadStoredChats() {
         return;
     }
 
-    SystemNotification.createNotification("Loading previous chat windows..");
+    SystemNotification.createNotification("Loading chat..", 1000);
 
     storedChats.forEach(chat => {
         OpenFriendChat(chat.recipientId);

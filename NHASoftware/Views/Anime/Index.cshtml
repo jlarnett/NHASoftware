@@ -33,86 +33,113 @@
     }
 
     var randomAnime = await unitOfWork.AnimePageRepository.GetRandomEntityAsync();
+    var sortedGenres = allGenres.Order();
+    var sortedPlatforms = allPlatforms.Order();
+    string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    string hiraganaAlphabet = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん";
+    string katakanaAlphabet = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+    int letterCounter = 0;
 }
 
 <head>
-    <link rel="stylesheet" href="css/AnimePages.css">
+    <link rel="stylesheet" href="~/css/AnimePages.css" asp-append-version="true">
 </head>
 
-<div>
-    <h2>Alphabetical Anime Index <em class=" h3 text-primary">(@animePageCount)</em></h2>
+<div class="anime-index-page">
+    <div class="anime-index-panel rounded-4 border border-light-subtle bg-body-tertiary shadow-sm p-4 p-lg-5">
+        <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+            <div>
+                <h2 class="mb-2">Anime Wiki <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">@animePageCount</span></h2>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-action="CreateAnimePage" asp-controller="Anime" class="btn btn-outline-primary rounded-pill interactable d-inline-flex align-items-center gap-2"><i class="bi bi-plus-circle"></i><span>Create Anime Entry</span></a>
+                @{
+                    if (randomAnime != null)
+                    {
+                        <a asp-action="AnimePageDetails" asp-route-id="@randomAnime.Id" asp-controller="Anime" class="btn btn-outline-secondary rounded-pill interactable d-inline-flex align-items-center gap-2"><i class="bi bi-shuffle"></i><span>Random Pick</span></a>
+                    }
+                }
+            </div>
+        </div>
     
-    <a asp-action="CreateAnimePage" asp-controller="Anime" class="interactable">Create Anime Entry</a> |
-    @{
-        if (randomAnime != null)
-        {
-            <a asp-action="AnimePageDetails" asp-route-id="@randomAnime.Id" asp-controller="Anime" class="interactable">Next &#x2794;</a>
-        }
-    }
-
-    <p>Select one of the letters to be view all animes beginning with that letter. The animes will be listed in alphabetical order. </p>
-    
-    @{
+        <section class="anime-index-section">
         <hr/>
 
-        <h2 class="mt-4">Genres <em class=" h3 text-primary">(@allGenres.Count)</em></h2>
+        <h2 class="mt-4">Genres <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">@allGenres.Count</span></h2>
 
-        var sorted = allGenres.Order();
-
-        foreach (var animeGenre in sorted)
-        {
-            if (animeGenre.IsNullOrEmpty()) continue;
-            <a asp-action="GenreIndex" asp-controller="Anime" asp-route-genre="@animeGenre" class="link-primary index-letters fs-3 interactable">@animeGenre</a>
-        }
+        <div class="anime-index-links d-flex flex-wrap gap-2 mt-3">
+            @foreach (var animeGenre in sortedGenres)
+            {
+                var count = Model.AnimeList.Count(x => x.AnimeGenres != null && x.AnimeGenres.Contains(animeGenre));
+                if (animeGenre.IsNullOrEmpty()) continue;
+                    <a asp-action="GenreIndex" asp-controller="Anime" asp-route-genre="@animeGenre" title="Contains - @count anime" class="btn btn-outline-primary rounded-pill index-letters interactable">@animeGenre</a>
+            }
+        </div>
+        </section>
 
         <hr />
 
-        <h2 class="mt-4">Streaming Platforms <em class=" h3 text-primary">(@allPlatforms.Count)</em></h2>
-        var sortedPlatforms = allPlatforms.Order();
+        <section class="anime-index-section">
+        <h2 class="mt-4">Streaming Platforms <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">@allPlatforms.Count</span></h2>
 
-        foreach (var platform in sortedPlatforms)
-        {
-            if (platform.IsNullOrEmpty()) continue;
-            <a asp-action="PlatformIndex" asp-controller="Anime" asp-route-platform="@platform" class="link-primary index-letters fs-3 interactable">@platform</a>
-        }
+        <div class="anime-index-links d-flex flex-wrap gap-2 mt-3">
+            @foreach (var platform in sortedPlatforms)
+            {
+                var count = Model.AnimeList.Count(x => x.Platforms != null && x.Platforms.Contains(platform));
+                if (platform.IsNullOrEmpty()) continue;
+                    <a asp-action="PlatformIndex" asp-controller="Anime" asp-route-platform="@platform" title="Contains - @count anime" class="btn btn-outline-primary rounded-pill index-letters interactable">@platform</a>
+            }
+        </div>
+        </section>
 
         <hr/>
 
-        string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        string hiraganaAlphabet = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん";
-        string katakanaAlphabet = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
-        int letterCounter = 0;
-
+        <section class="anime-index-section">
         <h2 class="mt-4">Alphabetical <em class=" h3 text-primary">· (English)</em></h2>
 
-        foreach (var letter in alphabet)
-        {
-            var letterCount = Model.AnimeList.Count(x => x.AnimeName.StartsWith(letter));
-            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" title="Contains - @letterCount anime" class="link-primary index-letters interactable">@letter</a>
-            letterCounter++;
-        }
+        <div class="anime-index-links d-flex flex-wrap gap-2 mt-3">
+            @foreach (var letter in alphabet)
+            {
+                var letterCount = Model.AnimeList.Count(x => x.AnimeName.StartsWith(letter));
+                <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" title="Contains - @letterCount anime" class="btn btn-outline-secondary rounded-pill index-letters interactable">@letter</a>
+                letterCounter++;
+            }
+        </div>
+        </section>
 
         <hr />
+        <section class="anime-index-section">
         <h2 class="mt-4">Alphabetical <em class=" h3 text-primary">· (Hiragana)</em></h2>
-        foreach (var letter in hiraganaAlphabet)
-        {
-            var letterCount = Model.AnimeList.Count(x => x.AnimeJapaneseName != null && x.AnimeJapaneseName.StartsWith(letter));
-            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" asp-route-isEnglish="false" title="Contains - @letterCount anime" class="link-primary index-letters interactable">@letter</a>
-            letterCounter++;
-        }
+        <div class="anime-index-links d-flex flex-wrap gap-2 mt-3">
+            @foreach (var letter in hiraganaAlphabet)
+            {
+                var letterCount = Model.AnimeList.Count(x => x.AnimeJapaneseName != null && x.AnimeJapaneseName.StartsWith(letter));
+                <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" asp-route-isEnglish="false" title="Contains - @letterCount anime" class="btn btn-outline-secondary rounded-pill index-letters interactable">@letter</a>
+                letterCounter++;
+            }
+        </div>
+        </section>
 
         <hr />
+        <section class="anime-index-section">
         <h2 class="mt-4">Alphabetical ·<em class=" h3 text-primary"> (katakana)</em></h2>
-        foreach (var letter in katakanaAlphabet)
-        {
-            var letterCount = Model.AnimeList.Count(x => x.AnimeJapaneseName != null && x.AnimeJapaneseName.StartsWith(letter));
-            <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" asp-route-isEnglish="false" title="Contains - @letterCount anime" class="link-primary index-letters interactable">@letter</a>
-            letterCounter++;
-        }
+        <div class="anime-index-links d-flex flex-wrap gap-2 mt-3">
+            @foreach (var letter in katakanaAlphabet)
+            {
+                var letterCount = Model.AnimeList.Count(x => x.AnimeJapaneseName != null && x.AnimeJapaneseName.StartsWith(letter));
+                <a asp-action="LetterDetail" asp-controller="Anime" asp-route-id="@letterCounter" asp-route-isEnglish="false" title="Contains - @letterCount anime" class="btn btn-outline-secondary rounded-pill index-letters interactable">@letter</a>
+                letterCounter++;
+            }
+        </div>
+        </section>
 
+        <section class="anime-index-section">
         <h2 class="mt-4">Rankings<em class=" h3 text-primary"></em></h2>
-        <a asp-action="Rankings" asp-controller="Anime" asp-route-platform="" class="link-primary index-letters fs-3 interactable">All-Time</a>
+        <div class="anime-index-links d-flex flex-wrap gap-2 mt-3">
+            <a asp-action="Rankings" asp-controller="Anime" asp-route-platform="" class="btn btn-outline-primary rounded-pill index-letters interactable">All-Time</a>
+        </div>
+        </section>
 
-    }
+    </div>
 </div>
 

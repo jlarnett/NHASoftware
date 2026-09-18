@@ -27,8 +27,14 @@
             @if (_SignInManager.IsSignedIn(User))
             {
                 @Html.AntiForgeryToken()
-                <div class="home-post-composer" style="opacity: 0.9;">
-                    <div class="row border home-post-form-row">
+                <div class="home-post-composer mb-4" style="opacity: 0.97;">
+                    <div class="row g-0 border home-post-form-row rounded-4 shadow-sm overflow-hidden">
+                        <div class="col-12 px-3 pt-3 pb-2 border-bottom border-light-subtle bg-body-tertiary">
+                            <div class="d-flex align-items-center gap-2 small text-uppercase fw-semibold text-primary-emphasis">
+                                <i class="bi bi-stars"></i>
+                                <span>Share an update</span>
+                            </div>
+                        </div>
                         <div class="col-12 px-0">
                             <form id="BasicPostForm" method="post" enctype="multipart/form-data" class="w-100">
                                 <div id="MainPostTextboxContainer" class="w-100 p-0">
@@ -44,6 +50,7 @@
                                     user="@_UserManager.GetUserId(User)"
                                     type="button"
                                     class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 fs-5 interactable">
+                                    <i class="bi bi-send-fill"></i>
                                 <span class="btn-text">Upload</span>
                                 <div id="BasicPostLoadingSpinner"
                                      class="spinner-border spinner-border-sm text-light d-none"
@@ -57,9 +64,10 @@
                                 <button id="AddPhotos"
                                         user="@_UserManager.GetUserId(User)"
                                         type="button"
-                                        class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2 fs-5 interactable"
+                                        class="btn btn-info w-100 d-flex align-items-center justify-content-center gap-2 fs-5 interactable"
                                         data-bs-toggle="modal"
                                         data-bs-target="#AddPostPhotosModal">
+                                    <i class="bi bi-images"></i>
                                     <span>Upload With Media</span>
                                 </button>
                             </div>
@@ -67,7 +75,7 @@
                     </div>
                     <div class="row mx-0">
                         <div class="col-12 px-0">
-                            <span id="MainPostTextboxValidationMessage" class="text-primary" style="display: none;">Error Submitting Post.....</span>
+                            <span id="MainPostTextboxValidationMessage" class="text-primary small mt-2 align-items-center gap-1" hidden aria-live="polite"></span>
                         </div>
                     </div>
                 </div>
@@ -103,13 +111,11 @@
 {
     <feature name="@FeatureFlags.CustomizedPostsEnabled">
         <div class="modal fade" id="AddPostPhotosModal" tabindex="-1" role="dialog" aria-labelledby="AddPostPhotosModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content border border-primary border-2 shadow">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
                     <div class="modal-header border-bottom justify-content-between">
                         <h5 class="modal-title text-primary" id="AddPostPhotosModalLabel">Personalize Post</h5>
-                        <button type="button" class="close interactable" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" class="btn-close interactable" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         @model NHA.Website.Software.ConsumableEntities.DTOs.PostDTO
@@ -121,17 +127,18 @@
                             </div>
                             <div class="row mb-2">
                                 <div class="col-12 px-0">
-                                    <input type="file" id="CustomPostMediaFileInput" class="p-0 interactable" multiple="multiple" role="button" name="MediaFiles" accept="image/*,video/mp4,video/webm,video/ogg" />
+                                    <label class="form-label fw-semibold" for="CustomPostMediaFileInput">Media</label>
+                                    <input type="file" id="CustomPostMediaFileInput" class="form-control interactable" multiple="multiple" role="button" name="MediaFiles" accept="image/*,video/mp4,video/webm,video/ogg" />
                                 </div>
                             </div>
                             <div class="row mb-2">
                                 <div class="col-12 px-0 text-start">
-                                    <button id="SubmitCustomPostBtn" class="btn btn-dark rounded-2 interactable w-auto d-inline-flex align-items-center justify-content-center" value="Create" type="Submit">Upload Custom Post</button>
+                                    <button id="SubmitCustomPostBtn" class="btn btn-primary rounded-3 interactable w-auto d-inline-flex align-items-center justify-content-center gap-2" value="Create" type="Submit"><i class="bi bi-upload"></i><span>Upload Custom Post</span></button>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-12 px-0">
-                                    <span id="CustomPostValidationMessage" style="display: none;" class="text-primary">Error Submitting Post.....</span>
+                                    <span id="CustomPostValidationMessage" hidden class="text-primary small" aria-live="polite"></span>
                                 </div>
                             </div>
                         </form>

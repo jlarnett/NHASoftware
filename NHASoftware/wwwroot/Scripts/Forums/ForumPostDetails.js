@@ -31,7 +31,7 @@
             year: "numeric"
         });
 
-        commentsTable.row.add(['<div class="container-fluid modern-forum-post-container shadow bg-dark">' +
+        commentsTable.row.add(['<div class="container-fluid forum-post-details-container shadow bg-dark">' +
             '<div class= "row align-items-xl-stretch">' +
                 '<div class="col-12 col-sm-4 col-md-3 col-lg-2 align-self-start p-4 night-gradient">' +
                     '<div class="row h5 text-center text-black text-break">' +

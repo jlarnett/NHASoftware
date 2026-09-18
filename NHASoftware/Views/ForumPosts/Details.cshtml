@@ -15,11 +15,42 @@
 <head>
     <link rel="stylesheet" href="~/css/Forums/ForumStyles.css">
     <script src="~/Scripts/Forums/ForumPostDetails.js"></script>
+    <style>
+        .forum-post-details-page,
+        .forum-post-details-page h1,
+        .forum-post-details-page h2,
+        .forum-post-details-page h3,
+        .forum-post-details-page h4,
+        .forum-post-details-page h5,
+        .forum-post-details-page h6,
+        .forum-post-details-page .btn,
+        .forum-post-details-page .form-control,
+        .forum-post-details-page label,
+        .forum-post-details-page input,
+        .forum-post-details-page textarea,
+        .forum-post-details-page button {
+            font-family: var(--bs-body-font-family);
+            letter-spacing: normal;
+        }
+
+        .forum-post-details-page {
+            line-height: var(--bs-body-line-height);
+        }
+
+        .forum-post-details-page .forum-post-details-container {
+            border: 2px ridge red;
+        }
+
+        .forum-post-details-page .forum-post-details-container:hover {
+            filter: brightness(.85);
+        }
+    </style>
 </head>
 
-<div class="d-grid gap-2">
-    <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="@Model.ForumPost.Id" class=" btn btn-dark interactable">Create Comment</a>
-</div>
+<div class="forum-post-details-page">
+    <div class="d-grid gap-2">
+        <a asp-controller="ForumComments" asp-area="" asp-action="Create" asp-route-id="@Model.ForumPost.Id" class=" btn btn-dark interactable">Create Comment</a>
+    </div>
 
 <div class="row align-items-center px-3">
     <a class="col-auto text-decoration-none p-0 pt-1 fs-2 me-1" asp-controller="ForumTopics" asp-action="Details" asp-route-id="@Model.ForumPost.ForumTopicId">
@@ -58,7 +89,7 @@
             string forumPostText = Model.ForumPost.ForumText;
         }
         
-        <div class="container-fluid modern-forum-post-container shadow bg-dark">
+        <div class="container-fluid forum-post-details-container shadow bg-dark">
             <div class="row align-items-xl-stretch">
                 <div class="col-12 col-sm-6 col-md-4 col-lg-2  align-self-start p-4 night-gradient">
                     <div class="row h5 text-center text-black text-break">
@@ -167,6 +198,7 @@
 
         await Html.RenderPartialAsync("Forums/_CreateCommentPartial", comment);
     }
+    </div>
 </div>
 
 

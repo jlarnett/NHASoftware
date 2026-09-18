@@ -11,7 +11,7 @@
 
         if (userSessionActive === "False") {
             console.log("User Login required to like social media posts & comments");
-            let validationMessageElement = $("span[unique-error-identifier$=" + uuid + "]");
+            let validationMessageElement = $("span[unique-error-identifier$='" + uuid + "']");
             ShowValidationMessage(validationMessageElement, "Please log in to join the conversation");
             return;
         }
@@ -59,7 +59,7 @@
 
         if (userSessionActive === "False") {
             console.log("User Login required to like social media posts & comments");
-            let validationMessageElement = $("span[unique-error-identifier$=" + uuid + "]");
+            let validationMessageElement = $("span[unique-error-identifier$='" + uuid + "']");
             ShowValidationMessage(validationMessageElement, "Please log in to join the conversation");
             return;
         }
@@ -132,6 +132,8 @@
         validationMessageElement
             .stop(true, true)
             .text(message)
+            .prop("hidden", false)
+            .removeClass("d-none")
             .hide()
             .css("opacity", 0)
             .slideDown(150)
