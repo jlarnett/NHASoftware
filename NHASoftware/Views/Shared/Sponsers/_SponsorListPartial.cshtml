@@ -14,8 +14,8 @@
 }
 
 @{
-    <div id="SponsorListUI" class="col position-fixed pb-5 mx-auto w-inherit" style="height: 100%; overflow-y: auto; overflow-x: hidden;">
-        <div style="padding: 0 .65rem 1rem .85rem;">
+    <div id="SponsorListUI" class="col position-fixed pb-5 mx-auto w-inherit site-sidebar-scroll">
+        <div class="site-sidebar-panel">
         @if (featuredAnime is not null)
         {
             <div class="row">
@@ -24,7 +24,7 @@
                 </div>
             </div>
         
-            <div class="row m-auto pt-1 pb-1 text-center">
+            <div class="row m-auto pt-1 pb-1 text-center site-sidebar-card p-3">
                 <div class="">
                     <a class="row text-center m-auto rounded-2 interactable w-100" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@featuredAnime.Id">
                         <img src="@featuredAnime.AnimeImageUrl" class="rounded-3 p-0 shadow" title="@featuredAnime.AnimeName" alt="@featuredAnime.AnimeName's cover photo" />
@@ -53,12 +53,12 @@
             </div>
         }
         
-        <a class="btn btn-outline-primary w-100 mb-2"
+        <a class="btn btn-outline-primary w-100 mb-2 rounded-pill d-flex align-items-center justify-content-center gap-2"
            asp-area="" asp-controller="Anime" asp-action="Index" asp-route-pageNumber="1">
             <i class="bi bi-card-text"></i> Wiki
         </a>
 
-        <a class="btn btn-outline-primary w-100 mb-2"
+        <a class="btn btn-outline-primary w-100 mb-2 rounded-pill d-flex align-items-center justify-content-center gap-2"
            asp-area="" asp-controller="Anime" asp-action="Roll" asp-route-pageNumber="1">
             <i class="bi bi-youtube"></i> Feed
         </a>
@@ -66,14 +66,14 @@
         @{
             if (randomAnime != null)
             {
-                <a class="btn btn-outline-primary w-100 mb-2"
+                <a class="btn btn-outline-primary w-100 mb-2 rounded-pill d-flex align-items-center justify-content-center gap-2"
                    asp-area="" asp-controller="Anime" asp-action="AnimePageDetails" asp-route-id="@randomAnime!.Id">
                     <i class="bi bi-shuffle"></i> Random
                 </a>
             }
         }
 
-        <a class="btn btn-outline-primary w-100 mb-2"
+        <a class="btn btn-outline-primary w-100 mb-2 rounded-pill d-flex align-items-center justify-content-center gap-2"
            asp-area="" asp-controller="Anime" asp-action="Rankings">
             <i class="bi bi-bar-chart"></i> Rankings
         </a>

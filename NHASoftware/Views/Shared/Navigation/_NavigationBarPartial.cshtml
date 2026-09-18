@@ -10,21 +10,16 @@
 @inject SignInManager<ApplicationUser> SignInManager
 
 <!--Navigation Bar-->
-<nav class="navbar navbar-expand-sm border-bottom bg-body-tertiary box-shadow fixed-top p-0 site-navbar">
-    <div class="container-fluid m-0 p-0" style="width: 100%; height: auto;">
+<nav class="navbar navbar-expand-sm border-bottom bg-body-tertiary box-shadow fixed-top p-0 site-navbar" aria-label="Main navigation">
+    <div class="container-fluid px-2 px-lg-3">
 
-        <button class="navbar-toggler btn-dark interactable mobile-nav-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        <button class="navbar-toggler btn-dark interactable mobile-nav-toggle border border-secondary-subtle shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" style="font-size:2rem; padding:1rem; min-width: 100px;">
             <i class="bi bi-chevron-down text-primary"></i>
         </button>
 
-        <button class="navbar-toggler btn-dark interactable mobile-nav-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" style="font-size:2rem; padding:1rem; min-width: 100px;">
-            <i class="bi bi-chevron-down text-primary"></i>
-        </button>
-
-        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="navbarSupportedContent">
-            <ul class="navbar-nav">
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between align-items-sm-center" id="navbarSupportedContent">
+            <ul class="navbar-nav align-items-stretch gap-2 py-2 py-sm-0">
                 <li class="nav-item align-self-center interactable w-100 w-sm-auto">
                     <a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap main-nav-link" asp-area="" asp-controller="Home" asp-action="Index">
                         <i class="bi bi-house-door-fill"></i>
@@ -42,7 +37,7 @@
                             <i class="bi bi-stars"></i>
                             Anime
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark text-center rounded-2" aria-labelledby="animeDropdown">
+                        <ul class="dropdown-menu dropdown-menu-dark text-center rounded-4 border-0 shadow-lg p-2" aria-labelledby="animeDropdown">
                             <li>
                                 <a class="dropdown-item d-flex align-items-center justify-content-center gap-2" asp-area="" asp-controller="Anime" asp-action="Index"><i class="bi bi-card-text"></i><span>Wiki</span></a>
                             </li>
@@ -67,7 +62,7 @@
                             <i class="bi bi-controller"></i>
                             Games
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark text-center rounded-2" aria-labelledby="gamesDropdown">
+                        <ul class="dropdown-menu dropdown-menu-dark text-center rounded-4 border-0 shadow-lg p-2" aria-labelledby="gamesDropdown">
                             <li>
                                 <a class="dropdown-item d-flex align-items-center justify-content-center gap-2" asp-area="" asp-controller="Game" asp-action="Index"><i class="bi bi-card-text"></i><span>Wiki</span></a>
                             </li>
@@ -96,6 +91,13 @@
                 @if (Warden.IsAdmin(User))
                 {
                     <li class="nav-item align-self-center interactable w-100 w-sm-auto">
+                        <a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap main-nav-link" asp-area="" asp-controller="Administration" asp-action="Users">
+                            <i class="bi bi-people-fill"></i>
+                            Users
+                        </a>
+                    </li>
+
+                    <li class="nav-item align-self-center interactable w-100 w-sm-auto">
                         <a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap main-nav-link" asp-area="" asp-controller="Administration" asp-action="CreateRole">
                             <i class="bi bi-person-plus"></i>
                             Create Role
@@ -112,12 +114,12 @@
                         <i class="bi bi-palette-fill"></i>
                         Theme
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-dark text-center">
+                    <ul class="dropdown-menu dropdown-menu-dark text-center rounded-4 border-0 shadow-lg p-2">
                         <li>
-                            <a class="dropdown-item d-flex align-items-center justify-content-center gap-2" href="#" onclick="setTheme('light')"><i class="bi bi-sun-fill"></i><span>Light Mode</span></a>
+                            <button class="dropdown-item d-flex align-items-center justify-content-center gap-2 rounded-3" type="button" onclick="setTheme('light')"><i class="bi bi-sun-fill"></i><span>Light Mode</span></button>
                         </li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center justify-content-center gap-2" href="#" onclick="setTheme('dark')"><i class="bi bi-moon-stars-fill"></i><span>Dark Mode</span></a>
+                            <button class="dropdown-item d-flex align-items-center justify-content-center gap-2 rounded-3" type="button" onclick="setTheme('dark')"><i class="bi bi-moon-stars-fill"></i><span>Dark Mode</span></button>
                         </li>
                     </ul>
                 </li>
@@ -130,7 +132,7 @@
                     {
 
                         <li class="align-self-center nav-item interactable">
-                            <button type="button" title="Notifications" class="btn btn-dark position-relative d-flex align-items-center justify-content-center p-1 rounded mobile-nav-button" data-bs-toggle="modal" data-bs-target="#friendRequestModal" style="min-width:50px; min-height:50px;">
+                            <button type="button" title="Notifications" aria-label="Open notifications" class="btn btn-dark position-relative d-flex align-items-center justify-content-center p-1 rounded mobile-nav-button site-icon-btn shadow-sm" data-bs-toggle="modal" data-bs-target="#friendRequestModal" style="min-width:50px; min-height:50px;">
                                 <i class="bi bi-bell-fill fs-5"></i>
                                 <span id="FriendRequestCounter" class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-primary">
                                     @requests.Count()
@@ -234,7 +236,7 @@
                                     <button id="ReportPostButton" class="btn btn-dark rounded-2 interactable" value="Create" type="Submit">Report Post</button>
                                 </div>
                                 <div class="row p-0">
-                                    <span id="ReportPostValidationMessage" style="display: none;" class="text-primary">Error Reporting Post.....</span>
+                                    <span id="ReportPostValidationMessage" hidden class="text-primary" aria-live="polite"></span>
                                 </div>
                             </form>
                         </div>

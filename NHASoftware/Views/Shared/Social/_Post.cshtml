@@ -29,8 +29,8 @@
     var profileStatusLabel = isUserOnline ? "Online" : "Offline";
 }
 
-<div id="post-@Model.Id" class="container-fluid border border-1 shadow-sm border-dark ridge rounded-2 mt-2 post-container" post-id="@Model.Id" media-attached="@Model.HasMediaAttached.ToString()" media-loaded="false" post-uuid="@uuid.ToString()" post-container-id="@Model.Id">
-    <div class="row align-items-center mt-2">
+<div id="post-@Model.Id" class="container-fluid rounded-4 mt-3 post-container bg-body-tertiary border border-light-subtle shadow-sm p-3 p-md-4" post-id="@Model.Id" media-attached="@Model.HasMediaAttached.ToString()" media-loaded="false" post-uuid="@uuid.ToString()" post-container-id="@Model.Id">
+    <div class="row g-0 align-items-start">
         <!--User Profile image & display name-->
         <div class="col-auto px-2">
             <a asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@Model.User!.Id" class="shadow">
@@ -53,7 +53,7 @@
             }
         </div>
         <div class="col-auto p-0">
-            <a class="btn btn-sm border-0 bg-transparent text-muted fs-5 interactable hide-post-link py-2">
+            <a class="btn btn-sm border-0 bg-transparent text-muted fs-5 interactable hide-post-link py-2 site-icon-btn" aria-label="Hide post" title="Hide post">
                 <i class="bi bi-x-lg " post-id="@Model.Id" title="Hide"
                    is-comment="@isCommentBool.ToString()"
                    uuid="@Model.UUID"></i>
@@ -61,10 +61,10 @@
         </div>
 
         <div class="col-auto p-0 me-1 dropdown">
-            <button class="btn btn-sm border-0 bg-transparent text-muted fs-5 interactable py-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Share">
+            <button class="btn btn-sm border-0 bg-transparent text-muted fs-5 interactable py-2 site-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Share" aria-label="Share post">
                 <i class="bi bi-share"></i>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow">
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 p-2">
                 <li>
                     <button class="dropdown-item native-share-link" type="button" data-share-title="@shareText" data-share-url="@shareUrl">
                         <i class="bi bi-share me-2" aria-hidden="true"></i>Share...
@@ -133,7 +133,7 @@
                     var objectHref = taggedObjectHref as string[] ?? taggedObjectHref.ToArray();
                     var objectImages = taggedObjectImages as string[] ?? taggedObjectImages.ToArray();
 
-                    <div class="post-summary p-1">
+                    <div class="post-summary px-1">
                         @Html.Raw(Model.Summary)
                     </div>
 
@@ -162,7 +162,7 @@
     </div>
     <div class="row text-break">
         <div unique-image-section="@uuid" class="col">
-            <div id="Image-Carousel-@uuid" class="carousel slide border border-white" data-bs-interval="false" style="display: none">
+            <div id="Image-Carousel-@uuid" class="carousel slide border border-light-subtle rounded-4 overflow-hidden bg-body" data-bs-interval="false" style="display: none">
                 <div class="carousel-inner" id="Image-Carousel-Inner-@uuid">
                 </div>
                 <button class="carousel-control-prev bg-black" type="button" data-bs-target="#Image-Carousel-@uuid" data-bs-slide="prev">
@@ -188,7 +188,7 @@
                 var commentCount = Model.CommentCount;
             }
 
-            <a class="text-nowrap hide-comments interactable" comment-count="@commentCount" unique-post-id="@uuid.ToString()" post-id="@Model.Id" role="button">Show Comments (@commentCount)</a>
+            <a class="text-nowrap text-decoration-none hide-comments interactable comment-toggle-link" comment-count="@commentCount" unique-post-id="@uuid.ToString()" post-id="@Model.Id" role="button">Show Comments (@commentCount)</a>
         </div>
         @{ await Html.RenderPartialAsync("Social/_PostLikeSection", @Model); }
     </div>
@@ -196,7 +196,7 @@
     <hr />
 
 
-    <div unique-comment-section="@uuid.ToString()" style="display: none">
+    <div unique-comment-section="@uuid.ToString()" class="mt-3" style="display: none">
 
         @if(commentCount > 0)
         {
@@ -208,27 +208,25 @@
 
         <ul unique-comment-list="@uuid.ToString()" class="list-unstyled comment-thread-list">
         </ul>
-        <form method="post" enctype="multipart/form-data" comment-form-uuid="@uuid.ToString()">
-            @{
-                if (_SignInManager.IsSignedIn(User))
-                {
-                    <div class="comment-composer mt-3 mb-2">
-                        <div class="comment-composer-shell border border-1 rounded-3 p-2 p-md-3">
-                            <div class="comment-composer-editor-wrap mb-2">
-                                <textarea class="summernote-comments text-black" post-id="@Model.Id" comment-textbox-uuid="@uuid.ToString()" name="Summary"></textarea>
-                            </div>
+        @if (_SignInManager.IsSignedIn(User))
+        {
+            <form method="post" enctype="multipart/form-data" comment-form-uuid="@uuid.ToString()">
+                <div class="comment-composer mt-3 mb-2">
+                    <div class="comment-composer-shell border border-1 rounded-3 p-2 p-md-3">
+                        <div class="comment-composer-editor-wrap mb-2">
+                            <textarea class="summernote-comments text-black" post-id="@Model.Id" comment-textbox-uuid="@uuid.ToString()" name="Summary"></textarea>
+                        </div>
 
-                            <div class="comment-composer-actions d-flex justify-content-end">
-                                <button type="button" class="btn btn-primary rounded-3 px-4 comment-send-btn interactable d-inline-flex align-items-center gap-2" unique-identifier="@uuid.ToString()" parent-post-id="@Model.Id">
-                                    <i class="bi bi-send-fill"></i>
-                                    <span>Reply</span>
-                                </button>
-                            </div>
+                        <div class="comment-composer-actions d-flex justify-content-end">
+                            <button type="button" class="btn btn-primary rounded-3 px-4 comment-send-btn interactable d-inline-flex align-items-center gap-2" unique-identifier="@uuid.ToString()" parent-post-id="@Model.Id">
+                                <i class="bi bi-send-fill"></i>
+                                <span>Reply</span>
+                            </button>
                         </div>
                     </div>
-                }
-            }
-        </form>
+                </div>
+            </form>
+        }
     </div>
-    <span unique-error-identifier="@uuid.ToString()" data-testid="post-error-message" style="display: none;" class="text-primary">Error Submitting Post.....</span>
+    <span unique-error-identifier="@uuid.ToString()" data-testid="post-error-message" hidden class="text-primary small mt-2" aria-live="polite"></span>
 </div>

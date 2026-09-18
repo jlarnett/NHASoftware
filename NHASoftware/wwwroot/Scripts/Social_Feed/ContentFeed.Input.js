@@ -38,22 +38,22 @@
     static ClearCustomPostForm() {
         $("#CustomPostTextbox").summernote('reset');
         $("#CustomPostMediaFileInput").val(null);
-        $("#CustomPostValidationMessage").hide("slow");
+        $("#CustomPostValidationMessage").hide("slow", function () { $(this).prop("hidden", true); });
     }
 
     static ClearReportPostForm() {
         $("#ReportPostTextbox").summernote('reset');
-        $("#CustomPostValidationMessage").hide("slow");
+        $("#ReportPostValidationMessage").hide("slow", function () { $(this).prop("hidden", true); });
     }
 
     static ClearBasicPostForm() {
         $("#MainPostTextbox").summernote('reset');
-        $("#MainPostTextboxValidationMessage").hide("slow");
+        $("#MainPostTextboxValidationMessage").hide("slow", function () { $(this).prop("hidden", true); });
     }
 
     static ClearCommentForm(uuid) {
         var commentTextboxJqueryLocator = '[comment-textbox-uuid="' + uuid + '"]';
         $(commentTextboxJqueryLocator).summernote("reset");
-        $("span[unique-error-identifier$="+ uuid +"]").hide("slow");
+        $("span[unique-error-identifier$='"+ uuid +"']").hide("slow", function () { $(this).prop("hidden", true); });
     }
 }

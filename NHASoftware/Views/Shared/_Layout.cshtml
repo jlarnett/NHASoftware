@@ -101,7 +101,7 @@
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.4.8/jquery.jgrowl.min.css" />
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.4.8/jquery.jgrowl.min.js"></script>
 </head>
-<body>
+<body class="site-shell">
 <header>
     @{ await Html.RenderPartialAsync("Navigation/_NavigationBarPartial");}
 </header>
@@ -117,18 +117,18 @@
 }
 
 <!-- Main body Content / Contains current user's id for common.js use -->
-<div class="container-fluid bg-body" id="MainPageContentContainer" userId="@UserManager.GetUserId(User)" user-session-active="@SignInManager.IsSignedIn(User).ToString()" admin-user="@userIsAdmin.ToString()">
+<div class="container-fluid bg-body site-content-shell" id="MainPageContentContainer" userId="@UserManager.GetUserId(User)" user-session-active="@SignInManager.IsSignedIn(User).ToString()" admin-user="@userIsAdmin.ToString()">
     <div class="row">
-        <div id="LeftMenu" class="col-3 mt-11 d-none d-md-block border-end border-primary bg-transparent p-1">
+        <div id="LeftMenu" class="col-3 mt-11 d-none d-md-block border-end border-primary bg-transparent p-1 site-sidebar-shell">
                 @{ await Html.RenderPartialAsync("Sponsers/_SponsorListPartial"); }
         </div>
-        <main role="main" class="col pt-2 mt-11">
+        <main role="main" class="col pt-2 mt-11 site-main-column">
             @RenderBody()
-            <button id="backToTop" title="Go to top" class="btn btn-outline-primary">
+            <button id="backToTop" title="Go to top" aria-label="Back to top" class="btn btn-outline-primary shadow-sm">
                 <i class="bi bi-arrow-up"></i>
             </button>
         </main>
-            <div class="col-3 mt-11 d-none d-md-block bg-transparent p-1" style="min-height: 75.5em;">
+            <div class="col-3 mt-11 d-none d-md-block bg-transparent p-1 right-sidebar site-sidebar-shell" style="min-height: 75.5em;">
             @{ await Html.RenderPartialAsync("FriendList/_FriendListPartial");}
         </div>
     </div>

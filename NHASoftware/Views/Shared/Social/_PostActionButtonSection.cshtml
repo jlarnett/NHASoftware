@@ -9,29 +9,32 @@
     bool isCommentBool = Model.ParentPostId != null;
     var userId = (await _UserManager.GetUserAsync(User))?.Id ?? "-1";
     bool isLoggedInUsersPost = Model.User!.Id == userId;
+    var menuButtonId = $"postMenuButton-{Model.Id}-{Model.UUID}";
 
     if (User.Identity!.IsAuthenticated)
     {
-            <a class="btn btn-sm border-0 bg-transparent text-muted fs-5 dropstart interactable" title="Options" type="button" id="postMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-sm border-0 bg-transparent text-muted fs-5 dropstart interactable site-icon-btn" title="Options" type="button" id="@menuButtonId" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Post options">
                 <i class="bi bi-three-dots-vertical fs-5 text-muted"></i>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-sm shadow-sm border-0" aria-labelledby="postMenuButton">
+            </button>
+            <ul class="dropdown-menu dropdown-menu-sm shadow-lg border-0 rounded-4 p-2" aria-labelledby="@menuButtonId">
                 @if (isLoggedInUsersPost || _Warden.IsAdmin(User))
                 {
                     <li>
-                        <a class="dropdown-item delete-post-link"
+                        <a class="dropdown-item delete-post-link d-flex align-items-center gap-2 rounded-3"
                            post-id="@Model.Id"
                            is-comment="@isCommentBool.ToString()"
                            uuid="@Model.UUID">
-                            Delete
+                            <i class="bi bi-trash"></i>
+                            <span>Delete</span>
                         </a>
                     </li>
                 }
                 <li>
-                    <a class="dropdown-item report-post-link"
+                    <a class="dropdown-item report-post-link d-flex align-items-center gap-2 rounded-3"
                        data-bs-toggle="modal" data-bs-target="#reportPostModal" data-postid="@Model.Id"
                        uuid="@Model.UUID">
-                        Report
+                        <i class="bi bi-flag"></i>
+                        <span>Report</span>
                     </a>
                 </li>
             </ul>

@@ -24,6 +24,7 @@ namespace NHA.Website.Software.Controllers.WebAPIs.Users
     public class UsersController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IActiveSessionTracker _sessionTracker;
         private readonly ILogger<UsersController> _logger;
@@ -33,6 +34,7 @@ namespace NHA.Website.Software.Controllers.WebAPIs.Users
 
         public UsersController(
             UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
             IActiveSessionTracker sessionTracker,
             ILogger<UsersController> logger,
@@ -41,6 +43,7 @@ namespace NHA.Website.Software.Controllers.WebAPIs.Users
             ApplicationDbContext context)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _signInManager = signInManager;
             _sessionTracker = sessionTracker;
             _logger = logger;
@@ -221,6 +224,35 @@ namespace NHA.Website.Software.Controllers.WebAPIs.Users
                     ModelState.AddModelError(error.Code, error.Description);
                 }
 
+                return ValidationProblem(ModelState);
+            }
+
+            if (!await _roleManager.RoleExistsAsync("basic"))
+            {
+                var createRoleResult = await _roleManager.CreateAsync(new IdentityRole("basic"));
+
+                if (!createRoleResult.Succeeded)
+                {
+                    foreach (var error in createRoleResult.Errors)
+                    {
+                        ModelState.AddModelError(error.Code, error.Description);
+                    }
+
+                    await _userManager.DeleteAsync(user);
+                    return ValidationProblem(ModelState);
+                }
+            }
+
+            var addToRoleResult = await _userManager.AddToRoleAsync(user, "basic");
+
+            if (!addToRoleResult.Succeeded)
+            {
+                foreach (var error in addToRoleResult.Errors)
+                {
+                    ModelState.AddModelError(error.Code, error.Description);
+                }
+
+                await _userManager.DeleteAsync(user);
                 return ValidationProblem(ModelState);
             }
 

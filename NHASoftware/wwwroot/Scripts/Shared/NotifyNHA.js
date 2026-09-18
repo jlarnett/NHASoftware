@@ -6,11 +6,11 @@
         audio.play();
     }
 
-    static createNotification(message) {
+    static createNotification(message, lifespan = 10000) {
         // this.playNotificationAudio();
         $.jGrowl(message, {
             position: "bottom-left",
-            life: 10000,
+            life: lifespan,
             theme: "large-notification"
         });
     }

@@ -8,28 +8,15 @@
     var returnUrl = HtmlEncoder.Encode(ViewContext.HttpContext.Request.Path + ViewContext.HttpContext.Request.QueryString);
 }
 
-<ul class="navbar-nav">
+<ul class="navbar-nav flex-column flex-sm-row ms-sm-auto align-items-stretch align-items-sm-center gap-2 py-2 py-sm-0 site-auth-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item align-self-center me-2 order-2 order-sm-1">
-            <input type="text" class="form-control align-self-center interactable w-100 w-sm-auto" id="searchInput" placeholder="Search Anime Social" />
+        <li class="nav-item align-self-center me-2 order-2 order-sm-1 position-relative site-search-shell">
+            <label class="visually-hidden" for="searchInput">Search Anime Social</label>
+            <input type="text" class="form-control align-self-center interactable w-100 w-sm-auto px-3" id="searchInput" placeholder="Search Anime Social" />
 
             <!-- Dropdown container -->
-            <ul id="searchDropdown" class="bg-body-tertiary"
-                style="
-                    position: absolute;
-                    top: 100%;
-                    border: 1px solid #fff;
-                    border-top: none;
-                    max-height: 400px;
-                    max-width: 300px;
-                    overflow-y: auto;
-                    z-index: 1000;
-                    display: none;
-                    list-style: none;
-                    margin: 0;
-                    padding: 0;
-                ">
+            <ul id="searchDropdown" class="bg-body-tertiary site-search-dropdown list-unstyled shadow-lg rounded-4">
             </ul>
         </li>
         var user = await UserManager.GetUserAsync(User);
@@ -38,32 +25,35 @@
         {
             string profilePicture = "~/ProfilePictures/" + user.ProfilePicturePath;
 
-            <li class="nav-item dropdown w-100 align-content-center order-1 order-sm-2">
+            <li class="nav-item dropdown align-content-center order-1 order-sm-2 site-auth-item site-profile-item">
 
                 <!-- Profile Picture Dropdown Toggle -->
-                <a class="nav-link dropdown-toggle p-0 pe-2 interactable text-center" href="#" id="profileDropdown" role="button"
+                <a class="nav-link dropdown-toggle p-1 pe-sm-2 interactable text-center site-profile-toggle" href="#" id="profileDropdown" role="button"
                    data-bs-toggle="dropdown" aria-expanded="false">
                     <img id="ProfilePicture"
                          src="@Url.Content(profilePicture)"
                          alt="Current User's Profile Picture"
-                         class="rounded login-profile-picture " />
+                          class="rounded-circle login-profile-picture shadow-sm" />
                 </a>
 
                 <!-- Dropdown Menu -->
-                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-center" aria-labelledby="profileDropdown">
+                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-start shadow-lg border-0 rounded-4 p-2" aria-labelledby="profileDropdown">
                     <li>
-                        <a class="dropdown-item" asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@user.Id">
-                            Profile
+                        <a class="dropdown-item d-flex align-items-center gap-2 rounded-3" asp-controller="Users" asp-action="GetProfiles" asp-route-userId="@user.Id">
+                            <i class="bi bi-person-circle"></i>
+                            <span>Profile</span>
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
-                            Manage
+                        <a class="dropdown-item d-flex align-items-center gap-2 rounded-3" asp-area="Identity" asp-page="/Account/Manage/Index">
+                            <i class="bi bi-gear"></i>
+                            <span>Manage</span>
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" asp-controller="Users" asp-action="Logout" asp-route-returnUrl="@returnUrl">
-                            Logout
+                        <a class="dropdown-item d-flex align-items-center gap-2 rounded-3" asp-controller="Users" asp-action="Logout" asp-route-returnUrl="@returnUrl">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Logout</span>
                         </a>
                     </li>
                 </ul>
@@ -74,34 +64,21 @@
     }
     else
     {
-        <li class="nav-item align-self-center me-2 order-3 order-sm-1">
-            <input type="text" id="searchInput" class="form-control interactable d-block text-center " placeholder="Search Anime Social" />
+        <li class="nav-item align-self-center me-2 order-3 order-sm-1 position-relative site-search-shell">
+            <label class="visually-hidden" for="searchInput">Search Anime Social</label>
+            <input type="text" id="searchInput" class="form-control interactable d-block px-3" placeholder="Search Anime Social" />
             <!-- Dropdown container -->
-            <ul id="searchDropdown" class="bg-body-tertiary"
-                style="
-                    position: absolute;
-                    top: 100%;
-                    border: 1px solid #fff;
-                    border-top: none;
-                    max-height: 400px;
-                    max-width: 300px;
-                    overflow-y: auto;
-                    z-index: 1000;
-                    display: none;
-                    list-style: none;
-                    margin: 0;
-                    padding: 0;
-                ">
+            <ul id="searchDropdown" class="bg-body-tertiary site-search-dropdown list-unstyled shadow-lg rounded-4">
             </ul>
         </li>
-        <li class="nav-item align-self-center interactable w-100 w-sm-auto order-1 order-sm-2">
-            <a class="nav-link btn-dark text-light  rounded-2 h5 m-0  d-block text-center text-nowrap" asp-area="Identity" asp-page="/Account/Register">
+        <li class="nav-item align-self-center interactable order-1 order-sm-2 site-auth-item">
+            <a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap main-nav-link" asp-area="Identity" asp-page="/Account/Register">
                 <i class="bi bi-person-plus"></i>
                 Register
             </a>
         </li>
-        <li class="nav-item align-self-center interactable w-100 w-sm-auto order-2 order-sm-3">
-            <a class="nav-link btn-dark text-light rounded-2 h5 m-0  d-block text-center text-nowrap" asp-area="Identity" asp-page="/Account/Login">
+        <li class="nav-item align-self-center interactable order-2 order-sm-3 site-auth-item">
+            <a class="nav-link btn-dark text-light rounded-2 h5 m-0 d-block text-center text-nowrap main-nav-link" asp-area="Identity" asp-page="/Account/Login">
                 <i class="bi bi-box-arrow-in-right"></i>
                 Login
             </a>
