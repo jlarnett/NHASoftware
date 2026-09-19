@@ -84,7 +84,33 @@ namespace NHA.Api.Tests.Tests
                 Assert.Equal(anime.AnimeImageUrl, response.Content.AnimeImageUrl);
                 Assert.Equal(anime.AnimeJikanScore, response.Content.AnimeJikanScore);
                 Assert.Equal(anime.AnimeImageUrl, response.Content.AnimeImageUrl);
+            }
 
+            try
+            {
+                if (response.Content != null)
+                {
+                    response = await authenticatedUser.AnimeApi.GetAnimePageAsync(response.Content.Id);
+
+                    Assert.Equal(anime.AnimeName, response.Content.AnimeName);
+                    Assert.Equal(anime.AnimeEnglishName, response.Content.AnimeEnglishName);
+                    Assert.Equal(anime.AnimeJapaneseName, response.Content.AnimeJapaneseName);
+                    Assert.Equal(anime.AnimeGenres, response.Content.AnimeGenres);
+                    Assert.Equal(anime.AnimeBackground, response.Content.AnimeBackground);
+                    Assert.Equal(anime.AnimeSummary, response.Content.AnimeSummary);
+                    Assert.Equal(0, response.Content.UpVotes);
+                    Assert.Equal(0, response.Content.DownVotes);
+                    Assert.Equal(anime.TrailerUrl, response.Content.TrailerUrl);
+                    Assert.Equal(anime.AnimeStatus, response.Content.AnimeStatus);
+                    Assert.Equal(anime.AnimeImageUrl, response.Content.AnimeImageUrl);
+                    Assert.Equal(anime.AnimeJikanScore, response.Content.AnimeJikanScore);
+                    Assert.Equal(anime.AnimeImageUrl, response.Content.AnimeImageUrl);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
