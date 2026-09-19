@@ -260,16 +260,30 @@ using (var scope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope(
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await dbContext.Database.MigrateAsync();
 
+    var startupLogger = scope.ServiceProvider
+        .GetRequiredService<ILoggerFactory>()
+        .CreateLogger("Program.Startup");
+
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     await EnsureRoleExistsAsync(roleManager, "basic");
     await EnsureRoleExistsAsync(roleManager, "admin");
 
     var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
-    recurringJobManager.AddOrUpdate<IProfilePictureFileScrubber>("ProfilePictureScrubber", x => x.RemoveOldProfilePicturesFromFolder(), Cron.Hourly);
-    recurringJobManager.AddOrUpdate<IAnimeLeecher>("AnimeLeecher", x => x.LoadExternalAnime(), Cron.Yearly);
-    recurringJobManager.AddOrUpdate<IGameLeecher>("GameLeecher", x => x.LoadExternalGameInformation(), Cron.Yearly);
-    recurringJobManager.AddOrUpdate<IAdMaximizerService>("FeaturedAnimeSelector", x => x.PickFeaturedAnime(), Cron.Hourly);
-    recurringJobManager.AddOrUpdate<IAdMaximizerService>("FeaturedGameSelector", x => x.PickFeaturedGame(), Cron.Hourly);
+    TryRegisterRecurringJob(startupLogger, () =>
+        recurringJobManager.AddOrUpdate<IProfilePictureFileScrubber>("ProfilePictureScrubber", x => x.RemoveOldProfilePicturesFromFolder(), Cron.Hourly),
+        "ProfilePictureScrubber");
+    TryRegisterRecurringJob(startupLogger, () =>
+        recurringJobManager.AddOrUpdate<IAnimeLeecher>("AnimeLeecher", x => x.LoadExternalAnime(), Cron.Yearly),
+        "AnimeLeecher");
+    TryRegisterRecurringJob(startupLogger, () =>
+        recurringJobManager.AddOrUpdate<IGameLeecher>("GameLeecher", x => x.LoadExternalGameInformation(), Cron.Yearly),
+        "GameLeecher");
+    TryRegisterRecurringJob(startupLogger, () =>
+        recurringJobManager.AddOrUpdate<IAdMaximizerService>("FeaturedAnimeSelector", x => x.PickFeaturedAnime(), Cron.Hourly),
+        "FeaturedAnimeSelector");
+    TryRegisterRecurringJob(startupLogger, () =>
+        recurringJobManager.AddOrUpdate<IAdMaximizerService>("FeaturedGameSelector", x => x.PickFeaturedGame(), Cron.Hourly),
+        "FeaturedGameSelector");
 }
 
 //App Hang fire Configuration.
@@ -304,6 +318,18 @@ static async Task EnsureRoleExistsAsync(RoleManager<IdentityRole> roleManager, s
     if (!createRoleResult.Succeeded)
     {
         throw new InvalidOperationException($"Failed to create required identity role '{roleName}'.");
+    }
+}
+
+static void TryRegisterRecurringJob(ILogger logger, Action registerJob, string jobId)
+{
+    try
+    {
+        registerJob();
+    }
+    catch (Hangfire.Storage.DistributedLockTimeoutException ex)
+    {
+        logger.LogWarning(ex, "Skipping Hangfire recurring job registration for {JobId} because the distributed lock could not be acquired during startup.", jobId);
     }
 }
 
