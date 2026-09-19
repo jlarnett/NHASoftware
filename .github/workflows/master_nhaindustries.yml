@@ -29,13 +29,13 @@ jobs:
         run: dotnet test NHA.Testing/NHA.Unit.Tests.csproj --configuration Release --no-build --verbosity normal
         
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish NHASoftware/NHA.Website.Software.csproj -c Release -o ${{ github.workspace }}/published-webapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ${{ github.workspace }}/published-webapp
 
   deploy:
     runs-on: windows-latest
@@ -53,6 +53,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
+          path: ${{ github.workspace }}/published-webapp
 
       # 1. Log in to Azure securely using OIDC tokens
       - name: Azure Login
@@ -69,4 +70,4 @@ jobs:
         with:
           app-name: 'NHAIndustries'
           slot-name: 'Production'
-          package: .
+          package: ${{ github.workspace }}/published-webapp
